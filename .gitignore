@@ -1,0 +1,10 @@
+Pods
+node_modules
+.DS_Store
+.pt
+*.xccheckout
+xcuserdata
+Gemfile.lock
+Podfile.lock
+DerivedData
+Build
