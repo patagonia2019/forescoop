@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JFWindguru'
-  s.version          = '0.1.3'
+  s.version          = '0.1.0'
   s.summary = "This is the JFWindguru library to use when building weather applications."
 
 # This description is used to generate tags and improve search results.
