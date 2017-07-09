@@ -16,6 +16,17 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		7057C8951F11D62F007A7FC2 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		7057C8971F11DABC007A7FC2 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
+		70C791BB1F126112008B1F30 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70C791B91F126112008B1F30 /* Interface.storyboard */; };
+		70C791BD1F126112008B1F30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70C791BC1F126112008B1F30 /* Assets.xcassets */; };
+		70C791C41F126112008B1F30 /* JFWindguruWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 70C791C31F126112008B1F30 /* JFWindguruWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		70C791CB1F126112008B1F30 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C791CA1F126112008B1F30 /* InterfaceController.swift */; };
+		70C791CD1F126112008B1F30 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C791CC1F126112008B1F30 /* ExtensionDelegate.swift */; };
+		70C791CF1F126112008B1F30 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C791CE1F126112008B1F30 /* NotificationController.swift */; };
+		70C791D11F126112008B1F30 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C791D01F126112008B1F30 /* ComplicationController.swift */; };
+		70C791D31F126112008B1F30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70C791D21F126112008B1F30 /* Assets.xcassets */; };
+		70C791D71F126112008B1F30 /* JFWindguruWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 70C791B71F126112008B1F30 /* JFWindguruWatch.app */; };
+		70C791E01F1263BB008B1F30 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
+		70D1E33E1ED877D4D55C7071 /* Pods_JFWindguruWatch_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C015C31E20BD50BA0AE6080B /* Pods_JFWindguruWatch_Extension.framework */; };
 		F53666E48EA50F4437C7245A /* Pods_JFWindguru_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D93F0B6B65CBA403B7743FBC /* Pods_JFWindguru_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -27,10 +38,50 @@
 			remoteGlobalIDString = 607FACCF1AFB9204008FA782;
 			remoteInfo = JFWindguru;
 		};
+		70C791C51F126112008B1F30 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70C791C21F126112008B1F30;
+			remoteInfo = "JFWindguruWatch Extension";
+		};
+		70C791D51F126112008B1F30 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70C791B61F126112008B1F30;
+			remoteInfo = JFWindguruWatch;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		70C791DD1F126112008B1F30 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				70C791C41F126112008B1F30 /* JFWindguruWatch Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C791DF1F126112008B1F30 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				70C791D71F126112008B1F30 /* JFWindguruWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		154C254CD77976B0E205DF68 /* Pods-JFWindguru_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru_Example/Pods-JFWindguru_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		1AA98D0A028465017AAFA6FD /* Pods-JFWindguruWatch Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguruWatch Extension.release.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguruWatch Extension/Pods-JFWindguruWatch Extension.release.xcconfig"; sourceTree = "<group>"; };
 		24D07A369532A7136ACE3C45 /* Pods-JFWindguru_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru_Tests/Pods-JFWindguru_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* JFWindguru_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JFWindguru_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -44,16 +95,37 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		7057C8941F11D62F007A7FC2 /* Facade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Facade.swift; sourceTree = "<group>"; };
 		7057C8961F11DABC007A7FC2 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		70C791B71F126112008B1F30 /* JFWindguruWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JFWindguruWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		70C791BA1F126112008B1F30 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		70C791BC1F126112008B1F30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		70C791BE1F126112008B1F30 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		70C791C31F126112008B1F30 /* JFWindguruWatch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "JFWindguruWatch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		70C791C91F126112008B1F30 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		70C791CA1F126112008B1F30 /* InterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		70C791CC1F126112008B1F30 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		70C791CE1F126112008B1F30 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		70C791D01F126112008B1F30 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
+		70C791D21F126112008B1F30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		70C791D41F126112008B1F30 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7C15CDBB380936AAAB9C6643 /* Pods-JFWindguruWatch Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguruWatch Extension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguruWatch Extension/Pods-JFWindguruWatch Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		88CC4239D10EA3B99ED1ADC3 /* JFWindguru.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JFWindguru.podspec; path = ../JFWindguru.podspec; sourceTree = "<group>"; };
 		917FA449C8A9F880844B10B1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9B797BC5480538A94EFE2069 /* Pods-JFWindguru_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru_Tests/Pods-JFWindguru_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		A4A85B64D047BA2623491E8D /* Pods-JFWindguru_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru_Example/Pods-JFWindguru_Example.release.xcconfig"; sourceTree = "<group>"; };
+		C015C31E20BD50BA0AE6080B /* Pods_JFWindguruWatch_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JFWindguruWatch_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3914A4B71476DA659AC439F /* Pods_JFWindguru_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JFWindguru_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D93F0B6B65CBA403B7743FBC /* Pods_JFWindguru_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JFWindguru_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E11FCEF0B612B56B1DEF6EF7 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		25ACEB0CFF1CA1CDF14B0F10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		607FACCD1AFB9204008FA782 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -70,6 +142,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70C791C01F126112008B1F30 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70D1E33E1ED877D4D55C7071 /* Pods_JFWindguruWatch_Extension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +158,7 @@
 			children = (
 				D3914A4B71476DA659AC439F /* Pods_JFWindguru_Example.framework */,
 				D93F0B6B65CBA403B7743FBC /* Pods_JFWindguru_Tests.framework */,
+				C015C31E20BD50BA0AE6080B /* Pods_JFWindguruWatch_Extension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -88,6 +169,8 @@
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for JFWindguru */,
 				607FACE81AFB9204008FA782 /* Tests */,
+				70C791B81F126112008B1F30 /* JFWindguruWatch */,
+				70C791C71F126112008B1F30 /* JFWindguruWatch Extension */,
 				607FACD11AFB9204008FA782 /* Products */,
 				B7BD308B2C5ACB7DC09326FE /* Pods */,
 				457E480755B3B9731D3C8AFE /* Frameworks */,
@@ -99,6 +182,8 @@
 			children = (
 				607FACD01AFB9204008FA782 /* JFWindguru_Example.app */,
 				607FACE51AFB9204008FA782 /* JFWindguru_Tests.xctest */,
+				70C791B71F126112008B1F30 /* JFWindguruWatch.app */,
+				70C791C31F126112008B1F30 /* JFWindguruWatch Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -154,6 +239,38 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
+		70C791B81F126112008B1F30 /* JFWindguruWatch */ = {
+			isa = PBXGroup;
+			children = (
+				70C791B91F126112008B1F30 /* Interface.storyboard */,
+				70C791BC1F126112008B1F30 /* Assets.xcassets */,
+				70C791BE1F126112008B1F30 /* Info.plist */,
+			);
+			path = JFWindguruWatch;
+			sourceTree = "<group>";
+		};
+		70C791C71F126112008B1F30 /* JFWindguruWatch Extension */ = {
+			isa = PBXGroup;
+			children = (
+				70C791CA1F126112008B1F30 /* InterfaceController.swift */,
+				70C791CC1F126112008B1F30 /* ExtensionDelegate.swift */,
+				70C791CE1F126112008B1F30 /* NotificationController.swift */,
+				70C791D01F126112008B1F30 /* ComplicationController.swift */,
+				70C791D21F126112008B1F30 /* Assets.xcassets */,
+				70C791D41F126112008B1F30 /* Info.plist */,
+				70C791C81F126112008B1F30 /* Supporting Files */,
+			);
+			path = "JFWindguruWatch Extension";
+			sourceTree = "<group>";
+		};
+		70C791C81F126112008B1F30 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				70C791C91F126112008B1F30 /* PushNotificationPayload.apns */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		B7BD308B2C5ACB7DC09326FE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +278,8 @@
 				A4A85B64D047BA2623491E8D /* Pods-JFWindguru_Example.release.xcconfig */,
 				24D07A369532A7136ACE3C45 /* Pods-JFWindguru_Tests.debug.xcconfig */,
 				9B797BC5480538A94EFE2069 /* Pods-JFWindguru_Tests.release.xcconfig */,
+				7C15CDBB380936AAAB9C6643 /* Pods-JFWindguruWatch Extension.debug.xcconfig */,
+				1AA98D0A028465017AAFA6FD /* Pods-JFWindguruWatch Extension.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -178,10 +297,12 @@
 				607FACCE1AFB9204008FA782 /* Resources */,
 				CBB2906263AA3D22F07B1FF0 /* [CP] Embed Pods Frameworks */,
 				B653429F33F3D8DFE409CBB7 /* [CP] Copy Pods Resources */,
+				70C791DF1F126112008B1F30 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				70C791D61F126112008B1F30 /* PBXTargetDependency */,
 			);
 			name = JFWindguru_Example;
 			productName = JFWindguru;
@@ -209,13 +330,51 @@
 			productReference = 607FACE51AFB9204008FA782 /* JFWindguru_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		70C791B61F126112008B1F30 /* JFWindguruWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70C791DE1F126112008B1F30 /* Build configuration list for PBXNativeTarget "JFWindguruWatch" */;
+			buildPhases = (
+				70C791B51F126112008B1F30 /* Resources */,
+				70C791DD1F126112008B1F30 /* Embed App Extensions */,
+				25ACEB0CFF1CA1CDF14B0F10 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				70C791C61F126112008B1F30 /* PBXTargetDependency */,
+			);
+			name = JFWindguruWatch;
+			productName = JFWindguruWatch;
+			productReference = 70C791B71F126112008B1F30 /* JFWindguruWatch.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		70C791C21F126112008B1F30 /* JFWindguruWatch Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70C791DC1F126112008B1F30 /* Build configuration list for PBXNativeTarget "JFWindguruWatch Extension" */;
+			buildPhases = (
+				B89E773F14770630B6D1C8E1 /* [CP] Check Pods Manifest.lock */,
+				70C791BF1F126112008B1F30 /* Sources */,
+				70C791C01F126112008B1F30 /* Frameworks */,
+				70C791C11F126112008B1F30 /* Resources */,
+				3003337AF961DF664CCF3AB8 /* [CP] Embed Pods Frameworks */,
+				E1EA50941EFCA52F50AC3106 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "JFWindguruWatch Extension";
+			productName = "JFWindguruWatch Extension";
+			productReference = 70C791C31F126112008B1F30 /* JFWindguruWatch Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		607FACC81AFB9204008FA782 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
@@ -227,6 +386,15 @@
 						CreatedOnToolsVersion = 6.3.1;
 						LastSwiftMigration = 0820;
 						TestTargetID = 607FACCF1AFB9204008FA782;
+					};
+					70C791B61F126112008B1F30 = {
+						CreatedOnToolsVersion = 8.3.2;
+						ProvisioningStyle = Automatic;
+					};
+					70C791C21F126112008B1F30 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = 27XTSJS68A;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -245,6 +413,8 @@
 			targets = (
 				607FACCF1AFB9204008FA782 /* JFWindguru_Example */,
 				607FACE41AFB9204008FA782 /* JFWindguru_Tests */,
+				70C791B61F126112008B1F30 /* JFWindguruWatch */,
+				70C791C21F126112008B1F30 /* JFWindguruWatch Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -267,6 +437,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70C791B51F126112008B1F30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70C791BD1F126112008B1F30 /* Assets.xcassets in Resources */,
+				70C791BB1F126112008B1F30 /* Interface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C791C11F126112008B1F30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70C791D31F126112008B1F30 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -283,6 +470,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JFWindguru_Tests/Pods-JFWindguru_Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3003337AF961DF664CCF3AB8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JFWindguruWatch Extension/Pods-JFWindguruWatch Extension-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		75AFD22DE16F9C4E91FC4373 /* [CP] Check Pods Manifest.lock */ = {
@@ -330,6 +532,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JFWindguru_Example/Pods-JFWindguru_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		B89E773F14770630B6D1C8E1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		CBB2906263AA3D22F07B1FF0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -343,6 +560,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JFWindguru_Example/Pods-JFWindguru_Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E1EA50941EFCA52F50AC3106 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JFWindguruWatch Extension/Pods-JFWindguruWatch Extension-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FAC68CD759B161FDB348A5D7 /* [CP] Check Pods Manifest.lock */ = {
@@ -382,6 +614,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70C791BF1F126112008B1F30 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70C791CF1F126112008B1F30 /* NotificationController.swift in Sources */,
+				70C791D11F126112008B1F30 /* ComplicationController.swift in Sources */,
+				70C791CD1F126112008B1F30 /* ExtensionDelegate.swift in Sources */,
+				70C791E01F1263BB008B1F30 /* Common.swift in Sources */,
+				70C791CB1F126112008B1F30 /* InterfaceController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -389,6 +633,16 @@
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* JFWindguru_Example */;
 			targetProxy = 607FACE61AFB9204008FA782 /* PBXContainerItemProxy */;
+		};
+		70C791C61F126112008B1F30 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 70C791C21F126112008B1F30 /* JFWindguruWatch Extension */;
+			targetProxy = 70C791C51F126112008B1F30 /* PBXContainerItemProxy */;
+		};
+		70C791D61F126112008B1F30 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 70C791B61F126112008B1F30 /* JFWindguruWatch */;
+			targetProxy = 70C791D51F126112008B1F30 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -407,6 +661,14 @@
 				607FACDF1AFB9204008FA782 /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		70C791B91F126112008B1F30 /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				70C791BA1F126112008B1F30 /* Base */,
+			);
+			name = Interface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -565,6 +827,92 @@
 			};
 			name = Release;
 		};
+		70C791D81F126112008B1F30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				IBSC_MODULE = JFWindguruWatch_Extension;
+				INFOPLIST_FILE = JFWindguruWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.2;
+			};
+			name = Debug;
+		};
+		70C791D91F126112008B1F30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				IBSC_MODULE = JFWindguruWatch_Extension;
+				INFOPLIST_FILE = JFWindguruWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.2;
+			};
+			name = Release;
+		};
+		70C791DA1F126112008B1F30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C15CDBB380936AAAB9C6643 /* Pods-JFWindguruWatch Extension.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
+				INFOPLIST_FILE = "JFWindguruWatch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.2;
+			};
+			name = Debug;
+		};
+		70C791DB1F126112008B1F30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1AA98D0A028465017AAFA6FD /* Pods-JFWindguruWatch Extension.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
+				INFOPLIST_FILE = "JFWindguruWatch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.2;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -591,6 +939,24 @@
 			buildConfigurations = (
 				607FACF31AFB9204008FA782 /* Debug */,
 				607FACF41AFB9204008FA782 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70C791DC1F126112008B1F30 /* Build configuration list for PBXNativeTarget "JFWindguruWatch Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70C791DA1F126112008B1F30 /* Debug */,
+				70C791DB1F126112008B1F30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70C791DE1F126112008B1F30 /* Build configuration list for PBXNativeTarget "JFWindguruWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70C791D81F126112008B1F30 /* Debug */,
+				70C791D91F126112008B1F30 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

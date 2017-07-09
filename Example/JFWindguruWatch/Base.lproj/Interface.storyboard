@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+    <device id="watch38" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="12029"/>
+    </dependencies>
+    <scenes>
+        <!--WeatherBackground-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller backgroundImage="WeatherBackground" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JFWindguruWatch" customModuleProvider="target">
+                    <items>
+                        <activity alignment="center" verticalAlignment="center" hidden="YES" id="YDB-l9-fug"/>
+                        <group width="136" height="28.5" alignment="left" verticalAlignment="bottom" id="7F8-8J-sx3">
+                            <items>
+                                <label width="53.5" height="30" alignment="center" text="-18" textAlignment="right" id="OPu-HQ-L1X">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" weight="heavy" pointSize="29"/>
+                                </label>
+                                <label width="15" height="16" alignment="center" text="o" textAlignment="left" id="68p-E1-K6v">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" weight="heavy" pointSize="24"/>
+                                </label>
+                                <label width="22.5" height="30" alignment="center" text="C" textAlignment="left" id="iBa-04-uxo">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" weight="heavy" pointSize="29"/>
+                                </label>
+                            </items>
+                        </group>
+                        <group width="1" alignment="left" backgroundImage="background" id="ID0-Ra-eft">
+                            <items>
+                                <label width="42.5" height="30" alignment="right" text="18 hs" textAlignment="right" id="6SG-dW-VMO">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                </label>
+                                <slider width="89" height="30" alignment="left" value="1" maximum="9" steps="9" id="Qop-uy-EhP">
+                                    <connections>
+                                        <action selector="sliderAction:" destination="AgC-eL-Hgc" id="iRE-wK-QkS"/>
+                                    </connections>
+                                </slider>
+                            </items>
+                        </group>
+                        <group width="1" height="59" alignment="center" verticalAlignment="center" id="QLG-Pz-OOZ">
+                            <items>
+                                <imageView width="63" height="64" alignment="left" image="WeatherSun" contentMode="scaleAspectFit" id="0fp-zz-Hzg"/>
+                                <imageView width="20" height="28" alignment="center" verticalAlignment="center" image="WindDirectionS" contentMode="scaleAspectFill" id="1Rk-gW-uZa"/>
+                                <label width="48.5" height="48" alignment="right" verticalAlignment="center" text="1.9 knots" textAlignment="center" numberOfLines="2" minimumScaleFactor="0.5" id="tEM-p1-RIl">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                </label>
+                            </items>
+                        </group>
+                        <group width="1" height="20" alignment="left" id="zNa-yd-0Sd">
+                            <items>
+                                <label width="1" height="30" alignment="left" text="Bariloche" textAlignment="center" id="uVc-LR-fmw">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                </label>
+                            </items>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="bottomGroup" destination="7F8-8J-sx3" id="n1q-0K-b4N"/>
+                        <outlet property="hourLabel" destination="6SG-dW-VMO" id="fzm-CK-ihV"/>
+                        <outlet property="locationLabel" destination="uVc-LR-fmw" id="BXF-G1-bBU"/>
+                        <outlet property="middleGroup" destination="QLG-Pz-OOZ" id="mnj-Ys-YeE"/>
+                        <outlet property="slider" destination="Qop-uy-EhP" id="Gnu-xv-fRp"/>
+                        <outlet property="spinner" destination="YDB-l9-fug" id="Q9s-6k-7Vf"/>
+                        <outlet property="temperatureLabel" destination="OPu-HQ-L1X" id="gex-GL-28Z"/>
+                        <outlet property="toolbarGroup" destination="ID0-Ra-eft" id="Bug-Lr-ooB"/>
+                        <outlet property="topGroup" destination="zNa-yd-0Sd" id="tY4-7U-b5i"/>
+                        <outlet property="unitLabel" destination="iBa-04-uxo" id="R2r-9e-r3C"/>
+                        <outlet property="weatherImage" destination="0fp-zz-Hzg" id="fc9-ag-cIm"/>
+                        <outlet property="windImage" destination="1Rk-gW-uZa" id="exb-YJ-P2p"/>
+                        <outlet property="windSpeedLabel" destination="tEM-p1-RIl" id="gtG-WX-smD"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="220" y="345"/>
+        </scene>
+        <!--Static Notification Interface Controller-->
+        <scene sceneID="AEw-b0-oYE">
+            <objects>
+                <notificationController id="YCC-NB-fut">
+                    <items>
+                        <label alignment="left" text="Alert Label" id="IdU-wH-bcW"/>
+                    </items>
+                    <notificationCategory key="notificationCategory" identifier="myCategory" id="JfB-70-Muf"/>
+                    <connections>
+                        <outlet property="notificationAlertLabel" destination="IdU-wH-bcW" id="JKC-fr-R95"/>
+                        <segue destination="4sK-HA-Art" kind="relationship" relationship="dynamicNotificationInterface" id="kXh-Jw-8B1"/>
+                    </connections>
+                </notificationController>
+            </objects>
+            <point key="canvasLocation" x="220" y="643"/>
+        </scene>
+        <!--Notification Controller-->
+        <scene sceneID="ZPc-GJ-vnh">
+            <objects>
+                <controller id="4sK-HA-Art" customClass="NotificationController" customModule="JFWindguruWatch" customModuleProvider="target"/>
+            </objects>
+            <point key="canvasLocation" x="468" y="643"/>
+        </scene>
+    </scenes>
+</document>
