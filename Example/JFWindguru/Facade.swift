@@ -102,13 +102,25 @@ public class Facade: NSObject {
                           let location = locations.first else {
                         return
                     }
+                if (TARGET_OS_WATCH == 1) {
+                    let locality = "Cupertino"
+                    let country = "US"
+                    self?.currentLocality = locality
+                    self?.currentCountry = country
+                    
+                    let dict = [kWDKeyLocality: locality, kWDKeyCountry: country]
+                    self?.writeNote(note: JFCore.Constants.Notification.locationUpdated, location: dict)
+                    self?.updateForecast()
+                }
+                else
+                {
                     LocationManager.instance.reverseLocation(location: location, didFailWithError: { (error) in
                         print("error: \(error)")
                     }, didUpdatePlacemarks: { (placemarks) in
                         guard let placemark = placemarks.first,
                             let locality = placemark.locality,
                             let country = placemark.country else {
-                            return
+                                return
                         }
                         self?.currentLocality = locality
                         self?.currentCountry = country
@@ -117,7 +129,8 @@ public class Facade: NSObject {
                         self?.writeNote(note: JFCore.Constants.Notification.locationUpdated, location: dict)
                         self?.updateForecast()
                     })
-//                }
+                    
+                }
         })
         
     }
