@@ -26,6 +26,7 @@
 		70C791D31F126112008B1F30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70C791D21F126112008B1F30 /* Assets.xcassets */; };
 		70C791D71F126112008B1F30 /* JFWindguruWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 70C791B71F126112008B1F30 /* JFWindguruWatch.app */; };
 		70C791E01F1263BB008B1F30 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
+		70C791E11F126590008B1F30 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		70D1E33E1ED877D4D55C7071 /* Pods_JFWindguruWatch_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C015C31E20BD50BA0AE6080B /* Pods_JFWindguruWatch_Extension.framework */; };
 		F53666E48EA50F4437C7245A /* Pods_JFWindguru_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D93F0B6B65CBA403B7743FBC /* Pods_JFWindguru_Tests.framework */; };
 /* End PBXBuildFile section */
@@ -621,6 +622,7 @@
 				70C791CF1F126112008B1F30 /* NotificationController.swift in Sources */,
 				70C791D11F126112008B1F30 /* ComplicationController.swift in Sources */,
 				70C791CD1F126112008B1F30 /* ExtensionDelegate.swift in Sources */,
+				70C791E11F126590008B1F30 /* Facade.swift in Sources */,
 				70C791E01F1263BB008B1F30 /* Common.swift in Sources */,
 				70C791CB1F126112008B1F30 /* InterfaceController.swift in Sources */,
 			);

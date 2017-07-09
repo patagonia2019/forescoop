@@ -39,13 +39,13 @@ class InterfaceController: WKInterfaceController {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
-        self.observeNotification()
+        observeNotification()
         
-        self.hideWeatherInfo()
+        hideWeatherInfo()
         
-        if self.forecastResult != nil
+        if forecastResult != nil
         {
-            self.updateForecastView()
+            updateForecastView()
         }
     }
     
@@ -53,7 +53,7 @@ class InterfaceController: WKInterfaceController {
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
         
-        self.unobserveNotification()
+        unobserveNotification()
         
     }
     
@@ -65,30 +65,30 @@ class InterfaceController: WKInterfaceController {
     
     fileprivate func updateForecastView()
     {
-        if self.forecastResult != nil
-        {
-            self.weatherImage.setImageNamed(self.forecastResult.asCurrentWeatherImagename)
-            self.windImage.setImageNamed(self.forecastResult.asCurrentWindDirectionImagename)
-            self.temperatureLabel.setText(self.forecastResult.asCurrentTemperature)
-            self.unitLabel.setText(self.forecastResult.asCurrentUnit)
-            self.locationLabel.setText(self.forecastResult.asCurrentLocation)
-            self.windSpeedLabel.setText(self.forecastResult.asCurrentWindSpeed)
-            self.hourLabel.setText(self.forecastResult.asHourString)
-            
-            self.showWeatherInfo()
+        guard let forecastResult = forecastResult else {
+            return
         }
-        
+        weatherImage.setImageNamed(forecastResult.asCurrentWeatherImagename)
+        windImage.setImageNamed(forecastResult.asCurrentWindDirectionImagename)
+        temperatureLabel.setText(forecastResult.asCurrentTemperature)
+        unitLabel.setText(forecastResult.asCurrentUnit)
+        locationLabel.setText(forecastResult.asCurrentLocation)
+        windSpeedLabel.setText(forecastResult.asCurrentWindSpeed)
+        hourLabel.setText(forecastResult.asHourString)
+            
+        showWeatherInfo()
     }
     
     
     fileprivate func observeNotification()
     {
-        self.unobserveNotification()
+        unobserveNotification()
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main, using: {
+            [weak self]
             note in if let object: ForecastResult = note.object as? ForecastResult {
-                self.forecastResult = object
-                self.updateForecastView()
+                self?.forecastResult = object
+                self?.updateForecastView()
             }})
     }
     
@@ -99,19 +99,19 @@ class InterfaceController: WKInterfaceController {
     
     fileprivate func hideWeatherInfo()
     {
-        self.toolbarGroup.setAlpha(0)
-        self.topGroup.setAlpha(0)
-        self.middleGroup.setAlpha(0)
-        self.bottomGroup.setAlpha(0)
+        toolbarGroup.setAlpha(0)
+        topGroup.setAlpha(0)
+        middleGroup.setAlpha(0)
+        bottomGroup.setAlpha(0)
     }
     
     fileprivate func showWeatherInfo()
     {
-        self.animate(withDuration: 1.0) { () -> Void in
-            self.toolbarGroup.setAlpha(1)
-            self.topGroup.setAlpha(1)
-            self.middleGroup.setAlpha(1)
-            self.bottomGroup.setAlpha(1)
+        animate(withDuration: 1.0) { [weak self] () -> Void in
+            self?.toolbarGroup.setAlpha(1)
+            self?.topGroup.setAlpha(1)
+            self?.middleGroup.setAlpha(1)
+            self?.bottomGroup.setAlpha(1)
         }
     }
     

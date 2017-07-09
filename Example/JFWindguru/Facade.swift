@@ -90,14 +90,14 @@ public class Facade: NSObject {
     {
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: JFCore.Constants.Notification.locationUpdated), object: nil, queue: OperationQueue.main, using: {
             [weak self] note in
-                if (TARGET_OS_WATCH == 1)
-                {
-                    if let ret = self?.restoreInfo(), ret == true {
-                        self?.updateForecast()
-                    }
-                }
-                else
-                {
+//                if (TARGET_OS_WATCH == 1)
+//                {
+//                    if let ret = self?.restoreInfo(), ret == true {
+//                        self?.updateForecast()
+//                    }
+//                }
+//                else
+//                {
                     guard let locations = LocationManager.instance.locations,
                           let location = locations.first else {
                         return
@@ -117,20 +117,16 @@ public class Facade: NSObject {
                         self?.writeNote(note: JFCore.Constants.Notification.locationUpdated, location: dict)
                         self?.updateForecast()
                     })
-                }
+//                }
         })
         
     }
     
     private func stopLocationServices()
     {
-//        NSNotificationCenter.defaultCenter().removeObserver(self, name: kWDLocationUpdated, object: nil)
+        LocationManager.instance.stop()
     }
     
-    
-    public func updateLocationInfo(locality: String, country: String)
-    {
-    }
     
     public func getCurrentLocation() -> String?
     {
