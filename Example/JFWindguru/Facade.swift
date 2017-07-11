@@ -206,7 +206,7 @@ public class Facade: NSObject {
         guard let location = getCurrentLocation() else {
             return
         }
-        ForecastWindguruService.instance.queryLocation(location: location, updateSpotDidFailWithError: { (error) in
+        ForecastWindguruService.instance.searchSpots(location: location, failure: { (error) in
             print("error = \(error)")
         }) { (spotResult) in
             guard let spots = spotResult.spots,
@@ -216,9 +216,9 @@ public class Facade: NSObject {
             guard let identity = spot.identity else {
                 return
             }
-            ForecastWindguruService.instance.queryWeatherSpot(spot: identity, updateForecastDidFailWithError: { (error) in
+            ForecastWindguruService.instance.forecast(spot: identity, failure: { (error) in
                 print("error = \(error)")
-            }, didUpdateForecastResult: { (forecastResult) in
+            }, success: { (forecastResult) in
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: kWDForecastUpdated), object: forecastResult)
             })
        }

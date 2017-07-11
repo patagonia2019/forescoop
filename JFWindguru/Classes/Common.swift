@@ -9,9 +9,9 @@
 import Foundation
 
 public enum ErrorCode: Int {
-    case WGSearchSpot = 101
-    case WGQueryForecastBySpotModel = 102
-    case WGDidFailWithError = 103
+    case searchSpots = 101
+    case forecast = 103
+    case WGDidFailWithError = 104
 }
 
 

@@ -16,7 +16,8 @@ import JFCore
  *  ForecastWindguruService
  *
  *  Discussion:
- *    Query forecasts and spots, it query weather conditions from any place in the world using http://windguru.cz json rest api.
+ *    Query forecasts and spots, it query weather conditions from any place 
+ *    in the world using http://windguru.cz json rest api.
  */
 
 
@@ -24,118 +25,176 @@ public class ForecastWindguruService: NSObject {
 
     struct Constants {
         static let defaultModel = "3"
-
-        // &username=\(user)&password=\(password)
-        static let windGuruApiUrl = "https://www.windguru.cz/int/jsonapi.php?client=wgapp"
-
-        static let searchSpotsUrl = "&q=search_spots&search="
         
-        static let searchForecastUrl = "&q=forecast"
-        
-        
-
-    }
-    
-    struct service {
-        // https://www.windguru.cz/int/jsonapi.php?client=wgapp
-        // scheme://server
-        static let scheme = "http"
-        static let server = "www.windguru.cz"
-        static let uri = "int/jsonapi.php"
-        struct client {
-            static let key = "client"
-            static let value = "wgapp"
-        }
-        // Not mandatory
-        struct version {
-            static let key = "app_version"
-            static let value = "1.1.10"
-        }
-        static func url() -> String {
-            return "\(service.scheme)://\(service.server)\(service.uri)?\(service.client.key)=\(service.client.value)"
-        }
-        
-        // https://www.windguru.cz/int/jsonapi.php?client=wgapp&app_version=1.1.10
-        // {"return":"error","error_id":5,"error_message":"Missing query [q]"}
-        
-        struct api {
-            let query : String
-            let parameters : [String]?
-
-            static let login = api(query: "user",
-                                   parameters: ["username", "password"]) // not user/pass (anonymous)
-            
-            static let searchSpots = api(query: "search_spots",
-                                         parameters: ["search", "opt"])
-                                            // opt=simple (optional)
-            
-            static let favoriteSpots = api(query: "f_spots",
-                                           parameters: ["username", "password", "opt"])
-                                            // opt=simple (optional)
-            
-            static let addFavoriteSpot = api(query: "add_f_spot",
-                                             parameters: ["username", "password", "id_spot"])
-            
-            static let forecastSets = api(query: "sets",
-                                          parameters: ["username", "password", "id_spot"])
-            
-            static let forecastSetSpots = api(query: "set_spots",
-                                              parameters: ["username", "password", "id_set", "opt"])
-                                                // opt=simple (optional)
-
-            static let forecastCustomSpots = api(query: "c_spots",
-                                                 parameters: ["username", "password", "id_set", "opt"])
-                                                    // opt=simple (optional)
-
-            static let spotInfo = api(query: "spot",
-                                      parameters: ["id_spot"])
-            
-            static let modelInfo = api(query: "model_info",
-                                       parameters: ["id_model"]) // id_model (optional)
-            
-            static let modelsLatLon = api(query: "models_latlon",
-                                          parameters: ["lat", "lon"])
-            
-            static let geoRegions = api(query: "geo_regions",
-                                        parameters: nil)
-            
-            static let countries = api(query: "countries",
-                                       parameters: ["with_spots", "id_georegion"])
-                                        // with_spots = 1 (optional)
-                                        // "id_georegion" (optional)
-            
-            static let regions = api(query: "regions",
-                                     parameters: ["with_spots", "id_country"])
-                                        // with_spots = 1 (optional)
-                                        // "id_country" (optional)
-
-            static let spots = api(query: "spots",
-                                   parameters: ["with_spots", "id_country", "id_region", "opt"])
-                                    // with_spots = 1 (optional)
-                                    // "id_country" (optional)
-                                    // "id_region" (optional)
-                                    // opt=simple (optional)
-
-            static let forecast = api(query: "forecast",
-                                      parameters: ["id_spot", "id_model", "no_wave"])
-                                        // no_wave = 1 (optional)
-
-            static let wforecast = api(query: "wforecast",
-                                       parameters: ["id_spot", "id_model", "no_wave"])
-                                        // no_wave = 1 (optional)
-            
-            static let wforecastLatlon = api(query: "wforecast_latlon",
-                                       parameters: ["id_model", "username", "password", "lat", "lon", "no_wave"])
-                                        // no_wave = 1 (optional)
-
-            // ?q=(query)
-            static func createQuery(api: String) -> String {
-                return "q=\(api)"
+        struct service {
+            // https://www.windguru.cz/int/jsonapi.php?client=wgapp
+            // scheme://server
+            static let scheme = "http"
+            static let server = "www.windguru.cz"
+            static let uri = "int/jsonapi.php"
+            struct client {
+                static let key = "client"
+                static let value = "wgapp"
             }
+            // Not mandatory
+            struct version {
+                static let key = "app_version"
+                static let value = "1.1.10"
+            }
+            static func baseUrl() -> String {
+                return "\(service.scheme)://\(service.server)\(service.uri)?\(service.client.key)=\(service.client.value)"
+            }
+
+            
+            // https://www.windguru.cz/int/jsonapi.php?client=wgapp&app_version=1.1.10
+            // {"return":"error","error_id":5,"error_message":"Missing query [q]"}
+            
+            struct api {
+
+                let query : String
+                let parameters : [String]?
+                
+                struct routine {
+                    static let add_f_spot = "add_f_spot"
+                    static let c_spots = "c_spots"
+                    static let countries = "countries"
+                    static let f_spots = "f_spots"
+                    static let forecast = "forecast"
+                    static let geo_regions = "geo_regions"
+                    static let model_info = "model_info"
+                    static let models_latlon = "models_latlon"
+                    static let regions = "regions"
+                    static let search_spots = "search_spots"
+                    static let set_spots = "set_spots"
+                    static let sets = "sets"
+                    static let spot = "spot"
+                    static let spots = "spots"
+                    static let user = "user"
+                    static let wforecast = "wforecast"
+                    static let wforecast_latlon = "wforecast_latlon"
+                }
+
+                struct parameter {
+                    static let id_country = "id_country"
+                    static let id_georegion = "id_georegion"
+                    static let id_model = "id_model"
+                    static let id_region = "id_region"
+                    static let id_set = "id_set"
+                    static let id_spot = "id_spot"
+                    static let lat = "lat"
+                    static let lon = "lon"
+                    static let no_wave = "no_wave" // no_wave = 1 (optional)
+                    static let opt = "opt" // opt=simple (optional)
+                    static let q = "q"
+                    static let password = "password"
+                    static let search = "search"
+                    static let username = "username"
+                    static let with_spots = "with_spots"
+                }
+                
+                /* Constants.parameter.xid */
+
+                static let login = api(query: routine.user,
+                                       parameters: [parameter.username,
+                                                    parameter.password]) // not user/pass (anonymous)
+                
+                static let searchSpots = api(query: routine.search_spots,
+                                             parameters: [parameter.search,
+                                                          parameter.opt])
+                
+                static let favoriteSpots = api(query: routine.f_spots,
+                                               parameters: [parameter.username,
+                                                            parameter.password,
+                                                            parameter.opt])
+                                                // opt=simple (optional)
+                
+                static let addFavoriteSpot = api(query: routine.add_f_spot,
+                                                 parameters: [parameter.username,
+                                                              parameter.password,
+                                                              parameter.id_spot])
+                
+                static let forecastSets = api(query: routine.sets,
+                                              parameters: [parameter.username,
+                                                           parameter.password,
+                                                           parameter.id_spot])
+                
+                static let forecastSetSpots = api(query: routine.set_spots,
+                                                  parameters: [parameter.username,
+                                                               parameter.password,
+                                                               parameter.id_set,
+                                                               parameter.opt])
+
+                static let forecastCustomSpots = api(query: routine.c_spots,
+                                                     parameters: [parameter.username,
+                                                                  parameter.password,
+                                                                  parameter.id_set,
+                                                                  parameter.opt])
+
+                static let spotInfo = api(query: routine.spot,
+                                          parameters: [parameter.id_spot])
+                
+                static let modelInfo = api(query: routine.model_info,
+                                           parameters: [parameter.id_model]) // id_model (optional)
+                
+                static let modelsLatLon = api(query: routine.models_latlon,
+                                              parameters: [parameter.lat, parameter.lon])
+                
+                static let geoRegions = api(query: routine.geo_regions,
+                                            parameters: nil)
+                
+                static let countries = api(query: routine.countries,
+                                           parameters: [parameter.with_spots,       // with_spots = 1 (optional)
+                                                        parameter.id_georegion])    // "id_georegion" (optional)
+
+                static let regions = api(query: routine.regions,
+                                         parameters: [parameter.with_spots,
+                                                      parameter.id_country])
+                                            // with_spots = 1 (optional)
+                                            // "id_country" (optional)
+
+                static let spots = api(query: routine.spots,
+                                       parameters: [parameter.with_spots, // with_spots = 1 (optional)
+                                                    parameter.id_country, // "id_country" (optional)
+                                                    parameter.id_region,  // "id_region" (optional)
+                                                    parameter.opt])       // opt=simple (optional)
+
+                static let forecast = api(query: routine.forecast,
+                                          parameters: [parameter.id_spot,
+                                                       parameter.id_model,
+                                                       parameter.no_wave])
+
+                static let wforecast = api(query: routine.wforecast,
+                                           parameters: [parameter.id_spot,
+                                                        parameter.id_model,
+                                                        parameter.no_wave])
+                
+                static let wforecastLatlon = api(query: routine.wforecast_latlon,
+                                           parameters: [parameter.id_model,
+                                                        parameter.username,
+                                                        parameter.password,
+                                                        parameter.lat,
+                                                        parameter.lon,
+                                                        parameter.no_wave])
+                
+
+            }
+            
+            static func url(api: api, tokens:[String: String?]) -> String {
+                var strUrl = baseUrl()
+                strUrl += "&q=\(api.query)"
+                for (k,v) in tokens {
+                    if let parameters = api.parameters,
+                        parameters.contains(k) {
+                        if let v = v {
+                            strUrl += "&\(k)=\(v)"
+                        }
+                    }
+                }
+                return strUrl
+            }
+
         }
-        
     }
-    
 
     
     public static let instance = ForecastWindguruService()
@@ -145,27 +204,32 @@ public class ForecastWindguruService: NSObject {
     //
     private var currentSpotResult: SpotResult!
     
+
     //
-    // query location
+    // searchSpots
     //
-    public func queryLocation(location: String,
-                                       updateSpotDidFailWithError:@escaping (_ error: JFError) -> Void,
-                                       didUpdateSpotResult:@escaping (_ spotResult: SpotResult) -> Void) {
+    public func searchSpots(location: String,
+                              failure:@escaping (_ error: JFError) -> Void,
+                              success:@escaping (_ spotResult: SpotResult) -> Void) {
         
         let escapedLocation = location.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
-
-        let url = Constants.searchSpotsUrl + escapedLocation!
-        print("URL = \(url)")
-
-        Alamofire.request(url, method:.get).validate().responseObject { (response: DataResponse<SpotResult>) in
-            if let spotResult = response.result.value {
-                didUpdateSpotResult(spotResult)
+        let tokens = [Constants.service.api.parameter.search : escapedLocation]
+        let url = Constants.service.url(api: Constants.service.api.searchSpots, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            (response: DataResponse<SpotResult>) in
+            if let value = response.result.value {
+                print("SUCCESS url = \(url) - response.result.value \(value)")
+                success(value)
             }
             else if let error = response.result.error {
-                let myerror = JFError.init(code: ErrorCode.WGSearchSpot.rawValue, desc: "failed to get location=\(location)",
-                    reason: "something get wrong on Alamofire.request \(url)", suggestion: "\(#file):\(#line):\(#column):\(#function)",
+                print("FAILURE url = \(url) - response.result.value \(error)")
+                let myerror = JFError.init(code: ErrorCode.searchSpots.rawValue,
+                                           desc: "failed to get location=\(location)",
+                    reason: "\(Constants.service.api.searchSpots) failed",
+                    suggestion: "\(#file):\(#line):\(#column):\(#function)",
                     underError: error as NSError)
-                updateSpotDidFailWithError(myerror)
+                failure(myerror)
             }
         }
     }
@@ -173,33 +237,36 @@ public class ForecastWindguruService: NSObject {
     //
     // query weather info
     //
-    public func queryWeatherSpot(spot spotId: String, model modelId:String,
-                                      updateForecastDidFailWithError:@escaping (_ error: JFError) -> Void,
-                                      didUpdateForecastResult:@escaping (_ forecastResult: ForecastResult) -> Void)
+    public func forecast(spot spotId: String, model modelId:String,
+                                      failure:@escaping (_ error: JFError) -> Void,
+                                      success:@escaping (_ forecastResult: ForecastResult) -> Void)
     {
-        let url = Constants.searchForecastUrl + "&id_model=" + modelId + "&id_spot=" + spotId;
+        let tokens = [Constants.service.api.parameter.id_model : modelId,
+                      Constants.service.api.parameter.id_spot : spotId]
+        let url = Constants.service.url(api: Constants.service.api.forecast, tokens: tokens)
         print("URL = \(url)")
-
         
-        Alamofire.request(url, method:.get).validate().responseObject { (response: DataResponse<ForecastResult>) in
+        Alamofire.request(url, method:.get).validate().responseObject {
+            (response: DataResponse<ForecastResult>) in
             if let forecastResult = response.result.value {
-                didUpdateForecastResult(forecastResult)
+                success(forecastResult)
             }
             else if let error = response.result.error {
-                let myerror = JFError.init(code: ErrorCode.WGQueryForecastBySpotModel.rawValue,
+                let myerror = JFError.init(code: ErrorCode.forecast.rawValue,
                     desc: "failed to get id_model=\(modelId) and id_spot=\(spotId)",
-                    reason: "something get wrong on Alamofire.request \(url)()", suggestion: "\(#file):\(#line):\(#column):\(#function)",
+                    reason: "something get wrong on request \(url)",
+                    suggestion: "\(#file):\(#line):\(#column):\(#function)",
                     underError: error as NSError)
-                updateForecastDidFailWithError(myerror)
+                failure(myerror)
             }
         }
     }
     
-    public func queryWeatherSpot(spot spotId: String,
-                                      updateForecastDidFailWithError:@escaping (_ error: JFError) -> Void,
-                                      didUpdateForecastResult:@escaping (_ forecastResult: ForecastResult) -> Void)
+    public func forecast(spot spotId: String,
+                         failure:@escaping (_ error: JFError) -> Void,
+                         success:@escaping (_ forecastResult: ForecastResult) -> Void)
     {
-        return queryWeatherSpot(spot: spotId, model: Constants.defaultModel, updateForecastDidFailWithError: updateForecastDidFailWithError, didUpdateForecastResult: didUpdateForecastResult)
+        return forecast(spot: spotId, model: Constants.defaultModel, failure: failure, success: success)
     }
 
 }
