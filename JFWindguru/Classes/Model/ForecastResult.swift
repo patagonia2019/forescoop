@@ -84,4 +84,15 @@ public class ForecastResult: Spot {
         }
         tides <- map["tides"]
     }
+    
+    override var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: countryId));"
+        aux += "\(String(describing: latitude));"
+        aux += "\(String(describing: sunrise));"
+        aux += "\(String(describing: sunset));"
+        aux += "]"
+        return aux
+    }
+
 }

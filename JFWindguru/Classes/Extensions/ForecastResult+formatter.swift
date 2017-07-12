@@ -192,7 +192,7 @@ extension ForecastResult
     
     // name contains the location in this object
     public var asCurrentLocation: String {
-        return self.name!
+        return self.spotname!
     }
     
 }

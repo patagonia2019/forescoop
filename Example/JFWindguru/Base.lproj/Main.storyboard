@@ -4,8 +4,9 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -106,26 +107,41 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XGn-NG-dQa" userLabel="bottom">
                                         <rect key="frame" x="0.0" y="500.5" width="375" height="166.5"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="18" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vqi-zn-bWr">
-                                                <rect key="frame" x="108" y="30" width="88" height="67"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="18" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vqi-zn-bWr">
+                                                <rect key="frame" x="159" y="30" width="37" height="67"/>
                                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="33"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="o" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="szr-pL-WC1">
-                                                <rect key="frame" x="204" y="37" width="18" height="40"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="26"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="C" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UWe-zQ-pNM">
-                                                <rect key="frame" x="220" y="30" width="45" height="67"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="°C" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UWe-zQ-pNM">
+                                                <rect key="frame" x="207" y="30" width="61" height="67"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="61" id="LAN-BR-TiL"/>
+                                                    <constraint firstAttribute="height" constant="67" id="o44-PQ-nb6"/>
+                                                </constraints>
                                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="33"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cHT-fK-Ixt">
+                                                <rect key="frame" x="0.0" y="109" width="375" height="29.5"/>
+                                                <color key="backgroundColor" red="0.83041405680000002" green="0.83038914200000002" blue="0.83040332790000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <state key="normal" title="Login"/>
+                                                <connections>
+                                                    <action selector="loginButtonAction" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ynj-hG-6aa"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="UWe-zQ-pNM" firstAttribute="top" secondItem="XGn-NG-dQa" secondAttribute="top" constant="30" id="B76-5S-jLK"/>
+                                            <constraint firstAttribute="bottom" secondItem="cHT-fK-Ixt" secondAttribute="bottom" constant="28" id="DIk-8Z-B7N"/>
+                                            <constraint firstAttribute="trailing" secondItem="UWe-zQ-pNM" secondAttribute="trailing" constant="107" id="MmY-Nn-0fT"/>
+                                            <constraint firstItem="UWe-zQ-pNM" firstAttribute="baseline" secondItem="Vqi-zn-bWr" secondAttribute="baseline" id="ObC-8G-H0F"/>
+                                            <constraint firstItem="UWe-zQ-pNM" firstAttribute="firstBaseline" secondItem="Vqi-zn-bWr" secondAttribute="firstBaseline" id="Uv9-JL-gBW"/>
+                                            <constraint firstItem="cHT-fK-Ixt" firstAttribute="top" secondItem="UWe-zQ-pNM" secondAttribute="bottom" constant="12" id="eK7-Oh-efE"/>
+                                            <constraint firstItem="cHT-fK-Ixt" firstAttribute="leading" secondItem="XGn-NG-dQa" secondAttribute="leading" id="k2h-lp-Q0I"/>
+                                            <constraint firstItem="cHT-fK-Ixt" firstAttribute="width" secondItem="XGn-NG-dQa" secondAttribute="width" id="kvO-nn-p2E"/>
+                                            <constraint firstItem="UWe-zQ-pNM" firstAttribute="leading" secondItem="Vqi-zn-bWr" secondAttribute="trailing" constant="11" id="wdU-sc-tWL"/>
+                                        </constraints>
                                     </view>
                                 </subviews>
                             </stackView>
@@ -157,6 +173,7 @@
                         <outlet property="horizontalSlider" destination="Lz4-bN-fW5" id="zb9-NL-ubT"/>
                         <outlet property="hourLabel" destination="nRV-qR-NBw" id="mB6-t8-MoS"/>
                         <outlet property="locationLabel" destination="IFB-7K-Fyv" id="Bo6-YF-BRa"/>
+                        <outlet property="loginButton" destination="cHT-fK-Ixt" id="gYN-Nb-4Yh"/>
                         <outlet property="middleView" destination="vUt-RG-fVa" id="Vki-Tm-L9K"/>
                         <outlet property="temperatureLabel" destination="Vqi-zn-bWr" id="2IM-0O-QOj"/>
                         <outlet property="toolbarView" destination="Y8Y-AY-P2f" id="wrb-Ri-uDA"/>

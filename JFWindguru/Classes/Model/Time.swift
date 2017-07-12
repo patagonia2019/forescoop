@@ -41,5 +41,15 @@ public class Time: NSObject {
         let date = Date.init(timeInterval:interval, since: Date.init())
         return date
     }
+    
+    public override var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: hour));"
+        aux += "\(String(describing: minutes));"
+        aux += "\(String(describing: seconds));"
+        aux += "]"
+        return aux
+    }
+
 
 }

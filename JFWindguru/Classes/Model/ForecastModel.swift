@@ -29,4 +29,13 @@ public class ForecastModel {
         self.model = model
         self.info = info
     }
+    
+    var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: model));"
+        aux += "\(String(describing: info));"
+        aux += "]"
+        return aux
+    }
+
 }

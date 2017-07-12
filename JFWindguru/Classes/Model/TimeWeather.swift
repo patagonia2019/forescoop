@@ -104,4 +104,12 @@ public class TimeWeather: Mappable {
             value![key] = tmpValue
         }
     }
+    
+    var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: value));"
+        aux += "]"
+        return aux
+    }
+
 }

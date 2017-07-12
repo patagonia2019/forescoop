@@ -29,7 +29,7 @@ import ObjectMapper
 
 public class SpotOwner: Spot {
     public var nickname: String?
-    public var userId: Int?
+    public var id_user: Int?
     
     required public init?(map: Map) {
         super.init(map: map)
@@ -38,6 +38,15 @@ public class SpotOwner: Spot {
     override public func mapping(map: Map) {
         super.mapping(map: map)
         nickname <- map["nickname"]
-        userId <- map["id_user"]
+        id_user <- map["id_user"]
     }
+    
+    override var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: nickname));"
+        aux += "\(String(describing: id_user));"
+        aux += "]"
+        return aux
+    }
+
 }

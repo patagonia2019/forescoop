@@ -6,6 +6,8 @@ use_frameworks!
 
 target 'JFWindguru_Example' do
   pod 'JFWindguru', :path => '../'
+  pod 'JFCore', :path => '../../jfcore'
+  pod 'SCLAlertView', '~> 0.7'
 
   target 'JFWindguru_Tests' do
     inherit! :search_paths

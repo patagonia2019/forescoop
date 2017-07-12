@@ -28,5 +28,14 @@ public class Elapse : NSObject {
         }
         return true
     }
+    
+    public override var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: start));"
+        aux += "\(String(describing: end));"
+        aux += "]"
+        return aux
+    }
+
 
 }

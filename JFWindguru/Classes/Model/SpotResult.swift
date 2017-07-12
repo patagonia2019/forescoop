@@ -45,4 +45,12 @@ public class SpotResult: Mappable {
         count <- map["count"]
         spots <- map["spots"]
     }
+    
+    var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: count));"
+        aux += "\(String(describing: spots));"
+        aux += "]"
+        return aux
+    }
 }

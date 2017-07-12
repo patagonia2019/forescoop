@@ -14,7 +14,7 @@ extension SpotResult
         
         var currentLocation : String!
         
-        currentLocation = self.spots?.last?.name
+        currentLocation = self.spots?.last?.spotname
         
         return currentLocation
     }

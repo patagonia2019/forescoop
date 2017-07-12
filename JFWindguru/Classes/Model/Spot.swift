@@ -24,8 +24,8 @@ import ObjectMapper
  */
 
 public class Spot: Mappable {
-    public var identity: String?
-    public var name: String?
+    public var id_spot: String?
+    public var spotname: String?
     public var country: String?
     
     required public init?(map: Map) {
@@ -33,8 +33,18 @@ public class Spot: Mappable {
     }
     
     public func mapping(map: Map) {
-        identity <- map["id_spot"]
-        name <- map["spotname"]
+        id_spot <- map["id_spot"]
+        spotname <- map["spotname"]
         country <- map["country"]
     }
+    
+    var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: id_spot));"
+        aux += "\(String(describing: spotname));"
+        aux += "\(String(describing: country));"
+        aux += "]"
+        return aux
+    }
+
 }

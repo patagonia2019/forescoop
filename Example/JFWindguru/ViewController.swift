@@ -8,6 +8,7 @@
 
 import UIKit
 import JFWindguru
+import SCLAlertView
 
 class ViewController: UIViewController {
     
@@ -27,6 +28,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var unitLabel: UILabel!
     
+    @IBOutlet weak var loginButton: UIButton!
+    
+    var usernameTextField: UITextField?
+    var passwordTextField: UITextField?
     
     var forecastResult: ForecastResult!
     
@@ -109,5 +114,39 @@ class ViewController: UIViewController {
         }
     }
     
-    
+    @IBAction func loginButtonAction() {
+        loginButton.setTitle("Login", for: .normal)
+        
+        let alert = SCLAlertView()
+        usernameTextField = alert.addTextField("username")
+        usernameTextField?.autocorrectionType = .no
+        usernameTextField?.autocapitalizationType = .none
+        passwordTextField = alert.addTextField("password")
+        passwordTextField?.autocorrectionType = .no
+        passwordTextField?.autocapitalizationType = .none
+        passwordTextField?.isSecureTextEntry = true
+        
+        alert.addButton("Login") { [weak self] in
+            ForecastWindguruService.instance.login(with: self?.usernameTextField?.text, password: self?.passwordTextField?.text,
+               failure: {
+                (error) in
+                let subTitle = error?.title() ?? ""
+                SCLAlertView().showError("Error on Login", subTitle: subTitle)
+            },
+               success: {
+                [weak self]
+                (user) in
+                var name = "Anonymous"
+                if let user = user {
+                    name = user.username ?? "Anonymous"
+                    name = name == "" ? "Anonymous" : name
+                }
+                SCLAlertView().showSuccess("You are in!", subTitle: "Welcome Windguru user \(name)")
+                self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
+                
+            })
+        }
+        alert.showEdit("Enter credentials", subTitle: "Please enter Windguru's username/password", closeButtonTitle: "Cancel")
+    }
+
 }

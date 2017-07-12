@@ -80,4 +80,14 @@ public class Forecast: Mappable {
         initDate <- (map["initdate"], DateTransform())
         modelName <- map["model_name"]
     }
+    
+    var description : String {
+        var aux : String = "["
+        aux += "\(String(describing: initStamp));"
+        aux += "\(String(describing: initDate));"
+        aux += "\(String(describing: modelName));"
+        aux += "]"
+        return aux
+    }
+
 }
