@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  JFWindguru
 //
-//  Created by southfox on 07/06/2017.
-//  Copyright (c) 2017 southfox. All rights reserved.
+//  Created by Javier Fuchs on 07/06/2017.
+//  Copyright (c) 2017 Mobile Patagonia. All rights reserved.
 //
 
 import UIKit
@@ -32,6 +32,8 @@ class ViewController: UIViewController {
     
     var usernameTextField: UITextField?
     var passwordTextField: UITextField?
+    
+    var user: User?
     
     var forecastResult: ForecastResult!
     
@@ -127,7 +129,7 @@ class ViewController: UIViewController {
         passwordTextField?.isSecureTextEntry = true
         
         alert.addButton("Login") { [weak self] in
-            ForecastWindguruService.instance.login(with: self?.usernameTextField?.text, password: self?.passwordTextField?.text,
+            ForecastWindguruService.instance.login(withUsername: self?.usernameTextField?.text, password: self?.passwordTextField?.text,
                failure: {
                 (error) in
                 let subTitle = error?.title() ?? ""
@@ -136,17 +138,30 @@ class ViewController: UIViewController {
                success: {
                 [weak self]
                 (user) in
+                self?.user = user
                 var name = "Anonymous"
                 if let user = user {
-                    name = user.username ?? "Anonymous"
-                    name = name == "" ? "Anonymous" : name
+                    name = user.name()
                 }
-                SCLAlertView().showSuccess("You are in!", subTitle: "Welcome Windguru user \(name)")
+                SCLAlertView().showSuccess("You are in!", subTitle: "Welcome Windguru user \(name)").setDismissBlock {
+                    if user?.isAnonymous() == false {
+                        self?.performSegue(withIdentifier: "UserViewController", sender: self)
+                    }
+                }
                 self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
-                
             })
         }
         alert.showEdit("Enter credentials", subTitle: "Please enter Windguru's username/password", closeButtonTitle: "Cancel")
     }
-
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? UserViewController {
+            if let user = user {
+                vc.title = "Logged in as:" + user.name()
+                vc.user = user
+                vc.password = passwordTextField?.text
+            }
+        }
+    }
 }

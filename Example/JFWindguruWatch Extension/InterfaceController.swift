@@ -3,7 +3,7 @@
 //  JFWindguruWatch Extension
 //
 //  Created by javierfuchs on 7/9/17.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Copyright © 2017 Mobile Patagonia. All rights reserved.
 //
 
 import WatchKit

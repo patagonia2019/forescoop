@@ -355,11 +355,28 @@ public class User: Mappable {
         colors <- map["colors"]
     }
 
+    public func name() -> String {
+        if isAnonymous() {
+            return "Anonymous"
+        }
+        return username ?? ""
+    }
+    
+    public func isAnonymous() -> Bool {
+        if let username = username, username != "" {
+            return false
+        }
+        return true
+    }
+    
     var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: id_user));"
-        aux += "\(String(describing: username));"
-        aux += "]"
+        var aux : String = ""
+        if let id_user = id_user {
+            aux += "#\(id_user) "
+        }
+        if let username = username {
+            aux += "\(username)."
+        }
         return aux
     }
 

@@ -3,7 +3,7 @@
 //  JFWindguru
 //
 //  Created by javierfuchs on 7/9/17.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Copyright © 2017 Mobile Patagonia. All rights reserved.
 //
 
 import Foundation
@@ -206,7 +206,7 @@ public class Facade: NSObject {
         guard let location = getCurrentLocation() else {
             return
         }
-        ForecastWindguruService.instance.searchSpots(by: location, failure: { (error) in
+        ForecastWindguruService.instance.searchSpots(byLocation: location, failure: { (error) in
             print("error = \(String(describing: error))")
         }) { (spotResult) in
             guard let spotResult = spotResult,
@@ -215,7 +215,7 @@ public class Facade: NSObject {
                 let id_spot = spot.id_spot else {
                 return
             }
-            ForecastWindguruService.instance.forecast(by: id_spot, failure: { (error) in
+            ForecastWindguruService.instance.forecast(bySpotId: id_spot, failure: { (error) in
                 print("error = \(String(describing: error))")
             }, success: { (forecastResult) in
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: kWDForecastUpdated), object: forecastResult)

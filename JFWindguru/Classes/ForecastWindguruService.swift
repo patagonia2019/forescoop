@@ -26,6 +26,7 @@ public class ForecastWindguruService: NSObject {
     public struct Definition {
         static let defaultModel = "3"
         
+        
         struct service {
             // https://www.windguru.cz/int/jsonapi.php?client=wgapp
             // scheme://server
@@ -255,6 +256,7 @@ public class ForecastWindguruService: NSObject {
             }
         }
         else {
+            print("FAILURE url = \(url) - response.result.value \(String(describing: response.result.error))")
             let anError = createError(with: url,
                                       api: api,
                                       context: "\(#file):\(#line):\(#column):\(#function)",
@@ -265,18 +267,17 @@ public class ForecastWindguruService: NSObject {
     }
     
 
-    func createError(with url: String,
+    func createError(with url: String?,
                      data: Data? = nil,
                  api: ForecastWindguruService.Definition.service.api,
                  context: String,
                  resultError: Error?) -> JFError? {
-        print("FAILURE url = \(url) - response.result.value \(String(describing: resultError))")
-        var desc = "failed to get info with url=\(url)."
+        var desc = url != nil ? "failed to get info with url=\(url ?? "")." : "failed to build url"
         if let data = data {
             if let jsonString = String(data: data, encoding: .utf8) {
                 if let wgerror = Mapper<WGError>().map(JSONString: jsonString) {
                     desc += " "
-                    desc += wgerror.info
+                    desc += wgerror.description
                 }
             }
 

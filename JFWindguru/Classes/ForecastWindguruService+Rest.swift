@@ -1,5 +1,5 @@
 //
-//  ForecastWindguruService+Constant.swift
+//  ForecastWindguruService+Rest.swift
 //  Pods
 //
 //  Created by javierfuchs on 7/12/17.
@@ -19,7 +19,7 @@ extension ForecastWindguruService {
     //
     // user
     //
-    public func login(with username: String?,
+    public func login(withUsername username: String?,
                       password: String?,
                       failure:@escaping (_ error: JFError?) -> Void,
                       success:@escaping (_ user: User?) -> Void) {
@@ -36,14 +36,15 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<User>) in
-            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)", failure: failure, success: success)
+            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
         }
     }
     
     //
     // searchSpots
     //
-    public func searchSpots(by location: String,
+    public func searchSpots(byLocation location: String,
                             failure:@escaping (_ error: JFError?) -> Void,
                             success:@escaping (_ spotResult: SpotResult?) -> Void) {
         
@@ -55,14 +56,15 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<SpotResult>) in
-            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)", failure: failure, success: success)
+            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
         }
     }
     
     //
     // forecast by spotId/model
     //
-    public func forecast(by spotId: String,
+    public func forecast(bySpotId spotId: String,
                          model modelId:String = Definition.defaultModel,
                          failure:@escaping (_ error: JFError?) -> Void,
                          success:@escaping (_ forecastResult: ForecastResult?) -> Void)
@@ -75,17 +77,18 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<ForecastResult>) in
-            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)", failure: failure, success: success)
+            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
         }
     }
     
     //
     // favoriteSpots
     //
-    public func favoriteSpots(with username: String?,
-                      password: String?,
-                      failure:@escaping (_ error: JFError?) -> Void,
-                      success:@escaping (_ user: User?) -> Void) {
+    public func favoriteSpots(withUsername username: String?,
+                              password: String?,
+                              failure:@escaping (_ error: JFError?) -> Void,
+                              success:@escaping (_ spotFavoriteContainer: SpotFavoriteContainer?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -93,14 +96,15 @@ extension ForecastWindguruService {
             tokens = [Definition.service.api.parameter.username : username,
                       Definition.service.api.parameter.password : password]
         }
-        let api = Definition.service.api.favoriteSpots
         
+        let api = Definition.service.api.favoriteSpots
         let url = Definition.service.url(api: api, tokens: tokens)
         
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
-            (response: DataResponse<User>) in
-            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)", failure: failure, success: success)
+            (response: DataResponse<SpotFavoriteContainer>) in
+            self?.checkData(response, url: url, api: api, context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
         }
     }
 

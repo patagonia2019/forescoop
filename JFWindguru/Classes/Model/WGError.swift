@@ -37,34 +37,18 @@ public class WGError: Mappable {
         error_message <- map["error_message"]
     }
     
-    var info : String {
+    var description : String {
         var aux : String = ""
         if let returnString = returnString {
-            aux += "#\(returnString) "
+            aux += "\(returnString): "
         }
         if let error_id = error_id {
-            aux += "# \(error_id) - "
+            aux += "# \(error_id), "
         }
         if let error_message = error_message {
             aux += "\(error_message)."
         }
-        aux += "]"
         return aux
     }
-    
-    var description : String {
-        var aux : String = "["
-        if let returnString = returnString {
-            aux += "\(returnString);"
-        }
-        if let error_id = error_id {
-            aux += "\(error_id);"
-        }
-        if let error_message = error_message {
-            aux += "\(error_message);"
-        }
-        aux += "]"
-        return aux
-    }
-    
+        
 }
