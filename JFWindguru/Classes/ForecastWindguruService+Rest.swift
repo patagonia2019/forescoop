@@ -16,8 +16,11 @@ extension ForecastWindguruService {
     
     
     //
-    // user
-    //
+    //    static let user = api(query: routine.user,
+    //                          errorCode: err.user.rawValue,
+    //                          parameters: [parameter.username,
+    //                                       parameter.password]) // not user/pass (anonymous)
+
     public func login(withUsername username: String?,
                       password: String?,
                       failure:@escaping (_ error: WGError?) -> Void,
@@ -41,9 +44,10 @@ extension ForecastWindguruService {
         }
     }
     
-    //
-    // searchSpots
-    //
+    //    static let searchSpots = api(query: routine.search_spots,
+    //                                 errorCode: err.search_spots.rawValue,
+    //                                 parameters: [parameter.search,
+    //                                              parameter.opt])
     public func searchSpots(byLocation location: String,
                             failure:@escaping (_ error: WGError?) -> Void,
                             success:@escaping (_ spotResult: SpotResult?) -> Void) {
@@ -62,9 +66,13 @@ extension ForecastWindguruService {
         }
     }
     
-    //
-    // forecast by spotId/model
-    //
+    //    static let forecast = api(query: routine.forecast,
+    //                              errorCode: err.forecast.rawValue,
+    //                              parameters: [parameter.id_spot,
+    //                                           parameter.id_model,
+    //                                           parameter.no_wave])
+    //    
+
     public func forecast(bySpotId spotId: String,
                          model modelId:String = Definition.defaultModel,
                          failure:@escaping (_ error: WGError?) -> Void,
@@ -90,7 +98,7 @@ extension ForecastWindguruService {
     public func favoriteSpots(withUsername username: String?,
                               password: String?,
                               failure:@escaping (_ error: WGError?) -> Void,
-                              success:@escaping (_ spotFavoriteContainer: SpotFavoriteContainer?) -> Void) {
+                              success:@escaping (_ spotFavorite: SpotFavorite?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -102,7 +110,7 @@ extension ForecastWindguruService {
         let url = Definition.service.url(api: api, tokens: tokens)
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
-            (response: DataResponse<SpotFavoriteContainer>) in
+            (response: DataResponse<SpotFavorite>) in
             self?.responds(response, url: url, api: api,
                            context: "\(#file):\(#line):\(#column):\(#function)",
                            failure: failure, success: success)

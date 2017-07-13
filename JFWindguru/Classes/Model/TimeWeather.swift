@@ -106,9 +106,11 @@ public class TimeWeather: Mappable {
     }
     
     var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: value));"
-        aux += "]"
+        var aux : String = ""
+        if let value = value {
+            aux += " \(value);"
+        }
+        aux += "\n"
         return aux
     }
 

@@ -12,30 +12,13 @@ import SCLAlertView
 
 class ApiInfoViewController: UIViewController {
     
-    @IBOutlet weak var tableView: UITableView!
-    var info = [String]()
+    @IBOutlet weak var textView: UITextView!
+    var info = String()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
+        textView.text = info
     }
-}
-
-extension ApiInfoViewController: UITableViewDelegate {
-}
-
-extension ApiInfoViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
-        return info.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CommonCell", for: indexPath)
-        cell.textLabel?.text = info[indexPath.row]
-        return cell
-    }
-    
     
 }
 

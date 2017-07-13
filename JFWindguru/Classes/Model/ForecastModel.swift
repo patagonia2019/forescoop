@@ -31,11 +31,13 @@ public class ForecastModel {
     }
     
     var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: model));"
-        aux += "\(String(describing: info));"
-        aux += "]"
+        var aux : String = ""
+        if let model = model {
+            aux += "Model # \(model)\n"
+        }
+        if let info = info {
+            aux += "\(info).\n"
+        }
         return aux
     }
-
 }

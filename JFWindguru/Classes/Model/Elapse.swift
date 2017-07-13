@@ -30,12 +30,14 @@ public class Elapse : NSObject {
     }
     
     public override var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: start));"
-        aux += "\(String(describing: end));"
-        aux += "]"
+        var aux : String = ""
+        if let start = start {
+            aux += "start \(start), "
+        }
+        if let end = end {
+            aux += "end \(end).\n"
+        }
         return aux
     }
-
 
 }

@@ -128,29 +128,30 @@ class ViewController: UIViewController {
         passwordTextField?.autocapitalizationType = .none
         passwordTextField?.isSecureTextEntry = true
         
-        alert.addButton("Login") { [weak self] in
+        let blockLogin =  { [weak self] in
             ForecastWindguruService.instance.login(withUsername: self?.usernameTextField?.text, password: self?.passwordTextField?.text,
-               failure: {
-                (error) in
-                let subTitle = error?.title() ?? ""
-                SCLAlertView().showError("Error on Login", subTitle: subTitle)
+                failure: {
+                    (error) in
+                    let subTitle = error?.title() ?? ""
+                    SCLAlertView().showError("Error on Login", subTitle: subTitle)
             },
-               success: {
-                [weak self]
-                (user) in
-                self?.user = user
-                var name = "Anonymous"
-                if let user = user {
-                    name = user.name()
-                }
-                SCLAlertView().showSuccess("You are in!", subTitle: "Welcome Windguru user \(name)").setDismissBlock {
-                    if user?.isAnonymous() == false {
+                success: {
+                    [weak self]
+                    (user) in
+                    self?.user = user
+                    var name = "Anonymous"
+                    if let user = user {
+                        name = user.name()
+                    }
+                    SCLAlertView().showSuccess("You are in!", subTitle: "Welcome Windguru user \(name)").setDismissBlock {
                         self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
                     }
-                }
-                self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
+                    self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
             })
         }
+        
+        alert.addButton("Login", action: blockLogin)
+        alert.addButton("Login as Anonymous", action: blockLogin)
         alert.showEdit("Enter credentials", subTitle: "Please enter Windguru's username/password", closeButtonTitle: "Cancel")
     }
     

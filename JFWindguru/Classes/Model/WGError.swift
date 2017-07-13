@@ -114,7 +114,7 @@ extension WGError : Error {
         }
         return nil
     }
-    
+        
     public var debugDescription : String {
         var aux : String = "["
         if let _error = nserror {

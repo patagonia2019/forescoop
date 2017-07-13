@@ -81,13 +81,63 @@ public class Forecast: Mappable {
         modelName <- map["model_name"]
     }
     
-    var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: initStamp));"
-        aux += "\(String(describing: initDate));"
-        aux += "\(String(describing: modelName));"
-        aux += "]"
+    public var description : String {
+        var aux : String = ""
+        if let initStamp = initStamp {
+            aux += "initStamp \(initStamp), "
+        }
+        if let cloudCoverTotal = cloudCoverTotal {
+            aux += "Cloud cover Total: \(cloudCoverTotal)  "
+        }
+        if let cloudCoverHigh = cloudCoverHigh {
+            aux += "High: \(cloudCoverHigh) "
+        }
+        if let cloudCoverMid = cloudCoverMid {
+            aux += "Mid: \(cloudCoverMid) "
+        }
+        if let cloudCoverLow = cloudCoverLow {
+            aux += "Low: \(cloudCoverLow), "
+        }
+        if let relativeHumidity = relativeHumidity {
+            aux += "Humidity: \(relativeHumidity), "
+        }
+        if let seaLevelPressure = seaLevelPressure {
+            aux += "\(seaLevelPressure), "
+        }
+        if let freezingLevel = freezingLevel {
+            aux += "\(freezingLevel), "
+        }
+        if let precipitation = precipitation {
+            aux += "\(precipitation). "
+        }
+        if let windGust = windGust {
+            aux += "Wind gust: \(windGust) "
+        }
+       if let windSpeed = windSpeed {
+            aux += "speed: \(windSpeed) "
+        }
+        if let windDirection = windDirection {
+            aux += "direccion: (\(windDirection) "
+        }
+        if let windDirectionName = windDirectionName {
+            aux += "\(windDirectionName)), "
+        }
+        if let temperature = temperature {
+            aux += "Temp: \(temperature), "
+        }
+       if let temperatureReal = temperatureReal {
+            aux += "real: \(temperatureReal), "
+        }
+        if let initDate = initDate {
+            aux += "initDate: \(initDate), "
+        }
+        if let modelName = modelName {
+            aux += "modelName: \(modelName).\n"
+        }
         return aux
     }
+    
+    
+
 
 }

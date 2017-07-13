@@ -38,13 +38,19 @@ public class Spot: Mappable {
         country <- map["country"]
     }
     
-    var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: id_spot));"
-        aux += "\(String(describing: spotname));"
-        aux += "\(String(describing: country));"
-        aux += "]"
+    public var description : String {
+        var aux : String = ""
+        if let id_spot = id_spot {
+            aux += "Spot # \(id_spot), "
+        }
+        if let spotname = spotname {
+            aux += "name \(spotname), "
+        }
+        if let country = country {
+            aux += "country \(country).\n"
+        }
         return aux
     }
+
 
 }

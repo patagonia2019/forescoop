@@ -268,35 +268,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="6CB-q4-nO0">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yag-an-tyc">
+                                <rect key="frame" x="0.0" y="64" width="375" height="667"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CommonCell" id="ei9-zk-FsT">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ei9-zk-FsT" id="Yh5-IB-anB">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
-                                <connections>
-                                    <outlet property="dataSource" destination="MGs-PU-gtn" id="64P-mv-M9V"/>
-                                    <outlet property="delegate" destination="MGs-PU-gtn" id="82i-d0-3cX"/>
-                                </connections>
-                            </tableView>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Yag-an-tyc" firstAttribute="leading" secondItem="VSz-z0-sOB" secondAttribute="leading" id="CRa-9p-RrD"/>
+                            <constraint firstItem="Yag-an-tyc" firstAttribute="width" secondItem="VSz-z0-sOB" secondAttribute="width" id="HIB-I0-4p3"/>
+                            <constraint firstItem="Yag-an-tyc" firstAttribute="height" secondItem="VSz-z0-sOB" secondAttribute="height" id="Kft-Pc-CNm"/>
+                            <constraint firstItem="Yag-an-tyc" firstAttribute="top" secondItem="AUP-5U-z16" secondAttribute="bottom" id="rEP-RN-0yQ"/>
+                        </constraints>
                     </view>
                     <connections>
-                        <outlet property="tableView" destination="6CB-q4-nO0" id="Ymd-yb-SP8"/>
+                        <outlet property="textView" destination="Yag-an-tyc" id="QhC-LQ-LHR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CqN-fJ-Mwd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3265" y="349"/>
+            <point key="canvasLocation" x="3264.8000000000002" y="348.57571214392806"/>
         </scene>
     </scenes>
     <resources>

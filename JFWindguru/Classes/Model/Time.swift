@@ -43,13 +43,12 @@ public class Time: NSObject {
     }
     
     public override var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: hour));"
-        aux += "\(String(describing: minutes));"
-        aux += "\(String(describing: seconds));"
-        aux += "]"
-        return aux
+        guard let hour = hour,
+            let minutes = minutes,
+            let seconds = seconds else {
+                return "--:--:--"
+        }
+        return String(format: "%02d:%02d:%02d", hour, minutes, seconds)
     }
-
 
 }

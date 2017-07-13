@@ -72,7 +72,7 @@ public class ForecastResult: Spot {
         gmtHourOffset <- map["gmt_hour_offset"]
         sunrise <- map["sunrise"]
         sunset <- map["sunset"]
-        self.elapse = Elapse.init(sunrise!, end: sunset!)
+        elapse = Elapse.init(sunrise!, end: sunset!)
         models <- map["models"]
         for model in models! {
             var tmpForecast : Forecast?
@@ -85,14 +85,46 @@ public class ForecastResult: Spot {
         tides <- map["tides"]
     }
     
-    override var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: countryId));"
-        aux += "\(String(describing: latitude));"
-        aux += "\(String(describing: sunrise));"
-        aux += "\(String(describing: sunset));"
-        aux += "]"
+    override public var description : String {
+        var aux : String = super.description
+        if let countryId = countryId {
+            aux += "country # \(countryId), "
+        }
+        if let latitude = latitude {
+            aux += "latitude \(latitude), "
+        }
+        if let longitude = longitude {
+            aux += "longitude \(longitude), "
+        }
+        if let altitude = altitude {
+            aux += "altitude # \(altitude), "
+        }
+        if let timezone = timezone {
+            aux += "timezone \(timezone), "
+        }
+        if let gmtHourOffset = gmtHourOffset {
+            aux += "gmtHourOffset \(gmtHourOffset), "
+        }
+        if let sunrise = sunrise {
+            aux += "sunrise \(sunrise), "
+        }
+        if let sunset = sunset {
+            aux += "sunset \(sunset), "
+        }
+        if let elapse = elapse {
+            aux += "elapse \(elapse), "
+        }
+        if let models = models {
+            aux += "models \(models), "
+        }
+        if let currentModel = currentModel {
+            aux += "currentModel \(currentModel), "
+        }
+        if let tides = tides {
+            aux += "tides \(tides).\n"
+        }
         return aux
     }
+
 
 }

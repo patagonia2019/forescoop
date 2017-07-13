@@ -19,8 +19,10 @@ import ObjectMapper
  *    Probably information not useful now, but in terms of having all the data.
  *
  *     {
- *        "nickname": "oamxyz09",
- *        "id_user": "348765"
+ *      "id_spot": "48769",
+ *      "spotname": "Bolonia",
+ *      "country": "Spain",
+ *      "id_user": "169"
  *     }
  * 
  *        
@@ -28,7 +30,6 @@ import ObjectMapper
  */
 
 public class SpotOwner: Spot {
-    public var nickname: String?
     public var id_user: Int?
     
     required public init?(map: Map) {
@@ -37,16 +38,16 @@ public class SpotOwner: Spot {
     
     override public func mapping(map: Map) {
         super.mapping(map: map)
-        nickname <- map["nickname"]
         id_user <- map["id_user"]
     }
     
-    override var description : String {
-        var aux : String = "["
-        aux += "\(String(describing: nickname));"
-        aux += "\(String(describing: id_user));"
-        aux += "]"
+    override public var description : String {
+        var aux : String = super.description
+        if let id_user = id_user {
+            aux += "\nuser ud \(id_user).\n"
+        }
         return aux
     }
+    
 
 }

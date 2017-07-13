@@ -369,15 +369,50 @@ public class User: Mappable {
         return true
     }
     
-    var description : String {
+    public var description : String {
         var aux : String = ""
         if let id_user = id_user {
-            aux += "#\(id_user) "
+            aux += "#\(id_user), "
         }
         if let username = username {
-            aux += "\(username)."
+            aux += "username: \(username), "
+        }
+        if let id_country = id_country {
+            aux += "country # \(id_country), "
+        }
+        if let wind_units = wind_units {
+            aux += "wind_units \(wind_units), "
+        }
+        if let temp_units = temp_units {
+            aux += "temp_units \(temp_units), "
+        }
+        if let wave_units = wave_units {
+            aux += "wave_units \(wave_units), "
+        }
+        if let pro = pro {
+            aux += "pro \(pro), "
+        }
+        if let no_ads = no_ads {
+            aux += "no_ads \(no_ads), "
+        }
+        if let view_hours_from = view_hours_from {
+            aux += "view_hours_from \(view_hours_from), "
+        }
+        if let view_hours_to = view_hours_to {
+            aux += "view_hours_to \(view_hours_to), "
+        }
+        if let temp_limit = temp_limit {
+            aux += "temp_limit \(temp_limit), "
+        }
+        if let wind_rating_limits = wind_rating_limits {
+            aux += "wind_rating_limits \(wind_rating_limits), "
+        }
+        if let colors = colors {
+            aux += "colors \(colors).\n"
         }
         return aux
     }
+    
+    
 
 }
