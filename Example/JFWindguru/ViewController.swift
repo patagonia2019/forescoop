@@ -145,7 +145,7 @@ class ViewController: UIViewController {
                 }
                 SCLAlertView().showSuccess("You are in!", subTitle: "Welcome Windguru user \(name)").setDismissBlock {
                     if user?.isAnonymous() == false {
-                        self?.performSegue(withIdentifier: "UserViewController", sender: self)
+                        self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
                     }
                 }
                 self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
@@ -154,9 +154,8 @@ class ViewController: UIViewController {
         alert.showEdit("Enter credentials", subTitle: "Please enter Windguru's username/password", closeButtonTitle: "Cancel")
     }
     
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? UserViewController {
+        if let vc = segue.destination as? ApiListViewController {
             if let user = user {
                 vc.title = "Logged in as:" + user.name()
                 vc.user = user

@@ -27,6 +27,32 @@ public class WGError: Mappable {
     public var error_id: Int?
     public var error_message: String?
     
+    public init(code: Int, desc: String, reason: String? = nil, suggestion: String? = nil,
+                underError error: NSError? = nil, wgdata : Data? = nil)
+    {
+        var dict = [String: AnyObject]()
+        if let reason = reason {
+            dict[NSLocalizedFailureReasonErrorKey] = reason as AnyObject?
+        }
+        if let suggestion = suggestion {
+            dict[NSLocalizedRecoverySuggestionErrorKey] = suggestion as AnyObject?
+        }
+        if let error = error {
+            dict[NSUnderlyingErrorKey] = error
+        }
+        self.nserror = NSError(domain: Bundle.main.bundleIdentifier!, code:code, userInfo: dict)
+        
+        var descValue = desc
+        if let wgdata = wgdata,
+            let jsonString = String(data: wgdata, encoding: .utf8),
+            let wgerror = Mapper<WGError>().map(JSONString: jsonString)
+        {
+            descValue += " "
+            descValue += wgerror.description
+        }
+        dict[NSLocalizedDescriptionKey] = descValue as AnyObject?
+    }
+
     required public init?(map: Map){
         
     }
@@ -48,7 +74,68 @@ public class WGError: Mappable {
         if let error_message = error_message {
             aux += "\(error_message)."
         }
+        if let nserror = nserror {
+            aux += "code=\(nserror.code). "
+            aux += "\(nserror.localizedDescription)\n"
+        }
+        aux += "Please contact us claiming this error."
         return aux
     }
-        
+    
+
+    public var nserror: NSError?
+    
 }
+
+extension WGError : Error {
+    
+    public func title() -> String {
+        if let e = nserror {
+            return e.localizedDescription
+        }
+        return "No Title"
+    }
+    
+    public func reason() -> String {
+        if let e = nserror,
+            let reason = e.localizedFailureReason {
+            return reason
+        }
+        return "No Reason"
+    }
+    
+    public func asDictionary() -> [String : AnyObject]? {
+        if let error = nserror {
+            return ["code": error.code as AnyObject,
+                    NSLocalizedDescriptionKey: error.localizedDescription as AnyObject,
+                    NSLocalizedFailureReasonErrorKey: (error.localizedFailureReason ?? "") as AnyObject,
+                    NSLocalizedRecoverySuggestionErrorKey: (error.localizedRecoverySuggestion ?? "") as AnyObject,
+                    NSUnderlyingErrorKey: "\(error.userInfo)" as AnyObject]
+        }
+        return nil
+    }
+    
+    public var debugDescription : String {
+        var aux : String = "["
+        if let _error = nserror {
+            aux += "\(_error.code);"
+            aux += "\(_error.localizedDescription);"
+            if let _failureReason = _error.localizedFailureReason {
+                aux += "\(_failureReason);"
+            } else { aux += "();" }
+            if let _recoverySuggestion = _error.localizedRecoverySuggestion {
+                aux += "\(_recoverySuggestion);"
+            } else { aux += "();" }
+            aux += "\(_error.userInfo.description);"
+        }
+        aux += "]"
+        return aux
+    }
+    
+    
+    public func fatal() {
+        fatalError("fatal:\(self.debugDescription)")
+    }
+    
+}
+

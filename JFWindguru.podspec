@@ -36,6 +36,5 @@ Use this framework in Swift to get windGURU service for forecasting weather. For
   s.source_files = 'JFWindguru/Classes/**/*'
   
   s.dependency 'AlamofireObjectMapper', '~> 4.0'
-  s.dependency 'JFCore', '~> 0.1.0'
 
 end

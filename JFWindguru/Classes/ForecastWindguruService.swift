@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import JFCore
 import ObjectMapper
 import Alamofire
 import AlamofireObjectMapper
@@ -234,61 +233,28 @@ public class ForecastWindguruService: NSObject {
     
     public static let instance = ForecastWindguruService()
     
-    func checkData<T>(_ response: DataResponse<T>,
+    func responds<T>(_ response: DataResponse<T>,
                    url: String,
                    api: ForecastWindguruService.Definition.service.api,
                    context: String,
-                   failure:@escaping (_ error: JFError?) -> Void,
-                   success:@escaping (_ result: T?) -> Void) {
-        
-        if let value = response.result.value {
-            if let mappable = value as? Mappable, mappable.toJSON().count > 0 {
+                   failure:@escaping (_ error: WGError?) -> Void,
+                   success:@escaping (_ result: T?) -> Void)
+    {
+        if let value = response.result.value,
+           let mappable = value as? Mappable, mappable.toJSON().count > 0
+        {
                 print("SUCCESS url = \(url) - response.result.value \(value)")
                 success(value)
-            }
-            else {
-                let anError = createError(with: url,
-                                          data: response.data,
-                                          api: api,
-                                          context: "\(#file):\(#line):\(#column):\(#function)",
-                    resultError: nil)
-                failure(anError)
-            }
         }
         else {
-            print("FAILURE url = \(url) - response.result.value \(String(describing: response.result.error))")
-            let anError = createError(with: url,
-                                      api: api,
-                                      context: "\(#file):\(#line):\(#column):\(#function)",
-                resultError: response.result.error)
-            failure(anError)
+            print("FAILURE url = \(url) - response.result.error \(String(describing: response.result.error))")
+            failure(WGError.init(code: api.errorCode,
+                                 desc: "failed using=\(url).",
+                reason: "\(api.query) failed",
+                suggestion: context,
+                underError: response.result.error as NSError?,
+                wgdata: response.data))
         }
-        
     }
-    
-
-    func createError(with url: String?,
-                     data: Data? = nil,
-                 api: ForecastWindguruService.Definition.service.api,
-                 context: String,
-                 resultError: Error?) -> JFError? {
-        var desc = url != nil ? "failed to get info with url=\(url ?? "")." : "failed to build url"
-        if let data = data {
-            if let jsonString = String(data: data, encoding: .utf8) {
-                if let wgerror = Mapper<WGError>().map(JSONString: jsonString) {
-                    desc += " "
-                    desc += wgerror.description
-                }
-            }
-
-        }
-        let myerror = JFError.init(code: api.errorCode,
-                                   desc: desc,
-            reason: "\(api.query) failed",
-            suggestion: context,
-            underError: resultError as NSError?)
-        return myerror
-    }
-    
   
 }

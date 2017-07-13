@@ -28,7 +28,8 @@
 		70C791E01F1263BB008B1F30 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		70C791E11F126590008B1F30 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		70D1E33E1ED877D4D55C7071 /* Pods_JFWindguruWatch_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C015C31E20BD50BA0AE6080B /* Pods_JFWindguruWatch_Extension.framework */; };
-		70ED9F501F16C45300F8DFB9 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* UserViewController.swift */; };
+		70ED9F501F16C45300F8DFB9 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
+		70ED9F551F17AC4C00F8DFB9 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
 		F53666E48EA50F4437C7245A /* Pods_JFWindguru_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D93F0B6B65CBA403B7743FBC /* Pods_JFWindguru_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -109,7 +110,8 @@
 		70C791D01F126112008B1F30 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
 		70C791D21F126112008B1F30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		70C791D41F126112008B1F30 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		70ED9F4F1F16C45300F8DFB9 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
+		70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiListViewController.swift; sourceTree = "<group>"; };
+		70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiInfoViewController.swift; sourceTree = "<group>"; };
 		7C15CDBB380936AAAB9C6643 /* Pods-JFWindguruWatch Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguruWatch Extension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguruWatch Extension/Pods-JFWindguruWatch Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		88CC4239D10EA3B99ED1ADC3 /* JFWindguru.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JFWindguru.podspec; path = ../JFWindguru.podspec; sourceTree = "<group>"; };
 		917FA449C8A9F880844B10B1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -198,7 +200,8 @@
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
 				7057C8941F11D62F007A7FC2 /* Facade.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
-				70ED9F4F1F16C45300F8DFB9 /* UserViewController.swift */,
+				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
+				70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -603,7 +606,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				70ED9F501F16C45300F8DFB9 /* UserViewController.swift in Sources */,
+				70ED9F501F16C45300F8DFB9 /* ApiListViewController.swift in Sources */,
+				70ED9F551F17AC4C00F8DFB9 /* ApiInfoViewController.swift in Sources */,
 				7057C8971F11DABC007A7FC2 /* Common.swift in Sources */,
 				7057C8951F11D62F007A7FC2 /* Facade.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,

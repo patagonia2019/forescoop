@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import JFCore
 import JFWindguru
 
 /*
@@ -38,7 +37,6 @@ public class Facade: NSObject {
     //
     public func start()
     {
-        startLocationServices()
         startForecastServices()
     }
     
@@ -47,97 +45,7 @@ public class Facade: NSObject {
     //
     public func stop()
     {
-        stopLocationServices()
         stopForecastServices()
-    }
-    
-    
-    //
-    // restore information (used by watch)
-    //
-    public func restoreInfo() -> Bool
-    {
-        guard let filePath = absoluteFilePath() else {
-            return false
-        }
-        
-        if FileManager.default.fileExists(atPath: filePath.path) {
-
-            guard let dict = NSDictionary.init(contentsOf: filePath) as? Dictionary<String, NSDictionary> else {
-                return false
-            }
-            
-            let location : NSDictionary = dict[JFCore.Constants.Notification.locationUpdated]!
-            if (location != NSNull())
-            {
-                // Treat location update
-                
-                currentLocality = String(describing: location[kWDKeyLocality]!)
-                currentCountry = String(describing: location[kWDKeyCountry]!)
-                
-                return true
-            }
-        } else {
-            print("No last location")
-        }
-        return false
-    }
-    
-    //
-    // Location code
-    //
-    private func startLocationServices()
-    {
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: JFCore.Constants.Notification.locationUpdated), object: nil, queue: OperationQueue.main, using: {
-            [weak self] note in
-//                if (TARGET_OS_WATCH == 1)
-//                {
-//                    if let ret = self?.restoreInfo(), ret == true {
-//                        self?.updateForecast()
-//                    }
-//                }
-//                else
-//                {
-                    guard let locations = LocationManager.instance.locations,
-                          let location = locations.first else {
-                        return
-                    }
-                if (TARGET_OS_WATCH == 1) {
-                    let locality = "Cupertino"
-                    let country = "US"
-                    self?.currentLocality = locality
-                    self?.currentCountry = country
-                    
-                    let dict = [kWDKeyLocality: locality, kWDKeyCountry: country]
-                    self?.writeNote(note: JFCore.Constants.Notification.locationUpdated, location: dict)
-                    self?.updateForecast()
-                }
-                else
-                {
-                    LocationManager.instance.reverseLocation(location: location, didFailWithError: { (error) in
-                        print("error: \(error)")
-                    }, didUpdatePlacemarks: { (placemarks) in
-                        guard let placemark = placemarks.first,
-                            let locality = placemark.locality,
-                            let country = placemark.country else {
-                                return
-                        }
-                        self?.currentLocality = locality
-                        self?.currentCountry = country
-                        
-                        let dict = [kWDKeyLocality: locality, kWDKeyCountry: country]
-                        self?.writeNote(note: JFCore.Constants.Notification.locationUpdated, location: dict)
-                        self?.updateForecast()
-                    })
-                    
-                }
-        })
-        
-    }
-    
-    private func stopLocationServices()
-    {
-        LocationManager.instance.stop()
     }
     
     
@@ -191,10 +99,12 @@ public class Facade: NSObject {
     //
     private func startForecastServices()
     {
-        if self.restoreInfo()
-        {
-            self.updateForecast()
-        }
+        let locality = "Cupertino"
+        let country = "US"
+        currentLocality = locality
+        currentCountry = country
+        
+        updateForecast()
     }
     
     private func stopForecastServices()
