@@ -65,6 +65,7 @@ public class ForecastWindguruService: NSObject {
                     case model_info
                     case models_latlon
                     case regions
+                    case remove_f_spot
                     case search_spots
                     case set_spots
                     case sets
@@ -76,21 +77,27 @@ public class ForecastWindguruService: NSObject {
                 }
 
                 struct routine {
-                    static let add_f_spot = "add_f_spot"
                     static let c_spots = "c_spots"
-                    static let countries = "countries"
-                    static let f_spots = "f_spots"
-                    static let forecast = "forecast"
-                    static let geo_regions = "geo_regions"
-                    static let model_info = "model_info"
-                    static let models_latlon = "models_latlon"
-                    static let regions = "regions"
-                    static let search_spots = "search_spots"
                     static let set_spots = "set_spots"
                     static let sets = "sets"
-                    static let spot = "spot"
-                    static let spots = "spots"
+                    
                     static let user = "user"
+                    
+                    static let f_spots = "f_spots"
+                    static let add_f_spot = "add_f_spot"
+                    static let remove_f_spot = "remove_f_spot"
+                    
+                    static let forecast = "forecast"
+                    static let model_info = "model_info"
+                    static let models_latlon = "models_latlon"
+                    
+                    static let geo_regions = "geo_regions"
+                    static let countries = "countries"
+                    static let regions = "regions"
+                    static let spots = "spots"
+                    static let spot = "spot"
+                    static let search_spots = "search_spots"
+                    
                     static let wforecast = "wforecast"
                     static let wforecast_latlon = "wforecast_latlon"
                 }
@@ -137,6 +144,12 @@ public class ForecastWindguruService: NSObject {
                                                  parameters: [parameter.username,
                                                               parameter.password,
                                                               parameter.id_spot])
+                
+                static let remove_f_spot = api(query: routine.remove_f_spot,
+                                               errorCode: err.remove_f_spot.rawValue,
+                                               parameters: [parameter.username,
+                                                            parameter.password,
+                                                            parameter.id_spot])
                 
                 static let forecastSets = api(query: routine.sets,
                                               errorCode: err.add_f_spot.rawValue,
@@ -233,7 +246,7 @@ public class ForecastWindguruService: NSObject {
     
     public static let instance = ForecastWindguruService()
     
-    func responds<T>(_ response: DataResponse<T>,
+    func replicates<T>(_ response: DataResponse<T>,
                    url: String,
                    api: ForecastWindguruService.Definition.service.api,
                    context: String,

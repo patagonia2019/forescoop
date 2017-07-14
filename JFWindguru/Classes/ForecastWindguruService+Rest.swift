@@ -38,7 +38,7 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<User>) in
-            self?.responds(response, url: url, api: api,
+            self?.replicates(response, url: url, api: api,
                            context: "\(#file):\(#line):\(#column):\(#function)",
                            failure: failure, success: success)
         }
@@ -60,7 +60,7 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<SpotResult>) in
-            self?.responds(response, url: url, api: api,
+            self?.replicates(response, url: url, api: api,
                            context: "\(#file):\(#line):\(#column):\(#function)",
                            failure: failure, success: success)
         }
@@ -86,15 +86,17 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<ForecastResult>) in
-            self?.responds(response, url: url, api: api,
+            self?.replicates(response, url: url, api: api,
                            context: "\(#file):\(#line):\(#column):\(#function)",
                            failure: failure, success: success)
         }
     }
     
-    //
-    // favoriteSpots
-    //
+    //    static let favoriteSpots = api(query: routine.f_spots,
+    //                                   errorCode: err.f_spots.rawValue,
+    //                                   parameters: [parameter.username,
+    //                                                parameter.password,
+    //                                                parameter.opt]) // opt=simple (optional)
     public func favoriteSpots(withUsername username: String?,
                               password: String?,
                               failure:@escaping (_ error: WGError?) -> Void,
@@ -111,10 +113,71 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<SpotFavorite>) in
-            self?.responds(response, url: url, api: api,
+            self?.replicates(response, url: url, api: api,
                            context: "\(#file):\(#line):\(#column):\(#function)",
                            failure: failure, success: success)
         }
     }
+    
+    //    static let addFavoriteSpot = api(query: routine.add_f_spot,
+    //                                     errorCode: err.add_f_spot.rawValue,
+    //                                     parameters: [parameter.username,
+    //                                                  parameter.password,
+    //                                                  parameter.id_spot])
+    public func addFavoriteSpot(withSpotId spotId: String?,
+                                username: String?,
+                                password: String?,
+                                failure:@escaping (_ error: WGError?) -> Void,
+                                success:@escaping (_ response: WGSuccess?) -> Void) {
+        
+        var tokens : [String: String?] = [:]
+        if let username = username,
+            let password = password,
+            let spotId = spotId {
+            tokens = [Definition.service.api.parameter.username : username,
+                      Definition.service.api.parameter.password : password,
+                      Definition.service.api.parameter.id_spot : spotId]
+        }
+        let api = Definition.service.api.addFavoriteSpot
+        let url = Definition.service.url(api: api, tokens: tokens)
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<WGSuccess>) in
+            self?.replicates(response, url: url, api: api,
+                           context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+    
+    //    static let remove_f_spot = api(query: routine.remove_f_spot,
+    //                                   errorCode: err.remove_f_spot.rawValue,
+    //                                   parameters: [parameter.username,
+    //                                                parameter.password,
+    //                                                parameter.id_spot])
+    public func removeFavoriteSpot(withSpotId spotId: String?,
+                                   username: String?,
+                                   password: String?,
+                                   failure:@escaping (_ error: WGError?) -> Void,
+                                   success:@escaping (_ response: WGSuccess?) -> Void) {
+        
+        var tokens : [String: String?] = [:]
+        if let username = username,
+            let password = password,
+            let spotId = spotId {
+            tokens = [Definition.service.api.parameter.username : username,
+                      Definition.service.api.parameter.password : password,
+                      Definition.service.api.parameter.id_spot : spotId]
+        }
+        let api = Definition.service.api.remove_f_spot
+        let url = Definition.service.url(api: api, tokens: tokens)
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<WGSuccess>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
 
+    
 }

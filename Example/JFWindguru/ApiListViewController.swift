@@ -19,23 +19,23 @@ class ApiListViewController: UIViewController {
     var info = String()
 
     let servicesAnonymos = ["user",
-                            "countries",
-                            "forecast",
                             "geo_regions",
-                            "model_info",
-                            "models_latlon",
+                            "countries",
                             "regions",
-                            "search_spots",
                             "spot",
                             "spots",
+                            "search_spots",
+                            "model_info",
+                            "models_latlon",
+                            "forecast",
                             "wforecast"]
 
     let servicesWithUser = ["add_f_spot",
-                            "c_spots",
+                            "remove_f_spot",
                             "f_spots",
+                            "c_spots",
                             "set_spots",
                             "sets",
-                            "user",
                             "wforecast_latlon"]
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,7 +58,7 @@ class ApiListViewController: UIViewController {
         {
             svcs += self.servicesWithUser
         }
-        return svcs.sorted()
+        return svcs
     }()
 }
 
@@ -71,7 +71,67 @@ extension ApiListViewController: UITableViewDelegate {
             
         case "countries":
             break
+
             
+        case "add_f_spot":
+            var searchText: UITextField?
+            let alert = SCLAlertView()
+            searchText = alert.addTextField("spot id")
+            searchText?.autocorrectionType = .no
+            searchText?.autocapitalizationType = .none
+            
+            alert.addButton("Add") { [weak self] in
+                guard let text = searchText?.text,
+                    let user = self?.user,
+                    let username = user.username,
+                    let password = self?.password else { return }
+                ForecastWindguruService.instance.addFavoriteSpot(withSpotId: text, username: username, password: password,
+                                                                 failure: {
+                                                                    (error) in
+                                                                    let subTitle = error?.title() ?? ""
+                                                                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    (result) in
+                    guard let result = result else {
+                        let subTitle = "Cannot add spot id"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    SCLAlertView().showSuccess("\(service) success", subTitle: result.description)
+                }
+            }
+            alert.showEdit("Add Favorite", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            break
+            
+        case "remove_f_spot":
+            var searchText: UITextField?
+            let alert = SCLAlertView()
+            searchText = alert.addTextField("spot id")
+            searchText?.autocorrectionType = .no
+            searchText?.autocapitalizationType = .none
+            
+            alert.addButton("Remove") { [weak self] in
+                guard let text = searchText?.text,
+                      let user = self?.user,
+                      let username = user.username,
+                      let password = self?.password else { return }
+                ForecastWindguruService.instance.removeFavoriteSpot(withSpotId: text, username: username, password: password,
+                 failure: {
+                    (error) in
+                    let subTitle = error?.title() ?? ""
+                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    (result) in
+                    guard let result = result else {
+                        let subTitle = "Cannot remove spot id"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    SCLAlertView().showSuccess("\(service) success", subTitle: result.description)
+                }
+            }
+            alert.showEdit("Remove Favorite", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            break
             
         case "forecast":
             var searchText: UITextField?
@@ -95,10 +155,8 @@ extension ApiListViewController: UITableViewDelegate {
                         SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
                         return
                     }
-                    SCLAlertView().showSuccess("\(service) success", subTitle: "").setDismissBlock {
-                        self?.info = forecastResult.description
-                        self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                    }
+                    self?.info = forecastResult.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                 }
             }
             alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
@@ -127,10 +185,8 @@ extension ApiListViewController: UITableViewDelegate {
                         SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
                         return
                     }
-                    SCLAlertView().showSuccess("\(service) success", subTitle: "").setDismissBlock {
-                        self?.info = spotResult.description
-                        self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                    }
+                    self?.info = spotResult.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                 }
             }
             alert.showEdit("Enter location", subTitle: "Please enter a spot to search (i.e. Bariloche)", closeButtonTitle: "Cancel")
@@ -150,10 +206,8 @@ extension ApiListViewController: UITableViewDelegate {
                     SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
                     return
                 }
-                SCLAlertView().showSuccess("\(service) success", subTitle: "").setDismissBlock {
-                    self?.info = favorites.description
-                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                self?.info = favorites.description
+                self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
             }
             break
             

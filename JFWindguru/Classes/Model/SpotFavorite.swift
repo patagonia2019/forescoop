@@ -56,7 +56,7 @@ public class SpotFavorite: Mappable {
         }
         if let spots = spots {
             for spot in spots {
-                aux += "\(spot)"
+                aux += "\(spot.description)"
             }
         }
         return aux
