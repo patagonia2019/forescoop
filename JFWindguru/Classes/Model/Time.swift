@@ -34,10 +34,15 @@ public class Time: NSObject {
         }
     }
 
-    public func asDate() -> Date {
-        var interval = Double(hour!)
-        interval += Double(minutes! * 60)
-        interval += Double(seconds! * 60 * 60)
+    public func asDate() -> Date? {
+        guard let hour = hour,
+            let minutes = minutes,
+            let seconds = seconds else {
+                return nil
+        }
+        var interval = Double(hour)
+        interval += Double(minutes * 60)
+        interval += Double(seconds * 60 * 60)
         let date = Date.init(timeInterval:interval, since: Date.init())
         return date
     }

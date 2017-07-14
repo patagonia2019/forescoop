@@ -213,4 +213,28 @@ extension ForecastWindguruService {
     }
 
 
+    //    static let modelInfo = api(query: routine.model_info,
+    //          errorCode: err.model_info.rawValue,
+    //          parameters: [parameter.id_model])    // id_model (optional)
+    
+    public func modelInfo(onlyModelId modelId: String?,
+                      failure:@escaping (_ error: WGError?) -> Void,
+                      success:@escaping (_ model: Model?) -> Void) {
+        
+        var tokens : [String: String?] = [:]
+        if let modelId = modelId {
+            tokens[Definition.service.api.parameter.id_model] = modelId
+        }
+        let api = Definition.service.api.modelInfo
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<Model>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+
 }

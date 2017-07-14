@@ -253,11 +253,15 @@ public class ForecastWindguruService: NSObject {
                    failure:@escaping (_ error: WGError?) -> Void,
                    success:@escaping (_ result: T?) -> Void)
     {
-        if let value = response.result.value,
-           let mappable = value as? Mappable, mappable.toJSON().count > 0
+        if  response.result.error == nil,
+            let responseResultValue = response.result.value,
+            let responseData = response.data,
+            let jsonString = String(data: responseData, encoding: .utf8),
+           let error = Mapper<WGError>().map(JSONString: jsonString),
+            error.toJSON().count == 0
         {
-                print("SUCCESS url = \(url) - response.result.value \(value)")
-                success(value)
+                print("SUCCESS url = \(url) - response.result.value \(responseResultValue)")
+                success(responseResultValue)
         }
         else {
             print("FAILURE url = \(url) - response.result.error \(String(describing: response.result.error))")

@@ -40,9 +40,9 @@ extension ForecastResult
         WeatherSunCloudSnowMore
         WeatherSunCloudSnowRain
     */
-        if (self.isSunny())
+        if (isSunny())
         {
-            if (self.isNight())
+            if (isNight())
             {
                 return "WeatherMoon"
             }
@@ -54,7 +54,7 @@ extension ForecastResult
     private func isNight() -> Bool
     {
         let date = NSDate()
-        if ((self.elapse?.containsTime(date: date)) != nil) {
+        if ((elapse?.containsTime(date: date)) != nil) {
             return true
         }
         return false
@@ -80,23 +80,33 @@ extension ForecastResult
         return true
     }
     
-    private func forecast() -> Forecast
+    private func forecast() -> Forecast?
     {
-        let forecastModel = self.forecasts![self.currentModel!]
-        return (forecastModel?.info)!
+        guard let currentModel = currentModel,
+            let forecastModel = forecasts[currentModel]
+            else {
+                return nil
+        }
+        return forecastModel.info
     }
     
-    private func valueForKey(key : TimeWeather) -> AnyObject!
+    private func valueForKey(key : TimeWeather) -> AnyObject?
     {
-        let value : AnyObject!
-        value = key.value![hourString()]
+        guard let hhString = hourString(),
+            let value = key.value[hhString] else {
+            return nil
+        }
         return value
     }
 
     private func cloudCoverTotal() -> Int
     {
-        let value = valueForKey(key: self.forecast().cloudCoverTotal!)
-        return value! as! Int
+        guard let forecast = forecast(),
+            let cloudCoverTotal = forecast.cloudCoverTotal,
+            let value = valueForKey(key: cloudCoverTotal) as? Int else {
+                return 0
+        }
+        return value
     }
 
     
@@ -115,7 +125,7 @@ extension ForecastResult
     
     private func hour() -> Int
     {
-        var hour: Int = self.hourInt()
+        var hour: Int = hourInt()
         let remainder = hour % 3
         
         hour -= remainder
@@ -125,12 +135,12 @@ extension ForecastResult
         return hour
     }
 
-    private func hourString() -> String
+    private func hourString() -> String?
     {
-        var hourString: String!
-        let hour: Int = self.hour()
+        var hourString: String
+        let hh: Int = hour()
 
-        hourString = String(format: "%d", hour)
+        hourString = String(format: "%d", hh)
         
         return hourString
     }
@@ -138,51 +148,60 @@ extension ForecastResult
 
     public var asHourString: String
     {
-        var hourString: String!
-        let hour: Int = self.hour()
+        var hourString: String
+        let hh: Int = hour()
 
-        hourString = String(format: "%02d hs", hour)
+        hourString = String(format: "%02d hs", hh)
         
         return hourString
     }
     
     // "WeatherSun"
-    public var asCurrentWeatherImagename: String {
+    public var asCurrentWeatherImagename: String? {
 
-        var imageName : String!
-        
-        imageName = self.weatherType()
-        
-        return imageName
+        return weatherType()
 
     }
     
     
     // "WindDirectionN"
-    public var asCurrentWindDirectionImagename: String {
+    public var asCurrentWindDirectionImagename: String? {
         
-        var imageName : String!
-        
-        imageName = "WindDirection\(self.asCurrentWindDirectionName)"
-        
-        return imageName
+        guard let asCurrentWindDirectionName = asCurrentWindDirectionName else {
+            return nil
+        }
+        return "WindDirection\(asCurrentWindDirectionName)"
     }
     
-    var asCurrentWindDirectionName: String {
-        let value = valueForKey(key: self.forecast().windDirectionName!)
-        return value! as! String
+    var asCurrentWindDirectionName: String? {
+        guard let forecast = forecast(),
+            let windDirectionName = forecast.windDirectionName,
+            let value = valueForKey(key: windDirectionName) as? String else {
+                return nil
+        }
+        return value
     }
     
-    public var asCurrentWindSpeed: String {
-        let windSpeed : Double = valueForKey(key: self.forecast().windSpeed!) as! Double
-        return "\(windSpeed) knots"
+    public var asCurrentWindSpeed: String? {
+        guard let forecast = forecast(),
+            let windSpeed = forecast.windSpeed,
+            let value = valueForKey(key: windSpeed) as? Double
+            else {
+                return nil
+        }
+        return "\(value) knots"
     }
     
     
     // "11"
-    public var asCurrentTemperature: String {
-        let value = valueForKey(key: self.forecast().temperatureReal!)
-        return "\(value! as! Int)"
+    public var asCurrentTemperature: String? {
+        guard let forecast = forecast(),
+            let temperatureReal = forecast.temperatureReal,
+            let value = valueForKey(key: temperatureReal) as? Int
+            else {
+                return nil
+        }
+        return "\(value)"
     }
     
     // "C" or "F"
@@ -191,8 +210,8 @@ extension ForecastResult
     }
     
     // name contains the location in this object
-    public var asCurrentLocation: String {
-        return self.spotname!
+    public var asCurrentLocation: String? {
+        return spotname!
     }
     
 }

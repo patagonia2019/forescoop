@@ -54,7 +54,7 @@ public class ForecastResult: Spot {
     public var models: Array<String>?
     public var currentModel: String?
     public var tides: String?
-    public var forecasts: Dictionary<String, ForecastModel>?
+    public var forecasts: Dictionary<String, ForecastModel>
 
     required public init?(map: Map) {
         forecasts = [:]
@@ -72,14 +72,20 @@ public class ForecastResult: Spot {
         gmtHourOffset <- map["gmt_hour_offset"]
         sunrise <- map["sunrise"]
         sunset <- map["sunset"]
-        elapse = Elapse.init(sunrise!, end: sunset!)
+        if let sunrise = sunrise,
+            let sunset = sunset
+        {
+            elapse = Elapse.init(sunrise, end: sunset)
+        }
         models <- map["models"]
-        for model in models! {
-            var tmpForecast : Forecast?
-            tmpForecast <- map["forecast.\(model)"]
-            if let forecast = tmpForecast {
-                forecasts![model] = ForecastModel(model: model, info: forecast)
-                currentModel = model
+        if let models = models {
+            for model in models {
+                var tmpForecast : Forecast?
+                tmpForecast <- map["forecast.\(model)"]
+                if let forecast = tmpForecast {
+                    forecasts[model] = ForecastModel(model: model, info: forecast)
+                    currentModel = model
+                }
             }
         }
         tides <- map["tides"]
@@ -123,6 +129,14 @@ public class ForecastResult: Spot {
         if let tides = tides {
             aux += "tides \(tides).\n"
         }
+        if let models = models {
+            for model in models {
+                if let forecast = forecasts[model] {
+                    aux += "Forecast model: \(model)\n\(forecast.description)\n"
+                }
+            }
+        }
+
         return aux
     }
 

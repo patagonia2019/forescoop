@@ -68,10 +68,12 @@ class ViewController: UIViewController {
         guard let forecastResult = forecastResult else {
             return
         }
-        let weatherImageName = forecastResult.asCurrentWeatherImagename
-        let image = UIImage(named: weatherImageName)
-        weatherImage.image = image
-        windImage.image = UIImage(named: forecastResult.asCurrentWindDirectionImagename)
+        if let weatherImageName = forecastResult.asCurrentWeatherImagename {
+            weatherImage.image = UIImage(named: weatherImageName)
+        }
+        if let currentWindDirectionImagename = forecastResult.asCurrentWindDirectionImagename {
+            windImage.image = UIImage(named: currentWindDirectionImagename)
+        }
         temperatureLabel.text = forecastResult.asCurrentTemperature
         unitLabel.text = forecastResult.asCurrentUnit
         locationLabel.text = forecastResult.asCurrentLocation

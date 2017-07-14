@@ -36,7 +36,7 @@ public class ForecastModel {
             aux += "Model # \(model)\n"
         }
         if let info = info {
-            aux += "\(info).\n"
+            aux += "\(info.description).\n"
         }
         return aux
     }

@@ -1,3 +1,4 @@
+
 //
 //  TimeWeather.swift
 //  Xoshem-watch
@@ -91,7 +92,7 @@ import ObjectMapper
 
 public class TimeWeather: Mappable {
 
-    public var value: Dictionary<String, AnyObject>?
+    public var value: Dictionary<String, AnyObject>
 
     required public init?(map: Map){
         value = [:]
@@ -101,14 +102,29 @@ public class TimeWeather: Mappable {
         for key in map.JSON.keys {
             var tmpValue : AnyObject?
             tmpValue <- map[key]
-            value![key] = tmpValue
+            value[key] = tmpValue
         }
     }
     
-    var description : String {
+    public var description : String {
         var aux : String = ""
-        if let value = value {
-            aux += " \(value);"
+        let sortedValue = value.sorted { (v0, v1) -> Bool in
+            guard let iv0 = Int(v0.key),
+                let iv1 = Int(v1.key) else {
+                    return false
+            }
+            return iv0 < iv1
+        }
+        for (k,v) in sortedValue {
+            if let sv = v as? String {
+                aux += "\(k):\(sv); "
+            }
+            else if let iv = v as? Int {
+                aux += "\(k):\(iv); "
+            }
+            else if let fv = v as? CGFloat {
+                aux += "\(k):\(fv); "
+            }
         }
         aux += "\n"
         return aux

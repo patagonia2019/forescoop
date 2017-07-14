@@ -84,49 +84,49 @@ public class Forecast: Mappable {
     public var description : String {
         var aux : String = ""
         if let initStamp = initStamp {
-            aux += "initStamp \(initStamp), "
+            aux += "initStamp: \(initStamp)\n"
         }
         if let cloudCoverTotal = cloudCoverTotal {
-            aux += "Cloud cover Total: \(cloudCoverTotal)  "
+            aux += "Cloud cover Total: \(cloudCoverTotal.description)\n"
         }
         if let cloudCoverHigh = cloudCoverHigh {
-            aux += "High: \(cloudCoverHigh) "
+            aux += "High: \(cloudCoverHigh.description)\n"
         }
         if let cloudCoverMid = cloudCoverMid {
-            aux += "Mid: \(cloudCoverMid) "
+            aux += "Mid: \(cloudCoverMid.description)\n"
         }
         if let cloudCoverLow = cloudCoverLow {
-            aux += "Low: \(cloudCoverLow), "
+            aux += "Low: \(cloudCoverLow.description)\n"
         }
         if let relativeHumidity = relativeHumidity {
-            aux += "Humidity: \(relativeHumidity), "
+            aux += "Humidity: \(relativeHumidity.description)\n"
         }
         if let seaLevelPressure = seaLevelPressure {
-            aux += "\(seaLevelPressure), "
+            aux += "Sea Level pressure: \(seaLevelPressure.description)\n"
         }
         if let freezingLevel = freezingLevel {
-            aux += "\(freezingLevel), "
+            aux += "Freezing level: \(freezingLevel.description)\n"
         }
         if let precipitation = precipitation {
-            aux += "\(precipitation). "
+            aux += "Precipitation: \(precipitation.description)\n"
         }
         if let windGust = windGust {
-            aux += "Wind gust: \(windGust) "
+            aux += "Wind gust: \(windGust.description)\n"
         }
        if let windSpeed = windSpeed {
-            aux += "speed: \(windSpeed) "
+            aux += "Wind speed: \(windSpeed.description)\n"
         }
         if let windDirection = windDirection {
-            aux += "direccion: (\(windDirection) "
+            aux += "Wind direccion: \(windDirection.description)\n"
         }
         if let windDirectionName = windDirectionName {
-            aux += "\(windDirectionName)), "
+            aux += "Wind name: \(windDirectionName.description)\n"
         }
         if let temperature = temperature {
-            aux += "Temp: \(temperature), "
+            aux += "Temp: \(temperature.description)\n"
         }
        if let temperatureReal = temperatureReal {
-            aux += "real: \(temperatureReal), "
+            aux += "Temp real: \(temperatureReal.description)\n"
         }
         if let initDate = initDate {
             aux += "initDate: \(initDate), "
@@ -136,8 +136,5 @@ public class Forecast: Mappable {
         }
         return aux
     }
-    
-    
-
 
 }

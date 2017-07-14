@@ -18,12 +18,15 @@ public class Elapse : NSObject {
     }
  
     public func containsTime(date: NSDate) -> Bool {
-        let dstart = start?.asDate()
-        let dend = end?.asDate()
-        if date.compare(dstart! as Date) == ComparisonResult.orderedAscending {
+        guard let dstart = start?.asDate(),
+            let dend = end?.asDate()
+            else {
+                return false
+        }
+        if date.compare(dstart) == ComparisonResult.orderedAscending {
             return false
         }
-        if date.compare(dend! as Date) == ComparisonResult.orderedDescending {
+        if date.compare(dend) == ComparisonResult.orderedDescending {
             return false
         }
         return true
@@ -35,7 +38,7 @@ public class Elapse : NSObject {
             aux += "start \(start), "
         }
         if let end = end {
-            aux += "end \(end).\n"
+            aux += "end \(end)."
         }
         return aux
     }

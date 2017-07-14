@@ -246,6 +246,35 @@ extension ApiListViewController: UITableViewDelegate {
             }
             break
             
+        case "model_info":
+            var modelIdTextField: UITextField?
+            let alert = SCLAlertView()
+            modelIdTextField = alert.addTextField("model id (optional)")
+            modelIdTextField?.autocorrectionType = .no
+            modelIdTextField?.autocapitalizationType = .none
+            
+            alert.addButton("get model/s") { [weak self] in
+                ForecastWindguruService.instance.modelInfo(onlyModelId: modelIdTextField?.text,
+                  failure: {
+                    (error) in
+                    let subTitle = error?.title() ?? ""
+                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    [weak self]
+                    (model) in
+                    guard let model = model else {
+                        let subTitle = "No models"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    self?.info = model.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                }
+            }
+            alert.showEdit("Enter model id", subTitle: "Please enter a model id (i.e. 3)", closeButtonTitle: "Cancel")
+            break
+            
+            
             
         case "user":
             if let user = user {

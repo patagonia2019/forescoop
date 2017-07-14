@@ -40,17 +40,31 @@ public class WGError: Mappable {
         if let error = error {
             dict[NSUnderlyingErrorKey] = error
         }
-        self.nserror = NSError(domain: Bundle.main.bundleIdentifier!, code:code, userInfo: dict)
         
         var descValue = desc
         if let wgdata = wgdata,
-            let jsonString = String(data: wgdata, encoding: .utf8),
-            let wgerror = Mapper<WGError>().map(JSONString: jsonString)
+            let jsonString = String(data: wgdata, encoding: .utf8)
         {
-            descValue += " "
-            descValue += wgerror.description
+            if let wgerror = Mapper<WGError>().map(JSONString: jsonString)
+            {
+                descValue += ". "
+                descValue += wgerror.description
+            }
+            else {
+                descValue += " Response IS " + jsonString
+            }
+        }
+        else {
+            descValue += " Response EMPTY"
         }
         dict[NSLocalizedDescriptionKey] = descValue as AnyObject?
+        
+        var id = "JFWindguru"
+        if let bundleId = Bundle.main.bundleIdentifier {
+            id = bundleId
+        }
+        nserror = NSError(domain: id, code:code, userInfo: dict)
+
     }
 
     required public init?(map: Map){
