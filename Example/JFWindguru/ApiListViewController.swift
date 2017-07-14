@@ -163,6 +163,41 @@ extension ApiListViewController: UITableViewDelegate {
             break
             
             
+        case "spots":
+            var countryText: UITextField?
+            var regionText: UITextField?
+            let alert = SCLAlertView()
+            countryText = alert.addTextField("country id# (optional)")
+            countryText?.autocorrectionType = .no
+            countryText?.autocapitalizationType = .none
+            
+            regionText = alert.addTextField("region id# (optional)")
+            regionText?.autocorrectionType = .no
+            regionText?.autocapitalizationType = .none
+            
+            alert.addButton("get spots") { [weak self] in
+                ForecastWindguruService.instance.spots(withCountryId: countryText?.text, regionId: regionText?.text,
+                   failure: {
+                    (error) in
+                    let subTitle = error?.title() ?? ""
+                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    [weak self]
+                    (spotResult) in
+                    guard let spotResult = spotResult else {
+                        let subTitle = "No spots"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    self?.info = spotResult.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                }
+            }
+            alert.showEdit("Enter country/region", subTitle: "Please enter info to search (i.e. country = 76, region = 209)", closeButtonTitle: "Cancel")
+            break
+            
+            
+            
         case "search_spots":
             var searchText: UITextField?
             let alert = SCLAlertView()

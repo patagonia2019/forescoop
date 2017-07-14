@@ -44,28 +44,6 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let searchSpots = api(query: routine.search_spots,
-    //                                 errorCode: err.search_spots.rawValue,
-    //                                 parameters: [parameter.search,
-    //                                              parameter.opt])
-    public func searchSpots(byLocation location: String,
-                            failure:@escaping (_ error: WGError?) -> Void,
-                            success:@escaping (_ spotResult: SpotResult?) -> Void) {
-        
-        let escapedLocation = location.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
-        let tokens = [Definition.service.api.parameter.search : escapedLocation]
-        let api = Definition.service.api.searchSpots
-        let url = Definition.service.url(api: api, tokens: tokens)
-        
-        Alamofire.request(url, method:.get).validate().responseObject {
-            [weak self]
-            (response: DataResponse<SpotResult>) in
-            self?.replicates(response, url: url, api: api,
-                           context: "\(#file):\(#line):\(#column):\(#function)",
-                           failure: failure, success: success)
-        }
-    }
-    
     //    static let forecast = api(query: routine.forecast,
     //                              errorCode: err.forecast.rawValue,
     //                              parameters: [parameter.id_spot,
@@ -180,4 +158,59 @@ extension ForecastWindguruService {
     }
 
     
+    //    static let searchSpots = api(query: routine.search_spots,
+    //                                 errorCode: err.search_spots.rawValue,
+    //                                 parameters: [parameter.search,
+    //                                              parameter.opt])
+    public func searchSpots(byLocation location: String,
+                            failure:@escaping (_ error: WGError?) -> Void,
+                            success:@escaping (_ spotResult: SpotResult?) -> Void) {
+        
+        let escapedLocation = location.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        let tokens = [Definition.service.api.parameter.search : escapedLocation]
+        let api = Definition.service.api.searchSpots
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<SpotResult>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+
+    //  static let spots = api(query: routine.spots,
+    //      errorCode: err.spots.rawValue,
+    //      parameters: [parameter.with_spots,       // with_spots = 1 (optional)
+    //                   parameter.id_country,       // "id_country" (optional)
+    //                   parameter.id_region,        // "id_region" (optional)
+    //                   parameter.opt])             // opt=simple (optional)
+    
+    
+    public func spots(withCountryId countryId: String?,
+                      regionId: String?,
+                      failure:@escaping (_ error: WGError?) -> Void,
+                      success:@escaping (_ spotResult: SpotResult?) -> Void) {
+        
+        var tokens = [Definition.service.api.parameter.with_spots : "1"]
+        if let countryId = countryId {
+            tokens[Definition.service.api.parameter.id_country] = countryId
+        }
+        if let regionId = regionId {
+              tokens[Definition.service.api.parameter.id_region] = regionId
+        }
+        let api = Definition.service.api.spots
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<SpotResult>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+
+
 }
