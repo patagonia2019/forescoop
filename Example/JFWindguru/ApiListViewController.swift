@@ -255,10 +255,10 @@ extension ApiListViewController: UITableViewDelegate {
             
             alert.addButton("get model/s") { [weak self] in
                 ForecastWindguruService.instance.modelInfo(onlyModelId: modelIdTextField?.text,
-                  failure: {
-                    (error) in
-                    let subTitle = error?.title() ?? ""
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                                                           failure: {
+                                                            (error) in
+                                                            let subTitle = error?.title() ?? ""
+                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
                 }) {
                     [weak self]
                     (model) in
@@ -272,6 +272,26 @@ extension ApiListViewController: UITableViewDelegate {
                 }
             }
             alert.showEdit("Enter model id", subTitle: "Please enter a model id (i.e. 3)", closeButtonTitle: "Cancel")
+            break
+            
+            
+            
+        case "geo_regions":
+            ForecastWindguruService.instance.geoRegions(failure: {
+                (error) in
+                let subTitle = error?.title() ?? ""
+                SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+            }) {
+                [weak self]
+                (georegions) in
+                guard let georegions = georegions else {
+                    let subTitle = "No georegions"
+                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                    return
+                }
+                self?.info = georegions.description
+                self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+            }
             break
             
             

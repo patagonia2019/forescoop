@@ -212,14 +212,14 @@ extension ForecastWindguruService {
         }
     }
 
-
+    
     //    static let modelInfo = api(query: routine.model_info,
     //          errorCode: err.model_info.rawValue,
     //          parameters: [parameter.id_model])    // id_model (optional)
     
     public func modelInfo(onlyModelId modelId: String?,
-                      failure:@escaping (_ error: WGError?) -> Void,
-                      success:@escaping (_ model: Model?) -> Void) {
+                          failure:@escaping (_ error: WGError?) -> Void,
+                          success:@escaping (_ model: Models?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let modelId = modelId {
@@ -230,7 +230,26 @@ extension ForecastWindguruService {
         
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
-            (response: DataResponse<Model>) in
+            (response: DataResponse<Models>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+
+    //    static let geoRegions = api(query: routine.geo_regions,
+    //                                errorCode: err.geo_regions.rawValue,
+    //                                parameters: nil)
+    
+    public func geoRegions(failure:@escaping (_ error: WGError?) -> Void,
+                      success:@escaping (_ model: GeoRegions?) -> Void) {
+        
+        let api = Definition.service.api.geoRegions
+        let url = Definition.service.url(api: api, tokens: [:])
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<GeoRegions>) in
             self?.replicates(response, url: url, api: api,
                              context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)

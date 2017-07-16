@@ -1,5 +1,5 @@
 //
-//  Model.swift
+//  Models.swift
 //  Pods
 //
 //  Created by javierfuchs on 7/13/17.
@@ -13,7 +13,7 @@ import ObjectMapper
  *  Model
  *
  *  Discussion:
- *    Model object representing the base class of Model.
+ *    Model object representing the base class of Models.
  *
  * {
  *  "42": {
@@ -46,7 +46,7 @@ import ObjectMapper
  * }
  */
 
-public class Model: Mappable {
+public class Models: Mappable {
     public var models = [ModelDetail]()
 
     required public init?(map: Map) {
