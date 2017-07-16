@@ -1,5 +1,5 @@
 //
-//  ModelDetail.swift
+//  Model.swift
 //  Pods
 //
 //  Created by javierfuchs on 7/13/17.
@@ -44,7 +44,7 @@ import ObjectMapper
  * }
  */
 
-public class ModelDetail: Mappable {
+public class Model: Mappable {
     public var id_model: Int?
     public var model_name: String?
     public var model: String?

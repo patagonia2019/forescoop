@@ -47,7 +47,7 @@ import ObjectMapper
  */
 
 public class Models: Mappable {
-    public var models = [ModelDetail]()
+    public var models = [Model]()
 
     required public init?(map: Map) {
     }
@@ -55,7 +55,7 @@ public class Models: Mappable {
     public func mapping(map: Map) {
         for json in map.JSON {
             if  let jsonValue = json.value as? [String: Any],
-                let model = Mapper<ModelDetail>().map(JSON: jsonValue) {
+                let model = Mapper<Model>().map(JSON: jsonValue) {
                 models.append(model)
             }
         }

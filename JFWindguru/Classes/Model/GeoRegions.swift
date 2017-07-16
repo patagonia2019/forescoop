@@ -30,31 +30,23 @@ import ObjectMapper
 
 public class GeoRegions: Mappable {
     
-    public var value: Dictionary<String, String>
-    
+    public var regions = [GeoRegion]()
+ 
     required public init?(map: Map){
-        value = [:]
     }
     
     public func mapping(map: Map) {
-        for key in map.JSON.keys {
-            var tmpValue : String?
-            tmpValue <- map[key]
-            value[key] = tmpValue
+        for json in map.JSON {
+            let jsonKV = ["id": json.key, "name": json.value]
+            if let georegion = Mapper<GeoRegion>().map(JSON: jsonKV) {
+                regions.append(georegion)
+            }
         }
     }
-    
     public var description : String {
         var aux : String = ""
-        let sortedValue = value.sorted { (v0, v1) -> Bool in
-            guard let iv0 = Int(v0.key),
-                let iv1 = Int(v1.key) else {
-                    return false
-            }
-            return iv0 < iv1
-        }
-        for (k,v) in sortedValue {
-            aux += "\(k):\(v); "
+        for region in regions {
+            aux += "\(region.description)\n"
         }
         aux += "\n"
         return aux
