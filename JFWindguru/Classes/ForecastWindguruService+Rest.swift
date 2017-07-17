@@ -255,5 +255,31 @@ extension ForecastWindguruService {
                 failure: failure, success: success)
         }
     }
+    
+    //    static let countries = api(query: routine.countries,
+    //                               errorCode: err.countries.rawValue,
+    //                               parameters: [parameter.with_spots,   // with_spots = 1 (optional)
+    //                                parameter.id_georegion])            // "id_georegion" (optional)
 
+    
+    public func countries(byRegionId regionId: String?,
+                          failure:@escaping (_ error: WGError?) -> Void,
+                           success:@escaping (_ countries: Countries?) -> Void) {
+        
+        var tokens : [String: String?] = [:]
+        if let regionId = regionId {
+            tokens[Definition.service.api.parameter.id_georegion] = regionId
+        }
+        let api = Definition.service.api.countries
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<Countries>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+    
 }

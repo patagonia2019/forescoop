@@ -69,10 +69,6 @@ extension ApiListViewController: UITableViewDelegate {
         guard let service = service else { return }
         switch service {
             
-        case "countries":
-            break
-
-            
         case "add_f_spot":
             var searchText: UITextField?
             let alert = SCLAlertView()
@@ -295,6 +291,38 @@ extension ApiListViewController: UITableViewDelegate {
             break
             
             
+            
+        case "countries":
+            var regionIdTextField: UITextField?
+            let alert = SCLAlertView()
+            regionIdTextField = alert.addTextField("region id (optional)")
+            regionIdTextField?.autocorrectionType = .no
+            regionIdTextField?.autocapitalizationType = .none
+            
+            alert.addButton("get countries/s") { [weak self] in
+                ForecastWindguruService.instance.countries(byRegionId: regionIdTextField?.text,
+                                                           failure: {
+                                                            (error) in
+                                                            let subTitle = error?.title() ?? ""
+                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    [weak self]
+                    (countries) in
+                    guard let countries = countries else {
+                        let subTitle = "No countries"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    self?.info = countries.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                }
+            }
+            alert.showEdit("Enter region id", subTitle: "Please enter a region id (i.e. 5)", closeButtonTitle: "Cancel")
+            break
+            
+            
+            
+
             
         case "user":
             if let user = user {
