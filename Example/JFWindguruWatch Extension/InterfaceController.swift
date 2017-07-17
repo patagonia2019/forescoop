@@ -26,7 +26,7 @@ class InterfaceController: WKInterfaceController {
     @IBOutlet var windSpeedLabel: WKInterfaceLabel!
     @IBOutlet var hourLabel: WKInterfaceLabel!
     
-    var forecastResult: ForecastResult!
+    var spotForecast: SpotForecast!
     var sliderHeight: Float!
 
     override func awake(withContext context: Any?) {
@@ -43,7 +43,7 @@ class InterfaceController: WKInterfaceController {
         
         hideWeatherInfo()
         
-        if forecastResult != nil
+        if spotForecast != nil
         {
             updateForecastView()
         }
@@ -65,16 +65,16 @@ class InterfaceController: WKInterfaceController {
     
     fileprivate func updateForecastView()
     {
-        guard let forecastResult = forecastResult else {
+        guard let spotForecast = spotForecast else {
             return
         }
-        weatherImage.setImageNamed(forecastResult.asCurrentWeatherImagename)
-        windImage.setImageNamed(forecastResult.asCurrentWindDirectionImagename)
-        temperatureLabel.setText(forecastResult.asCurrentTemperature)
-        unitLabel.setText(forecastResult.asCurrentUnit)
-        locationLabel.setText(forecastResult.asCurrentLocation)
-        windSpeedLabel.setText(forecastResult.asCurrentWindSpeed)
-        hourLabel.setText(forecastResult.asHourString)
+        weatherImage.setImageNamed(spotForecast.asCurrentWeatherImagename)
+        windImage.setImageNamed(spotForecast.asCurrentWindDirectionImagename)
+        temperatureLabel.setText(spotForecast.asCurrentTemperature)
+        unitLabel.setText(spotForecast.asCurrentUnit)
+        locationLabel.setText(spotForecast.asCurrentLocation)
+        windSpeedLabel.setText(spotForecast.asCurrentWindSpeed)
+        hourLabel.setText(spotForecast.asHourString)
             
         showWeatherInfo()
     }
@@ -86,8 +86,8 @@ class InterfaceController: WKInterfaceController {
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main, using: {
             [weak self]
-            note in if let object: ForecastResult = note.object as? ForecastResult {
-                self?.forecastResult = object
+            note in if let object: SpotForecast = note.object as? SpotForecast {
+                self?.spotForecast = object
                 self?.updateForecastView()
             }})
     }

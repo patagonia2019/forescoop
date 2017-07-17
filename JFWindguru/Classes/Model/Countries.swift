@@ -16,15 +16,17 @@ import ObjectMapper
  *    Model object representing the base class of Countries.
  *
  * {
- *  "2": "Africa",
- *  "5": "South America",
- *  "9": "Oceania",
- *  "13": "Central America",
- *  "21": "Northern America",
- *  "29": "Caribbean",
- *  "53": "Australia and New Zealand",
- *  "142": "Asia",
- *  "150": "Europe"
+ * "32": "Argentina",
+ * "68": "Bolivia",
+ * "76": "Brazil",
+ * "152": "Chile",
+ * "170": "Colombia",
+ * "218": "Ecuador",
+ * "254": "French Guiana",
+ * "600": "Paraguay",
+ * "604": "Peru",
+ * "858": "Uruguay",
+ * "862": "Venezuela"
  * }
  */
 

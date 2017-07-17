@@ -1,5 +1,5 @@
 //
-//  ForecastResult+formatter.swift
+//  SpotForecast+formatter.swift
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/8/15.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension ForecastResult
+extension SpotForecast
 {
     
     private func weatherType() -> String

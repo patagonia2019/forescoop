@@ -54,7 +54,7 @@ extension ForecastWindguruService {
     public func forecast(bySpotId spotId: String,
                          model modelId:String = Definition.defaultModel,
                          failure:@escaping (_ error: WGError?) -> Void,
-                         success:@escaping (_ forecastResult: ForecastResult?) -> Void)
+                         success:@escaping (_ spotForecast: SpotForecast?) -> Void)
     {
         let tokens = [Definition.service.api.parameter.id_model : modelId,
                       Definition.service.api.parameter.id_spot : spotId]
@@ -63,12 +63,33 @@ extension ForecastWindguruService {
         
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
-            (response: DataResponse<ForecastResult>) in
+            (response: DataResponse<SpotForecast>) in
             self?.replicates(response, url: url, api: api,
                            context: "\(#file):\(#line):\(#column):\(#function)",
                            failure: failure, success: success)
         }
     }
+    
+    //    static let spotInfo = api(query: routine.spot,
+    //                              errorCode: err.spot.rawValue,
+    //                              parameters: [parameter.id_spot])
+    public func spotInfo(bySpotId spotId: String,
+                         failure:@escaping (_ error: WGError?) -> Void,
+                         success:@escaping (_ spotInfo: SpotInfo?) -> Void)
+    {
+        let tokens = [Definition.service.api.parameter.id_spot : spotId]
+        let api = Definition.service.api.spotInfo
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<SpotInfo>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+
     
     //    static let favoriteSpots = api(query: routine.f_spots,
     //                                   errorCode: err.f_spots.rawValue,
@@ -276,6 +297,32 @@ extension ForecastWindguruService {
         Alamofire.request(url, method:.get).validate().responseObject {
             [weak self]
             (response: DataResponse<Countries>) in
+            self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+    
+    //    static let regions = api(query: routine.regions,
+    //                             errorCode: err.regions.rawValue,
+    //                             parameters: [parameter.with_spots,     // with_spots = 1 (optional)
+    //                                parameter.id_country])    // "id_country" (optional)
+
+    
+    public func regions(byCountryId countryId: String?,
+                          failure:@escaping (_ error: WGError?) -> Void,
+                          success:@escaping (_ regions: Regions?) -> Void) {
+        
+        var tokens : [String: String?] = [:]
+        if let countryId = countryId {
+            tokens[Definition.service.api.parameter.id_country] = countryId
+        }
+        let api = Definition.service.api.regions
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<Regions>) in
             self?.replicates(response, url: url, api: api,
                              context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)

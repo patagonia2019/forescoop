@@ -13,7 +13,7 @@ import ObjectMapper
  *  Spot
  *
  *  Discussion:
- *    Model object representing the base class of SpotOwner, ForecastResult.
+ *    Model object representing the base class of SpotOwner, SpotForecast.
  *    Is a repeated structure and is easy to integrate using inheritance.
  *
  * {

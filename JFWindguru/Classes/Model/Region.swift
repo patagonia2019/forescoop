@@ -1,5 +1,14 @@
 //
-//  Country.swift
+//  Region.swift
+//  Pods
+//
+//  Created by javierfuchs on 7/16/17.
+//
+//
+
+import Foundation
+//
+//  GeoRegion.swift
 //  Pods
 //
 //  Created by javierfuchs on 7/16/17.
@@ -13,12 +22,12 @@ import ObjectMapper
  *  GeoRegion
  *
  *  Discussion:
- *    Model object representing the base class of GeoRegion.
+ *    Model object representing the base class of Region.
  *
- * "32": "Argentina"
+ * "223": "Paraná",
  */
 
-public class Country: Mappable {
+public class Region: Mappable {
     
     public var id: String?
     public var name: String?

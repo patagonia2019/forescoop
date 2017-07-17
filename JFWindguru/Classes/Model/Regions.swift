@@ -1,8 +1,8 @@
 //
-//  GeoRegions.swift
+//  Regions.swift
 //  Pods
 //
-//  Created by javierfuchs on 7/14/17.
+//  Created by javierfuchs on 7/16/17.
 //
 //
 
@@ -10,35 +10,38 @@ import Foundation
 import ObjectMapper
 
 /*
- *  GeoRegions
+ *  Regions
  *
  *  Discussion:
- *    Model object representing all the geo-regions.
+ *    Model object representing all the regions.
  *
  * {
- *  "2": "Africa",
- *  "5": "South America",
- *  "9": "Oceania",
- *  "13": "Central America",
- *  "21": "Northern America",
- *  "29": "Caribbean",
- *  "53": "Australia and New Zealand",
- *  "142": "Asia",
- *  "150": "Europe"
+ * "209": "Alagoas",
+ * "212": "Bahia",
+ * "213": "Ceará",
+ * "222": "Paraíba",
+ * "223": "Paraná",
+ * "224": "Pernambuco",
+ * "225": "Piauí",
+ * "226": "Rio de Janeiro",
+ * "227": "Rio Grande do Norte",
+ * "228": "Rio Grande do Sul",
+ * "231": "Santa Catarina",
+ * "232": "São Paulo"
  * }
  */
 
-public class GeoRegions: Mappable {
+public class Regions: Mappable {
     
-    public var regions = [GeoRegion]()
- 
+    public var regions = [Region]()
+    
     required public init?(map: Map){
     }
     
     public func mapping(map: Map) {
         for json in map.JSON {
             let jsonKV = ["id": json.key, "name": json.value]
-            if let georegion = Mapper<GeoRegion>().map(JSON: jsonKV) {
+            if let georegion = Mapper<Region>().map(JSON: jsonKV) {
                 regions.append(georegion)
             }
         }

@@ -127,8 +127,8 @@ public class Facade: NSObject {
             }
             ForecastWindguruService.instance.forecast(bySpotId: id_spot, failure: { (error) in
                 print("error = \(String(describing: error))")
-            }, success: { (forecastResult) in
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: kWDForecastUpdated), object: forecastResult)
+            }, success: { (spotForecast) in
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: kWDForecastUpdated), object: spotForecast)
             })
        }
     }

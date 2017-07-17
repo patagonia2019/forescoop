@@ -139,19 +139,49 @@ extension ApiListViewController: UITableViewDelegate {
             alert.addButton("Forecast") { [weak self] in
                 guard let text = searchText?.text else { return }
                 ForecastWindguruService.instance.forecast(bySpotId: text,
+                                                          failure: {
+                                                            (error) in
+                                                            let subTitle = error?.title() ?? ""
+                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    [weak self]
+                    (spotForecast) in
+                    guard let spotForecast = spotForecast else {
+                        let subTitle = "No forecast result"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    self?.info = spotForecast.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                }
+            }
+            alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            break
+            
+            
+        case "spot":
+            var spotIdTextField: UITextField?
+            let alert = SCLAlertView()
+            spotIdTextField = alert.addTextField("spot id")
+            spotIdTextField?.autocorrectionType = .no
+            spotIdTextField?.autocapitalizationType = .none
+            
+            alert.addButton("get Spot Info") { [weak self] in
+                guard let text = spotIdTextField?.text else { return }
+                ForecastWindguruService.instance.spotInfo(bySpotId: text,
                   failure: {
                     (error) in
                     let subTitle = error?.title() ?? ""
                     SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
                 }) {
                     [weak self]
-                    (forecastResult) in
-                    guard let forecastResult = forecastResult else {
-                        let subTitle = "No forecast result"
+                    (spotInfo) in
+                    guard let spotInfo = spotInfo else {
+                        let subTitle = "No spot info"
                         SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
                         return
                     }
-                    self?.info = forecastResult.description
+                    self?.info = spotInfo.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                 }
             }
@@ -299,7 +329,7 @@ extension ApiListViewController: UITableViewDelegate {
             regionIdTextField?.autocorrectionType = .no
             regionIdTextField?.autocapitalizationType = .none
             
-            alert.addButton("get countries/s") { [weak self] in
+            alert.addButton("get country/s") { [weak self] in
                 ForecastWindguruService.instance.countries(byRegionId: regionIdTextField?.text,
                                                            failure: {
                                                             (error) in
@@ -318,6 +348,36 @@ extension ApiListViewController: UITableViewDelegate {
                 }
             }
             alert.showEdit("Enter region id", subTitle: "Please enter a region id (i.e. 5)", closeButtonTitle: "Cancel")
+            break
+            
+            
+            
+        case "regions":
+            var countryIdTextField: UITextField?
+            let alert = SCLAlertView()
+            countryIdTextField = alert.addTextField("country id (optional)")
+            countryIdTextField?.autocorrectionType = .no
+            countryIdTextField?.autocapitalizationType = .none
+            
+            alert.addButton("get region/s") { [weak self] in
+                ForecastWindguruService.instance.regions(byCountryId: countryIdTextField?.text,
+                                                           failure: {
+                                                            (error) in
+                                                            let subTitle = error?.title() ?? ""
+                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    [weak self]
+                    (regions) in
+                    guard let regions = regions else {
+                        let subTitle = "No regions"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    self?.info = regions.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                }
+            }
+            alert.showEdit("Enter country id", subTitle: "Please enter a country id (i.e. 76)", closeButtonTitle: "Cancel")
             break
             
             
