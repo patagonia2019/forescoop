@@ -69,6 +69,37 @@ extension ApiListViewController: UITableViewDelegate {
         guard let service = service else { return }
         switch service {
             
+        case "set_spots":
+            var searchText: UITextField?
+            let alert = SCLAlertView()
+            searchText = alert.addTextField("set id")
+            searchText?.autocorrectionType = .no
+            searchText?.autocapitalizationType = .none
+            
+            alert.addButton("Add") { [weak self] in
+                guard let text = searchText?.text,
+                    let user = self?.user,
+                    let username = user.username,
+                    let password = self?.password else { return }
+                ForecastWindguruService.instance.addSetSpots(withSetId: text, username: username, password: password,
+                                                                 failure: {
+                                                                    (error) in
+                                                                    let subTitle = error?.title() ?? ""
+                                                                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    (spots) in
+                    guard let spots = spots else {
+                        let subTitle = "Cannot add set id"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    self?.info = spots.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                }
+            }
+            alert.showEdit("Add Set id", subTitle: "Please enter a set id (i.e. 229823)", closeButtonTitle: "Cancel")
+            break
+            
         case "add_f_spot":
             var searchText: UITextField?
             let alert = SCLAlertView()
@@ -252,7 +283,24 @@ extension ApiListViewController: UITableViewDelegate {
             }
             alert.showEdit("Enter location", subTitle: "Please enter a spot to search (i.e. Bariloche)", closeButtonTitle: "Cancel")
             break
-            
+        
+        case "c_spots":
+            ForecastWindguruService.instance.customSpots(withUsername: user?.username, password: password, failure: {
+                (error) in
+                let subTitle = error?.title() ?? ""
+                SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+            }) {
+                [weak self]
+                (spots) in
+                guard let spots = spots else {
+                    let subTitle = "No custom spots"
+                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                    return
+                }
+                self?.info = spots.description
+                self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+            }
+            break
             
         case "f_spots":
             ForecastWindguruService.instance.favoriteSpots(withUsername: user?.username, password: password, failure: {
@@ -261,13 +309,31 @@ extension ApiListViewController: UITableViewDelegate {
                 SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
             }) {
                 [weak self]
-                (favorites) in
-                guard let favorites = favorites else {
+                (spots) in
+                guard let spots = spots else {
                     let subTitle = "No favorites"
                     SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
                     return
                 }
-                self?.info = favorites.description
+                self?.info = spots.description
+                self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+            }
+            break
+            
+        case "sets":
+            ForecastWindguruService.instance.setSpots(withUsername: user?.username, password: password, failure: {
+                (error) in
+                let subTitle = error?.title() ?? ""
+                SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+            }) {
+                [weak self]
+                (sets) in
+                guard let sets = sets else {
+                    let subTitle = "No sets"
+                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                    return
+                }
+                self?.info = sets.description
                 self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
             }
             break

@@ -151,25 +151,23 @@ public class ForecastWindguruService: NSObject {
                                                             parameter.password,
                                                             parameter.id_spot])
                 
-                static let forecastSets = api(query: routine.sets,
-                                              errorCode: err.add_f_spot.rawValue,
-                                              parameters: [parameter.username,
-                                                           parameter.password,
-                                                           parameter.id_spot])
+                static let setSpots = api(query: routine.sets,
+                                          errorCode: err.sets.rawValue,
+                                          parameters: [parameter.username,
+                                                       parameter.password])
                 
-                static let forecastSetSpots = api(query: routine.set_spots,
-                                                  errorCode: err.set_spots.rawValue,
-                                                  parameters: [parameter.username,
-                                                               parameter.password,
-                                                               parameter.id_set,
-                                                               parameter.opt])
+                static let addSetSpots = api(query: routine.set_spots,
+                                             errorCode: err.set_spots.rawValue,
+                                             parameters: [parameter.username,
+                                                          parameter.password,
+                                                          parameter.id_set,
+                                                          parameter.opt])
                 
-                static let forecastCustomSpots = api(query: routine.c_spots,
-                                                     errorCode: err.c_spots.rawValue,
-                                                     parameters: [parameter.username,
-                                                                  parameter.password,
-                                                                  parameter.id_set,
-                                                                  parameter.opt])
+                static let customSpots = api(query: routine.c_spots,
+                                             errorCode: err.c_spots.rawValue,
+                                             parameters: [parameter.username,
+                                                          parameter.password,
+                                                          parameter.opt])
 
                 static let spotInfo = api(query: routine.spot,
                                           errorCode: err.spot.rawValue,
