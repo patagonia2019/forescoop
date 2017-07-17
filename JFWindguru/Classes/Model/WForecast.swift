@@ -163,16 +163,16 @@ public class WForecast: Mappable {
             aux += "PCPT: \(PCPT.description)\n"
         }
         if let hr_weekday = hr_weekday {
-            aux += "hr_weekday: \(hr_weekday), "
+            aux += "hr_weekday: \(hr_weekday)\n"
         }
         if let hr_h = hr_h {
-            aux += "hr_h: \(hr_h), "
+            aux += "hr_h: \(hr_h)\n"
         }
         if let hr_d = hr_d {
-            aux += "hr_d: \(hr_d), "
+            aux += "hr_d: \(hr_d)\n"
         }
         if let hours = hours {
-            aux += "hours: \(hours), "
+            aux += "hours: \(hours)\n"
         }
         if let initDate = initDate {
             aux += "initDate: \(initDate), "
@@ -202,7 +202,7 @@ public class WForecast: Mappable {
             aux += "update_last: \(update_last), "
         }
         if let update_next = update_next {
-            aux += "update_next: \(update_next), "
+            aux += "update_next: \(update_next)\n"
         }
         if let img_param = img_param {
             aux += "img_param: \(img_param), "
