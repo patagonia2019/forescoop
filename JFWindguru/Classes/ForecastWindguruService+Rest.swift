@@ -64,6 +64,30 @@ extension ForecastWindguruService {
             [weak self]
             (response: DataResponse<SpotForecast>) in
             self?.replicates(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+    
+    //    static let wforecast = api(query: routine.wforecast,
+    //                               errorCode: err.wforecast.rawValue,
+    //                               parameters: [parameter.id_spot,
+    //                                            parameter.id_model,
+    //                                            parameter.no_wave])
+    public func wforecast(bySpotId spotId: String,
+                         model modelId:String = Definition.defaultModel,
+                         failure:@escaping (_ error: WGError?) -> Void,
+                         success:@escaping (_ spotForecast: WSpotForecast?) -> Void)
+    {
+        let tokens = [Definition.service.api.parameter.id_model : modelId,
+                      Definition.service.api.parameter.id_spot : spotId]
+        let api = Definition.service.api.wforecast
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+        Alamofire.request(url, method:.get).validate().responseObject {
+            [weak self]
+            (response: DataResponse<WSpotForecast>) in
+            self?.replicates(response, url: url, api: api,
                            context: "\(#file):\(#line):\(#column):\(#function)",
                            failure: failure, success: success)
         }

@@ -332,7 +332,36 @@ extension ApiListViewController: UITableViewDelegate {
             alert.showEdit("Enter latitude/longitude", subTitle: "Please enter (i.e. -41 / -71)", closeButtonTitle: "Cancel")
             break
             
+        case "wforecast":
+            var searchText: UITextField?
+            let alert = SCLAlertView()
+            searchText = alert.addTextField("spot id")
+            searchText?.autocorrectionType = .no
+            searchText?.autocapitalizationType = .none
             
+            alert.addButton("Forecast") { [weak self] in
+                guard let text = searchText?.text else { return }
+                ForecastWindguruService.instance.wforecast(bySpotId: text,
+                                                          failure: {
+                                                            (error) in
+                                                            let subTitle = error?.title() ?? ""
+                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    [weak self]
+                    (spotForecast) in
+                    guard let spotForecast = spotForecast else {
+                        let subTitle = "No forecast result"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    self?.info = spotForecast.description
+                    self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                }
+            }
+            alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            break
+            
+
         case "geo_regions":
             ForecastWindguruService.instance.geoRegions(failure: {
                 (error) in
