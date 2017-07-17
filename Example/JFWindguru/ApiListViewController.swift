@@ -300,6 +300,37 @@ extension ApiListViewController: UITableViewDelegate {
             alert.showEdit("Enter model id", subTitle: "Please enter a model id (i.e. 3)", closeButtonTitle: "Cancel")
             break
             
+        case "models_latlon":
+            let alert = SCLAlertView()
+            var latTextField: UITextField?
+            latTextField = alert.addTextField("latitude")
+            latTextField?.autocorrectionType = .no
+            latTextField?.autocapitalizationType = .none
+            var lonTextField: UITextField?
+            lonTextField = alert.addTextField("longitude")
+            lonTextField?.autocorrectionType = .no
+            lonTextField?.autocapitalizationType = .none
+            
+            alert.addButton("query lat/lon") {
+                guard let latText = latTextField?.text,
+                    let lonText = lonTextField?.text else { return }
+                ForecastWindguruService.instance.models(bylat: latText, lon: lonText,
+                failure: {
+                    (error) in
+                    let subTitle = error?.title() ?? ""
+                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                }) {
+                    (models) in
+                    guard let models = models else {
+                        let subTitle = "No models"
+                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        return
+                    }
+                    SCLAlertView().showSuccess("\(service) success", subTitle: models.description)
+                }
+            }
+            alert.showEdit("Enter latitude/longitude", subTitle: "Please enter (i.e. -41 / -71)", closeButtonTitle: "Cancel")
+            break
             
             
         case "geo_regions":

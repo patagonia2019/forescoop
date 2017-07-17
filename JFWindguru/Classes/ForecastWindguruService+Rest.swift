@@ -14,7 +14,6 @@ import AlamofireObjectMapper
 extension ForecastWindguruService {
     
     
-    
     //
     //    static let user = api(query: routine.user,
     //                          errorCode: err.user.rawValue,
@@ -258,6 +257,60 @@ extension ForecastWindguruService {
         }
     }
 
+    //    static let modelsLatLon = api(query: routine.models_latlon,
+    //                                  errorCode: err.models_latlon.rawValue,
+    //                                  parameters: [parameter.lat, parameter.lon])
+    public func models(bylat lat: String?, lon: String?,
+                          failure:@escaping (_ error: WGError?) -> Void,
+                          success:@escaping (_ models: [String]?) -> Void) {
+        
+        var tokens : [String: String?] = [:]
+        if let lat = lat, lat.characters.count > 0,
+           let lon = lon, lon.characters.count > 0 {
+            tokens[Definition.service.api.parameter.lat] = lat
+            tokens[Definition.service.api.parameter.lon] = lon
+        }
+        let api = Definition.service.api.modelsLatLon
+        let url = Definition.service.url(api: api, tokens: tokens)
+        
+//        public func responseArray<T: Mappable>(keyPath: String, completionHandler: Response<[T], NSError> -> Void) -> Self
+
+        Alamofire.request(url, method:.get).validate().responseString {
+            [weak self]
+            (response: DataResponse<String>) in
+            self?.replicatesWithString(response, url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
+        }
+    }
+    //    public func getTags(failure:@escaping (_ error: JFError) -> Void,
+//                              success:@escaping (_ result: AnyObject?) -> Void) {
+//        
+//        guard let baseUrl = Global.service.amazonaws.url(),
+//            let uri = UserDefaults.standard.string(forKey: Global.service.amazonaws.uri.key) else {
+//                return
+//        }
+//        
+//        let url = baseUrl + "/" + uri + "/" + Global.service.getTagList + "/100/0"
+//        
+//        Alamofire.request(url, method:.get).validate().responseString { (response: DataResponse<String>) in
+//            if let result = response.result.value {
+//                let array = Array(Set(result.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\" ", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
+//                
+//                success(array as AnyObject?)
+//            }
+//            else if let error = response.result.error {
+//                let myerror = JFError(code: Global.ErrorCode.ServicePromotionListError.rawValue,
+//                                      desc: "failed to get appId=\(Global.appId)",
+//                    reason: "something get wrong on request \(url)", suggestion: "\(#file):\(#line):\(#column):\(#function)",
+//                    underError: error as NSError?)
+//                failure(myerror)
+//            }
+//        }
+//    }
+
+
+    
     //    static let geoRegions = api(query: routine.geo_regions,
     //                                errorCode: err.geo_regions.rawValue,
     //                                parameters: nil)
