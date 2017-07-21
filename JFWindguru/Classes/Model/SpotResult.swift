@@ -1,39 +1,50 @@
 //
 //  SpotResult.swift
-//  Xoshem-watch
+//  Pods
 //
-//  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Created by javierfuchs on 7/17/17.
+//
 //
 
 import Foundation
 import ObjectMapper
 
 /*
- *  SetResult
+ *  SpotResult
  *
  *  Discussion:
- *    Model object representing the result of c_sets
+ *    Model object representing the result of a forecast query of locations/spots.
  *
  * {
- *   "count": 1,
- *   "sets": {
- *      "229823": "My forecast"
- *    }
- *  }
+ *   "count": 2,
+ *   "spots": [
+ *       {
+ *            "id_spot": "64141",
+ *            "spotname": "Bariloche",
+ *            "country": "Argentina",
+ *            "id_user": "169"
+ *        },
+ *        {
+ *            "id_spot": "209155",
+ *            "spotname": "Bariloche Classic",
+ *            "country": "Argentina",
+ *            "id_user": "169"
+ *        },
+ *    ]
+ * }
  */
 
 
-public class SetResult: Mappable {
+public class SpotResult: Mappable {
     //
     // count: number of results obtained
     //
     public var count: Int?
     
     //
-    // spots: is a dictionary forecast id/ forecast name
+    // spots: is an array of SpotOwner objects
     //
-    public var sets: [String: String]?
+    public var spots: [SpotOwner]?
     
     required public init?(map: Map){
         
@@ -41,20 +52,20 @@ public class SetResult: Mappable {
     
     public func mapping(map: Map) {
         count <- map["count"]
-        sets <- map["sets"]
+        spots <- map["spots"]
     }
     
     public var description : String {
         var aux : String = ""
         if let count = count {
-            aux += "\(count) sets, "
+            aux += "\(count) spots, "
         }
-        if let sets = sets {
-            for forecast in sets {
-                aux += "\(forecast)\n"
+        if let spots = spots {
+            for spot in spots {
+                aux += "\(spot.description)\n"
             }
         }
         return aux
     }
-
+    
 }

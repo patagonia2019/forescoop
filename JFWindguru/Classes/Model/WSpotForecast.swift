@@ -20,7 +20,7 @@ import ObjectMapper
  * {
  *     "id_spot": 546356,
  *     "id_user": 2,
- *     "nickname": "Windguru Station",
+ *     "spotname": "Windguru Station",
  *     "spot": "Argentina - Agrotécnico 4 - San Pedro, Guasayan - Sgo del Estero, MeteoStar",
  *     "lat": -27.9567,
  *     "lon": -65.1579,
@@ -50,10 +50,10 @@ import ObjectMapper
 public class WSpotForecast: Mappable {
     public var id_spot: Int?
     public var id_user: Int?
-    public var nickname: String?
+    public var spotname: String?
     public var spot: String?
-    public var lat: CGFloat?
-    public var lon: CGFloat?
+    public var lat: Float?
+    public var lon: Float?
     public var alt: Int?
     public var id_model: String?
     public var model: String?
@@ -81,7 +81,7 @@ public class WSpotForecast: Mappable {
     public func mapping(map: Map) {
         id_spot       <- map["id_spot"]
         id_user       <- map["id_user"]
-        nickname      <- map["nickname"]
+        spotname      <- map["spotname"]
         spot          <- map["spot"]
         lat           <- map["lat"]
         lon           <- map["lon"]
@@ -116,7 +116,7 @@ public class WSpotForecast: Mappable {
         var aux : String = ""
         if let id_spot      = id_spot       { aux += "id_spot     : \(id_spot), " }
         if let id_user      = id_user       { aux += "id_user     : \(id_user), " }
-        if let nickname     = nickname      { aux += "nickname    : \(nickname), " }
+        if let spotname     = spotname      { aux += "spotname    : \(spotname), " }
         if let spot         = spot          { aux += "spot        : \(spot), " }
         if let lat          = lat           { aux += "lat         : \(lat), " }
         if let lon          = lon           { aux += "lon         : \(lon), " }

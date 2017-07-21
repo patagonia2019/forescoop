@@ -41,17 +41,17 @@ import ObjectMapper
 
 public class WForecast: Mappable {
     public var initStamp: Int? // initstamp
-    public var temperature: [CGFloat]? // TMP: temperature
+    public var temperature: [Float]? // TMP: temperature
     public var cloudCoverTotal: [Int]? // TCDC: Cloud cover (%) Total
     public var cloudCoverHigh: [Int]? // HCDC: Cloud cover (%) High
     public var cloudCoverMid: [Int]? // MCDC: Cloud cover (%) Mid
     public var cloudCoverLow: [Int]? // LCDC: Cloud cover (%) Low
     public var relativeHumidity: [Int]? // RH: Relative humidity: relative humidity in percent
-    public var windGust: [CGFloat]? // GUST: Wind gusts (knots)
+    public var windGust: [Float]? // GUST: Wind gusts (knots)
     public var seaLevelPressure: [Int]? // SLP: sea level pressure
     public var freezingLevel: [Int]? //  FLHGT: Freezing Level height in meters (0 degree isoterm)
     public var precipitation: [Int]? //  APCP: Precip. (mm/3h)
-    public var windSpeed: [CGFloat]? //  WINDSPD: Wind speed (knots)
+    public var windSpeed: [Float]? //  WINDSPD: Wind speed (knots)
     public var windDirection: [Int]? //  WINDDIR: Wind direction
     public var SMERN: [Int]?
     public var temperatureReal: [CGFloat]? // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.

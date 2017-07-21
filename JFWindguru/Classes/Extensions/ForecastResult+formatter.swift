@@ -211,7 +211,7 @@ extension SpotForecast
     
     // name contains the location in this object
     public var asCurrentLocation: String? {
-        return spotname!
+        return spotname
     }
     
 }

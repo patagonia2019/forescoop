@@ -1,14 +1,5 @@
 //
 //  SetResult.swift
-//  Pods
-//
-//  Created by javierfuchs on 7/17/17.
-//
-//
-
-import Foundation
-//
-//  SpotResult.swift
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/7/15.
@@ -19,41 +10,30 @@ import Foundation
 import ObjectMapper
 
 /*
- *  SpotResult
+ *  SetResult
  *
  *  Discussion:
- *    Model object representing the result of a forecast query of locations/spots.
+ *    Model object representing the result of c_sets
  *
  * {
- *   "count": 2,
- *   "spots": [
- *       {
- *            "id_spot": "64141",
- *            "spotname": "Bariloche",
- *            "country": "Argentina",
- *            "id_user": "169"
- *        },
- *        {
- *            "id_spot": "209155",
- *            "spotname": "Bariloche Classic",
- *            "country": "Argentina",
- *            "id_user": "169"
- *        },
- *    ]
- * }
+ *   "count": 1,
+ *   "sets": {
+ *      "229823": "My forecast"
+ *    }
+ *  }
  */
 
 
-public class SpotResult: Mappable {
+public class SetResult: Mappable {
     //
     // count: number of results obtained
     //
     public var count: Int?
     
     //
-    // spots: is an array of SpotOwner objects
+    // spots: is a dictionary forecast id/ forecast name
     //
-    public var spots: [SpotOwner]?
+    public var sets: [String: String]?
     
     required public init?(map: Map){
         
@@ -61,20 +41,20 @@ public class SpotResult: Mappable {
     
     public func mapping(map: Map) {
         count <- map["count"]
-        spots <- map["spots"]
+        sets <- map["sets"]
     }
     
     public var description : String {
         var aux : String = ""
         if let count = count {
-            aux += "\(count) spots, "
+            aux += "\(count) sets, "
         }
-        if let spots = spots {
-            for spot in spots {
-                aux += "\(spot.description)\n"
+        if let sets = sets {
+            for forecast in sets {
+                aux += "\(forecast)\n"
             }
         }
         return aux
     }
-    
+
 }

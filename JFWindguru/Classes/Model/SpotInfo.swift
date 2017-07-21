@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 /*
- *  SpotForecast
+ *  SpotInfo
  *
  *  Discussion:
  *    Represents a model information of the stot or location.
