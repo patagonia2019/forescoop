@@ -54,7 +54,7 @@ public class WForecast: Mappable {
     public var windSpeed: [Float]? //  WINDSPD: Wind speed (knots)
     public var windDirection: [Int]? //  WINDDIR: Wind direction
     public var SMERN: [Int]?
-    public var temperatureReal: [CGFloat]? // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    public var temperatureReal: [Float]? // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
     public var PCPT: [Int]?
     public var hr_weekday: [Int]?
     public var hr_h: [String]?
