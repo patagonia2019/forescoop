@@ -50,6 +50,7 @@ import ObjectMapper
 public class WSpotForecast: Mappable {
     public var id_spot: Int?
     public var id_user: Int?
+    public var nickname: String?
     public var spotname: String?
     public var spot: String?
     public var lat: Float?
@@ -81,6 +82,7 @@ public class WSpotForecast: Mappable {
     public func mapping(map: Map) {
         id_spot       <- map["id_spot"]
         id_user       <- map["id_user"]
+        nickname      <- map["nickname"]
         spotname      <- map["spotname"]
         spot          <- map["spot"]
         lat           <- map["lat"]
@@ -116,6 +118,7 @@ public class WSpotForecast: Mappable {
         var aux : String = ""
         if let id_spot      = id_spot       { aux += "id_spot     : \(id_spot), " }
         if let id_user      = id_user       { aux += "id_user     : \(id_user), " }
+        if let nickname     = nickname      { aux += "nickname    : \(nickname), " }
         if let spotname     = spotname      { aux += "spotname    : \(spotname), " }
         if let spot         = spot          { aux += "spot        : \(spot), " }
         if let lat          = lat           { aux += "lat         : \(lat), " }
