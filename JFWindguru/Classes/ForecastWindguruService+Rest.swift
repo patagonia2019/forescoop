@@ -11,19 +11,19 @@ import ObjectMapper
 import Alamofire
 import AlamofireObjectMapper
 
+
 extension ForecastWindguruService {
     
     
-    //
-    //    static let user = api(query: routine.user,
-    //                          errorCode: err.user.rawValue,
-    //                          parameters: [parameter.username,
-    //                                       parameter.password]) // not user/pass (anonymous)
+    // user = api(query: routine.user,
+    //        errorCode: err.user.rawValue,
+    //       parameters: [parameter.username,
+    //                   parameter.password]) // not user/pass (anonymous)
 
     public func login(withUsername username: String?,
-                      password: String?,
-                      failure:@escaping (_ error: WGError?) -> Void,
-                      success:@escaping (_ user: User?) -> Void) {
+                                   password: String?,
+                                    failure: @escaping FailureType,
+                                    success: @escaping (_ user: User?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -43,17 +43,16 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let forecast = api(query: routine.forecast,
-    //                              errorCode: err.forecast.rawValue,
-    //                              parameters: [parameter.id_spot,
-    //                                           parameter.id_model,
-    //                                           parameter.no_wave])
-    //    
+    // forecast = api(query: routine.forecast,
+    //            errorCode: err.forecast.rawValue,
+    //           parameters: [parameter.id_spot,
+    //                        parameter.id_model,
+    //                        parameter.no_wave])
 
     public func forecast(bySpotId spotId: String,
-                         model modelId:String = Definition.defaultModel,
-                         failure:@escaping (_ error: WGError?) -> Void,
-                         success:@escaping (_ spotForecast: SpotForecast?) -> Void)
+                           model modelId: String = Definition.defaultModel,
+                                 failure: @escaping FailureType,
+                                 success: @escaping (_ spotForecast: SpotForecast?) -> Void)
     {
         let tokens = [Definition.service.api.parameter.id_model : modelId,
                       Definition.service.api.parameter.id_spot : spotId]
@@ -69,18 +68,28 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let wforecast = api(query: routine.wforecast,
-    //                               errorCode: err.wforecast.rawValue,
-    //                               parameters: [parameter.id_spot,
-    //                                            parameter.id_model,
-    //                                            parameter.no_wave])
+    //  wforecast = api(query: routine.wforecast,
+    //              errorCode: err.wforecast.rawValue,
+    //             parameters: [parameter.username,  // pro users
+    //                          parameter.password,   // pro users
+    //                          parameter.id_spot,
+    //                          parameter.id_model,
+    //                          parameter.no_wave])
+    
     public func wforecast(bySpotId spotId: String,
-                         model modelId:String = Definition.defaultModel,
-                         failure:@escaping (_ error: WGError?) -> Void,
-                         success:@escaping (_ spotForecast: WSpotForecast?) -> Void)
+                            model modelId: String = Definition.defaultModel,
+                                 username: String? = nil,
+                                 password: String? = nil,
+                                  failure: @escaping FailureType,
+                                  success: @escaping (_ spotForecast: WSpotForecast?) -> Void)
     {
-        let tokens = [Definition.service.api.parameter.id_model : modelId,
+        var tokens = [Definition.service.api.parameter.id_model : modelId,
                       Definition.service.api.parameter.id_spot : spotId]
+        if let username = username, username.characters.count > 0,
+            let password = password, password.characters.count > 0 {
+            tokens = [Definition.service.api.parameter.username : username,
+                      Definition.service.api.parameter.password : password]
+        }
         let api = Definition.service.api.wforecast
         let url = Definition.service.url(api: api, tokens: tokens)
         
@@ -93,12 +102,12 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let spotInfo = api(query: routine.spot,
-    //                              errorCode: err.spot.rawValue,
-    //                              parameters: [parameter.id_spot])
+    // spotInfo = api(query: routine.spot,
+    //            errorCode: err.spot.rawValue,
+    //           parameters: [parameter.id_spot])
     public func spotInfo(bySpotId spotId: String,
-                         failure:@escaping (_ error: WGError?) -> Void,
-                         success:@escaping (_ spotInfo: SpotInfo?) -> Void)
+                                 failure: @escaping FailureType,
+                                 success: @escaping (_ spotInfo: SpotInfo?) -> Void)
     {
         let tokens = [Definition.service.api.parameter.id_spot : spotId]
         let api = Definition.service.api.spotInfo
@@ -113,15 +122,15 @@ extension ForecastWindguruService {
         }
     }
 
-    //    static let customSpots = api(query: routine.c_spots,
-    //                                 errorCode: err.c_spots.rawValue,
-    //                                 parameters: [parameter.username,
-    //                                              parameter.password,
-    //                                              parameter.opt])  // opt=simple (optional)
+    // customSpots = api(query: routine.c_spots,
+    //               errorCode: err.c_spots.rawValue,
+    //              parameters: [parameter.username,
+    //                           parameter.password,
+    //                           parameter.opt])  // opt=simple (optional)
     public func customSpots(withUsername username: String?,
-                            password: String?,
-                            failure:@escaping (_ error: WGError?) -> Void,
-                            success:@escaping (_ spots: SpotResult?) -> Void) {
+                                         password: String?,
+                                          failure: @escaping FailureType,
+                                          success: @escaping (_ spots: SpotResult?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username, username.characters.count > 0,
@@ -142,15 +151,15 @@ extension ForecastWindguruService {
     
 
     
-    //    static let favoriteSpots = api(query: routine.f_spots,
-    //                                   errorCode: err.f_spots.rawValue,
-    //                                   parameters: [parameter.username,
-    //                                                parameter.password,
-    //                                                parameter.opt]) // opt=simple (optional)
+    // favoriteSpots = api(query: routine.f_spots,
+    //                 errorCode: err.f_spots.rawValue,
+    //                parameters: [parameter.username,
+    //                             parameter.password,
+    //                             parameter.opt]) // opt=simple (optional)
     public func favoriteSpots(withUsername username: String?,
-                              password: String?,
-                              failure:@escaping (_ error: WGError?) -> Void,
-                              success:@escaping (_ spots: SpotResult?) -> Void) {
+                                           password: String?,
+                                            failure: @escaping FailureType,
+                                            success: @escaping (_ spots: SpotResult?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -169,15 +178,15 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let setSpots = api(query: routine.sets,
-    //                              errorCode: err.sets.rawValue,
-    //                              parameters: [parameter.username,
-    //                                           parameter.password])
+    // setSpots = api(query: routine.sets,
+    //            errorCode: err.sets.rawValue,
+    //           parameters: [parameter.username,
+    //                        parameter.password])
     //    
     public func setSpots(withUsername username: String?,
-                              password: String?,
-                              failure:@escaping (_ error: WGError?) -> Void,
-                              success:@escaping (_ sets: SetResult?) -> Void) {
+                                      password: String?,
+                                       failure: @escaping FailureType,
+                                       success: @escaping (_ sets: SetResult?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -196,17 +205,17 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let addSetSpots = api(query: routine.set_spots,
-    //                                 errorCode: err.set_spots.rawValue,
-    //                                 parameters: [parameter.username,
-    //                                              parameter.password,
-    //                                              parameter.id_set,
-    //                                              parameter.opt])
+    // addSetSpots = api(query: routine.set_spots,
+    //               errorCode: err.set_spots.rawValue,
+    //              parameters: [parameter.username,
+    //                           parameter.password,
+    //                           parameter.id_set,
+    //                           parameter.opt])
     public func addSetSpots(withSetId setId: String?,
-                            username: String?,
-                            password: String?,
-                            failure:@escaping (_ error: WGError?) -> Void,
-                            success:@escaping (_ spots: SpotResult?) -> Void)
+                                   username: String?,
+                                   password: String?,
+                                    failure: @escaping FailureType,
+                                    success: @escaping (_ spots: SpotResult?) -> Void)
     {
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -229,16 +238,16 @@ extension ForecastWindguruService {
     
 
     
-    //    static let addFavoriteSpot = api(query: routine.add_f_spot,
-    //                                     errorCode: err.add_f_spot.rawValue,
-    //                                     parameters: [parameter.username,
-    //                                                  parameter.password,
-    //                                                  parameter.id_spot])
+    // addFavoriteSpot = api(query: routine.add_f_spot,
+    //                   errorCode: err.add_f_spot.rawValue,
+    //                  parameters: [parameter.username,
+    //                               parameter.password,
+    //                               parameter.id_spot])
     public func addFavoriteSpot(withSpotId spotId: String?,
-                                username: String?,
-                                password: String?,
-                                failure:@escaping (_ error: WGError?) -> Void,
-                                success:@escaping (_ response: WGSuccess?) -> Void) {
+                                         username: String?,
+                                         password: String?,
+                                          failure: @escaping FailureType,
+                                          success: @escaping (_ response: WGSuccess?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -259,16 +268,16 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let remove_f_spot = api(query: routine.remove_f_spot,
-    //                                   errorCode: err.remove_f_spot.rawValue,
-    //                                   parameters: [parameter.username,
-    //                                                parameter.password,
-    //                                                parameter.id_spot])
+    // remove_f_spot = api(query: routine.remove_f_spot,
+    //                 errorCode: err.remove_f_spot.rawValue,
+    //                parameters: [parameter.username,
+    //                             parameter.password,
+    //                             parameter.id_spot])
     public func removeFavoriteSpot(withSpotId spotId: String?,
-                                   username: String?,
-                                   password: String?,
-                                   failure:@escaping (_ error: WGError?) -> Void,
-                                   success:@escaping (_ response: WGSuccess?) -> Void) {
+                                            username: String?,
+                                            password: String?,
+                                             failure: @escaping FailureType,
+                                             success: @escaping (_ response: WGSuccess?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let username = username,
@@ -290,13 +299,13 @@ extension ForecastWindguruService {
     }
 
     
-    //    static let searchSpots = api(query: routine.search_spots,
-    //                                 errorCode: err.search_spots.rawValue,
-    //                                 parameters: [parameter.search,
-    //                                              parameter.opt])
+    // searchSpots = api(query: routine.search_spots,
+    //               errorCode: err.search_spots.rawValue,
+    //              parameters: [parameter.search,
+    //                           parameter.opt])
     public func searchSpots(byLocation location: String,
-                            failure:@escaping (_ error: WGError?) -> Void,
-                            success:@escaping (_ spotResult: SpotResult?) -> Void) {
+                                        failure: @escaping FailureType,
+                                        success: @escaping (_ spotResult: SpotResult?) -> Void) {
         
         let escapedLocation = location.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         let tokens = [Definition.service.api.parameter.search : escapedLocation]
@@ -312,18 +321,18 @@ extension ForecastWindguruService {
         }
     }
 
-    //  static let spots = api(query: routine.spots,
-    //      errorCode: err.spots.rawValue,
-    //      parameters: [parameter.with_spots,       // with_spots = 1 (optional)
-    //                   parameter.id_country,       // "id_country" (optional)
-    //                   parameter.id_region,        // "id_region" (optional)
-    //                   parameter.opt])             // opt=simple (optional)
+    // spots = api(query: routine.spots,
+    //         errorCode: err.spots.rawValue,
+    //        parameters: [parameter.with_spots,       // with_spots = 1 (optional)
+    //                     parameter.id_country,       // "id_country" (optional)
+    //                     parameter.id_region,        // "id_region" (optional)
+    //                     parameter.opt])             // opt=simple (optional)
     
     
     public func spots(withCountryId countryId: String?,
-                      regionId: String?,
-                      failure:@escaping (_ error: WGError?) -> Void,
-                      success:@escaping (_ spotResult: SpotResult?) -> Void) {
+                                     regionId: String?,
+                                      failure: @escaping FailureType,
+                                      success: @escaping (_ spotResult: SpotResult?) -> Void) {
         
         var tokens = [Definition.service.api.parameter.with_spots : "1"]
         if let countryId = countryId {
@@ -345,13 +354,13 @@ extension ForecastWindguruService {
     }
 
     
-    //    static let modelInfo = api(query: routine.model_info,
-    //          errorCode: err.model_info.rawValue,
-    //          parameters: [parameter.id_model])    // id_model (optional)
+    // modelInfo = api(query: routine.model_info,
+    //             errorCode: err.model_info.rawValue,
+    //            parameters: [parameter.id_model])    // id_model (optional)
     
     public func modelInfo(onlyModelId modelId: String?,
-                          failure:@escaping (_ error: WGError?) -> Void,
-                          success:@escaping (_ model: Models?) -> Void) {
+                                      failure: @escaping FailureType,
+                                      success: @escaping (_ model: Models?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let modelId = modelId {
@@ -369,12 +378,13 @@ extension ForecastWindguruService {
         }
     }
 
-    //    static let modelsLatLon = api(query: routine.models_latlon,
-    //                                  errorCode: err.models_latlon.rawValue,
-    //                                  parameters: [parameter.lat, parameter.lon])
-    public func models(bylat lat: String?, lon: String?,
-                          failure:@escaping (_ error: WGError?) -> Void,
-                          success:@escaping (_ models: [String]?) -> Void) {
+    // modelsLatLon = api(query: routine.models_latlon,
+    //                errorCode: err.models_latlon.rawValue,
+    //               parameters: [parameter.lat, parameter.lon])
+    public func models(bylat lat: String?,
+                             lon: String?,
+                         failure: @escaping FailureType,
+                         success: @escaping (_ models: [String]?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let lat = lat, lat.characters.count > 0,
@@ -384,8 +394,6 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.modelsLatLon
         let url = Definition.service.url(api: api, tokens: tokens)
-        
-//        public func responseArray<T: Mappable>(keyPath: String, completionHandler: Response<[T], NSError> -> Void) -> Self
 
         Alamofire.request(url, method:.get).validate().responseString {
             [weak self]
@@ -395,40 +403,14 @@ extension ForecastWindguruService {
                 failure: failure, success: success)
         }
     }
-    //    public func getTags(failure:@escaping (_ error: JFError) -> Void,
-//                              success:@escaping (_ result: AnyObject?) -> Void) {
-//        
-//        guard let baseUrl = Global.service.amazonaws.url(),
-//            let uri = UserDefaults.standard.string(forKey: Global.service.amazonaws.uri.key) else {
-//                return
-//        }
-//        
-//        let url = baseUrl + "/" + uri + "/" + Global.service.getTagList + "/100/0"
-//        
-//        Alamofire.request(url, method:.get).validate().responseString { (response: DataResponse<String>) in
-//            if let result = response.result.value {
-//                let array = Array(Set(result.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\" ", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
-//                
-//                success(array as AnyObject?)
-//            }
-//            else if let error = response.result.error {
-//                let myerror = JFError(code: Global.ErrorCode.ServicePromotionListError.rawValue,
-//                                      desc: "failed to get appId=\(Global.appId)",
-//                    reason: "something get wrong on request \(url)", suggestion: "\(#file):\(#line):\(#column):\(#function)",
-//                    underError: error as NSError?)
-//                failure(myerror)
-//            }
-//        }
-//    }
-
 
     
-    //    static let geoRegions = api(query: routine.geo_regions,
-    //                                errorCode: err.geo_regions.rawValue,
-    //                                parameters: nil)
+    // geoRegions = api(query: routine.geo_regions,
+    //              errorCode: err.geo_regions.rawValue,
+    //             parameters: nil)
     
-    public func geoRegions(failure:@escaping (_ error: WGError?) -> Void,
-                      success:@escaping (_ model: GeoRegions?) -> Void) {
+    public func geoRegions(withFailure failure: @escaping FailureType,
+                                       success: @escaping (_ model: GeoRegions?) -> Void) {
         
         let api = Definition.service.api.geoRegions
         let url = Definition.service.url(api: api, tokens: [:])
@@ -442,15 +424,15 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let countries = api(query: routine.countries,
-    //                               errorCode: err.countries.rawValue,
-    //                               parameters: [parameter.with_spots,   // with_spots = 1 (optional)
-    //                                parameter.id_georegion])            // "id_georegion" (optional)
+    // countries = api(query: routine.countries,
+    //             errorCode: err.countries.rawValue,
+    //            parameters: [parameter.with_spots,        // with_spots = 1 (optional)
+    //                         parameter.id_georegion])     // "id_georegion" (optional)
 
     
     public func countries(byRegionId regionId: String?,
-                          failure:@escaping (_ error: WGError?) -> Void,
-                           success:@escaping (_ countries: Countries?) -> Void) {
+                                      failure: @escaping FailureType,
+                                      success: @escaping (_ countries: Countries?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let regionId = regionId {
@@ -468,15 +450,15 @@ extension ForecastWindguruService {
         }
     }
     
-    //    static let regions = api(query: routine.regions,
-    //                             errorCode: err.regions.rawValue,
-    //                             parameters: [parameter.with_spots,     // with_spots = 1 (optional)
-    //                                parameter.id_country])    // "id_country" (optional)
+    // regions = api(query: routine.regions,
+    //           errorCode: err.regions.rawValue,
+    //          parameters: [parameter.with_spots,     // with_spots = 1 (optional)
+    //                       parameter.id_country])    // "id_country" (optional)
 
     
     public func regions(byCountryId countryId: String?,
-                          failure:@escaping (_ error: WGError?) -> Void,
-                          success:@escaping (_ regions: Regions?) -> Void) {
+                                      failure: @escaping FailureType,
+                                      success: @escaping (_ regions: Regions?) -> Void) {
         
         var tokens : [String: String?] = [:]
         if let countryId = countryId {

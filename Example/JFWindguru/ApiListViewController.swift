@@ -429,7 +429,7 @@ extension ApiListViewController: UITableViewDelegate {
             
 
         case "geo_regions":
-            ForecastWindguruService.instance.geoRegions(failure: {
+            ForecastWindguruService.instance.geoRegions(withFailure: {
                 (error) in
                 let subTitle = error?.title() ?? ""
                 SCLAlertView().showError("Error on \(service)", subTitle: subTitle)

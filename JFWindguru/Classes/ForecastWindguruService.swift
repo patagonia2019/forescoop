@@ -22,6 +22,8 @@ import AlamofireObjectMapper
 
 public class ForecastWindguruService: NSObject {
 
+    public typealias FailureType = (_ error: WGError?) -> Void
+
     public struct Definition {
         static let defaultModel = "3"
         
@@ -210,15 +212,17 @@ public class ForecastWindguruService: NSObject {
 
                 static let wforecast = api(query: routine.wforecast,
                                            errorCode: err.wforecast.rawValue,
-                                           parameters: [parameter.id_spot,
+                                           parameters: [parameter.username,     // pro users
+                                                        parameter.password,     // pro users
+                                                        parameter.id_spot,
                                                         parameter.id_model,
                                                         parameter.no_wave])
                 
                 static let wforecastLatlon = api(query: routine.wforecast_latlon,
                                                  errorCode: err.wforecast_latlon.rawValue,
-                                                 parameters: [parameter.id_model,
-                                                              parameter.username,
-                                                              parameter.password,
+                                                 parameters: [parameter.username,   // pro users
+                                                              parameter.password,   // pro users
+                                                              parameter.id_model,
                                                               parameter.lat,
                                                               parameter.lon,
                                                               parameter.no_wave])
