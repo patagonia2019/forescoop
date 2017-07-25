@@ -53,9 +53,12 @@ public class WForecast: Mappable {
     public var precipitation: [Int]? //  APCP: Precip. (mm/3h)
     public var windSpeed: [Float]? //  WINDSPD: Wind speed (knots)
     public var windDirection: [Int]? //  WINDDIR: Wind direction
-    public var SMERN: [Int]?
+    public var SMER: [Int]?          // SMER: something related to wind speed
+    public var SMERN: [Int]?         // SMERN: something related to wind speed
+    public var HTSGW: [Float]?         // HTSGW: something related to wind
+    public var PERPW: [Float]?         // PERPW: something related to wind
     public var temperatureReal: [Float]? // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
-    public var PCPT: [Int]?
+    public var PCPT: [Int]?         // PCPT: precip.
     public var hr_weekday: [Int]?
     public var hr_h: [String]?
     public var hr_d: [String]?
@@ -92,8 +95,11 @@ public class WForecast: Mappable {
         windSpeed <- map["WINDSPD"]
         windDirection <- map["WINDDIR"]
         SMERN <- map["SMERN"]
+        SMER <- map["SMER"]
         temperatureReal <- map["TMPE"]
         PCPT <- map["PCPT"]
+        HTSGW <- map["HTSGW"]
+        PERPW <- map["PERPW"]
         hr_weekday <- map["hr_weekday"]
         hr_h <- map["hr_h"]
         hr_d <- map["hr_d"]
@@ -153,6 +159,9 @@ public class WForecast: Mappable {
         if let SMERN = SMERN {
             aux += "SMERN: \(SMERN.description)\n"
         }
+        if let SMER = SMER {
+            aux += "SMER: \(SMER.description)\n"
+        }
         if let temperature = temperature {
             aux += "Temp: \(temperature.description)\n"
         }
@@ -161,6 +170,12 @@ public class WForecast: Mappable {
         }
         if let PCPT = PCPT {
             aux += "PCPT: \(PCPT.description)\n"
+        }
+        if let HTSGW = HTSGW {
+            aux += "HTSGW: \(HTSGW.description)\n"
+        }
+        if let PERPW = PERPW {
+            aux += "PERPW: \(PERPW.description)\n"
         }
         if let hr_weekday = hr_weekday {
             aux += "hr_weekday: \(hr_weekday)\n"
