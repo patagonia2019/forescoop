@@ -304,5 +304,67 @@ public class ForecastWindguruService: NSObject {
                 wgdata: response.data))
         }
     }
+    
+    
+    /*
+     * Private parts
+     */
+    
+    private struct Constants {
+        static let plist = "ForecastWindguruService"
+        static let frameworkBundle = "JFWindguru"
+        static let bundleResource = "JFWindguru"
+    }
+    
+    private func bundleFromFramework() -> Bundle? {
+        var fwkBundle : Bundle? = nil
+        for bundle in Bundle.allFrameworks {
+            if let bundleIdentifier = bundle.bundleIdentifier,
+                bundleIdentifier.hasSuffix(Constants.frameworkBundle) == true {
+                fwkBundle = bundle
+                break
+            }
+        }
+        if let fwkBundle = fwkBundle,
+            let innerBundlePath = fwkBundle.path(forResource: Constants.bundleResource, ofType: "bundle")
+        {
+            return Bundle.init(path: innerBundlePath)
+        }
+        return Bundle.init(identifier: "org.cocoapods.\(Constants.bundleResource)")
+    }
+    
+    
+    private func fwkBundle() -> Bundle? {
+        guard let bundle = bundleFromFramework() else {
+            assert(false, "Check if \(Constants.frameworkBundle) is framework available in bundle:\(Constants.bundleResource)")
+            return nil
+        }
+        return bundle
+    }
+    
+    private lazy var info : [String : AnyObject]? = {
+        guard let bundle = self.fwkBundle(),
+            let path = bundle.path(forResource: Constants.plist, ofType: "plist"),
+            let dict = NSDictionary.init(contentsOfFile: path) as? [String: AnyObject] else {
+                return nil
+        }
+        return dict
+    }()
+    
+    public func conversionDict() -> [String: Float?]? {
+        guard let info = info else {
+            return nil
+        }
+        return info["conversion"] as? [String: Float?]
+    }
+    
+    public func beaufortArray() -> Array<[String: Any?]>? {
+        guard let info = info,
+            let bft = info["bft"] as? Array<[String: Any?]> else {
+                return nil
+        }
+        return bft
+    }
+
   
 }

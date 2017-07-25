@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bft</key>
+	<array>
+		<dict>
+			<key>beaufort</key>
+			<integer>0</integer>
+			<key>rangeKnots</key>
+			<string>[0,1)</string>
+			<key>knotsLimit</key>
+			<integer>1</integer>
+			<key>effect</key>
+			<string>Calm</string>
+			<key>effectOnSea</key>
+			<string>Sea like a mirror</string>
+			<key>effectOnLand</key>
+			<string>Calm. Smoke rises vertically.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>1</integer>
+			<key>rangeKnots</key>
+			<string>[1,4)</string>
+			<key>knotsLimit</key>
+			<integer>4</integer>
+			<key>effect</key>
+			<string>Light Air</string>
+			<key>effectOnSea</key>
+			<string>Ripples with the appearance of scales are formed, but without foam crests</string>
+			<key>effectOnLand</key>
+			<string>Wind motion visible in smoke.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>2</integer>
+			<key>rangeKnots</key>
+			<string>[4,7)</string>
+			<key>knotsLimit</key>
+			<integer>7</integer>
+			<key>effect</key>
+			<string>Light Breeze</string>
+			<key>effectOnSea</key>
+			<string>Small wavelets, still short, but more pronounced. Crests have a glassy appearance and do not break.</string>
+			<key>effectOnLand</key>
+			<string>Wind felt on exposed skin. Leaves rustle.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>3</integer>
+			<key>rangeKnots</key>
+			<string>[7,11)</string>
+			<key>knotsLimit</key>
+			<integer>11</integer>
+			<key>effect</key>
+			<string>Gentle Breeze</string>
+			<key>effectOnSea</key>
+			<string>Large wavelets. Crests begin to break. Foam of glassy appearance. Perhaps scattered white horses.</string>
+			<key>effectOnLand</key>
+			<string>Leaves and smaller twigs in constant motion.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>4</integer>
+			<key>rangeKnots</key>
+			<string>[11,16)</string>
+			<key>knotsLimit</key>
+			<integer>16</integer>
+			<key>effect</key>
+			<string>Moderate Breeze</string>
+			<key>effectOnSea</key>
+			<string>Small waves, becoming larger; fairly frequent white horses.</string>
+			<key>EffectOnLand</key>
+			<string>Dust and loose paper raised. Small branches begin to move.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>5</integer>
+			<key>rangeKnots</key>
+			<string>[16,22)</string>
+			<key>knotsLimit</key>
+			<integer>22</integer>
+			<key>effect</key>
+			<string>Fresh Breeze</string>
+			<key>effectOnSea</key>
+			<string>Moderate waves, taking a more pronounced long form; many white horses are formed. Chance of some spray.	</string>
+			<key>effectOnLand</key>
+			<string>Branches of a moderate size move. Small trees begin to sway.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>6</integer>
+			<key>rangeKnots</key>
+			<string>[22,28)</string>
+			<key>knotsLimit</key>
+			<integer>28</integer>
+			<key>effect</key>
+			<string>Strong Breeze</string>
+			<key>effectOnSea</key>
+			<string>Large waves begin to form; the white foam crests are more extensive everywhere. Probably some spray.</string>
+			<key>effectOnLand</key>
+			<string>Large branches in motion. Whistling heard in overhead wires. Umbrella use becomes difficult. Empty plastic garbage cans tip over.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>7</integer>
+			<key>rangeKnots</key>
+			<string>[28,34)</string>
+			<key>knotsLimit</key>
+			<integer>34</integer>
+			<key>effect</key>
+			<string>Near Gale</string>
+			<key>effectOnSea</key>
+			<string>Sea heaps up and white foam from breaking waves begins to be blown in streaks along the direction of the wind.</string>
+			<key>effectOnLand</key>
+			<string>Whole trees in motion. Effort needed to walk against the wind. Swaying of skyscrapers may be felt, especially by people on upper floors.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>8</integer>
+			<key>rangeKnots</key>
+			<string>[34,41)</string>
+			<key>knotsLimit</key>
+			<integer>41</integer>
+			<key>effect</key>
+			<string>Gale</string>
+			<key>effectOnSea</key>
+			<string>Moderately high waves of greater length; edges of crests begin to break into spindrift. The foam is blown in well-marked streaks along the direction of the wind.</string>
+			<key>effectOnLand</key>
+			<string>Twigs broken from trees. Cars veer on road.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>9</integer>
+			<key>rangeKnots</key>
+			<string>[41,48)</string>
+			<key>knotsLimit</key>
+			<integer>48</integer>
+			<key>effect</key>
+			<string>Severe Gale</string>
+			<key>effectOnSea</key>
+			<string>High waves. Dense streaks of foam along the direction of the wind. Crests of waves begin to topple, tumble and roll over. Spray may affect visibility.</string>
+			<key>effectOnLand</key>
+			<string>Larger branches break off trees, and some small trees blow over. Construction/temporary signs and barricades blow over. Damage to circus tents and canopies.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>10</integer>
+			<key>rangeKnots</key>
+			<string>[48,56)</string>
+			<key>knotsLimit</key>
+			<integer>56</integer>
+			<key>effect</key>
+			<string>Storm</string>
+			<key>effectOnSea</key>
+			<string>Very high waves with long over-hanging crests. The resulting foam, in great patches, is blown in dense white streaks along the direction of the wind. On the whole the surface of the sea takes on a white appearance. The &apos;tumbling&apos; of the sea becomes heavy and shock-like. Visibility affected.</string>
+			<key>effectOnLand</key>
+			<string>Trees are broken off or uprooted, saplings bent and deformed, poorly attached asphalt shingles and shingles in poor condition peel off roofs.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>11</integer>
+			<key>rangeKnots</key>
+			<string>[56,64)</string>
+			<key>knotsLimit</key>
+			<integer>64</integer>
+			<key>effect</key>
+			<string>Violent Storm</string>
+			<key>effectOnSea</key>
+			<string>Exceptionally high waves (small and medium-size ships might disappear behind the waves). The sea is completely covered with long white patches of foam flying along the direction of the wind. Everywhere the edges of the wave crests are blown into froth. Visibility affected.</string>
+			<key>effectOnLand</key>
+			<string>Widespread vegetation damage. More damage to most roofing surfaces, asphalt tiles that have curled up and/or fractured due to age may break away completely.</string>
+		</dict>
+		<dict>
+			<key>beaufort</key>
+			<integer>12</integer>
+			<key>rangeKnots</key>
+			<string>[64,72)</string>
+			<key>knotsLimit</key>
+			<integer>72</integer>
+			<key>effect</key>
+			<string>Hurricane</string>
+			<key>effectOnSea</key>
+			<string>The air is filled with foam and spray. Sea completely white with driving spray; visibility very seriously affected.</string>
+			<key>effectOnLand</key>
+			<string>Considerable and widespread damage to vegetation, a few windows broken, structural damage to mobile homes and poorly constructed sheds and barns. Debris may be hurled about.</string>
+		</dict>
+	</array>
+	<key>conversion</key>
+	<dict>
+		<key>mph</key>
+		<real>1.15078</real>
+		<key>kmh</key>
+		<real>1.852</real>
+		<key>mps</key>
+		<real>0.514444</real>
+	</dict>
+</dict>
+</plist>

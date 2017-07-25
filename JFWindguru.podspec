@@ -34,7 +34,8 @@ Use this framework in Swift to get windGURU service for forecasting weather. For
   s.watchos.deployment_target = '2.2'
 
   s.source_files = 'JFWindguru/Classes/**/*'
-  
+  s.resources = 'JFWindguru/Assets/**/*.{lproj,xcassets,storyboard,plist,strings}'
+
   s.dependency 'AlamofireObjectMapper', '~> 4.0'
 
 end

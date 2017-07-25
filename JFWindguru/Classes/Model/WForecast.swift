@@ -228,4 +228,16 @@ public class WForecast: Mappable {
         return aux
     }
     
+    // Thanks: https://www.campbellsci.com/blog/convert-wind-directions
+    static public func windDirectionName(direction: Int) -> String? {
+        let compass = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW","N"]
+        let module = Double(direction % 360)
+        let index = Int(module / 22.5) + 1 // degrees for each sector
+        if index >= 0 && index < compass.count {
+            return compass[index]
+        }
+        return nil
+    }
+    
+
 }
