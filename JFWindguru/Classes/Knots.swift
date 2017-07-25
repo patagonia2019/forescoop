@@ -57,7 +57,7 @@ public struct Knots {
         }
         for bftInfo in bftArray {
             if let knotsLimit = bftInfo["knotsLimit"] as? Float,
-                knots > knotsLimit
+                knots < knotsLimit
             {
                 return bftInfo["beaufort"] as? Int
             }
@@ -85,7 +85,7 @@ public struct Knots {
         }
         for bftInfo in bftArray {
             if let knotsLimit = bftInfo["knotsLimit"] as? Float,
-                knots > knotsLimit
+                knots < knotsLimit
             {
                 return bftInfo["effectOnSea"] as? String
             }
@@ -99,7 +99,7 @@ public struct Knots {
         }
         for bftInfo in bftArray {
             if let knotsLimit = bftInfo["knotsLimit"] as? Float,
-                knots > knotsLimit
+                knots < knotsLimit
             {
                 return bftInfo["effectOnLand"] as? String
             }
