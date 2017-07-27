@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  Regions
@@ -31,23 +34,42 @@ import ObjectMapper
  * }
  */
 
-public class Regions: Mappable {
+#if USE_EXT_FWK
+    public class Regions: RegionsObject, Mappable {
     
-    public var regions = [Region]()
+        required convenience public init?(map: Map) {
+            self.init()
+        }
     
-    required public init?(map: Map){
-    }
-    
-    public func mapping(map: Map) {
-        for json in map.JSON {
-            let jsonKV = ["id": json.key, "name": json.value]
-            if let georegion = Mapper<Region>().map(JSON: jsonKV) {
-                regions.append(georegion)
+        public func mapping(map: Map) {
+            for json in map.JSON {
+                let jsonKV = ["id": json.key, "name": json.value]
+                if let region = Mapper<Region>().map(JSON: jsonKV) {
+                    regions.append(region)
+                }
             }
         }
     }
-    public var description : String {
-        var aux : String = ""
+
+#else
+
+    public class Regions: RegionsObject {
+        
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+        }
+    }
+#endif
+
+public class RegionsObject : Object {
+    #if USE_EXT_FWK
+    public var regions = List<Region>()
+    #else
+    public dynamic var regions = [Region]()
+    #endif
+
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
         for region in regions {
             aux += "\(region.description)\n"
         }
@@ -56,5 +78,6 @@ public class Regions: Mappable {
     }
     
 }
+
 
 

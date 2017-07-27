@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  GeoRegion
@@ -18,21 +21,37 @@ import ObjectMapper
  * "32": "Argentina"
  */
 
-public class Country: Mappable {
-    
-    public var id: String?
-    public var name: String?
-    
-    required public init?(map: Map){
+#if USE_EXT_FWK
+
+    public class Country: CountryObject, Mappable {
+        
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+        
+        public func mapping(map: Map) {
+            id <- map["id"]
+            name <- map["name"]
+        }
     }
-    
-    public func mapping(map: Map) {
-        id <- map["id"]
-        name <- map["name"]
+
+#else
+    public class Country: CountryObject {
+        init(dictionary: [String: AnyObject?]) {
+            super.init()
+            id = dictionary["id"] as? String ?? nil
+            name = dictionary["name"] as? String ?? nil
+        }
     }
-    
-    public var description : String {
-        var aux : String = ""
+#endif
+
+public class CountryObject : Object {
+
+    public dynamic var id: String? = nil
+    public dynamic var name: String? = nil
+
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
         
         if let id = id {
             aux += "id: \(id), "

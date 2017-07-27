@@ -7,39 +7,74 @@
 //
 
 import Foundation
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+    import Realm
+#endif
 
-public class Time: NSObject {
-    public var hour: Int?
-    public var minutes: Int?
-    public var seconds: Int?
+#if USE_EXT_FWK
+    public class Time: TimeObject, Mappable {
+
+
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+
+        public func mapping(map: Map) {
+        }
+
+    }
+
+#else
+
+    public class Time: TimeObject {
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+       }
+    }
+#endif
+public class TimeObject : Object {
+    public dynamic var hour: Int = 0
+    public dynamic var minutes: Int = 0
+    public dynamic var seconds: Int = 0
 
     required public init?(_ str: String) {
-        self.hour = 0
-        self.minutes = 0
-        self.seconds = 0
+        super.init()
+        hour = 0
+        minutes = 0
+        seconds = 0
         
         let words = str.components(separatedBy: ":")
         
         if words.count == 3 {
-            self.hour = Int(words[0])
-            self.minutes = Int(words[1])
-            self.seconds = Int(words[2])
+            hour = Int(words[0]) ?? 0
+            minutes = Int(words[1]) ?? 0
+            seconds = Int(words[2]) ?? 0
         }
         else if words.count == 2 {
-            self.hour = Int(words[0])
-            self.minutes = Int(words[1])
+            self.hour = Int(words[0]) ?? 0
+            self.minutes = Int(words[1]) ?? 0
         }
         else {
             assert(false)
         }
     }
+    #if USE_EXT_FWK
+    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
+        super.init(realm: realm, schema: schema)
+    }
+    
+    required public init() {
+        super.init()
+    }
+    
+    required public init(value: Any, schema: RLMSchema) {
+        super.init(value: value, schema: schema)
+    }
+    #endif
 
     public func asDate() -> Date? {
-        guard let hour = hour,
-            let minutes = minutes,
-            let seconds = seconds else {
-                return nil
-        }
         var interval = Double(hour)
         interval += Double(minutes * 60)
         interval += Double(seconds * 60 * 60)
@@ -48,12 +83,9 @@ public class Time: NSObject {
     }
     
     public override var description : String {
-        guard let hour = hour,
-            let minutes = minutes,
-            let seconds = seconds else {
-                return "--:--:--"
-        }
-        return String(format: "%02d:%02d:%02d", hour, minutes, seconds)
+        var aux : String = "\(type(of:self)): "
+        aux += String(format: "%02d:%02d:%02d", hour, minutes, seconds)
+        return aux
     }
 
 }

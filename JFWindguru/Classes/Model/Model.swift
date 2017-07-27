@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  Model
@@ -44,66 +47,79 @@ import ObjectMapper
  * }
  */
 
-public class Model: Mappable {
-    public var id_model: Int?
-    public var model_name: String?
-    public var model: String?
-    public var hr_start: Int?
-    public var hr_end: Int?
-    public var hr_step: Int?
-    public var period: Int?
-    public var resolution: Int?
-    public var update_time: String?
-    public var show_vars: [String]?
-    
-    required public init?(map: Map) {
+#if USE_EXT_FWK
+    public class Model: ModelObject, Mappable {
         
-    }
-    
-    public func mapping(map: Map) {
-        id_model    <- map["id_model"]
-        model_name  <- map["model_name"]
-        model       <- map["model"]
-        hr_start    <- map["hr_start"]
-        hr_end      <- map["hr_end"]
-        hr_step     <- map["hr_step"]
-        period      <- map["period"]
-        resolution  <- map["resolution"]
-        update_time <- map["update_time"]
-        show_vars   <- map["show_vars"]
-    }
-    
-    public var description : String {
-        var aux : String = ""
-        if let id_model = id_model {
-            aux += "Model # \(id_model), "
+        required convenience public init?(map: Map) {
+            self.init()
         }
+    
+        public func mapping(map: Map) {
+            id_model    <- map["id_model"]
+            model_name  <- map["model_name"]
+            model       <- map["model"]
+            hr_start    <- map["hr_start"]
+            hr_end      <- map["hr_end"]
+            hr_step     <- map["hr_step"]
+            period      <- map["period"]
+            resolution  <- map["resolution"]
+            update_time <- map["update_time"]
+            show_vars   <- map["show_vars"]
+        }
+}
+
+#else
+
+    public class Model: ModelObject {
+
+        init(dictionary: [String: AnyObject?]) {
+            super.init()
+            id_model = dictionary["id_model"] as? Int
+            model_name = dictionary["model_name"] as? String ?? nil
+            model = dictionary["model"] as? String ?? nil
+            hr_start = Opt.init(dictionary["hr_start"] as? Int)
+            hr_end = Opt.init(dictionary["hr_end"] as? Int)
+            hr_step = Opt.init(dictionary["hr_step"] as? Int)
+            period = Opt.init(dictionary["period"] as? Int)
+            resolution = Opt.init(dictionary["resolution"] as? Int)
+            update_time = dictionary["update_time"] as? String ?? nil
+            show_vars = dictionary["show_vars"] as? [String] ?? nil
+        }
+    }
+
+#endif
+
+public class ModelObject: Object {
+    public dynamic var id_model : Int = 0
+    public dynamic var model_name: String? = nil
+    public dynamic var model: String? = nil
+    public dynamic var hr_start: Int = 0
+    public var hr_end : Int = 0
+    public var hr_step : Int = 0
+    public var period : Int = 0
+    public var resolution : Int = 0
+    public dynamic var update_time: String?
+    public var show_vars = List<StringObject>()
+
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
+        aux += "Model # \(id_model), "
         if let model_name = model_name {
             aux += "name \(model_name), "
         }
         if let model = model {
             aux += "model \(model).\n"
         }
-        if let hr_start = hr_start {
-            aux += "hr_start \(hr_start), "
-        }
-        if let hr_end = hr_end {
-            aux += "hr_end \(hr_end), "
-        }
-        if let period = period {
-            aux += "period \(period), "
-        }
-        if let resolution = resolution {
-            aux += "resolution \(resolution).\n"
-        }
+        aux += "hr_start \(hr_start), "
+        aux += "hr_end \(hr_end), "
+        aux += "period \(period), "
+        aux += "resolution \(resolution).\n"
         if let update_time = update_time {
             aux += "update_time \(update_time)\n"
         }
-        if let show_vars = show_vars {
+        if show_vars.count > 0 {
             aux += "show_vars \(show_vars)\n"
         }
         return aux
     }
-    
-    
 }

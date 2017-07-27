@@ -119,12 +119,22 @@ public class Facade: NSObject {
         ForecastWindguruService.instance.searchSpots(byLocation: location, failure: { (error) in
             print("error = \(String(describing: error))")
         }) { (spotResult) in
-            guard let spotResult = spotResult,
-                let spots = spotResult.spots,
-                let spot = spots.last,
-                let id_spot = spot.id_spot else {
-                return
-            }
+            
+            #if USE_EXT_FWK
+                guard let spotResult = spotResult,
+                    let spots = spotResult.spots,
+                    let spot = spots.last,
+                    let id_spot = spot.id_spot else {
+                        return
+                }
+            #else
+                guard let spotResult = spotResult,
+//                    let spots = spotResult.spots,
+                    let spot = spotResult.spots.last,
+                    let id_spot = spot.id_spot else {
+                        return
+                }
+            #endif
             ForecastWindguruService.instance.forecast(bySpotId: id_spot, failure: { (error) in
                 print("error = \(String(describing: error))")
             }, success: { (spotForecast) in

@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  Spot
@@ -23,23 +26,40 @@ import ObjectMapper
  * }
  */
 
-public class Spot: Mappable {
-    public var id_spot: String?
-    public var spotname: String?
-    public var country: String?
-    
-    required public init?(map: Map) {
+#if USE_EXT_FWK
+
+    public class Spot: SpotObject, Mappable {
         
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+        
+        public func mapping(map: Map) {
+            id_spot <- map["id_spot"]
+            spotname <- map["spotname"]
+            country <- map["country"]
+        }
     }
-    
-    public func mapping(map: Map) {
-        id_spot <- map["id_spot"]
-        spotname <- map["spotname"]
-        country <- map["country"]
+
+#else
+    public class Spot: SpotObject {
+        
+        init(dictionary: [String: AnyObject?]) {
+            super.init()
+            id_spot = dictionary["id_spot"] as? String ?? nil
+            spotname = dictionary["spotname"] as? String ?? nil
+            country = dictionary["country"] as? String ?? nil
+        }
     }
-    
-    public var description : String {
-        var aux : String = ""
+#endif
+
+public class SpotObject : Object {
+    public dynamic var id_spot: String? = nil
+    public dynamic var spotname: String? = nil
+    public dynamic var country: String? = nil
+
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
         if let id_spot = id_spot {
             aux += "Spot # \(id_spot), "
         }
@@ -51,6 +71,6 @@ public class Spot: Mappable {
         }
         return aux
     }
-
+    
 
 }

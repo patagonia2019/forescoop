@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  SpotOwner
@@ -30,41 +33,55 @@ import ObjectMapper
  *
  */
 
-public class WindguruStation: Mappable {
-    public var id: String?
-    public var station: String?
-    public var distance: Int?
-    public var id_type: String?
-    public var wind_avg: Int?
-    
-    required public init?(map: Map) {
+#if USE_EXT_FWK
+    public class WindguruStation: WindguruStationObject, Mappable {
+
+
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+        
+        public func mapping(map: Map) {
+            id <- map["id"]
+            station <- map["station"]
+            distance <- map["distance"]
+            id_type <- map["id_type"]
+            wind_avg <- map["wind_avg"]
+        }
+
+        
     }
-    
-    public func mapping(map: Map) {
-        id <- map["id"]
-        station <- map["station"]
-        distance <- map["distance"]
-        id_type <- map["id_type"]
-        wind_avg <- map["wind_avg"]
+
+#else
+
+    public class WindguruStation: WindguruStationObject {
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+       }
     }
+#endif
+
+public class WindguruStationObject: Object {
+
+    public dynamic var id: String? = nil
+    public dynamic var station: String? = nil
+    public dynamic var distance: Int = 0
+    public dynamic var id_type: String? = nil
+    public dynamic var wind_avg: Int = 0
     
-    public var description : String {
-        var aux : String = ""
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
         if let id = id {
             aux += "id \(id) "
         }
         if let station = station {
             aux += "station \(station) "
         }
-        if let distance = distance {
-            aux += "distance \(distance) "
-        }
+        aux += "distance \(distance) "
         if let id_type = id_type {
             aux += "id_type \(id_type) "
         }
-        if let wind_avg = wind_avg {
-            aux += "wind_avg \(wind_avg) "
-        }
+        aux += "wind_avg \(wind_avg) "
         return aux
     }
     

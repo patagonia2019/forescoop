@@ -35,7 +35,7 @@ public class WGSuccess: Mappable {
     }
     
     public var description : String {
-        var aux : String = ""
+        var aux : String = "\(type(of:self)): "
         if let returnString = returnString {
             aux += "\(returnString): "
         }

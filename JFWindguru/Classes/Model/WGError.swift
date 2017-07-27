@@ -130,7 +130,8 @@ extension WGError : Error {
     }
         
     public var debugDescription : String {
-        var aux : String = "["
+        var aux : String = "\(type(of:self)): "
+        aux += "["
         if let _error = nserror {
             aux += "\(_error.code);"
             aux += "\(_error.localizedDescription);"

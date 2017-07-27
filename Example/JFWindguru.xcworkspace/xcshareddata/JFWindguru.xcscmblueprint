@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "394C43E239A29C4D492069524767A5F54860F8C9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "394C43E239A29C4D492069524767A5F54860F8C9" : 9223372036854775807,
+    "ECB4E5D30EB201A75BEE03B65290D3567A84F732" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "6743FDAE-07EF-4831-8867-6CD5C58B3434",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "394C43E239A29C4D492069524767A5F54860F8C9" : "jfwindguru\/",
+    "ECB4E5D30EB201A75BEE03B65290D3567A84F732" : "jfcore\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "JFWindguru",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Example\/JFWindguru.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/southfox\/jfwindguru.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "394C43E239A29C4D492069524767A5F54860F8C9"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/southfox\/jfcore.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "ECB4E5D30EB201A75BEE03B65290D3567A84F732"
+    }
+  ]
+}

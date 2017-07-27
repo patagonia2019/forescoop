@@ -7,7 +7,10 @@
 //
 
 import Foundation
+#if USE_EXT_FWK
 import ObjectMapper
+import RealmSwift
+#endif
 
 /*
  *  Countries
@@ -30,23 +33,40 @@ import ObjectMapper
  * }
  */
 
-public class Countries: Mappable {
-    
-    public var countries = [Country]()
-    
-    required public init?(map: Map){
-    }
-    
-    public func mapping(map: Map) {
-        for json in map.JSON {
-            let jsonKV = ["id": json.key, "name": json.value]
-            if let country = Mapper<Country>().map(JSON: jsonKV) {
-                countries.append(country)
+#if USE_EXT_FWK
+    public class Countries: CountriesObject, Mappable {
+        
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+        
+        public func mapping(map: Map) {
+            for json in map.JSON {
+                let jsonKV = ["id": json.key, "name": json.value]
+                if let country = Mapper<Country>().map(JSON: jsonKV) {
+                    countries.append(country)
+                }
             }
         }
     }
-    public var description : String {
-        var aux : String = ""
+#else
+    public class Countries: CountriesObject {
+        
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+        }
+    }
+#endif
+
+public class CountriesObject : Object {
+    #if USE_EXT_FWK
+    let countries = List<Country>()
+    #else
+    public dynamic var countries = [Country]()
+    #endif
+    
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
         for country in countries {
             aux += "\(country.description)\n"
         }

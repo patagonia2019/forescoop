@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  SpotOwner
@@ -29,25 +32,43 @@ import ObjectMapper
  *
  */
 
-public class SpotOwner: Spot {
-    public var id_user: Int?
+#if USE_EXT_FWK
+    public class SpotOwner: SpotOwnerObject, Mappable {
     
-    required public init?(map: Map) {
-        super.init(map: map)
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+    
+        public func mapping(map: Map) {
+            id_user <- map["id_user"]
+            id_spot <- map["id_spot"]
+            spotname <- map["spotname"]
+            country <- map["country"]
+        }
+    
     }
-    
-    override public func mapping(map: Map) {
-        super.mapping(map: map)
-        id_user <- map["id_user"]
+
+#else
+
+    public class SpotOwner: SpotOwnerObject {
+        init(dictionary: [String: AnyObject?]) {
+            super.init(dictionary: dictionary)
+            id_user = dictionary["id_user"] ?? nil
+       }
     }
-    
+#endif
+
+public class SpotOwnerObject: SpotObject {
+
+    public dynamic var id_user: String? = nil
+
     override public var description : String {
         var aux : String = super.description
+        aux += "\(type(of:self)): "
         if let id_user = id_user {
-            aux += "\nuser ud \(id_user).\n"
+            aux += "\nuser id \(id_user).\n"
         }
         return aux
     }
     
-
 }

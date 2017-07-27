@@ -7,9 +7,12 @@
 //
 
 import Foundation
-import ObjectMapper
-import Alamofire
-import AlamofireObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+    import Alamofire
+    import AlamofireObjectMapper
+#endif
 
 
 extension ForecastWindguruService {
@@ -475,5 +478,65 @@ extension ForecastWindguruService {
                 failure: failure, success: success)
         }
     }
+
+    /*
+     * Privates part
+     */
+    func replicates<T>(_ response: DataResponse<T>,
+                    url: String,
+                    api: ForecastWindguruService.Definition.service.api,
+                    context: String,
+                    failure:@escaping (_ error: WGError?) -> Void,
+                    success:@escaping (_ result: T?) -> Void)
+    {
+        if  response.result.error == nil,
+            let responseResultValue = response.result.value,
+            let responseData = response.data,
+            let jsonString = String(data: responseData, encoding: .utf8),
+            let error = Mapper<WGError>().map(JSONString: jsonString),
+            (error.toJSON().count == 0 || error.returnString == "OK")
+        {
+            print("SUCCESS url = \(url) - response.result.value \(responseResultValue)")
+            success(responseResultValue)
+        }
+        else {
+            print("FAILURE url = \(url) - response.result.error \(String(describing: response.result.error))")
+            failure(WGError.init(code: api.errorCode,
+                                 desc: "failed using=\(url).",
+                reason: "\(api.query) failed",
+                suggestion: context,
+                underError: response.result.error as NSError?,
+                wgdata: response.data))
+        }
+    }
     
+    func replicatesWithString(_ response: DataResponse<String>,
+                              url: String,
+                              api: ForecastWindguruService.Definition.service.api,
+                              context: String,
+                              failure:@escaping (_ error: WGError?) -> Void,
+                              success:@escaping (_ result: [String]) -> Void)
+    {
+        if  response.result.error == nil,
+            let responseResultValue = response.result.value,
+            let responseData = response.data,
+            let jsonString = String(data: responseData, encoding: .utf8),
+            Mapper<WGError>().map(JSONString: jsonString) == nil
+        {
+            let array = Array(Set(responseResultValue.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
+            
+            print("SUCCESS url = \(url) - response.result.value \(String(describing: responseResultValue))")
+            success(array)
+        }
+        else {
+            print("FAILURE url = \(url) - response.result.error \(String(describing: response.result.error))")
+            failure(WGError.init(code: api.errorCode,
+                                 desc: "failed using=\(url).",
+                reason: "\(api.query) failed",
+                suggestion: context,
+                underError: response.result.error as NSError?,
+                wgdata: response.data))
+        }
+    }
+
 }

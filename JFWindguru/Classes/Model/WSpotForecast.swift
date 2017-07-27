@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  SpotForecast
@@ -47,106 +50,131 @@ import ObjectMapper
  *
  */
 
-public class WSpotForecast: Mappable {
-    public var id_spot: Int?
-    public var id_user: Int?
-    public var nickname: String?
-    public var spotname: String?
-    public var spot: String?
-    public var lat: Float?
-    public var lon: Float?
-    public var alt: Int?
-    public var id_model: String?
-    public var model: String?
-    public var model_alt: Int?
-    public var levels: Int?
-    public var sst: String?
-    public var sunrise: String?
-    public var sunset: String?
-    var elapse : Elapse?
-    public var tz: String?
-    public var tzutc: String?
-    public var utc_offset: Int?
-    public var tzid: String?
-    public var tides: Int?
-    public var md5chk: String?
-    public var fcst: WForecast?
-    public var wgs: Bool?
-    public var wgs_arr: [WindguruStation]?
-    public var wgs_wind_avg: Int?
-    
-    required public init?(map: Map) {
-    }
-    
-    
-    public func mapping(map: Map) {
-        id_spot       <- map["id_spot"]
-        id_user       <- map["id_user"]
-        nickname      <- map["nickname"]
-        spotname      <- map["spotname"]
-        spot          <- map["spot"]
-        lat           <- map["lat"]
-        lon           <- map["lon"]
-        alt           <- map["alt"]
-        id_model      <- map["id_model"]
-        model         <- map["model"]
-        model_alt     <- map["model_alt"]
-        levels        <- map["levels"]
-        sst           <- map["sst"]
-        sunrise       <- map["sunrise"]
-        sunset        <- map["sunset"]
-        if let sunrise = sunrise,
-            let sunset = sunset
-        {
-            elapse = Elapse.init(sunrise, end: sunset)
-        }
-        tz            <- map["tz"]
-        tzutc         <- map["tzutc"]
-        utc_offset    <- map["utc_offset"]
-        tzid          <- map["tzid"]
-        tides         <- map["tides"]
-        md5chk        <- map["md5chk"]
-        wgs           <- map["wgs"]
-        wgs_arr       <- map["wgs_arr"]
-        wgs_wind_avg  <- map["wgs_wind_avg"]
+#if USE_EXT_FWK
+    public class WSpotForecast: WSpotForecastObject, Mappable {
 
-        guard let id_model = id_model else { return }
-        fcst <- map["fcst.\(id_model)"]
+
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+
+        public func mapping(map: Map) {
+            id_spot       <- map["id_spot"]
+            id_user       <- map["id_user"]
+            nickname      <- map["nickname"]
+            spotname      <- map["spotname"]
+            spot          <- map["spot"]
+            lat           <- map["lat"]
+            lon           <- map["lon"]
+            alt           <- map["alt"]
+            id_model      <- map["id_model"]
+            model         <- map["model"]
+            model_alt     <- map["model_alt"]
+            levels        <- map["levels"]
+            sst           <- map["sst"]
+            sunrise       <- map["sunrise"]
+            sunset        <- map["sunset"]
+            if let sunrise = sunrise,
+                let sunset = sunset
+            {
+                elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+            }
+            tz            <- map["tz"]
+            tzutc         <- map["tzutc"]
+            utc_offset    <- map["utc_offset"]
+            tzid          <- map["tzid"]
+            tides         <- map["tides"]
+            md5chk        <- map["md5chk"]
+            wgs           <- map["wgs"]
+            wgs_arr <- (map["wgs_arr"], ArrayTransform<WindguruStation>())
+            wgs_wind_avg  <- map["wgs_wind_avg"]
+
+            guard let id_model = id_model else { return }
+            fcst <- map["fcst.\(id_model)"]
+        }
+
     }
+
+#else
+
+    public class WSpotForecast: WSpotForecastObject {
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+       }
+    }
+#endif
+
+public class WSpotForecastObject: Object {
+    dynamic var id_spot = 0
+    dynamic var id_user = 0
+    dynamic var nickname: String? = nil
+    dynamic var spotname: String? = nil
+    dynamic var spot: String? = nil
+    dynamic var lat: Float = 0.0
+    dynamic var lon: Float = 0.0
+    dynamic var alt = 0
+    dynamic var id_model: String? = nil
+    dynamic var model: String? = nil
+    dynamic var model_alt = 0
+    dynamic var levels = 0
+    dynamic var sst: String? = nil
+    dynamic var sunrise: String? = nil
+    dynamic var elapse: Elapse?
+    dynamic var sunset: String? = nil
+    dynamic var tz: String? = nil
+    dynamic var tzutc: String? = nil
+    dynamic var utc_offset = 0
+    dynamic var tzid: String? = nil
+    dynamic var tides = 0
+    dynamic var md5chk: String? = nil
+    dynamic var fcst : WForecast?
+    dynamic var wgs = false
+    #if USE_EXT_FWK
+    public var wgs_arr = List<WindguruStation>()
+    #else
+    public var wgs_arr: [WindguruStation]?
+    #endif
+    dynamic var wgs_wind_avg = 0
     
-    public var description : String {
-        var aux : String = ""
-        if let id_spot      = id_spot       { aux += "id_spot     : \(id_spot), " }
-        if let id_user      = id_user       { aux += "id_user     : \(id_user), " }
-        if let nickname     = nickname      { aux += "nickname    : \(nickname), " }
-        if let spotname     = spotname      { aux += "spotname    : \(spotname), " }
-        if let spot         = spot          { aux += "spot        : \(spot), " }
-        if let lat          = lat           { aux += "lat         : \(lat), " }
-        if let lon          = lon           { aux += "lon         : \(lon), " }
-        if let alt          = alt           { aux += "alt         : \(alt), " }
-        if let id_model     = id_model      { aux += "id_model    : \(id_model), " }
-        if let model        = model         { aux += "model       : \(model), " }
-        if let model_alt    = model_alt     { aux += "model_alt   : \(model_alt), " }
-        if let levels       = levels        { aux += "levels      : \(levels), " }
-        if let sst          = sst           { aux += "sst         : \(sst), " }
-        if let sunrise      = sunrise       { aux += "sunrise     : \(sunrise), " }
-        if let sunset       = sunset        { aux += "sunset      : \(sunset), " }
-        if let tz           = tz            { aux += "tz          : \(tz), " }
-        if let tzutc        = tzutc         { aux += "tzutc       : \(tzutc), " }
-        if let utc_offset   = utc_offset    { aux += "utc_offset  : \(utc_offset), " }
-        if let tzid         = tzid          { aux += "tzid        : \(tzid), " }
-        if let tides        = tides         { aux += "tides       : \(tides), " }
-        if let md5chk       = md5chk        { aux += "md5chk      : \(md5chk), " }
+    
+    override public var description : String {
+        var aux : String = "\(type(of:self)):\n"
+        aux += "id_spot : \(id_spot), "
+        aux += "id_user : \(id_user)\n"
+        if let nickname     = nickname      { aux += "nickname : \(nickname), " }
+        if let spotname     = spotname      { aux += "spotname : \(spotname), " }
+        if let spot         = spot          { aux += "spot : \(spot)\n" }
+        aux += "lat         : \(lat), "
+        aux += "lon         : \(lon), "
+        aux += "alt         : \(alt)\n"
+        if let id_model     = id_model      { aux += "id_model : \(id_model), " }
+        if let model        = model         { aux += "model : \(model), " }
+        aux += "model_alt   : \(model_alt), "
+        aux += "levels      : \(levels)\n"
+        if let sst          = sst           { aux += "sst : \(sst)\n" }
+        if let sunrise      = sunrise       { aux += "sunrise : \(sunrise), " }
+        if let sunset       = sunset        { aux += "sunset : \(sunset)\n" }
+        if let tz           = tz            { aux += "tz : \(tz), " }
+        if let tzutc        = tzutc         { aux += "tzutc : \(tzutc), " }
+        aux += "utc_offset  : \(utc_offset), "
+        if let tzid         = tzid          { aux += "tzid : \(tzid)\n" }
+        aux += "tides       : \(tides), "
+        if let md5chk       = md5chk        { aux += "md5chk      : \(md5chk)\n" }
         if let fcst = fcst {
             aux += "Forecast\n \(fcst.description)\n"
         }
-        if let wgs_wind_avg = wgs_wind_avg  { aux += "wgs_wind_avg: \(wgs_wind_avg)\n" }
+        #if USE_EXT_FWK
+            for wgs in wgs_arr {
+                aux += "WGS: \(wgs.description)\n"
+            }
+        #else
         if let wgs_arr = wgs_arr {
             for wgs in wgs_arr {
                 aux += "WGS: \(wgs.description)\n"
             }
         }
-        
+        #endif
+        aux += "wgs_wind_avg: \(wgs_wind_avg)\n"
         return aux
     }
     

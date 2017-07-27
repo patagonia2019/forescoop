@@ -37,5 +37,10 @@ Use this framework in Swift to get windGURU service for forecasting weather. For
   s.resources = 'JFWindguru/Assets/**/*.{lproj,xcassets,storyboard,plist,strings}'
 
   s.dependency 'AlamofireObjectMapper', '~> 4.0'
-
+  s.dependency 'RealmSwift'
+  s.pod_target_xcconfig = {
+    'OTHER_SWIFT_FLAGS' => '-DUSE_EXT_FWK',
+  }
 end
+
+

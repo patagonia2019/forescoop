@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  SpotForecast
@@ -39,43 +42,86 @@ import ObjectMapper
  *
  */
 
-public class SpotForecast: SpotInfo {
-    public var currentModel: String?
-    public var forecasts: Dictionary<String, ForecastModel>
-
-    required public init?(map: Map) {
-        forecasts = [:]
-        super.init(map: map)
-    }
-    
-    
-    override public func mapping(map: Map) {
-        super.mapping(map: map)
-        if let models = models {
+#if USE_EXT_FWK
+    public class SpotForecast: SpotForecastObject, Mappable {
+        
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+        
+        public func mapping(map: Map) {
+            id_spot <- map["id_spot"]
+            spotname <- map["spotname"]
+            country <- map["country"]
+            countryId <- map["id_country"]
+            latitude <- map["lat"]
+            longitude <- map["lon"]
+            altitude <- map["alt"]
+            timezone <- map["tz"]
+            gmtHourOffset <- map["gmt_hour_offset"]
+            sunrise <- map["sunrise"]
+            sunset <- map["sunset"]
+            if let sunrise = sunrise,
+                let sunset = sunset
+            {
+                elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+            }
+            models = StringObject.map(map: map, key: "models")
+            tides <- map["tides"]
             for model in models {
                 var tmpForecast : Forecast?
-                tmpForecast <- map["forecast.\(model)"]
-                if let forecast = tmpForecast {
-                    forecasts[model] = ForecastModel(model: model, info: forecast)
-                    currentModel = model
+                if let modelValue = model.value {
+                    tmpForecast <- map["forecast.\(modelValue)"]
+                    if let forecast = tmpForecast {
+                        #if USE_EXT_FWK
+                            forecasts.append(ForecastModel(model: modelValue, info: forecast))
+                        #else
+                            forecasts?[model] = ForecastModel(model: modelValue, info: forecast)
+                        #endif
+                        currentModel = model.value
+                    }
                 }
             }
         }
+        
     }
+
+#else
+
+    public class SpotForecast: SpotForecastObject {
+        init(dictionary: [String: AnyObject?]) {
+            super.init(dictionary: dictionary)
+            current_model = dictionary["current_model"] ?? nil
+            forecasts = dictionary["forecasts"] ?? nil
+       }
+    }
+#endif
+
+public class SpotForecastObject: SpotInfoObject {
     
+    public dynamic var currentModel: String? = nil
+    #if USE_EXT_FWK
+    public let forecasts = List<ForecastModel>()
+    #else
+    public var forecasts: Dictionary<String, ForecastModel>?
+    #endif
+
     override public var description : String {
         var aux : String = super.description
+        aux += "\(type(of:self)): "
         if let currentModel = currentModel {
             aux += "currentModel \(currentModel), "
         }
-        if let models = models {
-            for model in models {
-                if let forecast = forecasts[model] {
-                    aux += "Forecast model: \(model)\n\(forecast.description)\n"
+        for model in models {
+            #if USE_EXT_FWK
+            let model = model.value
+            #endif
+            for forecast in forecasts {
+                if  let fmodel =  forecast.model, fmodel == model {
+                    aux += "Forecast model: \(fmodel)\n\(forecast.description)\n"
                 }
             }
         }
-
         return aux
     }
 

@@ -8,7 +8,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  TimeWeather
@@ -90,41 +93,70 @@ import ObjectMapper
  */
 
 
-public class TimeWeather: Mappable {
+#if USE_EXT_FWK
+    public class TimeWeather: TimeWeatherObject, Mappable {
 
-    public var value: Dictionary<String, AnyObject>
 
-    required public init?(map: Map){
-        value = [:]
-    }
-    
-    public func mapping(map: Map) {
-        for key in map.JSON.keys {
-            var tmpValue : AnyObject?
-            tmpValue <- map[key]
-            value[key] = tmpValue
+        required convenience public init?(map: Map) {
+            self.init()
         }
-    }
-    
-    public var description : String {
-        var aux : String = ""
-        let sortedValue = value.sorted { (v0, v1) -> Bool in
-            guard let iv0 = Int(v0.key),
-                let iv1 = Int(v1.key) else {
-                    return false
+        
+        public func mapping(map: Map) {
+            for key in map.JSON.keys {
+                var tmpValue : AnyObject?
+                tmpValue <- map[key]
+                keys.append(StringObject.init(value:[key]))
+                if let str = tmpValue as? String {
+                    strings.append(StringObject.init(value:[str]))
+                }
+                else if let f = tmpValue as? Float {
+                    floats.append(FloatObject.init(value:[f]))
+                }
             }
-            return iv0 < iv1
         }
-        for (k,v) in sortedValue {
-            if let sv = v as? String {
-                aux += "\(k):\(sv); "
+        
+    }
+
+#else
+
+    public class TimeWeather: TimeWeatherObject {
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+       }
+    }
+#endif
+
+public class TimeWeatherObject: Object {
+
+    public var keys = List<StringObject>()
+    public var strings = List<StringObject>()
+    public var floats = List<FloatObject>()
+    
+    override public var description : String {
+        
+        var aux : String = "\(type(of:self)): "
+
+        let orderkeys = keys.sorted { (a, b) -> Bool in
+            if let av = a.value, let bv = b.value,
+                let avi = Int(av), let bvi = Int(bv) {
+                return avi < bvi
             }
-            else if let iv = v as? Int {
-                aux += "\(k):\(iv); "
+            return false
+        }
+        for k in orderkeys {
+            guard let index = keys.index(of: k),
+                let key = k.value
+                else { return "" }
+            aux += "\(key): "
+            if strings.count >= 0 && index < strings.count {
+                aux += strings[index].value ?? ""
             }
-            else if let fv = v as? CGFloat {
-                aux += "\(k):\(fv); "
+            else if floats.count > 0 && index < floats.count {
+                if let v = floats[index].value.value {
+                    aux += v.description
+                }
             }
+            aux += ", "
         }
         aux += "\n"
         return aux

@@ -1,8 +1,8 @@
 //
-//  GeoRegion.swift
+//  SetInfo.swift
 //  Pods
 //
-//  Created by javierfuchs on 7/16/17.
+//  Created by javierfuchs on 7/27/17.
 //
 //
 
@@ -16,13 +16,13 @@ import Foundation
  *  GeoRegion
  *
  *  Discussion:
- *    Model object representing the base class of GeoRegion.
+ *    Model object representing the base class of Region.
  *
- *  "2": "Africa",
+ * "229823": "My forecast",
  */
 
 #if USE_EXT_FWK
-    public class GeoRegion: GeoRegionObject, Mappable {
+    public class SetInfo: SetInfoObject, Mappable {
         
         required convenience public init?(map: Map) {
             self.init()
@@ -32,20 +32,24 @@ import Foundation
             id <- map["id"]
             name <- map["name"]
         }
+        
     }
-
+    
 #else
-    public class GeoRegion: GeoRegionObject {
+    
+    public class SetInfo: SetInfoObject {
+        
         init(dictionary: [String: AnyObject?]) {
             super.init()
             id = dictionary["id"] as? String ?? nil
-            name = dictionary["name"] as? String ?? nil
+            name = dictionary["name"] as? String  ?? nil
         }
     }
+    
 #endif
 
-
-public class GeoRegionObject : Object {
+public class SetInfoObject: Object {
+    
     public dynamic var id: String? = nil
     public dynamic var name: String? = nil
     
@@ -60,4 +64,7 @@ public class GeoRegionObject : Object {
         }
         return aux
     }
+    
 }
+
+

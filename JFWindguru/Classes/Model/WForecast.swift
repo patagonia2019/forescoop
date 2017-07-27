@@ -7,7 +7,10 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
  *  WForecast
@@ -39,8 +42,93 @@ import ObjectMapper
  *  }
  */
 
-public class WForecast: Mappable {
-    public var initStamp: Int? // initstamp
+#if USE_EXT_FWK
+    public class WForecast: WForecastObject, Mappable {
+
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+
+        public func mapping(map: Map) {
+            initStamp <- map["initstamp"]
+
+            temperature = FloatObject.map(map: map, key: "TMP")
+            cloudCoverTotal = IntObject.map(map: map, key: "TCDC")
+            cloudCoverHigh = IntObject.map(map: map, key: "HCDC")
+            cloudCoverMid = IntObject.map(map: map, key: "MCDC")
+            cloudCoverLow = IntObject.map(map: map, key: "LCDC")
+            relativeHumidity = IntObject.map(map: map, key: "RH")
+            windGust = FloatObject.map(map: map, key: "GUST")
+            seaLevelPressure = IntObject.map(map: map, key: "SLP")
+            freezingLevel = IntObject.map(map: map, key: "FLHGT")
+            precipitation = IntObject.map(map: map, key: "APCP")
+            windSpeed = FloatObject.map(map: map, key: "WINDSPD")
+            windDirection = IntObject.map(map: map, key: "WINDDIR")
+            SMERN = IntObject.map(map: map, key: "SMERN")
+            SMER = IntObject.map(map: map, key: "SMER")
+            temperatureReal = FloatObject.map(map: map, key: "TMPE")
+            PCPT = IntObject.map(map: map, key: "PCPT")
+            HTSGW = FloatObject.map(map: map, key: "HTSGW")
+            PERPW = FloatObject.map(map: map, key: "PERPW")
+            hr_weekday = IntObject.map(map: map, key: "hr_weekday")
+            hr_h = StringObject.map(map: map, key: "hr_h")
+            hr_d = StringObject.map(map: map, key: "hr_d")
+            hours = StringObject.map(map: map, key: "hours")
+            initDate <- (map["initdate"], DateTransform())
+            init_d <- map["init_d"]
+            init_dm <- map["init_dm"]
+            init_h <- map["init_h"]
+            initstr <- map["initstr"]
+            model_name <- map["model_name"]
+            model_longname <- map["model_longname"]
+            id_model <- map["id_model"]
+            update_last <- (map["update_last"], DateTransform())
+            update_next <- (map["update_next"], DateTransform())
+            img_param = StringObject.map(map: map, key: "img_param")
+            img_var_map = StringObject.map(map: map, key: "img_var_map")
+        }
+    
+    }
+
+#else
+
+    public class WForecast: WForecastObject {
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+       }
+    }
+#endif
+
+public class WForecastObject: Object {
+
+    dynamic var initStamp   = 0  // initstamp
+
+    #if USE_EXT_FWK
+    var temperature         = List<FloatObject>() // TMP: temperature
+    var cloudCoverTotal     = List<IntObject>() // TCDC: Cloud cover (%) Total
+    var cloudCoverHigh      = List<IntObject>() // HCDC: Cloud cover (%) High
+    var cloudCoverMid       = List<IntObject>() // MCDC: Cloud cover (%) Mid
+    var cloudCoverLow       = List<IntObject>() // LCDC: Cloud cover (%) Low
+    var relativeHumidity    = List<IntObject>() // RH: Relative humidity: relative humidity in percent
+    var windGust            = List<FloatObject>() // GUST: Wind gusts (knots)
+    var seaLevelPressure    = List<IntObject>() // SLP: sea level pressure
+    var freezingLevel       = List<IntObject>() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
+    var precipitation       = List<IntObject>() //  APCP: Precip. (mm/3h)
+    var windSpeed           = List<FloatObject>() //  WINDSPD: Wind speed (knots)
+    var windDirection       = List<IntObject>() //  WINDDIR: Wind direction
+    var SMERN               = List<IntObject>()
+    var SMER                = List<IntObject>()
+    var temperatureReal     = List<FloatObject>() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    var PCPT                = List<IntObject>()
+    var HTSGW               = List<FloatObject>()
+    var PERPW               = List<FloatObject>()
+    var hr_weekday          = List<IntObject>()
+    var hr_h                = List<StringObject>()
+    var hr_d                = List<StringObject>()
+    var hours               = List<StringObject>()
+    var img_param           = List<StringObject>()
+    var img_var_map         = List<StringObject>()
+    #else
     public var temperature: [Float]? // TMP: temperature
     public var cloudCoverTotal: [Int]? // TCDC: Cloud cover (%) Total
     public var cloudCoverHigh: [Int]? // HCDC: Cloud cover (%) High
@@ -63,66 +151,152 @@ public class WForecast: Mappable {
     public var hr_h: [String]?
     public var hr_d: [String]?
     public var hours: [String]?
-    public var initDate: Date?
-    public var init_d: String?
-    public var init_dm: String?
-    public var init_h: String?
-    public var initstr: String?
-    public var model_name: String?
-    public var model_longname: String?
-    public var id_model: String?
-    public var update_last: Date?
-    public var update_next: Date?
+    
     public var img_param: [String:String]?
     public var img_var_map: [String:String]?
+    #endif
     
-    required public init?(map: Map){
+    
+    dynamic var initDate: Date = Date()
+    dynamic var init_d: String = ""
+    dynamic var init_dm: String = ""
+    dynamic var init_h: String = ""
+    dynamic var initstr: String = ""
+    dynamic var model_name: String = ""
+    dynamic var model_longname: String = ""
+    dynamic var id_model: String = ""
+    dynamic var update_last: Date = Date()
+    dynamic var update_next: Date = Date()
+    
+    
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
+
+        aux += "initStamp: \(initStamp)\n"
         
-    }
-    
-    public func mapping(map: Map) {
-        initStamp <- map["initstamp"]
-        temperature <- map["TMP"]
-        cloudCoverTotal <- map["TCDC"]
-        cloudCoverHigh <- map["HCDC"]
-        cloudCoverMid <- map["MCDC"]
-        cloudCoverLow <- map["LCDC"]
-        relativeHumidity <- map["RH"]
-        windGust <- map["GUST"]
-        seaLevelPressure <- map["SLP"]
-        freezingLevel <- map["FLHGT"]
-        precipitation <- map["APCP"]
-        windSpeed <- map["WINDSPD"]
-        windDirection <- map["WINDDIR"]
-        SMERN <- map["SMERN"]
-        SMER <- map["SMER"]
-        temperatureReal <- map["TMPE"]
-        PCPT <- map["PCPT"]
-        HTSGW <- map["HTSGW"]
-        PERPW <- map["PERPW"]
-        hr_weekday <- map["hr_weekday"]
-        hr_h <- map["hr_h"]
-        hr_d <- map["hr_d"]
-        hours <- map["hours"]
-        initDate <- (map["initdate"], DateTransform())
-        init_d <- map["init_d"]
-        init_dm <- map["init_dm"]
-        init_h <- map["init_h"]
-        initstr <- map["initstr"]
-        model_name <- map["model_name"]
-        model_longname <- map["model_longname"]
-        id_model <- map["id_model"]
-        update_last <- (map["update_last"], DateTransform())
-        update_next <- (map["update_next"], DateTransform())
-        img_param <- map["img_param"]
-        img_var_map <- map["img_var_map"]
-    }
-    
-    public var description : String {
-        var aux : String = ""
-        if let initStamp = initStamp {
-            aux += "initStamp: \(initStamp)\n"
-        }
+        #if USE_EXT_FWK
+            aux += "Cloud cover Total: ["
+            for v in cloudCoverTotal {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "High (HCDC): ["
+            for v in cloudCoverHigh {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Mid: ["
+            for v in cloudCoverMid {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Low: ["
+            for v in cloudCoverLow {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Humidity: ["
+            for v in relativeHumidity {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Sea Level pressure: ["
+            for v in seaLevelPressure {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Freezing level: ["
+            for v in freezingLevel {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Precipitation: ["
+            for v in precipitation {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Wind gust: ["
+            for v in windGust {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Wind speed: ["
+            for v in windSpeed {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Wind direccion: ["
+            for v in windDirection {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "SMERN: ["
+            for v in SMERN {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "SMER: ["
+            for v in SMER {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Temp: ["
+            for v in temperature {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "Temp: ["
+            for v in temperatureReal {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "PCPT: ["
+            for v in PCPT {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "HTSGW: ["
+            for v in HTSGW {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "PERPW: ["
+            for v in PERPW {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "hr_weekday: ["
+            for v in hr_weekday {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "hr_h: ["
+            for v in hr_h {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "hr_d: ["
+            for v in hr_d {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "hours: ["
+            for v in hours {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "img_param: ["
+            for v in img_param {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+            aux += "img_var_map: ["
+            for v in img_var_map {
+                aux += "\(v), "
+            }
+            aux += "]\n"
+        #else
+        
         if let cloudCoverTotal = cloudCoverTotal {
             aux += "Cloud cover Total: \(cloudCoverTotal.description)\n"
         }
@@ -189,42 +363,27 @@ public class WForecast: Mappable {
         if let hours = hours {
             aux += "hours: \(hours)\n"
         }
-        if let initDate = initDate {
-            aux += "initDate: \(initDate), "
-        }
-        if let init_d = init_d {
-            aux += "init_d: \(init_d), "
-        }
-        if let init_dm = init_dm {
-            aux += "init_dm: \(init_dm), "
-        }
-        if let init_h = init_h {
-            aux += "init_h: \(init_h), "
-        }
-        if let initstr = initstr {
-            aux += "initstr: \(initstr), "
-        }
-        if let model_name = model_name {
-            aux += "modelName: \(model_name), "
-        }
-        if let model_longname = model_longname {
-            aux += "model_longname: \(model_longname), "
-        }
-        if let id_model = id_model {
-            aux += "id_model: \(id_model), "
-        }
-        if let update_last = update_last {
-            aux += "update_last: \(update_last), "
-        }
-        if let update_next = update_next {
-            aux += "update_next: \(update_next)\n"
-        }
+
         if let img_param = img_param {
             aux += "img_param: \(img_param), "
         }
         if let img_var_map = img_var_map {
             aux += "img_var_map: \(img_var_map)."
         }
+        
+        #endif
+
+        aux += "initDate: \(initDate), "
+        aux += "init_d: \(init_d), "
+        aux += "init_dm: \(init_dm), "
+        aux += "init_h: \(init_h), "
+        aux += "initstr: \(initstr)\n"
+        aux += "modelName: \(model_name), "
+        aux += "model_longname: \(model_longname), "
+        aux += "id_model: \(id_model)\n"
+        aux += "update_last: \(update_last), "
+        aux += "update_next: \(update_next)\n"
+        
         return aux
     }
     

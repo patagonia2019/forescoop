@@ -7,67 +7,60 @@
 //
 
 import Foundation
-import ObjectMapper
+#if USE_EXT_FWK
+    import ObjectMapper
+    import RealmSwift
+#endif
 
 /*
- *  Model
+ *  Models
  *
  *  Discussion:
- *    Model object representing the base class of Models.
+ *    This is just a container of Model.
  *
- * {
- *  "42": {
- *      "id_model": 42,
- *      "model_name": "WRF 3 km",
- *      "model": "wrfcas",
- *      "hr_start": 0,
- *      "hr_end": 48,
- *      "hr_step": 1,
- *      "period": 6,
- *      "resolution": 3,
- *      "update_time": "+7 hours +35 minutes",
- *      "show_vars": [
- *          "WINDSPD",
- *          "GUST",
- *          "MWINDSPD",
- *          "SMER",
- *          "TMP",
- *          "TMPE",
- *          "WCHILL",
- *          "FLHGT",
- *          "CDC",
- *          "TCDC",
- *          "APCP1s",
- *          "RH",
- *          "SLP",
- *          "RATING"
- *      ]
- *   }
- * }
+ * { [ <Model> ] }
  */
 
-public class Models: Mappable {
-    public var models = [Model]()
+#if USE_EXT_FWK
+    public class Models: ModelsObject, Mappable {
 
-    required public init?(map: Map) {
-    }
-    
-    public func mapping(map: Map) {
-        for json in map.JSON {
-            if  let jsonValue = json.value as? [String: Any],
-                let model = Mapper<Model>().map(JSON: jsonValue) {
-                models.append(model)
+        required convenience public init?(map: Map) {
+            self.init()
+        }
+        
+        public func mapping(map: Map) {
+            for json in map.JSON {
+                if  let jsonValue = json.value as? [String: Any],
+                    let model = Mapper<Model>().map(JSON: jsonValue) {
+                    models.append(model)
+                }
             }
         }
-   }
+    }
+
+#else
+
+    public class Models: ModelsObject {
+        init(dictionary: [String: AnyObject?]) {
+            // TODO
+        }
+    }
+
+#endif
+        
+public class ModelsObject : Object {
+    #if USE_EXT_FWK
+    public var models = List<Model>()
+    #else
+    public dynamic var models = [Model]()
+    #endif
     
-    public var description : String {
-        var aux : String = ""
+    override public var description : String {
+        var aux : String = "\(type(of:self)): "
         for model in models {
             aux += model.description + "\n"
         }
         return aux
     }
-    
     
 }
