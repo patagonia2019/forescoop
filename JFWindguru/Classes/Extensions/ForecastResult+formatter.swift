@@ -111,7 +111,7 @@ extension SpotForecast
                     return key.strings[index].value as AnyObject
                 }
                 else if key.floats.count >= 0 && index < key.floats.count{
-                    return key.floats[index].value as AnyObject
+                    return key.floats[index].value.value as AnyObject
                 }
             }
         }
@@ -204,7 +204,7 @@ extension SpotForecast
     public var asCurrentWindSpeed: String? {
         guard let forecast = forecast(),
             let windSpeed = forecast.windSpeed,
-            let value = valueForKey(key: windSpeed) as? Double
+            let value = valueForKey(key: windSpeed) as? Float
             else {
                 return nil
         }
@@ -216,7 +216,7 @@ extension SpotForecast
     public var asCurrentTemperature: String? {
         guard let forecast = forecast(),
             let temperatureReal = forecast.temperatureReal,
-            let value = valueForKey(key: temperatureReal) as? Int
+            let value = valueForKey(key: temperatureReal) as? Float
             else {
                 return nil
         }
@@ -225,7 +225,7 @@ extension SpotForecast
     
     // "C" or "F"
     public var asCurrentUnit: String {
-        return "C"
+        return "°C"
     }
     
     // name contains the location in this object
