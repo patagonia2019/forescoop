@@ -24,32 +24,26 @@ import Foundation
  *
  */
 
+public class ForecastModel: Object, Mappable {
+
+    public var model: String?
+    public var info: Forecast?
+
 #if USE_EXT_FWK
-    public class ForecastModel: ForecastModelObject, Mappable {
 
+    required convenience public init?(map: Map) {
+        self.init()
+    }
 
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-
-        public func mapping(map: Map) {
-        }
-
+    public func mapping(map: Map) {
     }
 
 #else
-
-    public class ForecastModel: ForecastModelObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-       }
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
     }
 #endif
 
-public class ForecastModelObject : Object {
-    public var model: String?
-    public var info: Forecast?
-    
     convenience public init(model: String, info: Forecast)
     {
         self.init()

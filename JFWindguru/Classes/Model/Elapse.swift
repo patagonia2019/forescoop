@@ -13,44 +13,8 @@ import Foundation
     import Realm
 #endif
 
-#if USE_EXT_FWK
-    public class Elapse: ElapseObject, Mappable {
-
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        required public init?(elapseStart: String? = nil, elapseEnd: String? = nil) {
-            super.init(elapseStart: elapseStart, elapseEnd: elapseEnd)
-        }
+public class Elapse: Object, Mappable {
         
-        required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-            super.init(realm: realm, schema: schema)
-        }
-        
-        required public init() {
-            super.init()
-        }
-        
-        required public init(value: Any, schema: RLMSchema) {
-            super.init(value: value, schema: schema)
-        }
-
-        public func mapping(map: Map) {
-        }
-
-    }
-
-#else
-
-    public class WSpotForecast: WSpotForecastObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-       }
-    }
-#endif
-public class ElapseObject : Object {
-
     public var start: Time?
     public var end: Time?
     
@@ -61,8 +25,12 @@ public class ElapseObject : Object {
         start = Time(elapseStart)
         end = Time(elapseEnd)
     }
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
     
-    #if USE_EXT_FWK
     required public init(realm: RLMRealm, schema: RLMObjectSchema) {
         super.init(realm: realm, schema: schema)
     }
@@ -74,8 +42,15 @@ public class ElapseObject : Object {
     required public init(value: Any, schema: RLMSchema) {
         super.init(value: value, schema: schema)
     }
-    #endif
     
+    public func mapping(map: Map) {
+    }
+#else
+    init(dictionary: [String: AnyObject?]) {
+    // TODO
+    }
+#endif
+
     public func containsTime(date: NSDate) -> Bool {
         guard let dstart = start?.asDate(),
             let dend = end?.asDate()
@@ -101,5 +76,6 @@ public class ElapseObject : Object {
         }
         return aux
     }
+
 
 }

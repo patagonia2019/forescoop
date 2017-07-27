@@ -34,39 +34,33 @@ import Foundation
  * }
  */
 
+public class Regions: Object, Mappable {
+
 #if USE_EXT_FWK
-    public class Regions: RegionsObject, Mappable {
+
+    public var regions = List<Region>()
     
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-    
-        public func mapping(map: Map) {
-            for json in map.JSON {
-                let jsonKV = ["id": json.key, "name": json.value]
-                if let region = Mapper<Region>().map(JSON: jsonKV) {
-                    regions.append(region)
-                }
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+
+    public func mapping(map: Map) {
+        for json in map.JSON {
+            let jsonKV = ["id": json.key, "name": json.value]
+            if let region = Mapper<Region>().map(JSON: jsonKV) {
+                regions.append(region)
             }
         }
     }
 
 #else
+    
+    public dynamic var regions = [Region]()
 
-    public class Regions: RegionsObject {
-        
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-        }
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
     }
 #endif
-
-public class RegionsObject : Object {
-    #if USE_EXT_FWK
-    public var regions = List<Region>()
-    #else
-    public dynamic var regions = [Region]()
-    #endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

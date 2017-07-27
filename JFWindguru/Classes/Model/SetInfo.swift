@@ -21,37 +21,30 @@ import Foundation
  * "229823": "My forecast",
  */
 
-#if USE_EXT_FWK
-    public class SetInfo: SetInfoObject, Mappable {
-        
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            id <- map["id"]
-            name <- map["name"]
-        }
-        
-    }
-    
-#else
-    
-    public class SetInfo: SetInfoObject {
-        
-        init(dictionary: [String: AnyObject?]) {
-            super.init()
-            id = dictionary["id"] as? String ?? nil
-            name = dictionary["name"] as? String  ?? nil
-        }
-    }
-    
-#endif
-
-public class SetInfoObject: Object {
+public class SetInfo: Object, Mappable {
     
     public dynamic var id: String? = nil
     public dynamic var name: String? = nil
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+    }
+    
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        super.init()
+        id = dictionary["id"] as? String ?? nil
+        name = dictionary["name"] as? String  ?? nil
+    }
+
+#endif
     
     override public var description : String {
         var aux : String = "\(type(of:self)): "

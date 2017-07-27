@@ -50,61 +50,8 @@ import Foundation
  *
  */
 
-#if USE_EXT_FWK
-    public class WSpotForecast: WSpotForecastObject, Mappable {
+public class WSpotForecast: Object, Mappable {
 
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-
-        public func mapping(map: Map) {
-            id_spot       <- map["id_spot"]
-            id_user       <- map["id_user"]
-            nickname      <- map["nickname"]
-            spotname      <- map["spotname"]
-            spot          <- map["spot"]
-            lat           <- map["lat"]
-            lon           <- map["lon"]
-            alt           <- map["alt"]
-            id_model      <- map["id_model"]
-            model         <- map["model"]
-            model_alt     <- map["model_alt"]
-            levels        <- map["levels"]
-            sst           <- map["sst"]
-            sunrise       <- map["sunrise"]
-            sunset        <- map["sunset"]
-            if let sunrise = sunrise,
-                let sunset = sunset
-            {
-                elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
-            }
-            tz            <- map["tz"]
-            tzutc         <- map["tzutc"]
-            utc_offset    <- map["utc_offset"]
-            tzid          <- map["tzid"]
-            tides         <- map["tides"]
-            md5chk        <- map["md5chk"]
-            wgs           <- map["wgs"]
-            wgs_arr <- (map["wgs_arr"], ArrayTransform<WindguruStation>())
-            wgs_wind_avg  <- map["wgs_wind_avg"]
-
-            guard let id_model = id_model else { return }
-            fcst <- map["fcst.\(id_model)"]
-        }
-
-    }
-
-#else
-
-    public class WSpotForecast: WSpotForecastObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-       }
-    }
-#endif
-
-public class WSpotForecastObject: Object {
     dynamic var id_spot = 0
     dynamic var id_user = 0
     dynamic var nickname: String? = nil
@@ -129,13 +76,61 @@ public class WSpotForecastObject: Object {
     dynamic var md5chk: String? = nil
     dynamic var fcst : WForecast?
     dynamic var wgs = false
-    #if USE_EXT_FWK
+#if USE_EXT_FWK
     public var wgs_arr = List<WindguruStation>()
-    #else
+#else
     public var wgs_arr: [WindguruStation]?
-    #endif
+#endif
     dynamic var wgs_wind_avg = 0
     
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+
+    public func mapping(map: Map) {
+        id_spot       <- map["id_spot"]
+        id_user       <- map["id_user"]
+        nickname      <- map["nickname"]
+        spotname      <- map["spotname"]
+        spot          <- map["spot"]
+        lat           <- map["lat"]
+        lon           <- map["lon"]
+        alt           <- map["alt"]
+        id_model      <- map["id_model"]
+        model         <- map["model"]
+        model_alt     <- map["model_alt"]
+        levels        <- map["levels"]
+        sst           <- map["sst"]
+        sunrise       <- map["sunrise"]
+        sunset        <- map["sunset"]
+        if let sunrise = sunrise,
+            let sunset = sunset
+        {
+            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+        }
+        tz            <- map["tz"]
+        tzutc         <- map["tzutc"]
+        utc_offset    <- map["utc_offset"]
+        tzid          <- map["tzid"]
+        tides         <- map["tides"]
+        md5chk        <- map["md5chk"]
+        wgs           <- map["wgs"]
+        wgs_arr <- (map["wgs_arr"], ArrayTransform<WindguruStation>())
+        wgs_wind_avg  <- map["wgs_wind_avg"]
+
+        guard let id_model = id_model else { return }
+        fcst <- map["fcst.\(id_model)"]
+    }
+
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
+   }
+
+#endif
     
     override public var description : String {
         var aux : String = "\(type(of:self)):\n"
@@ -163,18 +158,16 @@ public class WSpotForecastObject: Object {
         if let fcst = fcst {
             aux += "Forecast\n \(fcst.description)\n"
         }
-        #if USE_EXT_FWK
-            for wgs in wgs_arr {
-                aux += "WGS: \(wgs.description)\n"
-            }
-        #else
-        if let wgs_arr = wgs_arr {
-            for wgs in wgs_arr {
-                aux += "WGS: \(wgs.description)\n"
-            }
-        }
-        #endif
         aux += "wgs_wind_avg: \(wgs_wind_avg)\n"
+#if USE_EXT_FWK
+#else
+        guard let wgs_arr = wgs_arr else {
+            return aux
+        }
+#endif
+        for wgs in wgs_arr {
+            aux += "WGS: \(wgs.description)\n"
+        }
         return aux
     }
     

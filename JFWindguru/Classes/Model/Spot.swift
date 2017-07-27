@@ -26,37 +26,35 @@ import Foundation
  * }
  */
 
+
+public class Spot: Object, Mappable {
+
 #if USE_EXT_FWK
 
-    public class Spot: SpotObject, Mappable {
-        
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            id_spot <- map["id_spot"]
-            spotname <- map["spotname"]
-            country <- map["country"]
-        }
-    }
-
-#else
-    public class Spot: SpotObject {
-        
-        init(dictionary: [String: AnyObject?]) {
-            super.init()
-            id_spot = dictionary["id_spot"] as? String ?? nil
-            spotname = dictionary["spotname"] as? String ?? nil
-            country = dictionary["country"] as? String ?? nil
-        }
-    }
-#endif
-
-public class SpotObject : Object {
     public dynamic var id_spot: String? = nil
     public dynamic var spotname: String? = nil
     public dynamic var country: String? = nil
+
+    required public convenience init(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        id_spot <- map["id_spot"]
+        spotname <- map["spotname"]
+        country <- map["country"]
+    }
+
+#else
+    
+    public init(dictionary: [String: AnyObject?]) {
+        super.init()
+        id_spot = dictionary["id_spot"] as? String ?? nil
+        spotname = dictionary["spotname"] as? String ?? nil
+        country = dictionary["country"] as? String ?? nil
+    }
+
+#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

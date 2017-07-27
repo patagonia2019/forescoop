@@ -47,49 +47,7 @@ import Foundation
  * }
  */
 
-#if USE_EXT_FWK
-    public class Model: ModelObject, Mappable {
-        
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-    
-        public func mapping(map: Map) {
-            id_model    <- map["id_model"]
-            model_name  <- map["model_name"]
-            model       <- map["model"]
-            hr_start    <- map["hr_start"]
-            hr_end      <- map["hr_end"]
-            hr_step     <- map["hr_step"]
-            period      <- map["period"]
-            resolution  <- map["resolution"]
-            update_time <- map["update_time"]
-            show_vars   <- map["show_vars"]
-        }
-}
-
-#else
-
-    public class Model: ModelObject {
-
-        init(dictionary: [String: AnyObject?]) {
-            super.init()
-            id_model = dictionary["id_model"] as? Int
-            model_name = dictionary["model_name"] as? String ?? nil
-            model = dictionary["model"] as? String ?? nil
-            hr_start = Opt.init(dictionary["hr_start"] as? Int)
-            hr_end = Opt.init(dictionary["hr_end"] as? Int)
-            hr_step = Opt.init(dictionary["hr_step"] as? Int)
-            period = Opt.init(dictionary["period"] as? Int)
-            resolution = Opt.init(dictionary["resolution"] as? Int)
-            update_time = dictionary["update_time"] as? String ?? nil
-            show_vars = dictionary["show_vars"] as? [String] ?? nil
-        }
-    }
-
-#endif
-
-public class ModelObject: Object {
+public class Model: Object, Mappable {
     public dynamic var id_model : Int = 0
     public dynamic var model_name: String? = nil
     public dynamic var model: String? = nil
@@ -100,6 +58,40 @@ public class ModelObject: Object {
     public var resolution : Int = 0
     public dynamic var update_time: String?
     public var show_vars = List<StringObject>()
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+
+    public func mapping(map: Map) {
+        id_model    <- map["id_model"]
+        model_name  <- map["model_name"]
+        model       <- map["model"]
+        hr_start    <- map["hr_start"]
+        hr_end      <- map["hr_end"]
+        hr_step     <- map["hr_step"]
+        period      <- map["period"]
+        resolution  <- map["resolution"]
+        update_time <- map["update_time"]
+        show_vars   <- map["show_vars"]
+    }
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        super.init()
+        id_model = dictionary["id_model"] as? Int
+        model_name = dictionary["model_name"] as? String ?? nil
+        model = dictionary["model"] as? String ?? nil
+        hr_start = Opt.init(dictionary["hr_start"] as? Int)
+        hr_end = Opt.init(dictionary["hr_end"] as? Int)
+        hr_step = Opt.init(dictionary["hr_step"] as? Int)
+        period = Opt.init(dictionary["period"] as? Int)
+        resolution = Opt.init(dictionary["resolution"] as? Int)
+        update_time = dictionary["update_time"] as? String ?? nil
+        show_vars = dictionary["show_vars"] as? [String] ?? nil
+    }
+#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

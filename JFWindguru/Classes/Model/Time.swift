@@ -13,32 +13,39 @@ import Foundation
     import Realm
 #endif
 
-#if USE_EXT_FWK
-    public class Time: TimeObject, Mappable {
+public class Time: Object, Mappable {
 
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-
-        public func mapping(map: Map) {
-        }
-
-    }
-
-#else
-
-    public class Time: TimeObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-       }
-    }
-#endif
-public class TimeObject : Object {
     public dynamic var hour: Int = 0
     public dynamic var minutes: Int = 0
     public dynamic var seconds: Int = 0
 
+#if USE_EXT_FWK
+
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+
+    public func mapping(map: Map) {
+    }
+
+    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
+        super.init(realm: realm, schema: schema)
+    }
+    
+    required public init() {
+        super.init()
+    }
+    
+    required public init(value: Any, schema: RLMSchema) {
+        super.init(value: value, schema: schema)
+    }
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+    // TODO
+    }
+#endif
+    
     required public init?(_ str: String) {
         super.init()
         hour = 0
@@ -60,19 +67,6 @@ public class TimeObject : Object {
             assert(false)
         }
     }
-    #if USE_EXT_FWK
-    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
-    
-    required public init() {
-        super.init()
-    }
-    
-    required public init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-    #endif
 
     public func asDate() -> Date? {
         var interval = Double(hour)

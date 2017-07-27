@@ -21,35 +21,28 @@ import Foundation
  * "32": "Argentina"
  */
 
-#if USE_EXT_FWK
-
-    public class Country: CountryObject, Mappable {
-        
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            id <- map["id"]
-            name <- map["name"]
-        }
-    }
-
-#else
-    public class Country: CountryObject {
-        init(dictionary: [String: AnyObject?]) {
-            super.init()
-            id = dictionary["id"] as? String ?? nil
-            name = dictionary["name"] as? String ?? nil
-        }
-    }
-#endif
-
-public class CountryObject : Object {
-
+public class Country: Object, Mappable {
+    
     public dynamic var id: String? = nil
     public dynamic var name: String? = nil
-
+    
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+    }
+#else
+    init(dictionary: [String: AnyObject?]) {
+        super.init()
+        id = dictionary["id"] as? String ?? nil
+        name = dictionary["name"] as? String ?? nil
+    }
+#endif
+    
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         
@@ -62,6 +55,6 @@ public class CountryObject : Object {
         return aux
     }
     
-}
 
+}
 

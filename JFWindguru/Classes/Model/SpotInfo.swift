@@ -10,6 +10,7 @@ import Foundation
 #if USE_EXT_FWK
     import ObjectMapper
     import RealmSwift
+    import Realm
 #endif
 
 /*
@@ -42,62 +43,8 @@ import Foundation
  *
  */
 
-#if USE_EXT_FWK
-    public class SpotInfo: SpotInfoObject, Mappable {
+public class SpotInfo: Spot {
 
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            id_spot <- map["id_spot"]
-            spotname <- map["spotname"]
-            country <- map["country"]
-            countryId <- map["id_country"]
-            latitude <- map["lat"]
-            longitude <- map["lon"]
-            altitude <- map["alt"]
-            timezone <- map["tz"]
-            gmtHourOffset <- map["gmt_hour_offset"]
-            sunrise <- map["sunrise"]
-            sunset <- map["sunset"]
-            if let sunrise = sunrise,
-                let sunset = sunset
-            {
-                elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
-            }
-            models = StringObject.map(map: map, key: "models")
-            tides <- map["tides"]
-        }
-    }
-
-#else
-
-    public class SpotInfo: SpotInfoObject {
-        init(dictionary: [String: AnyObject?]) {
-            super.init(dictionary: dictionary)
-            id_spot = dictionary["id_spot"] ?? nil
-            spotname = dictionary["spotname"] ?? nil
-            countryId = dictionary["countryId"] ?? nil
-            latitude = dictionary["latitude"] ?? nil
-            longitude = dictionary["longitude"] ?? nil
-            altitude = dictionary["altitude"] ?? nil
-            timezone = dictionary["timezone"] ?? nil
-            gmtHourOffset = dictionary["gmtHourOffset"] ?? nil
-            sunrise = dictionary["sunrise"] ?? nil
-            sunset = dictionary["sunset"] ?? nil
-            if let sunrise = sunrise,
-                let sunset = sunset
-            {
-                elapse = Elapse.init(sunrise, end: sunset)
-            }
-            models = dictionary["models"] ?? nil
-            tides = dictionary["tides"] ?? nil
-       }
-    }
-#endif
-
-public class SpotInfoObject: SpotObject {
     public dynamic var countryId: Int = 0
     public dynamic var latitude: Double = 0
     public dynamic var longitude: Double = 0
@@ -107,14 +54,73 @@ public class SpotInfoObject: SpotObject {
     public dynamic var sunrise: String? = nil
     public dynamic var sunset: String? = nil
     public dynamic var elapse : Elapse?
-    #if USE_EXT_FWK
+#if USE_EXT_FWK
     public var models = List<StringObject>()
-    #else
+#else
     public var models: Array<String>?
-    #endif
+#endif
     public dynamic var tides: String? = nil
+
+#if USE_EXT_FWK
+    public required init(map: Map) {
+        super.init()
+    }
     
+    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
+        super.init(realm: realm, schema: schema)
+    }
     
+    required public init() {
+        super.init()
+    }
+    
+    required public init(value: Any, schema: RLMSchema) {
+        super.init(value: value, schema: schema)
+    }
+
+    
+    public override func mapping(map: Map) {
+        super.mapping(map: map)
+
+        countryId <- map["id_country"]
+        latitude <- map["lat"]
+        longitude <- map["lon"]
+        altitude <- map["alt"]
+        timezone <- map["tz"]
+        gmtHourOffset <- map["gmt_hour_offset"]
+        sunrise <- map["sunrise"]
+        sunset <- map["sunset"]
+        if let sunrise = sunrise,
+            let sunset = sunset
+        {
+            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+        }
+        models = StringObject.map(map: map, key: "models")
+        tides <- map["tides"]
+    }
+#else
+
+    public override init(dictionary: [String: AnyObject?]) {
+        super.init(dictionary: dictionary)
+        countryId = dictionary["countryId"] ?? nil
+        latitude = dictionary["latitude"] ?? nil
+        longitude = dictionary["longitude"] ?? nil
+        altitude = dictionary["altitude"] ?? nil
+        timezone = dictionary["timezone"] ?? nil
+        gmtHourOffset = dictionary["gmtHourOffset"] ?? nil
+        sunrise = dictionary["sunrise"] ?? nil
+        sunset = dictionary["sunset"] ?? nil
+        if let sunrise = sunrise,
+            let sunset = sunset
+        {
+            elapse = Elapse.init(sunrise, end: sunset)
+        }
+        models = dictionary["models"] ?? nil
+        tides = dictionary["tides"] ?? nil
+   }
+
+#endif
+ 
     override public var description : String {
         var aux : String = super.description
         aux += "\(type(of:self)): "

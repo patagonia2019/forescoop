@@ -38,34 +38,7 @@ import Foundation
  */
 
 
-#if USE_EXT_FWK
-    public class SpotResult: SpotResultObject, Mappable {
-        
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            count <- map["count"]
-            spots <- (map["spots"], ArrayTransform<SpotOwner>())
-        }
-        
-    }
-
-#else
-
-    public class SpotResult: SpotResultObject {
-        init(dictionary: [String: AnyObject?]) {
-            super.init(dictionary: dictionary)
-            count = dictionary["count"] ?? nil
-            spots = dictionary["spots"] ?? nil
-       }
-    }
-#endif
-
-public class SpotResultObject: Object {
-
-
+public class SpotResult: Object, Mappable {
     //
     // count: number of results obtained
     //
@@ -79,6 +52,26 @@ public class SpotResultObject: Object {
     #else
     public var spots: [SpotOwner]?
     #endif
+ 
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        count <- map["count"]
+        spots <- (map["spots"], ArrayTransform<SpotOwner>())
+    }
+    
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        super.init(dictionary: dictionary)
+        count = dictionary["count"] ?? nil
+        spots = dictionary["spots"] ?? nil
+   }
+
+#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

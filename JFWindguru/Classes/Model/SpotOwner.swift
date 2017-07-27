@@ -10,6 +10,7 @@ import Foundation
 #if USE_EXT_FWK
     import ObjectMapper
     import RealmSwift
+    import Realm
 #endif
 
 /*
@@ -32,35 +33,41 @@ import Foundation
  *
  */
 
+public class SpotOwner: Spot {
+
+public dynamic var id_user: String? = nil
+
 #if USE_EXT_FWK
-    public class SpotOwner: SpotOwnerObject, Mappable {
+    public required init(map: Map) {
+        super.init()
+    }
     
-        required convenience public init?(map: Map) {
-            self.init()
-        }
+    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
+        super.init(realm: realm, schema: schema)
+    }
     
-        public func mapping(map: Map) {
-            id_user <- map["id_user"]
-            id_spot <- map["id_spot"]
-            spotname <- map["spotname"]
-            country <- map["country"]
-        }
+    required public init() {
+        super.init()
+    }
     
+    required public init(value: Any, schema: RLMSchema) {
+        super.init(value: value, schema: schema)
+    }
+    
+    
+    override public func mapping(map: Map) {
+        super.mapping(map: map)
+        id_user <- map["id_user"]
     }
 
 #else
 
-    public class SpotOwner: SpotOwnerObject {
-        init(dictionary: [String: AnyObject?]) {
-            super.init(dictionary: dictionary)
-            id_user = dictionary["id_user"] ?? nil
-       }
-    }
+    init(dictionary: [String: AnyObject?]) {
+        super.init(dictionary: dictionary)
+        id_user = dictionary["id_user"] ?? nil
+   }
+
 #endif
-
-public class SpotOwnerObject: SpotObject {
-
-    public dynamic var id_user: String? = nil
 
     override public var description : String {
         var aux : String = super.description

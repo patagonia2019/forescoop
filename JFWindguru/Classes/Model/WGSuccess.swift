@@ -7,8 +7,9 @@
 //
 
 import Foundation
+#if USE_EXT_FWK
 import ObjectMapper
-
+#endif
 /*
  *  WGSuccess
  *
@@ -25,6 +26,7 @@ public class WGSuccess: Mappable {
     public var returnString: String?
     public var message: String?
     
+#if USE_EXT_FWK
     required public init?(map: Map) {
         
     }
@@ -33,6 +35,7 @@ public class WGSuccess: Mappable {
         returnString <- map["return"]
         message <- map["message"]
     }
+#endif
     
     public var description : String {
         var aux : String = "\(type(of:self)): "

@@ -101,87 +101,8 @@ import Foundation
  */
 
 
-#if USE_EXT_FWK
-    public class User: UserObject, Mappable {
-        
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            id_user <- map["id_user"]
-            username <- map["username"]
-            id_country <- map["id_country"]
-            wind_units <- map["wind_units"]
-            temp_units <- map["temp_units"]
-            wave_units <- map["wave_units"]
-            pro <- map["pro"]
-            no_ads <- map["no_ads"]
-            view_hours_from <- map["view_hours_from"]
-            view_hours_to <- map["view_hours_to"]
-            temp_limit <- map["temp_limit"]
-            
-            wind_rating_limits = FloatObject.map(map: map, key: "wind_rating_limits")
-
-            var tmpcolors = Dictionary<String, [[Float]]>()
-            tmpcolors <- map["colors"]
-            for (k,v) in tmpcolors {
-                for c in v {
-                    if let color = Color.init(a: c[0], r: c[1], g: c[2], b: c[3]) {
-                        switch k {
-                        case "wind": colors_wind.append(color)
-                            break
-                        case "temp": colors_temp.append(color)
-                            break
-                        case "cloud": colors_cloud.append(color)
-                            break
-                        case "precip": colors_precip.append(color)
-                            break
-                        case "precip1": colors_precip1.append(color)
-                            break
-                        case "press": colors_press.append(color)
-                            break
-                        case "rh": colors_rh.append(color)
-                            break
-                        case "htsgw": colors_htsgw.append(color)
-                            break
-                        case "perpw": colors_perpw.append(color)
-                            break
-                        default:
-                            break
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
-#else
-
-    public class User: UserObject {
-
-        init(dictionary: [String: AnyObject?]) {
-            id_user = dictionary["id_user"] ?? nil
-            username = dictionary["username"] ?? nil
-            id_country = dictionary["id_country"] ?? nil
-            wind_units = dictionary["wind_units"] ?? nil
-            temp_units = dictionary["temp_units"] ?? nil
-            wave_units = dictionary["wave_units"] ?? nil
-            pro = dictionary["pro"] ?? nil
-            no_ads = dictionary["no_ads"] ?? nil
-            view_hours_from = dictionary["view_hours_from"] ?? nil
-            view_hours_to = dictionary["view_hours_to"] ?? nil
-            temp_limit = dictionary["temp_limit"] ?? nil
-            wind_rating_limits = dictionary["wind_rating_limits"] ?? nil
-            colors = dictionary["colors"] ?? nil
-        }
-
+public class User: Object, Mappable {
     
-    }
-#endif
-
-public class UserObject: Object {
     public dynamic var id_user : Int = 0
     public dynamic var username: String?
     public dynamic var id_country : Int = 0
@@ -193,7 +114,7 @@ public class UserObject: Object {
     public dynamic var view_hours_from : Int = 0
     public dynamic var view_hours_to : Int = 0
     public dynamic var temp_limit : Int = 0
-    #if USE_EXT_FWK
+#if USE_EXT_FWK
     public var wind_rating_limits = List<FloatObject>()
     public var colors_wind = List<Color>()
     public var colors_temp = List<Color>()
@@ -204,11 +125,92 @@ public class UserObject: Object {
     public var colors_rh = List<Color>()
     public var colors_htsgw = List<Color>()
     public var colors_perpw = List<Color>()
-    #else
+#else
     public dynamic var wind_rating_limits: [Float]?
-    public dynamic var colors : Dictionary<String, [Color]>?
-    #endif
+    public dynamic var colors : [Color]?
+    public dynamic var colors_wind : [Color]?
+    public dynamic var colors_temp : [Color]?
+    public dynamic var colors_cloud : [Color]?
+    public dynamic var colors_precip : [Color]?
+    public dynamic var colors_precip1 : [Color]?
+    public dynamic var colors_press : [Color]?
+    public dynamic var colors_rh : [Color]?
+    public dynamic var colors_htsgw : [Color]?
+    public dynamic var colors_perpw : [Color]?
+#endif
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
     
+    public func mapping(map: Map) {
+        id_user <- map["id_user"]
+        username <- map["username"]
+        id_country <- map["id_country"]
+        wind_units <- map["wind_units"]
+        temp_units <- map["temp_units"]
+        wave_units <- map["wave_units"]
+        pro <- map["pro"]
+        no_ads <- map["no_ads"]
+        view_hours_from <- map["view_hours_from"]
+        view_hours_to <- map["view_hours_to"]
+        temp_limit <- map["temp_limit"]
+        
+        wind_rating_limits = FloatObject.map(map: map, key: "wind_rating_limits")
+
+        var tmpcolors = Dictionary<String, [[Float]]>()
+        tmpcolors <- map["colors"]
+        for (k,v) in tmpcolors {
+            for c in v {
+                if let color = Color.init(a: c[0], r: c[1], g: c[2], b: c[3]) {
+                    switch k {
+                    case "wind": colors_wind.append(color)
+                        break
+                    case "temp": colors_temp.append(color)
+                        break
+                    case "cloud": colors_cloud.append(color)
+                        break
+                    case "precip": colors_precip.append(color)
+                        break
+                    case "precip1": colors_precip1.append(color)
+                        break
+                    case "press": colors_press.append(color)
+                        break
+                    case "rh": colors_rh.append(color)
+                        break
+                    case "htsgw": colors_htsgw.append(color)
+                        break
+                    case "perpw": colors_perpw.append(color)
+                        break
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        id_user = dictionary["id_user"] ?? nil
+        username = dictionary["username"] ?? nil
+        id_country = dictionary["id_country"] ?? nil
+        wind_units = dictionary["wind_units"] ?? nil
+        temp_units = dictionary["temp_units"] ?? nil
+        wave_units = dictionary["wave_units"] ?? nil
+        pro = dictionary["pro"] ?? nil
+        no_ads = dictionary["no_ads"] ?? nil
+        view_hours_from = dictionary["view_hours_from"] ?? nil
+        view_hours_to = dictionary["view_hours_to"] ?? nil
+        temp_limit = dictionary["temp_limit"] ?? nil
+        wind_rating_limits = dictionary["wind_rating_limits"] ?? nil
+        colors = dictionary["colors"] ?? nil
+    }
+
+#endif
+
     public func name() -> String {
         if isAnonymous() {
             return "Anonymous"

@@ -93,45 +93,45 @@ import Foundation
  */
 
 
+public class TimeWeather: Object, Mappable {
+
 #if USE_EXT_FWK
-    public class TimeWeather: TimeWeatherObject, Mappable {
+    public var keys = List<StringObject>()
+    public var strings = List<StringObject>()
+    public var floats = List<FloatObject>()
+#else
+    public var keys = [String]()
+    public var strings = [String]()
+    public var floats = [Float]()
+#endif
 
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            for key in map.JSON.keys {
-                var tmpValue : AnyObject?
-                tmpValue <- map[key]
-                keys.append(StringObject.init(value:[key]))
-                if let str = tmpValue as? String {
-                    strings.append(StringObject.init(value:[str]))
-                }
-                else if let f = tmpValue as? Float {
-                    floats.append(FloatObject.init(value:[f]))
-                }
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        for key in map.JSON.keys {
+            var tmpValue : AnyObject?
+            tmpValue <- map[key]
+            keys.append(StringObject.init(value:[key]))
+            if let str = tmpValue as? String {
+                strings.append(StringObject.init(value:[str]))
+            }
+            else if let f = tmpValue as? Float {
+                floats.append(FloatObject.init(value:[f]))
             }
         }
-        
     }
 
 #else
 
-    public class TimeWeather: TimeWeatherObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-       }
-    }
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
+   }
+
 #endif
 
-public class TimeWeatherObject: Object {
-
-    public var keys = List<StringObject>()
-    public var strings = List<StringObject>()
-    public var floats = List<FloatObject>()
-    
     override public var description : String {
         
         var aux : String = "\(type(of:self)): "

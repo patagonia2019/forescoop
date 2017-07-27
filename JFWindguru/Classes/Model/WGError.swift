@@ -7,8 +7,9 @@
 //
 
 import Foundation
+#if USE_EXT_FWK
 import ObjectMapper
-
+#endif
 /*
  *  WGError
  *
@@ -66,18 +67,19 @@ public class WGError: Mappable {
         nserror = NSError(domain: id, code:code, userInfo: dict)
 
     }
-
-    required public init?(map: Map){
+#if USE_EXT_FWK
+        required public init?(map: Map){
+            
+        }
         
-    }
+        public func mapping(map: Map) {
+            returnString <- map["return"]
+            error_id <- map["error_id"]
+            error_message <- map["error_message"]
+        }
+#endif
     
-    public func mapping(map: Map) {
-        returnString <- map["return"]
-        error_id <- map["error_id"]
-        error_message <- map["error_message"]
-    }
-    
-    var description : String {
+    public var description : String {
         var aux : String = ""
         if let returnString = returnString {
             aux += "\(returnString): "

@@ -41,44 +41,8 @@ import Foundation
  *  }
  */
 
-#if USE_EXT_FWK
 
-    public class Forecast: ForecastObject, Mappable {
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            initStamp <- map["initstamp"]
-            temperature <- map["TMP"]
-            cloudCoverTotal <- map["TCDC"]
-            cloudCoverHigh <- map["HCDC"]
-            cloudCoverMid <- map["MCDC"]
-            cloudCoverLow <- map["LCDC"]
-            relativeHumidity <- map["RH"]
-            windGust <- map["GUST"]
-            seaLevelPressure <- map["SLP"]
-            freezingLevel <- map["FLHGT"]
-            precipitation <- map["APCP"]
-            windSpeed <- map["WINDSPD"]
-            windDirection <- map["WINDDIR"]
-            windDirectionName <- map["WINDIRNAME"]
-            temperatureReal <- map["TMPE"]
-            initDate <- (map["initdate"], DateTransform())
-            modelName <- map["model_name"]
-        }
-    }
-#else
-    public class Forecast: ForecastObject {
-        init(dictionary: [String: AnyObject?]) {
-            super.init()
-            initStamp = dictionary["initStamp"] as? Int ?? 0
-        }
-    }
-#endif
-
-public class ForecastObject : Object {
+public class Forecast: Object, Mappable {
     dynamic var initStamp : Int = 0
     public var temperature: TimeWeather? // temperature
     public var cloudCoverTotal: TimeWeather? //  Cloud cover (%) Total
@@ -97,6 +61,37 @@ public class ForecastObject : Object {
     public dynamic var initDate: Date?
     public dynamic var modelName: String?
 
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        initStamp <- map["initstamp"]
+        temperature <- map["TMP"]
+        cloudCoverTotal <- map["TCDC"]
+        cloudCoverHigh <- map["HCDC"]
+        cloudCoverMid <- map["MCDC"]
+        cloudCoverLow <- map["LCDC"]
+        relativeHumidity <- map["RH"]
+        windGust <- map["GUST"]
+        seaLevelPressure <- map["SLP"]
+        freezingLevel <- map["FLHGT"]
+        precipitation <- map["APCP"]
+        windSpeed <- map["WINDSPD"]
+        windDirection <- map["WINDDIR"]
+        windDirectionName <- map["WINDIRNAME"]
+        temperatureReal <- map["TMPE"]
+        initDate <- (map["initdate"], DateTransform())
+        modelName <- map["model_name"]
+    }
+
+#else
+    init(dictionary: [String: AnyObject?]) {
+        super.init()
+        initStamp = dictionary["initStamp"] as? Int ?? 0
+    }
+#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): \n"

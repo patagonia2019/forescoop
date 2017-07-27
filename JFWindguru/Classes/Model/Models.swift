@@ -21,39 +21,32 @@ import Foundation
  * { [ <Model> ] }
  */
 
-#if USE_EXT_FWK
-    public class Models: ModelsObject, Mappable {
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            for json in map.JSON {
-                if  let jsonValue = json.value as? [String: Any],
-                    let model = Mapper<Model>().map(JSON: jsonValue) {
-                    models.append(model)
-                }
+public class Models: Object, Mappable {
+    
+    #if USE_EXT_FWK
+    public var models = List<Model>()
+    
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        for json in map.JSON {
+            if  let jsonValue = json.value as? [String: Any],
+                let model = Mapper<Model>().map(JSON: jsonValue) {
+                models.append(model)
             }
         }
     }
-
 #else
-
-    public class Models: ModelsObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-        }
+    public dynamic var models = [Model]()
+    
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
     }
 
 #endif
-        
-public class ModelsObject : Object {
-    #if USE_EXT_FWK
-    public var models = List<Model>()
-    #else
-    public dynamic var models = [Model]()
-    #endif
+
     
     override public var description : String {
         var aux : String = "\(type(of:self)): "

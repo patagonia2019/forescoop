@@ -42,68 +42,11 @@ import Foundation
  *  }
  */
 
-#if USE_EXT_FWK
-    public class WForecast: WForecastObject, Mappable {
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-
-        public func mapping(map: Map) {
-            initStamp <- map["initstamp"]
-
-            temperature = FloatObject.map(map: map, key: "TMP")
-            cloudCoverTotal = IntObject.map(map: map, key: "TCDC")
-            cloudCoverHigh = IntObject.map(map: map, key: "HCDC")
-            cloudCoverMid = IntObject.map(map: map, key: "MCDC")
-            cloudCoverLow = IntObject.map(map: map, key: "LCDC")
-            relativeHumidity = IntObject.map(map: map, key: "RH")
-            windGust = FloatObject.map(map: map, key: "GUST")
-            seaLevelPressure = IntObject.map(map: map, key: "SLP")
-            freezingLevel = IntObject.map(map: map, key: "FLHGT")
-            precipitation = IntObject.map(map: map, key: "APCP")
-            windSpeed = FloatObject.map(map: map, key: "WINDSPD")
-            windDirection = IntObject.map(map: map, key: "WINDDIR")
-            SMERN = IntObject.map(map: map, key: "SMERN")
-            SMER = IntObject.map(map: map, key: "SMER")
-            temperatureReal = FloatObject.map(map: map, key: "TMPE")
-            PCPT = IntObject.map(map: map, key: "PCPT")
-            HTSGW = FloatObject.map(map: map, key: "HTSGW")
-            PERPW = FloatObject.map(map: map, key: "PERPW")
-            hr_weekday = IntObject.map(map: map, key: "hr_weekday")
-            hr_h = StringObject.map(map: map, key: "hr_h")
-            hr_d = StringObject.map(map: map, key: "hr_d")
-            hours = StringObject.map(map: map, key: "hours")
-            initDate <- (map["initdate"], DateTransform())
-            init_d <- map["init_d"]
-            init_dm <- map["init_dm"]
-            init_h <- map["init_h"]
-            initstr <- map["initstr"]
-            model_name <- map["model_name"]
-            model_longname <- map["model_longname"]
-            id_model <- map["id_model"]
-            update_last <- (map["update_last"], DateTransform())
-            update_next <- (map["update_next"], DateTransform())
-            img_param = StringObject.map(map: map, key: "img_param")
-            img_var_map = StringObject.map(map: map, key: "img_var_map")
-        }
-    
-    }
-
-#else
-
-    public class WForecast: WForecastObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-       }
-    }
-#endif
-
-public class WForecastObject: Object {
+public class WForecast: Object, Mappable {
 
     dynamic var initStamp   = 0  // initstamp
-
-    #if USE_EXT_FWK
+    
+#if USE_EXT_FWK
     var temperature         = List<FloatObject>() // TMP: temperature
     var cloudCoverTotal     = List<IntObject>() // TCDC: Cloud cover (%) Total
     var cloudCoverHigh      = List<IntObject>() // HCDC: Cloud cover (%) High
@@ -128,7 +71,7 @@ public class WForecastObject: Object {
     var hours               = List<StringObject>()
     var img_param           = List<StringObject>()
     var img_var_map         = List<StringObject>()
-    #else
+#else
     public var temperature: [Float]? // TMP: temperature
     public var cloudCoverTotal: [Int]? // TCDC: Cloud cover (%) Total
     public var cloudCoverHigh: [Int]? // HCDC: Cloud cover (%) High
@@ -154,9 +97,8 @@ public class WForecastObject: Object {
     
     public var img_param: [String:String]?
     public var img_var_map: [String:String]?
-    #endif
-    
-    
+#endif
+
     dynamic var initDate: Date = Date()
     dynamic var init_d: String = ""
     dynamic var init_dm: String = ""
@@ -168,13 +110,63 @@ public class WForecastObject: Object {
     dynamic var update_last: Date = Date()
     dynamic var update_next: Date = Date()
     
-    
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+
+    public func mapping(map: Map) {
+        initStamp <- map["initstamp"]
+
+        temperature = FloatObject.map(map: map, key: "TMP")
+        cloudCoverTotal = IntObject.map(map: map, key: "TCDC")
+        cloudCoverHigh = IntObject.map(map: map, key: "HCDC")
+        cloudCoverMid = IntObject.map(map: map, key: "MCDC")
+        cloudCoverLow = IntObject.map(map: map, key: "LCDC")
+        relativeHumidity = IntObject.map(map: map, key: "RH")
+        windGust = FloatObject.map(map: map, key: "GUST")
+        seaLevelPressure = IntObject.map(map: map, key: "SLP")
+        freezingLevel = IntObject.map(map: map, key: "FLHGT")
+        precipitation = IntObject.map(map: map, key: "APCP")
+        windSpeed = FloatObject.map(map: map, key: "WINDSPD")
+        windDirection = IntObject.map(map: map, key: "WINDDIR")
+        SMERN = IntObject.map(map: map, key: "SMERN")
+        SMER = IntObject.map(map: map, key: "SMER")
+        temperatureReal = FloatObject.map(map: map, key: "TMPE")
+        PCPT = IntObject.map(map: map, key: "PCPT")
+        HTSGW = FloatObject.map(map: map, key: "HTSGW")
+        PERPW = FloatObject.map(map: map, key: "PERPW")
+        hr_weekday = IntObject.map(map: map, key: "hr_weekday")
+        hr_h = StringObject.map(map: map, key: "hr_h")
+        hr_d = StringObject.map(map: map, key: "hr_d")
+        hours = StringObject.map(map: map, key: "hours")
+        initDate <- (map["initdate"], DateTransform())
+        init_d <- map["init_d"]
+        init_dm <- map["init_dm"]
+        init_h <- map["init_h"]
+        initstr <- map["initstr"]
+        model_name <- map["model_name"]
+        model_longname <- map["model_longname"]
+        id_model <- map["id_model"]
+        update_last <- (map["update_last"], DateTransform())
+        update_next <- (map["update_next"], DateTransform())
+        img_param = StringObject.map(map: map, key: "img_param")
+        img_var_map = StringObject.map(map: map, key: "img_var_map")
+    }
+
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
+   }
+#endif
+
     override public var description : String {
         var aux : String = "\(type(of:self)): "
 
         aux += "initStamp: \(initStamp)\n"
         
-        #if USE_EXT_FWK
+#if USE_EXT_FWK
             aux += "Cloud cover Total: ["
             for v in cloudCoverTotal {
                 aux += "\(v), "
@@ -295,7 +287,7 @@ public class WForecastObject: Object {
                 aux += "\(v), "
             }
             aux += "]\n"
-        #else
+#else
         
         if let cloudCoverTotal = cloudCoverTotal {
             aux += "Cloud cover Total: \(cloudCoverTotal.description)\n"
@@ -371,7 +363,7 @@ public class WForecastObject: Object {
             aux += "img_var_map: \(img_var_map)."
         }
         
-        #endif
+#endif
 
         aux += "initDate: \(initDate), "
         aux += "init_d: \(init_d), "

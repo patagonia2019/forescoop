@@ -21,38 +21,31 @@ import Foundation
  * "223": "Paraná",
  */
 
-#if USE_EXT_FWK
-    public class Region: RegionObject, Mappable {
-    
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-    
-        public func mapping(map: Map) {
-            id <- map["id"]
-            name <- map["name"]
-        }
-    
-    }
-
-#else
-
-    public class Region: RegionObject {
-
-        init(dictionary: [String: AnyObject?]) {
-            super.init()
-            id = dictionary["id"] as? String ?? nil
-            name = dictionary["name"] as? String  ?? nil
-        }
-    }
-
-#endif
-
-public class RegionObject: Object {
+public class Region: Object, Mappable {
 
     public dynamic var id: String? = nil
     public dynamic var name: String? = nil
     
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+
+    public func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+    }
+
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        super.init()
+        id = dictionary["id"] as? String ?? nil
+        name = dictionary["name"] as? String  ?? nil
+    }
+
+#endif
+
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         

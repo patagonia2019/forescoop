@@ -31,39 +31,29 @@ import Foundation
  * }
  */
 
-#if USE_EXT_FWK
-    public class GeoRegions: GeoRegionsObject, Mappable {
-    
-        required convenience public init?(map: Map) {
-            self.init()
-        }
+public class GeoRegions: Object, Mappable {
 
-        public func mapping(map: Map) {
-            for json in map.JSON {
-                let jsonKV = ["id": json.key, "name": json.value]
-                if let georegion = Mapper<GeoRegion>().map(JSON: jsonKV) {
-                    geoRegions.append(georegion)
-                }
+#if USE_EXT_FWK
+    let geoRegions = List<GeoRegion>()
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+
+    public func mapping(map: Map) {
+        for json in map.JSON {
+            let jsonKV = ["id": json.key, "name": json.value]
+            if let georegion = Mapper<GeoRegion>().map(JSON: jsonKV) {
+                geoRegions.append(georegion)
             }
         }
     }
-
 #else
+    public dynamic var geoRegions = [GeoRegion]()
 
-    public class GeoRegions: GeoRegionsObject {
-        
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-        }
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
     }
 #endif
-
-public class GeoRegionsObject : Object {
-    #if USE_EXT_FWK
-    let geoRegions = List<GeoRegion>()
-    #else
-    public dynamic var geoRegions = [GeoRegion]()
-    #endif
     
     override public var description : String {
         var aux : String = "\(type(of:self)): "

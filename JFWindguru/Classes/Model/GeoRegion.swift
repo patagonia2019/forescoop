@@ -21,34 +21,28 @@ import Foundation
  *  "2": "Africa",
  */
 
-#if USE_EXT_FWK
-    public class GeoRegion: GeoRegionObject, Mappable {
-        
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            id <- map["id"]
-            name <- map["name"]
-        }
-    }
+public class GeoRegion: Object, Mappable {
 
+    public dynamic var id: String? = nil
+    public dynamic var name: String? = nil
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+    }
 #else
-    public class GeoRegion: GeoRegionObject {
-        init(dictionary: [String: AnyObject?]) {
-            super.init()
-            id = dictionary["id"] as? String ?? nil
-            name = dictionary["name"] as? String ?? nil
-        }
+    init(dictionary: [String: AnyObject?]) {
+        super.init()
+        id = dictionary["id"] as? String ?? nil
+        name = dictionary["name"] as? String ?? nil
     }
 #endif
 
-
-public class GeoRegionObject : Object {
-    public dynamic var id: String? = nil
-    public dynamic var name: String? = nil
-    
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         

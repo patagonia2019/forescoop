@@ -27,38 +27,7 @@ import Foundation
  */
 
 
-#if USE_EXT_FWK
-    public class SetResult: SetResultObject, Mappable {
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            count <- map["count"]
-            var dict = [String: String]()
-            dict <- map["sets"]
-            for (k,v) in dict {
-                let jsonKV = ["id": k, "name": v]
-                if let setInfo = Mapper<SetInfo>().map(JSON: jsonKV) {
-                    sets.append(setInfo)
-                }
-            }            
-        }
-
-    }
-    
-#else
-
-    public class SetResult: SetResultObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-        }
-    }
-
-#endif
-        
-public class SetResultObject : Object {
+public class SetResult: Object, Mappable {
 
     // count: number of results obtained
     public dynamic var count: Int = 0
@@ -68,6 +37,32 @@ public class SetResultObject : Object {
     #else
     public var sets: [SetInfo]?
     #endif
+    
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
+    
+    public func mapping(map: Map) {
+        count <- map["count"]
+        var dict = [String: String]()
+        dict <- map["sets"]
+        for (k,v) in dict {
+            let jsonKV = ["id": k, "name": v]
+            if let setInfo = Mapper<SetInfo>().map(JSON: jsonKV) {
+                sets.append(setInfo)
+            }
+        }            
+    }
+
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
+    }
+
+#endif
 
 
     override public var description : String {

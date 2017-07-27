@@ -33,42 +33,34 @@ import Foundation
  *
  */
 
-#if USE_EXT_FWK
-    public class WindguruStation: WindguruStationObject, Mappable {
-
-
-        required convenience public init?(map: Map) {
-            self.init()
-        }
-        
-        public func mapping(map: Map) {
-            id <- map["id"]
-            station <- map["station"]
-            distance <- map["distance"]
-            id_type <- map["id_type"]
-            wind_avg <- map["wind_avg"]
-        }
-
-        
-    }
-
-#else
-
-    public class WindguruStation: WindguruStationObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-       }
-    }
-#endif
-
-public class WindguruStationObject: Object {
+public class WindguruStation: Object, Mappable {
 
     public dynamic var id: String? = nil
     public dynamic var station: String? = nil
     public dynamic var distance: Int = 0
     public dynamic var id_type: String? = nil
     public dynamic var wind_avg: Int = 0
+
+#if USE_EXT_FWK
+    required convenience public init?(map: Map) {
+        self.init()
+    }
     
+    public func mapping(map: Map) {
+        id <- map["id"]
+        station <- map["station"]
+        distance <- map["distance"]
+        id_type <- map["id_type"]
+        wind_avg <- map["wind_avg"]
+    }
+
+#else
+
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
+   }
+
+#endif
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         if let id = id {
