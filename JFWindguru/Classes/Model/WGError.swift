@@ -46,6 +46,7 @@ public class WGError: Mappable {
         if let wgdata = wgdata,
             let jsonString = String(data: wgdata, encoding: .utf8)
         {
+#if USE_EXT_FWK
             if let wgerror = Mapper<WGError>().map(JSONString: jsonString)
             {
                 descValue += ". "
@@ -54,6 +55,9 @@ public class WGError: Mappable {
             else {
                 descValue += " Response IS " + jsonString
             }
+#else
+            descValue += " Response IS " + jsonString
+#endif
         }
         else {
             descValue += " Response EMPTY"

@@ -49,7 +49,7 @@ public class SpotForecast: SpotInfo {
 #if USE_EXT_FWK
     public let forecasts = List<ForecastModel>()
 #else
-    public var forecasts: Dictionary<String, ForecastModel>?
+    public var forecasts = [ForecastModel]()
 #endif
     
 #if USE_EXT_FWK
@@ -79,9 +79,9 @@ public class SpotForecast: SpotInfo {
                 tmpForecast <- map["forecast.\(modelValue)"]
                 if let forecast = tmpForecast {
                     #if USE_EXT_FWK
-                        forecasts.append(ForecastModel(model: modelValue, info: forecast))
+                        forecasts.append(ForecastModel(modelValue: modelValue, infoForecast: forecast))
                     #else
-                        forecasts?[model] = ForecastModel(model: modelValue, info: forecast)
+                        forecasts?[model] = ForecastModel(modelValue: modelValue, infoForecast: forecast)
                     #endif
                     currentModel = model.value
                 }
@@ -93,9 +93,15 @@ public class SpotForecast: SpotInfo {
     
     public override init(dictionary: [String: AnyObject?]) {
         super.init(dictionary: dictionary)
-        current_model = dictionary["current_model"] ?? nil
-        forecasts = dictionary["forecasts"] ?? nil
-   }
+        currentModel = dictionary["current_model"] as? String ?? nil
+        if let dict = dictionary["forecasts"] as? Dictionary<String, AnyObject?> {
+            for (_, v) in dict {
+                if let d = v as? Dictionary<String, AnyObject?> {
+                    forecasts.append(ForecastModel.init(dictionary: d))
+                }
+            }
+        }
+    }
 
 #endif
 

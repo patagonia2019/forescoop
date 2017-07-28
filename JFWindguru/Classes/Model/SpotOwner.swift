@@ -62,9 +62,9 @@ public dynamic var id_user: String? = nil
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    override init(dictionary: [String: AnyObject?]) {
         super.init(dictionary: dictionary)
-        id_user = dictionary["id_user"] ?? nil
+        id_user = dictionary["id_user"] as? String ?? nil
    }
 
 #endif

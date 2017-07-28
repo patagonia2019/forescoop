@@ -57,7 +57,7 @@ public class SpotInfo: Spot {
 #if USE_EXT_FWK
     public var models = List<StringObject>()
 #else
-    public var models: Array<String>?
+    public var models = [String]()
 #endif
     public dynamic var tides: String? = nil
 
@@ -102,21 +102,25 @@ public class SpotInfo: Spot {
 
     public override init(dictionary: [String: AnyObject?]) {
         super.init(dictionary: dictionary)
-        countryId = dictionary["countryId"] ?? nil
-        latitude = dictionary["latitude"] ?? nil
-        longitude = dictionary["longitude"] ?? nil
-        altitude = dictionary["altitude"] ?? nil
-        timezone = dictionary["timezone"] ?? nil
-        gmtHourOffset = dictionary["gmtHourOffset"] ?? nil
-        sunrise = dictionary["sunrise"] ?? nil
-        sunset = dictionary["sunset"] ?? nil
+        countryId = dictionary["countryId"] as? Int ?? 0
+        latitude = dictionary["latitude"] as? Double ?? 0.0
+        longitude = dictionary["longitude"] as? Double ?? 0.0
+        altitude = dictionary["altitude"] as? Int ?? 0
+        timezone = dictionary["timezone"] as? String ?? nil
+        gmtHourOffset = dictionary["gmtHourOffset"] as? Int ?? 0
+        sunrise = dictionary["sunrise"] as? String ?? nil
+        sunset = dictionary["sunset"] as? String ?? nil
         if let sunrise = sunrise,
             let sunset = sunset
         {
-            elapse = Elapse.init(sunrise, end: sunset)
+            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
         }
-        models = dictionary["models"] ?? nil
-        tides = dictionary["tides"] ?? nil
+        if let modelDicts = dictionary["models"] as? [String] {
+            for model in modelDicts {
+                models.append(model)
+            }
+        }
+        tides = dictionary["tides"] as? String ?? nil
    }
 
 #endif
@@ -141,10 +145,10 @@ public class SpotInfo: Spot {
         if let elapse = elapse {
             aux += "elapse \(elapse)\n"
         }
-        aux += "models \(models), "
         if let tides = tides {
             aux += "tides \(tides).\n"
         }
+        aux += "models \(models), "
         return aux
     }
     

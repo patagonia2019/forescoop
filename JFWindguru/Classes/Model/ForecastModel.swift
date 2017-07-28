@@ -38,19 +38,20 @@ public class ForecastModel: Object, Mappable {
     public func mapping(map: Map) {
     }
 
+    convenience public init(modelValue: String, infoForecast: Forecast)
+    {
+        self.init()
+        model = modelValue
+        info = infoForecast
+    }
+    
+
 #else
     init(dictionary: [String: AnyObject?]) {
         // TODO
     }
 #endif
 
-    convenience public init(model: String, info: Forecast)
-    {
-        self.init()
-        self.model = model
-        self.info = info
-    }
-    
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         if let model = model {

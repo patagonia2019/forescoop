@@ -137,13 +137,18 @@ public class TimeWeather: Object, Mappable {
         var aux : String = "\(type(of:self)): "
 
         let orderkeys = keys.sorted { (a, b) -> Bool in
+#if USE_EXT_FWK
             if let av = a.value, let bv = b.value,
                 let avi = Int(av), let bvi = Int(bv) {
                 return avi < bvi
             }
             return false
+#else
+            return a < b
+#endif
         }
         for k in orderkeys {
+#if USE_EXT_FWK
             guard let index = keys.index(of: k),
                 let key = k.value
                 else { return "" }
@@ -156,6 +161,18 @@ public class TimeWeather: Object, Mappable {
                     aux += v.description
                 }
             }
+#else
+            let key = k
+            guard let index = keys.index(of: k) else { return "" }
+            aux += "\(key): "
+            if strings.count >= 0 && index < strings.count {
+                aux += strings[index]
+            }
+            else if floats.count > 0 && index < floats.count {
+                let v = floats[index]
+                aux += "\(v)"
+            }
+#endif
             aux += ", "
         }
         aux += "\n"

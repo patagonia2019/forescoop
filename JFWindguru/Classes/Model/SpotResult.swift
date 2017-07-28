@@ -50,7 +50,7 @@ public class SpotResult: Object, Mappable {
     #if USE_EXT_FWK
     public var spots = List<SpotOwner>()
     #else
-    public var spots: [SpotOwner]?
+    public var spots = [SpotOwner]()
     #endif
  
 #if USE_EXT_FWK
@@ -66,9 +66,12 @@ public class SpotResult: Object, Mappable {
 #else
 
     init(dictionary: [String: AnyObject?]) {
-        super.init(dictionary: dictionary)
-        count = dictionary["count"] ?? nil
-        spots = dictionary["spots"] ?? nil
+        count = dictionary["count"] as? Int ?? 0
+//        if let dict = dictionary["spots"] as {
+//            for so in dict {
+//                spots.append(SpotOwner.init(dictionary:so))
+//            }
+//        }
    }
 
 #endif
@@ -76,11 +79,6 @@ public class SpotResult: Object, Mappable {
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "\n\(count) spots.\n"
-        #if USE_EXT_FWK
-        #else
-            guard let spots = spots else { return aux }
-        #endif
-    
         for spot in spots {
             aux += "\(spot.description)\n"
         }

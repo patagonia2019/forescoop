@@ -57,7 +57,11 @@ public class Model: Object, Mappable {
     public var period : Int = 0
     public var resolution : Int = 0
     public dynamic var update_time: String?
+#if USE_EXT_FWK
     public var show_vars = List<StringObject>()
+#else
+    public var show_vars: Array<String>?
+#endif
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -80,14 +84,14 @@ public class Model: Object, Mappable {
 
     init(dictionary: [String: AnyObject?]) {
         super.init()
-        id_model = dictionary["id_model"] as? Int
+        id_model = dictionary["id_model"] as? Int ?? 0
         model_name = dictionary["model_name"] as? String ?? nil
         model = dictionary["model"] as? String ?? nil
-        hr_start = Opt.init(dictionary["hr_start"] as? Int)
-        hr_end = Opt.init(dictionary["hr_end"] as? Int)
-        hr_step = Opt.init(dictionary["hr_step"] as? Int)
-        period = Opt.init(dictionary["period"] as? Int)
-        resolution = Opt.init(dictionary["resolution"] as? Int)
+        hr_start = dictionary["hr_start"] as? Int ?? 0
+        hr_end = dictionary["hr_end"] as? Int ?? 0
+        hr_step = dictionary["hr_step"] as? Int ?? 0
+        period = dictionary["period"] as? Int ?? 0
+        resolution = dictionary["resolution"] as? Int ?? 0
         update_time = dictionary["update_time"] as? String ?? nil
         show_vars = dictionary["show_vars"] as? [String] ?? nil
     }
@@ -109,6 +113,12 @@ public class Model: Object, Mappable {
         if let update_time = update_time {
             aux += "update_time \(update_time)\n"
         }
+#if USE_EXT_FWK
+#else
+        guard let show_vars = show_vars else {
+            return aux
+        }
+#endif
         if show_vars.count > 0 {
             aux += "show_vars \(show_vars)\n"
         }

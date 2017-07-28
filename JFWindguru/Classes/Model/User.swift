@@ -126,17 +126,17 @@ public class User: Object, Mappable {
     public var colors_htsgw = List<Color>()
     public var colors_perpw = List<Color>()
 #else
-    public dynamic var wind_rating_limits: [Float]?
-    public dynamic var colors : [Color]?
-    public dynamic var colors_wind : [Color]?
-    public dynamic var colors_temp : [Color]?
-    public dynamic var colors_cloud : [Color]?
-    public dynamic var colors_precip : [Color]?
-    public dynamic var colors_precip1 : [Color]?
-    public dynamic var colors_press : [Color]?
-    public dynamic var colors_rh : [Color]?
-    public dynamic var colors_htsgw : [Color]?
-    public dynamic var colors_perpw : [Color]?
+    public dynamic var wind_rating_limits = [Float]()
+    public dynamic var colors = [Color]()
+    public dynamic var colors_wind = [Color]()
+    public dynamic var colors_temp = [Color]()
+    public dynamic var colors_cloud = [Color]()
+    public dynamic var colors_precip = [Color]()
+    public dynamic var colors_precip1 = [Color]()
+    public dynamic var colors_press = [Color]()
+    public dynamic var colors_rh = [Color]()
+    public dynamic var colors_htsgw = [Color]()
+    public dynamic var colors_perpw = [Color]()
 #endif
 
 #if USE_EXT_FWK
@@ -194,19 +194,22 @@ public class User: Object, Mappable {
 #else
 
     init(dictionary: [String: AnyObject?]) {
-        id_user = dictionary["id_user"] ?? nil
-        username = dictionary["username"] ?? nil
-        id_country = dictionary["id_country"] ?? nil
-        wind_units = dictionary["wind_units"] ?? nil
-        temp_units = dictionary["temp_units"] ?? nil
-        wave_units = dictionary["wave_units"] ?? nil
-        pro = dictionary["pro"] ?? nil
-        no_ads = dictionary["no_ads"] ?? nil
-        view_hours_from = dictionary["view_hours_from"] ?? nil
-        view_hours_to = dictionary["view_hours_to"] ?? nil
-        temp_limit = dictionary["temp_limit"] ?? nil
-        wind_rating_limits = dictionary["wind_rating_limits"] ?? nil
-        colors = dictionary["colors"] ?? nil
+        id_user = dictionary["id_user"] as? Int ?? 0
+        username = dictionary["username"] as? String ?? nil
+        id_country = dictionary["id_country"] as? Int ?? 0
+        wind_units = dictionary["wind_units"] as? String ?? nil
+        temp_units = dictionary["temp_units"] as? String ?? nil
+        wave_units = dictionary["wave_units"] as? String ?? nil
+        pro = dictionary["pro"] as? Int ?? 0
+        no_ads = dictionary["no_ads"] as? Int ?? 0
+        view_hours_from = dictionary["view_hours_from"] as? Int ?? 0
+        view_hours_to = dictionary["view_hours_to"] as? Int ?? 0
+        temp_limit = dictionary["temp_limit"] as? Int ?? 0
+        if let wrl = dictionary["wind_rating_limits"] as? [Float] {
+            for f in wrl {
+                wind_rating_limits.append(f)
+            }
+        }
     }
 
 #endif
@@ -247,8 +250,8 @@ public class User: Object, Mappable {
         aux += "view_hours_from \(view_hours_from), "
         aux += "view_hours_to \(view_hours_to), "
         aux += "temp_limit \(temp_limit), "
+        aux += "wind_rating_limits \(wind_rating_limits)\n"
         #if USE_EXT_FWK
-            aux += "wind_rating_limits \(wind_rating_limits)\n"
 
             aux += "colors_wind: "
             for c in colors_wind { aux += c.description + "; " }
@@ -287,12 +290,7 @@ public class User: Object, Mappable {
             aux += "]\n"
 
         #else
-            if let wind_rating_limits = wind_rating_limits {
-                aux += "wind_rating_limits \(wind_rating_limits), "
-            }
-            if let colors = colors {
-                aux += "colors \(colors).\n"
-            }
+            aux += "colors \(colors).\n"
         #endif
         return aux
     }

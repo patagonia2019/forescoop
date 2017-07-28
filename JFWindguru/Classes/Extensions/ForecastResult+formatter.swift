@@ -82,28 +82,19 @@ extension SpotForecast
     
     private func forecast() -> Forecast?
     {
-        #if USE_EXT_FWK
-            guard let currentModel = currentModel else { return nil }
-            for forecastModel in forecasts {
-                if forecastModel.model == currentModel {
-                    return forecastModel.info
-                }
+        guard let currentModel = currentModel else { return nil }
+        for forecastModel in forecasts {
+            if forecastModel.model == currentModel {
+                return forecastModel.info
             }
-            return nil
-        #else
-            guard let currentModel = currentModel,
-                let forecasts = forecasts,
-                let forecastModel = forecasts[currentModel]
-                else {
-                    return nil
-            }
-            return forecastModel.info
-        #endif
+        }
+        return nil
     }
     
     private func valueForKey(key : TimeWeather) -> AnyObject?
     {
         guard let hhString = hourString() else { return nil }
+#if USE_EXT_FWK
         for k in key.keys {
             if k.value == hhString {
                 guard let index = key.keys.index(of: k) else { continue }
@@ -116,6 +107,20 @@ extension SpotForecast
             }
         }
         return nil
+#else
+    for k in key.keys {
+        if k == hhString {
+            guard let index = key.keys.index(of: k) else { continue }
+            if key.strings.count >= 0 && index < key.strings.count {
+                return key.strings[index] as AnyObject
+            }
+            else if key.floats.count >= 0 && index < key.floats.count{
+                return key.floats[index] as AnyObject
+            }
+        }
+    }
+    return nil
+#endif
     }
 
     private func cloudCoverTotal() -> Int

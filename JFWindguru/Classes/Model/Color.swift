@@ -41,12 +41,9 @@ public class Color: Object {
         super.init(value: value, schema: schema)
     }
 #else
-    public class Color: ColorObject {
-        init(dictionary: [String: AnyObject?]) {
-            // TODO
-        }
+    init(dictionary: [String: AnyObject?]) {
+        // TODO
     }
-    
 #endif
     
     public override var description : String {

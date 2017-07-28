@@ -36,13 +36,13 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.user
         let url = Definition.service.url(api: api, tokens: tokens)
-        
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<User>) in
-            self?.replicates(response, url: url, api: api,
-                           context: "\(#file):\(#line):\(#column):\(#function)",
-                           failure: failure, success: success)
+            (object) in
+            self?.mapAndResponse(object,
+                             url: url, api: api,
+                             context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
         }
     }
     
@@ -62,11 +62,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.forecast
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SpotForecast>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -96,12 +97,13 @@ extension ForecastWindguruService {
         let api = Definition.service.api.wforecast
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<WSpotForecast>) in
-            self?.replicates(response, url: url, api: api,
-                           context: "\(#file):\(#line):\(#column):\(#function)",
-                           failure: failure, success: success)
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
         }
     }
     
@@ -116,11 +118,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.spotInfo
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SpotInfo>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -143,11 +146,12 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.customSpots
         let url = Definition.service.url(api: api, tokens: tokens)
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SpotResult>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -172,12 +176,13 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.favoriteSpots
         let url = Definition.service.url(api: api, tokens: tokens)
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SpotResult>) in
-            self?.replicates(response, url: url, api: api,
-                           context: "\(#file):\(#line):\(#column):\(#function)",
-                           failure: failure, success: success)
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
+                failure: failure, success: success)
         }
     }
     
@@ -199,11 +204,12 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.setSpots
         let url = Definition.service.url(api: api, tokens: tokens)
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SetResult>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -230,11 +236,12 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.addSetSpots
         let url = Definition.service.url(api: api, tokens: tokens)
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SpotResult>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -262,11 +269,12 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.addFavoriteSpot
         let url = Definition.service.url(api: api, tokens: tokens)
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<WGSuccess>) in
-            self?.replicates(response, url: url, api: api,
-                           context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -292,11 +300,12 @@ extension ForecastWindguruService {
         }
         let api = Definition.service.api.remove_f_spot
         let url = Definition.service.url(api: api, tokens: tokens)
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<WGSuccess>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -315,11 +324,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.searchSpots
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SpotResult>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -347,11 +357,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.spots
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<SpotResult>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -372,11 +383,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.modelInfo
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<Models>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -398,11 +410,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.modelsLatLon
         let url = Definition.service.url(api: api, tokens: tokens)
 
-        Alamofire.request(url, method:.get).validate().responseString {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<String>) in
-            self?.replicatesWithString(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponseWithString(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -418,11 +431,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.geoRegions
         let url = Definition.service.url(api: api, tokens: [:])
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<GeoRegions>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -444,11 +458,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.countries
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<Countries>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -470,11 +485,12 @@ extension ForecastWindguruService {
         let api = Definition.service.api.regions
         let url = Definition.service.url(api: api, tokens: tokens)
         
-        Alamofire.request(url, method:.get).validate().responseObject {
+        Communication.request(url) {
             [weak self]
-            (response: DataResponse<Regions>) in
-            self?.replicates(response, url: url, api: api,
-                             context: "\(#file):\(#line):\(#column):\(#function)",
+            (response) in
+            self?.mapAndResponse(response,
+                                 url: url, api: api,
+                                 context: "\(#file):\(#line):\(#column):\(#function)",
                 failure: failure, success: success)
         }
     }
@@ -482,17 +498,26 @@ extension ForecastWindguruService {
     /*
      * Privates part
      */
-    func replicates<T>(_ response: DataResponse<T>,
-                    url: String,
-                    api: ForecastWindguruService.Definition.service.api,
-                    context: String,
-                    failure:@escaping (_ error: WGError?) -> Void,
-                    success:@escaping (_ result: T?) -> Void)
+    #if USE_EXT_FWK
+    func mapAndResponse<T: BaseMappable>(_ response: Response?,
+        url: String,
+        api: ForecastWindguruService.Definition.service.api,
+        context: String,
+        failure:@escaping (_ error: WGError?) -> Void,
+        success:@escaping (_ result: T?) -> Void)
     {
-        if  response.result.error == nil,
-            let responseResultValue = response.result.value,
+        var error : Error? = NSError()
+        var data : Data? = Data()
+        if let response = response {
+            data = response.data
+            error = response.error
+        }
+
+        if  let response = response,
+            response.error == nil,
             let responseData = response.data,
             let jsonString = String(data: responseData, encoding: .utf8),
+            let responseResultValue = Mapper<T>(shouldIncludeNilValues: true).map(JSONString: jsonString),
             let error = Mapper<WGError>().map(JSONString: jsonString),
             (error.toJSON().count == 0 || error.returnString == "OK")
         {
@@ -500,43 +525,120 @@ extension ForecastWindguruService {
             success(responseResultValue)
         }
         else {
-            print("FAILURE url = \(url) - response.result.error \(String(describing: response.result.error))")
+            print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
             failure(WGError.init(code: api.errorCode,
                                  desc: "failed using=\(url).",
                 reason: "\(api.query) failed",
-                suggestion: context,
-                underError: response.result.error as NSError?,
-                wgdata: response.data))
+                suggestion: "\(#file):\(#line):\(#column):\(#function)",
+                underError: error as NSError?,
+                wgdata: data))
         }
+
     }
-    
-    func replicatesWithString(_ response: DataResponse<String>,
-                              url: String,
+
+    func mapAndResponseWithString(_ response: Response?,
+                            url: String,
                               api: ForecastWindguruService.Definition.service.api,
                               context: String,
                               failure:@escaping (_ error: WGError?) -> Void,
                               success:@escaping (_ result: [String]) -> Void)
     {
-        if  response.result.error == nil,
-            let responseResultValue = response.result.value,
+        var error : Error? = NSError()
+        var data : Data? = Data()
+        if let response = response {
+            data = response.data
+            error = response.error
+        }
+        
+        if  let response = response,
+            response.error == nil,
             let responseData = response.data,
             let jsonString = String(data: responseData, encoding: .utf8),
             Mapper<WGError>().map(JSONString: jsonString) == nil
         {
-            let array = Array(Set(responseResultValue.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
+            let array = Array(Set(jsonString.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
             
-            print("SUCCESS url = \(url) - response.result.value \(String(describing: responseResultValue))")
+            print("SUCCESS url = \(url) - response.result.value \(String(describing: jsonString))")
             success(array)
         }
         else {
-            print("FAILURE url = \(url) - response.result.error \(String(describing: response.result.error))")
+            print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
             failure(WGError.init(code: api.errorCode,
                                  desc: "failed using=\(url).",
                 reason: "\(api.query) failed",
                 suggestion: context,
-                underError: response.result.error as NSError?,
-                wgdata: response.data))
+                underError: error as NSError?,
+                wgdata: data))
+        }
+    }
+    #else
+    
+    func mapAndResponse<T>(_ response: Response?,
+                        url: String,
+                        api: ForecastWindguruService.Definition.service.api,
+                        context: String,
+                        failure:@escaping (_ error: WGError?) -> Void,
+                        success:@escaping (_ result: T?) -> Void)
+    {
+        var error : Error? = NSError()
+        var data : Data? = Data()
+        if let response = response {
+            data = response.data
+            error = response.error
+        }
+        
+        if  let response = response,
+            response.error == nil,
+            let responseData = response.data
+        {
+            let json = try! JSONSerialization.jsonObject(with: responseData, options:[])
+        }
+        else {
+            print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
+            failure(WGError.init(code: api.errorCode,
+                                 desc: "failed using=\(url).",
+                reason: "\(api.query) failed",
+                suggestion: "\(#file):\(#line):\(#column):\(#function)",
+                underError: error as NSError?,
+                wgdata: data))
+        }
+        
+    }
+
+    func mapAndResponseWithString(_ response: Response?,
+                                  url: String,
+                                  api: ForecastWindguruService.Definition.service.api,
+                                  context: String,
+                                  failure:@escaping (_ error: WGError?) -> Void,
+                                  success:@escaping (_ result: [String]) -> Void)
+    {
+        var error : Error? = NSError()
+        var data : Data? = Data()
+        if let response = response {
+            data = response.data
+            error = response.error
+        }
+        
+        if  let response = response,
+            response.error == nil,
+            let responseData = response.data,
+            let jsonString = String(data: responseData, encoding: .utf8)
+        {
+            let array = Array(Set(jsonString.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
+            
+            print("SUCCESS url = \(url) - response.result.value \(String(describing: jsonString))")
+            success(array)
+        }
+        else {
+            print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
+            failure(WGError.init(code: api.errorCode,
+                                 desc: "failed using=\(url).",
+                reason: "\(api.query) failed",
+                suggestion: context,
+                underError: error as NSError?,
+                wgdata: data))
         }
     }
 
+    #endif
 }

@@ -32,11 +32,11 @@ public class SetResult: Object, Mappable {
     // count: number of results obtained
     public dynamic var count: Int = 0
     // spots: is a dictionary forecast id/ forecast name
-    #if USE_EXT_FWK
+#if USE_EXT_FWK
     public var sets = List<SetInfo>()
-    #else
+#else
     public var sets: [SetInfo]?
-    #endif
+#endif
     
 
 #if USE_EXT_FWK

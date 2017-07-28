@@ -29,11 +29,11 @@ import Foundation
 
 public class Spot: Object, Mappable {
 
-#if USE_EXT_FWK
-
     public dynamic var id_spot: String? = nil
     public dynamic var spotname: String? = nil
     public dynamic var country: String? = nil
+    
+#if USE_EXT_FWK
 
     required public convenience init(map: Map) {
         self.init()
