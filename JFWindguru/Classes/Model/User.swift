@@ -103,6 +103,13 @@ import Foundation
 
 public class User: Object, Mappable {
     
+#if USE_EXT_FWK
+    public typealias ListColor   = List<Color>
+#else
+    public typealias ListColor   = [Color]
+#endif
+    
+
     public dynamic var id_user : Int = 0
     public dynamic var username: String?
     public dynamic var id_country : Int = 0
@@ -114,30 +121,16 @@ public class User: Object, Mappable {
     public dynamic var view_hours_from : Int = 0
     public dynamic var view_hours_to : Int = 0
     public dynamic var temp_limit : Int = 0
-#if USE_EXT_FWK
-    public var wind_rating_limits = List<FloatObject>()
-    public var colors_wind = List<Color>()
-    public var colors_temp = List<Color>()
-    public var colors_cloud = List<Color>()
-    public var colors_precip = List<Color>()
-    public var colors_precip1 = List<Color>()
-    public var colors_press = List<Color>()
-    public var colors_rh = List<Color>()
-    public var colors_htsgw = List<Color>()
-    public var colors_perpw = List<Color>()
-#else
-    public dynamic var wind_rating_limits = [Float]()
-    public dynamic var colors = [Color]()
-    public dynamic var colors_wind = [Color]()
-    public dynamic var colors_temp = [Color]()
-    public dynamic var colors_cloud = [Color]()
-    public dynamic var colors_precip = [Color]()
-    public dynamic var colors_precip1 = [Color]()
-    public dynamic var colors_press = [Color]()
-    public dynamic var colors_rh = [Color]()
-    public dynamic var colors_htsgw = [Color]()
-    public dynamic var colors_perpw = [Color]()
-#endif
+    public var wind_rating_limits = ListFloatObject()
+    public var colors_wind = ListColor()
+    public var colors_temp = ListColor()
+    public var colors_cloud = ListColor()
+    public var colors_precip = ListColor()
+    public var colors_precip1 = ListColor()
+    public var colors_press = ListColor()
+    public var colors_rh = ListColor()
+    public var colors_htsgw = ListColor()
+    public var colors_perpw = ListColor()
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -213,20 +206,6 @@ public class User: Object, Mappable {
     }
 
 #endif
-
-    public func name() -> String {
-        if isAnonymous() {
-            return "Anonymous"
-        }
-        return username ?? ""
-    }
-    
-    public func isAnonymous() -> Bool {
-        if let username = username, username != "" {
-            return false
-        }
-        return true
-    }
     
     override public var description : String {
         var aux : String = "\(type(of:self)): "
@@ -250,48 +229,60 @@ public class User: Object, Mappable {
         aux += "view_hours_from \(view_hours_from), "
         aux += "view_hours_to \(view_hours_to), "
         aux += "temp_limit \(temp_limit), "
-        aux += "wind_rating_limits \(wind_rating_limits)\n"
-        #if USE_EXT_FWK
+        aux += "wind_rating_limits \(wind_rating_limits.printDescription())\n"
 
-            aux += "colors_wind: "
-            for c in colors_wind { aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_wind: "
+        for c in colors_wind { aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_temp: "
-            for c in colors_temp { aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_temp: "
+        for c in colors_temp { aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_cloud: "
-            for c in colors_cloud { aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_cloud: "
+        for c in colors_cloud { aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_precip: "
-            for c in colors_precip { aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_precip: "
+        for c in colors_precip { aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_precip1: "
-            for c in colors_precip1 { aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_precip1: "
+        for c in colors_precip1 { aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_press: "
-            for c in colors_press { aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_press: "
+        for c in colors_press { aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_rh: "
-            for c in colors_rh { aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_rh: "
+        for c in colors_rh { aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_htsgw: "
-            for c in colors_htsgw{ aux += c.description + "; " }
-            aux += "\n"
+        aux += "colors_htsgw: "
+        for c in colors_htsgw{ aux += c.description + "; " }
+        aux += "\n"
 
-            aux += "colors_perpw: ["
-            for c in colors_perpw{ aux += c.description + "; " }
-            aux += "]\n"
+        aux += "colors_perpw: ["
+        for c in colors_perpw{ aux += c.description + "; " }
+        aux += "]\n"
 
-        #else
-            aux += "colors \(colors).\n"
-        #endif
         return aux
+    }
+}
+
+extension User {
+    public func name() -> String {
+        if isAnonymous() {
+            return "Anonymous"
+        }
+        return username ?? ""
+    }
+    
+    public func isAnonymous() -> Bool {
+        if let username = username, username != "" {
+            return false
+        }
+        return true
     }
 }

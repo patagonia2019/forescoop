@@ -36,8 +36,14 @@ import RealmSwift
 public class Countries: Object, Mappable {
     
 #if USE_EXT_FWK
-    let countries = List<Country>()
+    public typealias ListCountry    = List<Country>
+#else
+    public typealias ListCountry    = [Country]
+#endif
 
+    let countries = ListCountry()
+
+#if USE_EXT_FWK
     required convenience public init?(map: Map) {
         self.init()
     }
@@ -51,7 +57,6 @@ public class Countries: Object, Mappable {
         }
     }
 #else
-    public dynamic var countries = [Country]()
 
     init(dictionary: [String: AnyObject?]) {
         // TODO

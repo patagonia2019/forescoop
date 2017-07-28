@@ -15,7 +15,11 @@ import Realm
 public class StringObject: Object {
     dynamic var value: String? = nil
     override public var description: String  {
-       return value ?? ""
+        return v() ?? ""
+    }
+    
+    func v() -> String? {
+        return value
     }
     
     class func map(map: Map, key: String) -> List<StringObject> {
@@ -30,8 +34,12 @@ public class StringObject: Object {
 public class FloatObject: Object {
     let value = RealmOptional<Float>()
     override public var description: String  {
-        guard let value = value.value else { return "" }
-        return "\(value)"
+        guard let v = v() else { return "" }
+        return "\(v)"
+    }
+    
+    func v() -> Float? {
+        return value.value
     }
     
     class func map(map: Map, key: String) -> List<FloatObject> {
@@ -46,10 +54,14 @@ public class FloatObject: Object {
 public class IntObject: Object {
     let value = RealmOptional<Int>()
     override public var description: String  {
-        guard let value = value.value else { return "" }
-        return "\(value)"
+        guard let v = v() else { return "" }
+        return "\(v)"
     }
     
+    func v() -> Int? {
+        return value.value
+    }
+
     class func map(map: Map, key: String) -> List<IntObject> {
         var array = [Int?]()
         array <- map[key]
@@ -94,3 +106,115 @@ public class Object : NSObject {}
 public protocol Mappable {}
 #endif
 
+#if USE_EXT_FWK
+public typealias ListIntObject    = List<IntObject>
+public typealias ListFloatObject  = List<FloatObject>
+public typealias ListStringObject = List<StringObject>
+#else
+public typealias ListIntObject    = [Int]
+public typealias ListFloatObject  = [Float]
+public typealias ListStringObject = [String]
+#endif
+
+#if USE_EXT_FWK
+extension List where Iterator.Element == StringObject {
+    public func printDescription() -> String {
+        var aux : String = "\(type(of:self)): "
+        
+        for i in 0..<count {
+            let r = self[i]
+            if let value = r.v() {
+                aux += "\(value), "
+            }
+            else {
+                    aux += ", "
+            }
+        }
+        return aux
+    }
+}
+extension List where Iterator.Element == IntObject {
+    public func printDescription() -> String {
+        var aux : String = "\(type(of:self)): "
+        
+        for i in 0..<count {
+            let r = self[i]
+            if let value = r.v() {
+                aux += "\(value), "
+            }
+            else {
+                aux += ", "
+            }
+        }
+        return aux
+    }
+}
+extension List where Iterator.Element == FloatObject {
+    public func printDescription() -> String {
+        var aux : String = "\(type(of:self)): "
+
+        for i in 0..<count {
+            let r = self[i]
+            if let value = r.v() {
+                aux += "\(value), "
+            }
+            else {
+                aux += ", "
+            }
+        }
+        return aux
+    }
+}
+#else
+extension Array where Iterator.Element == String {
+    public func printDescription() -> String {
+        var aux : String = "\(type(of:self)): "
+        
+        for i in 0..<count {
+            let r = self[i]
+            aux += "\(r), "
+        }
+        return aux
+    }
+}
+extension Array where Iterator.Element == Int {
+    public func printDescription() -> String {
+        var aux : String = "\(type(of:self)): "
+        
+        for i in 0..<count {
+            let r = self[i]
+            aux += "\(r), "
+        }
+        return aux
+    }
+}
+extension Array where Iterator.Element == Float {
+    public func printDescription() -> String {
+        var aux : String = "\(type(of:self)): "
+        
+        for i in 0..<count {
+            let r = self[i]
+            aux += "\(r), "
+        }
+        return aux
+    }
+}
+
+extension String {
+    public func v() -> String {
+        return self
+    }
+}
+
+extension Float {
+    public func v() -> Float {
+        return self
+    }
+}
+    
+extension Int {
+    public func v() -> Int {
+        return self
+    }
+}
+#endif

@@ -44,7 +44,6 @@ public class ForecastModel: Object, Mappable {
         model = modelValue
         info = infoForecast
     }
-    
 
 #else
     init(dictionary: [String: AnyObject?]) {

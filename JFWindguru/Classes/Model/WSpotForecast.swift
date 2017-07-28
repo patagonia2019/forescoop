@@ -51,37 +51,38 @@ import Foundation
  */
 
 public class WSpotForecast: Object, Mappable {
-
-    dynamic var id_spot = 0
-    dynamic var id_user = 0
-    dynamic var nickname: String? = nil
-    dynamic var spotname: String? = nil
-    dynamic var spot: String? = nil
-    dynamic var lat: Float = 0.0
-    dynamic var lon: Float = 0.0
-    dynamic var alt = 0
-    dynamic var id_model: String? = nil
-    dynamic var model: String? = nil
-    dynamic var model_alt = 0
-    dynamic var levels = 0
-    dynamic var sst: String? = nil
-    dynamic var sunrise: String? = nil
-    dynamic var elapse: Elapse?
-    dynamic var sunset: String? = nil
-    dynamic var tz: String? = nil
-    dynamic var tzutc: String? = nil
-    dynamic var utc_offset = 0
-    dynamic var tzid: String? = nil
-    dynamic var tides = 0
-    dynamic var md5chk: String? = nil
-    dynamic var fcst : WForecast?
-    dynamic var wgs = false
 #if USE_EXT_FWK
-    public var wgs_arr = List<WindguruStation>()
+    public typealias ListWindguruStation   = List<WindguruStation>
 #else
-    public var wgs_arr: [WindguruStation]?
+    public typealias ListWindguruStation   = [WindguruStation]
 #endif
-    dynamic var wgs_wind_avg = 0
+
+    public dynamic var id_spot = 0
+    public dynamic var id_user = 0
+    public dynamic var nickname: String? = nil
+    public dynamic var spotname: String? = nil
+    public dynamic var spot: String? = nil
+    public dynamic var lat: Float = 0.0
+    public dynamic var lon: Float = 0.0
+    public dynamic var alt = 0
+    public dynamic var id_model: String? = nil
+    public dynamic var model: String? = nil
+    public dynamic var model_alt = 0
+    public dynamic var levels = 0
+    public dynamic var sst: String? = nil
+    public dynamic var sunrise: String? = nil
+    public dynamic var elapse: Elapse?
+    public dynamic var sunset: String? = nil
+    public dynamic var tz: String? = nil
+    public dynamic var tzutc: String? = nil
+    public dynamic var utc_offset = 0
+    public dynamic var tzid: String? = nil
+    public dynamic var tides = 0
+    dynamic var md5chk: String? = nil
+    public dynamic var fcst : WForecast?
+    dynamic var wgs = false
+    public var wgs_arr = ListWindguruStation()
+    public dynamic var wgs_wind_avg = 0
     
 
 #if USE_EXT_FWK
@@ -159,17 +160,39 @@ public class WSpotForecast: Object, Mappable {
             aux += "Forecast\n \(fcst.description)\n"
         }
         aux += "wgs_wind_avg: \(wgs_wind_avg)\n"
-#if USE_EXT_FWK
-#else
-        guard let wgs_arr = wgs_arr else {
-            return aux
-        }
-#endif
         for wgs in wgs_arr {
             aux += "WGS: \(wgs.description)\n"
         }
         return aux
     }
+}
+
+extension WSpotForecast {
     
+    public func locationName() -> String? {
+        guard let windguruStation = wgs_arr.first
+            else { return nil }
+        return windguruStation.station
+    }
+    
+    public func spotName() -> String {
+        if let locationName = locationName() {
+            return locationName
+        }
+        if let spot = spot {
+            return spot
+        }
+        if let spotname = spotname {
+            return spotname
+        }
+        if let nickname = nickname {
+            return nickname
+        }
+        if let tzid = tzid {
+            return tzid
+        }
+        return "Spot id: \(id_spot)"
+    }
     
 }
+

@@ -67,19 +67,23 @@ public class Time: Object, Mappable {
             assert(false)
         }
     }
+    
+    public override var description : String {
+        var aux : String = "\(type(of:self)): "
+        aux += String(format: "%02d:%02d:%02d", hour, minutes, seconds)
+        return aux
+    }
 
+}
+
+extension Time {
+    
     public func asDate() -> Date? {
         var interval = Double(hour)
         interval += Double(minutes * 60)
         interval += Double(seconds * 60 * 60)
         let date = Date.init(timeInterval:interval, since: Date.init())
         return date
-    }
-    
-    public override var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += String(format: "%02d:%02d:%02d", hour, minutes, seconds)
-        return aux
     }
 
 }

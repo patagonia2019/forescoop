@@ -46,11 +46,14 @@ import Foundation
 public class SpotForecast: SpotInfo {
     
     public dynamic var currentModel: String? = nil
+
 #if USE_EXT_FWK
-    public let forecasts = List<ForecastModel>()
+    public typealias ListForecastModel    = List<ForecastModel>
 #else
-    public var forecasts = [ForecastModel]()
+    public typealias ListForecastModel    = [ForecastModel]
 #endif
+
+    public var forecasts = ListForecastModel()
     
 #if USE_EXT_FWK
     public required init(map: Map) {

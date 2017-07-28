@@ -161,15 +161,24 @@ extension ApiListViewController: UITableViewDelegate {
             break
             
         case "forecast":
-            var searchText: UITextField?
             let alert = SCLAlertView()
-            searchText = alert.addTextField("spot id")
-            searchText?.autocorrectionType = .no
-            searchText?.autocapitalizationType = .none
+            var spotIdText: UITextField?
+            spotIdText = alert.addTextField("spot id")
+            spotIdText?.autocorrectionType = .no
+            spotIdText?.autocapitalizationType = .none
+
+            var modelIdText: UITextField?
+            modelIdText = alert.addTextField("model")
+            modelIdText?.autocorrectionType = .no
+            modelIdText?.autocapitalizationType = .none
             
+
             alert.addButton("Forecast") { [weak self] in
-                guard let text = searchText?.text else { return }
-                ForecastWindguruService.instance.forecast(bySpotId: text,
+                guard let spotId = spotIdText?.text,
+                    let modelId = modelIdText?.text
+                    else { return }
+                ForecastWindguruService.instance.forecast(bySpotId: spotId,
+                                                          model: modelId,
                                                           failure: {
                                                             (error) in
                                                             let subTitle = error?.title() ?? ""
@@ -186,7 +195,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                 }
             }
-            alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141), omdel id (i.e 3)", closeButtonTitle: "Cancel")
             break
             
             
@@ -399,15 +408,23 @@ extension ApiListViewController: UITableViewDelegate {
             break
             
         case "wforecast":
-            var searchText: UITextField?
             let alert = SCLAlertView()
-            searchText = alert.addTextField("spot id")
-            searchText?.autocorrectionType = .no
-            searchText?.autocapitalizationType = .none
+            var spotIdText: UITextField?
+            spotIdText = alert.addTextField("spot id")
+            spotIdText?.autocorrectionType = .no
+            spotIdText?.autocapitalizationType = .none
+            
+            var modelIdText: UITextField?
+            modelIdText = alert.addTextField("model")
+            modelIdText?.autocorrectionType = .no
+            modelIdText?.autocapitalizationType = .none
             
             alert.addButton("Forecast") { [weak self] in
-                guard let text = searchText?.text else { return }
-                ForecastWindguruService.instance.wforecast(bySpotId: text,
+                guard let spotId = spotIdText?.text,
+                      let modelId = modelIdText?.text
+                        else { return }
+                ForecastWindguruService.instance.wforecast(bySpotId: spotId,
+                                                           model: modelId,
                                                           failure: {
                                                             (error) in
                                                             let subTitle = error?.title() ?? ""

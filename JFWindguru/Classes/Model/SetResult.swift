@@ -32,11 +32,14 @@ public class SetResult: Object, Mappable {
     // count: number of results obtained
     public dynamic var count: Int = 0
     // spots: is a dictionary forecast id/ forecast name
+
 #if USE_EXT_FWK
-    public var sets = List<SetInfo>()
+    public typealias ListSetInfo    = List<SetInfo>
 #else
-    public var sets: [SetInfo]?
+    public typealias ListSetInfo    = [SetInfo]
 #endif
+
+    public var sets = ListSetInfo()
     
 
 #if USE_EXT_FWK
@@ -68,12 +71,8 @@ public class SetResult: Object, Mappable {
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "\(count) sets, "
-        #if USE_EXT_FWK
-        #else
-            guard let sets = sets else { return aux }
-        #endif
-        for forecastName in sets {
-            aux += "\(forecastName)\n"
+        for setInfo in sets {
+            aux += "\(setInfo.description)\n"
         }
         return aux
     }

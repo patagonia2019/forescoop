@@ -196,5 +196,327 @@
 		<key>mps</key>
 		<real>0.514444</real>
 	</dict>
+	<key>info</key>
+	<dict>
+		<key>WIND</key>
+		<dict>
+			<key>title</key>
+			<string>Wind speed</string>
+			<key>short</key>
+			<string>Wind speed in 10 meters above surface. </string>
+			<key>long</key>
+			<string>Wind speed is caused by air moving from high pressure to low pressure, usually due to changes in temperature. Wind speed affects weather forecasting, aircraft and maritime operations, construction projects, growth and metabolism rate of many plant species, and countless other implications. Wind speed is now commonly measured with an anemometer but can also be classified using the older Beaufort scale which is based on people&apos;s observation of specifically defined wind effects.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Wind_speed</string>
+		</dict>
+		<key>TMP</key>
+		<dict>
+			<key>title</key>
+			<string>Temperature</string>
+			<key>short</key>
+			<string>Temperature in 2 meters above ground.</string>
+			<key>long</key>
+			<string>Temperature is an objective comparative measurement of hot or cold. Temperature is an objective comparative measurement of hot or cold. Temperature is measured by a thermometer, where several scales and units exist for measuring temperature. The most common being the Celsius scale (with units denoted °C; formerly called degrees centigrade), the Fahrenheit scale (with units denoted °F), and, especially in science, the Kelvin scale (with units denoted K). The coldest theoretical temperature is absolute zero, at which the thermal motion of atoms and molecules reaches its minimum – classically, this would be a state of motionlessness, but quantum uncertainty dictates that the particles still possess a finite zero-point energy. Absolute zero is denoted as 0 K on the Kelvin scale, −273.15 °C on the Celsius scale, and −459.67 °F on the Fahrenheit scale.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Temperature</string>
+		</dict>
+		<key>TCDC</key>
+		<dict>
+			<key>title</key>
+			<string>Cloud cover (%) Total</string>
+			<key>short</key>
+			<string>Total cloud cover in percent (available at GFS, NAM, WRF). HRW model only offers total cloud cover.</string>
+			<key>long</key>
+			<string>Cloud cover (also known as cloudiness, cloudage, or cloud amount) refers to the fraction of the sky obscured by clouds when observed from a particular location.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Cloud_cover</string>
+		</dict>
+		<key>HCDC</key>
+		<dict>
+			<key>title</key>
+			<string>Cloud cover (%) High</string>
+			<key>short</key>
+			<string>High cloud cover in percent (available at GFS, NAM, WRF). HRW model only offers total cloud cover.</string>
+			<key>long</key>
+			<string>Cloud cover (also known as cloudiness, cloudage, or cloud amount) refers to the fraction of the sky obscured by clouds when observed from a particular location.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Cloud_cover</string>
+		</dict>
+		<key>MCDC</key>
+		<dict>
+			<key>title</key>
+			<string>Cloud cover (%) Mid</string>
+			<key>short</key>
+			<string>Middle cloud cover in percent (available at GFS, NAM, WRF). HRW model only offers total cloud cover.</string>
+			<key>long</key>
+			<string>Cloud cover (also known as cloudiness, cloudage, or cloud amount) refers to the fraction of the sky obscured by clouds when observed from a particular location.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Cloud_cover</string>
+		</dict>
+		<key>LCDC</key>
+		<dict>
+			<key>title</key>
+			<string>Cloud cover (%) Low</string>
+			<key>short</key>
+			<string>Low cloud cover in percent (available at GFS, NAM, WRF). HRW model only offers total cloud cover.</string>
+			<key>long</key>
+			<string>Cloud cover (also known as cloudiness, cloudage, or cloud amount) refers to the fraction of the sky obscured by clouds when observed from a particular location.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Cloud_cover</string>
+		</dict>
+		<key>RH</key>
+		<dict>
+			<key>title</key>
+			<string>Relative humidity</string>
+			<key>short</key>
+			<string>The amount of water vapour present in air expressed as a percentage of the amount needed for saturation at the same temperature.</string>
+			<key>long</key>
+			<string>Relative humidity (RH) is the ratio of the partial pressure of water vapor to the equilibrium vapor pressure of water at a given temperature. Relative humidity depends on temperature and the pressure of the system of interest. It requires less water vapor to attain high relative humidity at low temperatures; more water vapour is required to attain high relative humidity in warm or hot air.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Relative_humidity</string>
+		</dict>
+		<key>GUST</key>
+		<dict>
+			<key>title</key>
+			<string>Wind gusts</string>
+			<key>name</key>
+			<string>A wind gust is a sudden, brief increase in the speed of the wind followed by a lull. According to National Weather Service observing practice, gusts are reported when the peak wind speed reaches at least 18 mph and the variation in wind speed between the peaks and lulls is at least about 10 mph.</string>
+			<key>url</key>
+			<string>http://wxguys.ssec.wisc.edu/2012/01/09/what-causes-wind-gusts/</string>
+		</dict>
+		<key>FLHGT</key>
+		<dict>
+			<key>title</key>
+			<string>Freezing Level height in meters (0 degree isoterm)</string>
+			<key>short</key>
+			<string>Altitude in meters in which the temperature is at 0 degrees Celsius (freezing level). By default we show this only if the model predicts temperatures below 5 °C.</string>
+			<key>long</key>
+			<string>The freezing level, or 0 °C (zero-degree) isotherm, represents the altitude in which the temperature is at 0 °C (the freezing point of water) in a free atmosphere (i.e. allowing reflection of the sun by snow, etc.). Any given measure is valid for only a short period of time, often less than a day. Above the freezing altitude, the temperature of the air is below freezing. Below it, the temperature is above freezing. The profile of this frontier, and its variations, are studied in meteorology, and are used for a variety of forecasts and predictions. Whilst not given on general weather forecasts, it is used on bulletins giving forecasts for mountainous areas.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Freezing_level</string>
+		</dict>
+		<key>APCP</key>
+		<dict>
+			<key>title</key>
+			<string>Precip. (mm/3h)</string>
+			<key>short</key>
+			<string>Precipitation in milimeters</string>
+			<key>long</key>
+			<string>Models that offer forecasts for every 3 hours show accumulated precipitation for last 3 hours, models that have hourly forecasts show precipitation for last hour. For better comparison the background color indicating intensity will be same for both 1 or 3-hourly models. Some of the models can also indicate snowfall - with bold blue numbers.. (available at GFS, WRF 9 km (Europe), WRF 3 km (CZ)). Snow/rain type of precipitation is estimated according to altitude of the spot and forecasted freezing level height. 1 mm of rain could transform into approx. 1 cm of snow so when you see blue numbers you can consider these values as centimeters of snow per hour (or 3 hours) instead of milimeters of rain.</string>
+			<key>url</key>
+			<string>http://wxguys.ssec.wisc.edu/2012/01/09/what-causes-wind-gusts/</string>
+		</dict>
+		<key>WDIR</key>
+		<dict>
+			<key>title</key>
+			<string>Wind direction</string>
+			<key>short</key>
+			<string>The arrows are aligned with the wind stream direction. Example: a northerly wind (e.g. a wind that is coming from the north, blowing to the south) is indicated with an arrow pointing downward.</string>
+			<key>long</key>
+			<string>Wind direction is reported by the direction from which it originates. For example, a northerly wind blows from the north to the south.[1] Wind direction is usually reported in cardinal directions or in azimuth degrees. Wind direction is measured in degrees clockwise from due north and so a wind coming from the south has a wind direction of 180 degrees; one from the east is 90 degrees.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Wind_direction</string>
+		</dict>
+		<key>SLP</key>
+		<dict>
+			<key>title</key>
+			<string>Sea level pressure</string>
+			<key>short</key>
+			<string>Mean sea level presure (pressure reduced to sea level) in hPa. Hidden by default but registered users can choose to show this parameter. (Values above 1000 hpa are printed as x-1000 to save space in the table).</string>
+			<key>long</key>
+			<string>The mean sea level pressure (MSLP) is the average atmospheric pressure at sea level. This is the atmospheric pressure normally given in weather reports on radio, television, and newspapers or on the Internet. When barometers in the home are set to match the local weather reports, they measure pressure adjusted to sea level, not the actual local atmospheric pressure.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Atmospheric_pressure#Mean_sea_level_pressure</string>
+		</dict>
+		<key>HTSGW</key>
+		<dict>
+			<key>title</key>
+			<string>Significant Wave Height</string>
+			<key>short</key>
+			<string>In physical oceanography, the significant wave height (SWH or Hs) is defined traditionally as the mean wave height (trough to crest) of the highest third of the waves (H1/3).</string>
+			<key>long</key>
+			<string>Nowadays it is usually defined as four times the standard deviation of the surface elevation – or equivalently as four times the square root of the zeroth-order moment (area) of the wave spectrum.[1] The symbol Hm0 is usually used for that latter definition. The significant wave height may thus refer to Hm0 or H1/3; the difference in magnitude between the two definitions is only a few percent.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Significant_wave_height</string>
+		</dict>
+		<key>UGRD</key>
+		<dict>
+			<key>title</key>
+			<string>Wind U component [m/s]</string>
+			<key>short</key>
+			<string>Air flow in the atmosphere has both a speed and direction. This is represented mathematically by a vector.</string>
+			<key>long</key>
+			<string>Maps that show winds will also sometimes display them as vectors. Remember that wind barbs point in the direction the wind is coming from. Wind arrows (vectors) point in the direction the wind is blowing towards.</string>
+			<key>url</key>
+			<string>http://colaweb.gmu.edu/dev/clim301/lectures/wind/wind-uv.html</string>
+		</dict>
+		<key>VGRD</key>
+		<dict>
+			<key>title</key>
+			<string>Wind V component [m/s]</string>
+			<key>short</key>
+			<string>The meteorological convention for winds is that U component is positive for a west to east flow (eastward wind) and the V component is positive for south to north flow (northward wind).</string>
+			<key>long</key>
+			<string>In order to capture the speed and direction of wind or a water current, anemometers or Doppler current profilers measure the velocity of the wind or water in two perpendicular directions, U and V.  U is the velocity toward east and V is the velocity toward north.  U is sometimes referred to as the zonal velocity and V the meridional velocity.  Using U and V, both the speed and direction of the wind or water current can be calculated.</string>
+			<key>url</key>
+			<string>https://blogs.esri.com/esri/arcgis/2013/07/17/displaying-speed-and-direction-symbology-from-u-and-v-vectors/</string>
+		</dict>
+		<key>WVDIR</key>
+		<dict>
+			<key>title</key>
+			<string>Mean wave direction [°]</string>
+			<key>short</key>
+			<string>The mean wave direction, θm, which is defined as the mean of all the individual wave directions in a time-series representing a certain sea state.</string>
+			<key>long</key>
+			<string></string>
+			<key>url</key>
+			<string>http://www.coastalwiki.org/wiki/Statistical_description_of_wave_parameters#Mean_wave_direction</string>
+		</dict>
+		<key>WVPER</key>
+		<dict>
+			<key>title</key>
+			<string>Mean wave period [s]</string>
+			<key>short</key>
+			<string>The mean wave period, Tm, is the mean of all wave periods in a time-series representing a certain sea state.</string>
+			<key>long</key>
+			<string>Sea waves are a periodic phenomenon in which wave phases such as crests and troughs relentlessly alternate and repeat during the propagation towards a shore. The wave period can be defined as the time it takes for two consecutive crests to pass through a fixed point.</string>
+			<key>url</key>
+			<string>https://swellbeat.com/mean-and-peak-wave-periods/</string>
+		</dict>
+		<key>DIRPW</key>
+		<dict>
+			<key>title</key>
+			<string>Peak wave direction [°]</string>
+			<key>short</key>
+			<string></string>
+			<key>long</key>
+			<string></string>
+			<key>url</key>
+			<string>http://www.coastalwiki.org/wiki/Statistical_description_of_wave_parameters#Mean_wave_direction</string>
+		</dict>
+		<key>DIRS</key>
+		<dict>
+			<key>title</key>
+			<string>Wind sea direction [°]</string>
+			<key>short</key>
+			<string>Undefined if wind too weak to generate wave in spectral model domain.</string>
+			<key>long</key>
+			<string></string>
+			<key>url</key>
+			<string>http://www.coastalwiki.org/wiki/Statistical_description_of_wave_parameters</string>
+		</dict>
+		<key>PERPW</key>
+		<dict>
+			<key>title</key>
+			<string>Peak wave period [s]</string>
+			<key>short</key>
+			<string></string>
+			<key>long</key>
+			<string>The peak wave period, Tp, is the wave period with the highest energy. The analysis of the distribution of the wave energy as a function of wave frequency (period-1) for a time-series of individual waves is referred to as a spectral analysis. Wind wave periods (frequencies) often follow the so-called JONSWAP and Pierson-Moskowitz spectra. The peak wave period is extracted from the spectra. As a rule of thumb the following relation can be used: Tp ~ 5.3 Hm01/2.</string>
+			<key>url</key>
+			<string>http://www.coastalwiki.org/wiki/Statistical_description_of_wave_parameters</string>
+		</dict>
+		<key>SMER</key>
+		<dict>
+			<key>title</key>
+			<string></string>
+			<key>title - 2</key>
+			<string>specific moisture extraction rate ?</string>
+			<key>short</key>
+			<string></string>
+			<key>long</key>
+			<string></string>
+			<key>url</key>
+			<string></string>
+		</dict>
+		<key>SMERN</key>
+		<dict>
+			<key>title</key>
+			<string></string>
+			<key>title - 2</key>
+			<string>specific moisture extraction rate n.?</string>
+			<key>short</key>
+			<string></string>
+			<key>long</key>
+			<string></string>
+			<key>url</key>
+			<string></string>
+		</dict>
+		<key>TMPW</key>
+		<dict>
+			<key>title</key>
+			<string>Wind chill</string>
+			<key>short</key>
+			<string>Wind chill is the apparent temperature felt on exposed skin due to wind</string>
+			<key>long</key>
+			<string>The degree of this phenomenon depends on both air temperature and wind speed. The wind chill temperature (often popularly called the wind chill factor) is always lower than the air temperature for values where the wind chill formula is valid. Wind chill is only defined for temperatures at or below 10 °C (50 °F) and wind speeds above 3 knots. (optional, hidden by default, registered users can enable this parameter)
+Wind-chill or windchill, (popularly wind chill factor) is the perceived decrease in air temperature felt by the body on exposed skin due to the flow of air. Wind chill numbers are always lower than the air temperature for values where the formula is valid.
+</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Wind_chill</string>
+		</dict>
+		<key>SST</key>
+		<dict>
+			<key>title</key>
+			<string>Sea surface temperatures</string>
+			<key>short</key>
+			<string>Sea surface temperatures come from NOAA Real-Time Global Sea Surface Temperature analysis (RTG_SST_HR dataset), the source is satellite data and also buoy and ship observations. The resolution of the SST dataset is 0.083 degree (approx. 8 km) so remember that local differences are always possible. Temperatures are only valid for oceans and large lakes. Data update once per day.</string>
+			<key>long</key>
+			<string>In describing sea &apos;surface&apos; temperature, there are actually several surface levels that data initially arrive on. For all 5 of our SST analyses, we reference a &apos;bulk&apos; temperature -- a temperature representative of the upper layer of the ocean. This is approximately the temperature seen by buoys and some ships. Other ships observe lower in the water column. Infrared instruments, such as AVHRR and VIIRS observe most directly the &apos;skin&apos; temperature, the upper 10 microns of the water. Microwave instruments, such as AMSR-E and WindSat, observe the upper couple of centimeters.</string>
+			<key>url</key>
+			<string>http://polar.ncep.noaa.gov/sst/</string>
+		</dict>
+		<key>WVHG</key>
+		<dict>
+			<key>title</key>
+			<string>Wave height</string>
+			<key>short</key>
+			<string>In fluid dynamics, the wave height of a surface wave is the difference between the elevations of a crest and a neighbouring trough. </string>
+			<key>long</key>
+			<string>Wave height is a term used by mariners, as well as in coastal, ocean and naval engineering. At sea, the term significant wave height is used as a means to introduce a well-defined and standardized statistic to denote the characteristic height of the random waves in a sea state. It is defined in such a way that it more–or–less corresponds to what a mariner observes when estimating visually the average wave height.
+</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Wave_height</string>
+		</dict>
+		<key>SWELL</key>
+		<dict>
+			<key>title</key>
+			<string>Swell height (m)</string>
+			<key>short</key>
+			<string>A swell, in the context of an ocean, sea or lake, is a series of mechanical waves that propagate along the interface between water and air and so they are often referred to as surface gravity waves.</string>
+			<key>long</key>
+			<string>Swells have smooth, well-defined crests and relatively long periods. Swell is more uniform and regular than seas because wave energy becomes more organized as it travel longs distances. Longer period waves move faster than short period waves, and reach distant sites first. In addition, wave energy is dissipated as waves travel (from friction, turbulence, etc.), and short-period wave components lose their energy more readily than long-period components. As a consequence of these processes, swells form longer, smoother, more uniform waves than seas.</string>
+			<key>url</key>
+			<string>https://cdip.ucsd.edu/?nav=documents&amp;sub=index&amp;xitem=waves</string>
+		</dict>
+		<key>SWPER</key>
+		<dict>
+			<key>title</key>
+			<string>Swell period</string>
+			<key>short</key>
+			<string>Swell period is literally the time it takes for successive waves to pass the same point in seconds. Practically the peak period of a swell gives a great idea of how powerful the swell is and how likely it is to create good waves for surfing. Longer period swells also have a flatter profile in deep water, so create larger waves when entering shallow water to create surf.
+</string>
+			<key>long</key>
+			<string>Swell period is an important factor in surf forecasting that is often overlooked. It is a measurement of time between successive waves in seconds. If you multiply the swell period by 1.5 you will calculate the speed in knots of the wave group for deep water.</string>
+			<key>url</key>
+			<string>https://en.wikipedia.org/wiki/Surf_forecasting</string>
+		</dict>
+		<key>SWDIR</key>
+		<dict>
+			<key>title</key>
+			<string>Swell direction</string>
+			<key>short</key>
+			<string>Swell period is literally the time it takes for successive waves to pass the same point in seconds. Practically the peak period of a swell gives a great idea of how powerful the swell is and how likely it is to create good waves for surfing. Longer period swells also have a flatter profile in deep water, so create larger waves when entering shallow water to create surf.
+</string>
+			<key>long</key>
+			<string>To make waves on your local beach the swell needs to be heading towards it. Simply put the more the swell arrow is pointing straight towards the beach past any obstructions the larger the waves will be all other factors being equal. For even the most exposed locations once the swell moves beyond about 90 degrees from this optimum location the chance of any waves at all rapidly diminish. It&apos;s quite possible for a very large swell to travel along the coast straight past the beach without making ridable surf.
+
+There are some exceptions, longer period swells refract (bend) better around obstacles and the precise shape of the sea bed and any other local obstructions can alter the wave size. None the less swell direction is absolutely crucial and 10-20 degrees difference can have a massive effect at some locations. 
+
+In all our experience with novice forecasters swell direction is one of the most overlooked factors when trying to read the forecast. </string>
+			<key>url</key>
+			<string>http://magicseaweed.com/help/forecast-table/swell</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

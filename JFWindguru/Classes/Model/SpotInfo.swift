@@ -54,11 +54,7 @@ public class SpotInfo: Spot {
     public dynamic var sunrise: String? = nil
     public dynamic var sunset: String? = nil
     public dynamic var elapse : Elapse?
-#if USE_EXT_FWK
-    public var models = List<StringObject>()
-#else
-    public var models = [String]()
-#endif
+    public var models = ListStringObject()
     public dynamic var tides: String? = nil
 
 #if USE_EXT_FWK
@@ -148,7 +144,7 @@ public class SpotInfo: Spot {
         if let tides = tides {
             aux += "tides \(tides).\n"
         }
-        aux += "models \(models), "
+        aux += "models \(models.printDescription()), "
         return aux
     }
     

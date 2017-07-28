@@ -47,11 +47,13 @@ public class SpotResult: Object, Mappable {
     //
     // spots: is an array of SpotOwner objects
     //
-    #if USE_EXT_FWK
-    public var spots = List<SpotOwner>()
-    #else
-    public var spots = [SpotOwner]()
-    #endif
+#if USE_EXT_FWK
+    public typealias ListSpotOwner    = List<SpotOwner>
+#else
+    public typealias ListSpotOwner    = [SpotOwner]
+#endif
+
+    public var spots = ListSpotOwner()
  
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {

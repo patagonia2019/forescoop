@@ -521,7 +521,7 @@ extension ForecastWindguruService {
             let error = Mapper<WGError>().map(JSONString: jsonString),
             (error.toJSON().count == 0 || error.returnString == "OK")
         {
-            print("SUCCESS url = \(url) - response.result.value \(responseResultValue)")
+            print("SUCCESS url = \(url) - response.result.value \(jsonString)")
             success(responseResultValue)
         }
         else {

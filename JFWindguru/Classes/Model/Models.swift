@@ -23,8 +23,15 @@ import Foundation
 
 public class Models: Object, Mappable {
     
-    #if USE_EXT_FWK
-    public var models = List<Model>()
+#if USE_EXT_FWK
+    public typealias ListModel    = List<Model>
+#else
+    public typealias ListModel    = [Model]
+#endif
+
+    public var models = ListModel()
+
+#if USE_EXT_FWK
     
     required convenience public init?(map: Map) {
         self.init()
@@ -39,7 +46,6 @@ public class Models: Object, Mappable {
         }
     }
 #else
-    public dynamic var models = [Model]()
     
     init(dictionary: [String: AnyObject?]) {
         // TODO

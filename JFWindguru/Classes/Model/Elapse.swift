@@ -51,6 +51,19 @@ public class Elapse: Object, Mappable {
     }
 #endif
 
+    public override var description : String {
+        var aux : String = "\(type(of:self)): "
+        if let start = start {
+            aux += "start \(start), "
+        }
+        if let end = end {
+            aux += "end \(end)."
+        }
+        return aux
+    }
+}
+
+extension Elapse {
     public func containsTime(date: NSDate) -> Bool {
         guard let dstart = start?.asDate(),
             let dend = end?.asDate()
@@ -65,17 +78,4 @@ public class Elapse: Object, Mappable {
         }
         return true
     }
-    
-    public override var description : String {
-        var aux : String = "\(type(of:self)): "
-        if let start = start {
-            aux += "start \(start), "
-        }
-        if let end = end {
-            aux += "end \(end)."
-        }
-        return aux
-    }
-
-
 }

@@ -95,15 +95,9 @@ import Foundation
 
 public class TimeWeather: Object, Mappable {
 
-#if USE_EXT_FWK
-    public var keys = List<StringObject>()
-    public var strings = List<StringObject>()
-    public var floats = List<FloatObject>()
-#else
-    public var keys = [String]()
-    public var strings = [String]()
-    public var floats = [Float]()
-#endif
+    public var keys = ListStringObject()
+    public var strings = ListStringObject()
+    public var floats = ListFloatObject()
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -154,11 +148,11 @@ public class TimeWeather: Object, Mappable {
                 else { return "" }
             aux += "\(key): "
             if strings.count >= 0 && index < strings.count {
-                aux += strings[index].value ?? ""
+                aux += strings[index].v() ?? ""
             }
             else if floats.count > 0 && index < floats.count {
-                if let v = floats[index].value.value {
-                    aux += v.description
+                if let v = floats[index].v() {
+                    aux += "\(v)"
                 }
             }
 #else
@@ -166,10 +160,10 @@ public class TimeWeather: Object, Mappable {
             guard let index = keys.index(of: k) else { return "" }
             aux += "\(key): "
             if strings.count >= 0 && index < strings.count {
-                aux += strings[index]
+                aux += strings[index].v()
             }
             else if floats.count > 0 && index < floats.count {
-                let v = floats[index]
+                let v = floats[index].v()
                 aux += "\(v)"
             }
 #endif

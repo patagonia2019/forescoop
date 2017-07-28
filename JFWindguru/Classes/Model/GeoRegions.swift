@@ -34,7 +34,14 @@ import Foundation
 public class GeoRegions: Object, Mappable {
 
 #if USE_EXT_FWK
-    let geoRegions = List<GeoRegion>()
+    public typealias ListGeoRegion    = List<GeoRegion>
+#else
+    public typealias ListGeoRegion    = [GeoRegion]
+#endif
+    
+    let geoRegions = ListGeoRegion()
+
+#if USE_EXT_FWK
     required convenience public init?(map: Map) {
         self.init()
     }
@@ -48,8 +55,6 @@ public class GeoRegions: Object, Mappable {
         }
     }
 #else
-    public dynamic var geoRegions = [GeoRegion]()
-
     init(dictionary: [String: AnyObject?]) {
         // TODO
     }
