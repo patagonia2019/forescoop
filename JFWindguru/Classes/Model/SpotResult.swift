@@ -42,7 +42,7 @@ public class SpotResult: Object, Mappable {
     //
     // count: number of results obtained
     //
-    public dynamic var count: Int = 0
+    dynamic var count: Int = 0
     
     //
     // spots: is an array of SpotOwner objects
@@ -53,7 +53,7 @@ public class SpotResult: Object, Mappable {
     public typealias ListSpotOwner    = [SpotOwner]
 #endif
 
-    public var spots = ListSpotOwner()
+    var spots = ListSpotOwner()
  
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -67,13 +67,14 @@ public class SpotResult: Object, Mappable {
     
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         count = dictionary["count"] as? Int ?? 0
-//        if let dict = dictionary["spots"] as {
-//            for so in dict {
-//                spots.append(SpotOwner.init(dictionary:so))
-//            }
-//        }
+        if let dict = dictionary["spots"] as? [[String: Any]] {
+            for so in dict {
+                print(so)
+                spots.append(SpotOwner.init(dictionary: so))
+            }
+        }
    }
 
 #endif
@@ -87,4 +88,10 @@ public class SpotResult: Object, Mappable {
         return aux
     }
     
+}
+
+extension SpotResult {
+    public func lastSpot() -> SpotOwner? {
+        return spots.last
+    }
 }

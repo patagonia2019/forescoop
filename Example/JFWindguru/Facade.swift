@@ -68,14 +68,6 @@ public class Facade: NSObject {
             let url = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
             let filePath = url.appendingPathComponent(kWDWatchPlist)
         #endif
-        if (TARGET_OS_WATCH == 1)
-        {
-            print("Watch")
-        }
-        else
-        {
-            print("iPhone/iPad")
-        }
         print(filePath)
         return filePath
     }
@@ -129,9 +121,8 @@ public class Facade: NSObject {
                 }
             #else
                 guard let spotResult = spotResult,
-//                    let spots = spotResult.spots,
-                    let spot = spotResult.spots.last,
-                    let id_spot = spot.id_spot else {
+                    let spot = spotResult.lastSpot(),
+                    let id_spot = spot.id() else {
                         return
                 }
             #endif

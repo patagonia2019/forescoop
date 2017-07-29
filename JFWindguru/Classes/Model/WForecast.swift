@@ -44,51 +44,51 @@ import Foundation
 
 public class WForecast: Object, Mappable {
 
-    public dynamic var initStamp   = 0  // initstamp
-    public var temperature         = ListFloatObject() // TMP: temperature
-    public var cloudCoverTotal     = ListIntObject() // TCDC: Cloud cover (%) Total
-    public var cloudCoverHigh      = ListIntObject() // HCDC: Cloud cover (%) High
-    public var cloudCoverMid       = ListIntObject() // MCDC: Cloud cover (%) Mid
-    public var cloudCoverLow       = ListIntObject() // LCDC: Cloud cover (%) Low
-    public var relativeHumidity    = ListIntObject() // RH: Relative humidity: relative humidity in percent
-    public var windGust            = ListFloatObject() // GUST: Wind gusts (knots)
-    public var seaLevelPressure    = ListIntObject() // SLP: sea level pressure
-    public var freezingLevel       = ListIntObject() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
-    public var precipitation       = ListIntObject() //  APCP: Precip. (mm/3h)
-    public var windSpeed           = ListFloatObject() //  WINDSPD: Wind speed (knots)
-    public var windDirection       = ListIntObject() //  WINDDIR: Wind direction
-    public var SMERN               = ListIntObject()
-    public var SMER                = ListIntObject()
-    public var temperatureReal     = ListFloatObject() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
-    public var PCPT                = ListIntObject()
-    public var HTSGW               = ListFloatObject() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
-    public var WVHGT               = ListFloatObject() // WVHG: Wave height
-    public var WVPER               = ListFloatObject() // WVPER: Mean wave period [s]
-    public var WVDIR               = ListFloatObject() // WVDIR: Mean wave direction [°]
-    public var SWELL1              = ListFloatObject() // SWELL1: Swell height (m)
-    public var SWPER1              = ListFloatObject() // SWPER1: Swell period
-    public var SWDIR1              = ListFloatObject() // SWDIR1: Swell direction
-    public var SWELL2              = ListFloatObject() // SWELL2: Swell height (m)
-    public var SWPER2              = ListFloatObject() // SWPER2: Swell period
-    public var SWDIR2              = ListFloatObject() // SWDIR2: Swell direction
-    public var PERPW               = ListFloatObject() // PERPW: Peak wave period
-    public var DIRPW               = ListFloatObject() // DIRPW: Peak wave direction [°]
-    public var hr_weekday          = ListIntObject()
-    public var hr_h                = ListStringObject()
-    public var hr_d                = ListStringObject()
-    public var hours               = ListIntObject()
-    public var img_param           = ListStringObject()
-    public var img_var_map         = ListStringObject()
-    public dynamic var initDate: Date = Date()
-    public dynamic var init_d: String = ""
-    public dynamic var init_dm: String = ""
-    public dynamic var init_h: String = ""
-    public dynamic var initstr: String = ""
-    public dynamic var model_name: String = ""
-    public dynamic var model_longname: String = ""
-    public dynamic var id_model: String = ""
-    public dynamic var update_last: Date = Date()
-    public dynamic var update_next: Date = Date()
+    dynamic var initStamp   = 0  // initstamp
+    var temperature         = ListFloatObject() // TMP: temperature
+    var cloudCoverTotal     = ListIntObject() // TCDC: Cloud cover (%) Total
+    var cloudCoverHigh      = ListIntObject() // HCDC: Cloud cover (%) High
+    var cloudCoverMid       = ListIntObject() // MCDC: Cloud cover (%) Mid
+    var cloudCoverLow       = ListIntObject() // LCDC: Cloud cover (%) Low
+    var relativeHumidity    = ListIntObject() // RH: Relative humidity: relative humidity in percent
+    var windGust            = ListFloatObject() // GUST: Wind gusts (knots)
+    var seaLevelPressure    = ListIntObject() // SLP: sea level pressure
+    var freezingLevel       = ListIntObject() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
+    var precipitation       = ListIntObject() //  APCP: Precip. (mm/3h)
+    var windSpeed           = ListFloatObject() //  WINDSPD: Wind speed (knots)
+    var windDirection       = ListIntObject() //  WINDDIR: Wind direction
+    var SMERN               = ListIntObject()
+    var SMER                = ListIntObject()
+    var temperatureReal     = ListFloatObject() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    var PCPT                = ListIntObject()
+    var HTSGW               = ListFloatObject() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
+    var WVHGT               = ListFloatObject() // WVHG: Wave height
+    var WVPER               = ListFloatObject() // WVPER: Mean wave period [s]
+    var WVDIR               = ListFloatObject() // WVDIR: Mean wave direction [°]
+    var SWELL1              = ListFloatObject() // SWELL1: Swell height (m)
+    var SWPER1              = ListFloatObject() // SWPER1: Swell period
+    var SWDIR1              = ListFloatObject() // SWDIR1: Swell direction
+    var SWELL2              = ListFloatObject() // SWELL2: Swell height (m)
+    var SWPER2              = ListFloatObject() // SWPER2: Swell period
+    var SWDIR2              = ListFloatObject() // SWDIR2: Swell direction
+    var PERPW               = ListFloatObject() // PERPW: Peak wave period
+    var DIRPW               = ListFloatObject() // DIRPW: Peak wave direction [°]
+    var hr_weekday          = ListIntObject()
+    var hr_h                = ListStringObject()
+    var hr_d                = ListStringObject()
+    var hours               = ListIntObject()
+    var img_param           = ListStringObject()
+    var img_var_map         = ListStringObject()
+    dynamic var initDate: Date = Date()
+    dynamic var init_d: String = ""
+    dynamic var init_dm: String = ""
+    dynamic var init_h: String = ""
+    dynamic var initstr: String = ""
+    dynamic var model_name: String = ""
+    dynamic var model_longname: String = ""
+    dynamic var id_model: String = ""
+    dynamic var update_last: Date = Date()
+    dynamic var update_next: Date = Date()
     
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -146,9 +146,9 @@ public class WForecast: Object, Mappable {
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         // TODO
-   }
+    }
 #endif
 
     override public var description : String {
@@ -202,6 +202,11 @@ public class WForecast: Object, Mappable {
         return aux
     }
     
+
+}
+
+extension WForecast {
+    
     // Thanks: https://www.campbellsci.com/blog/convert-wind-directions
     static public func windDirectionName(direction: Int) -> String? {
         let compass = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW","N"]
@@ -214,10 +219,6 @@ public class WForecast: Object, Mappable {
     }
     
 
-}
-
-extension WForecast {
-    
     public func temperature(hour: Int) -> Float? {
         if temperature.count > 0 && hour < temperature.count {
             return temperature[hour].v()

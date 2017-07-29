@@ -35,11 +35,11 @@ import Foundation
 
 public class WindguruStation: Object, Mappable {
 
-    public dynamic var id: String? = nil
-    public dynamic var station: String? = nil
-    public dynamic var distance: Int = 0
-    public dynamic var id_type: String? = nil
-    public dynamic var wind_avg: Int = 0
+    dynamic var id: String? = nil
+    dynamic var station: String? = nil
+    dynamic var distance: Int = 0
+    dynamic var id_type: String? = nil
+    dynamic var wind_avg: Int = 0
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -56,9 +56,9 @@ public class WindguruStation: Object, Mappable {
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         // TODO
-   }
+    }
 
 #endif
     override public var description : String {

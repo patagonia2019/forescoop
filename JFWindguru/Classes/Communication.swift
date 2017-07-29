@@ -14,24 +14,24 @@ import Foundation
     import AlamofireObjectMapper
 #endif
 
-public struct Response {
+struct Response {
     /// The server's response to the URL request.
-    public let response: URLResponse?
+    let response: URLResponse?
     
     /// The data returned by the server.
-    public let data: Data?
+    let data: Data?
     
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error?
+    var error: Error?
     
     /// Creates a `DataResponse` instance with the specified parameters derived from response serialization.
     ///
     /// - parameter response: The server's response to the URL request.
     /// - parameter data:     The data returned by the server.
-    public init(
-        response: URLResponse?,
-        data: Data?,
-        error: Error?)
+    /// - parameter data:     The error returned by the server.
+    init(response: URLResponse?,
+             data: Data?,
+            error: Error?)
     {
         self.response = response
         self.data = data
@@ -39,10 +39,8 @@ public struct Response {
     }
 }
 
-
-open class Communication {
-    class func request(_ url: String,
-        finish: @escaping (_ response: Response?) -> Void) {
+class Communication {
+    class func request(_ url: String, finish: @escaping (_ response: Response?) -> Void) {
 #if USE_EXT_FWK
         Alamofire.request(url, method:.get).validate().response {
             (response: DefaultDataResponse) in

@@ -498,7 +498,7 @@ extension ForecastWindguruService {
     /*
      * Privates part
      */
-    #if USE_EXT_FWK
+#if USE_EXT_FWK
     func mapAndResponse<T: BaseMappable>(_ response: Response?,
         url: String,
         api: ForecastWindguruService.Definition.service.api,
@@ -571,9 +571,10 @@ extension ForecastWindguruService {
                 wgdata: data))
         }
     }
-    #else
     
-    func mapAndResponse<T>(_ response: Response?,
+#else
+    
+    func mapAndResponse<T: Mappable>(_ response: Response?,
                         url: String,
                         api: ForecastWindguruService.Definition.service.api,
                         context: String,
@@ -588,10 +589,13 @@ extension ForecastWindguruService {
         }
         
         if  let response = response,
-            response.error == nil,
-            let responseData = response.data
+            let responseData = response.data,
+            let json = try! JSONSerialization.jsonObject(with: responseData, options:[]) as? [String : Any?],
+            response.error == nil
         {
-            let json = try! JSONSerialization.jsonObject(with: responseData, options:[])
+                let t = T.init(dictionary: json)
+                print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
+                success(t)
         }
         else {
             print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
@@ -639,6 +643,5 @@ extension ForecastWindguruService {
                 wgdata: data))
         }
     }
-
-    #endif
+#endif
 }

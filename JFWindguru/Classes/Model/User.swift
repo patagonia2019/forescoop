@@ -104,33 +104,32 @@ import Foundation
 public class User: Object, Mappable {
     
 #if USE_EXT_FWK
-    public typealias ListColor   = List<Color>
+    typealias ListColor   = List<Color>
 #else
-    public typealias ListColor   = [Color]
+    typealias ListColor   = [Color]
 #endif
-    
 
-    public dynamic var id_user : Int = 0
-    public dynamic var username: String?
-    public dynamic var id_country : Int = 0
-    public dynamic var wind_units: String?
-    public dynamic var temp_units: String?
-    public dynamic var wave_units: String?
-    public dynamic var pro : Int = 0
-    public dynamic var no_ads : Int = 0
-    public dynamic var view_hours_from : Int = 0
-    public dynamic var view_hours_to : Int = 0
-    public dynamic var temp_limit : Int = 0
-    public var wind_rating_limits = ListFloatObject()
-    public var colors_wind = ListColor()
-    public var colors_temp = ListColor()
-    public var colors_cloud = ListColor()
-    public var colors_precip = ListColor()
-    public var colors_precip1 = ListColor()
-    public var colors_press = ListColor()
-    public var colors_rh = ListColor()
-    public var colors_htsgw = ListColor()
-    public var colors_perpw = ListColor()
+    dynamic var id_user : Int = 0
+    dynamic var username: String?
+    dynamic var id_country : Int = 0
+    dynamic var wind_units: String?
+    dynamic var temp_units: String?
+    dynamic var wave_units: String?
+    dynamic var pro : Int = 0
+    dynamic var no_ads : Int = 0
+    dynamic var view_hours_from : Int = 0
+    dynamic var view_hours_to : Int = 0
+    dynamic var temp_limit : Int = 0
+    var wind_rating_limits = ListFloatObject()
+    var colors_wind = ListColor()
+    var colors_temp = ListColor()
+    var colors_cloud = ListColor()
+    var colors_precip = ListColor()
+    var colors_precip1 = ListColor()
+    var colors_press = ListColor()
+    var colors_rh = ListColor()
+    var colors_htsgw = ListColor()
+    var colors_perpw = ListColor()
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -186,7 +185,7 @@ public class User: Object, Mappable {
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         id_user = dictionary["id_user"] as? Int ?? 0
         username = dictionary["username"] as? String ?? nil
         id_country = dictionary["id_country"] as? Int ?? 0
@@ -284,5 +283,9 @@ extension User {
             return false
         }
         return true
+    }
+    
+    public func getUsername() -> String? {
+        return username
     }
 }

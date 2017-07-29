@@ -15,8 +15,8 @@ import Foundation
 
 public class Elapse: Object, Mappable {
         
-    public var start: Time?
-    public var end: Time?
+    var start: Time?
+    var end: Time?
     
     required public init?(elapseStart: String? = nil, elapseEnd: String? = nil) {
         super.init()
@@ -46,7 +46,7 @@ public class Elapse: Object, Mappable {
     public func mapping(map: Map) {
     }
 #else
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
     // TODO
     }
 #endif

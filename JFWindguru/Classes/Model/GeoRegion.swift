@@ -23,8 +23,8 @@ import Foundation
 
 public class GeoRegion: Object, Mappable {
 
-    public dynamic var id: String? = nil
-    public dynamic var name: String? = nil
+    dynamic var id: String? = nil
+    dynamic var name: String? = nil
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -36,7 +36,7 @@ public class GeoRegion: Object, Mappable {
         name <- map["name"]
     }
 #else
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init()
         id = dictionary["id"] as? String ?? nil
         name = dictionary["name"] as? String ?? nil

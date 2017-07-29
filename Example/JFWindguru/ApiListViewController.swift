@@ -79,7 +79,7 @@ extension ApiListViewController: UITableViewDelegate {
             alert.addButton("Add") { [weak self] in
                 guard let text = searchText?.text,
                     let user = self?.user,
-                    let username = user.username,
+                    let username = user.getUsername(),
                     let password = self?.password else { return }
                 ForecastWindguruService.instance.addSetSpots(withSetId: text, username: username, password: password,
                                                                  failure: {
@@ -110,7 +110,7 @@ extension ApiListViewController: UITableViewDelegate {
             alert.addButton("Add") { [weak self] in
                 guard let text = searchText?.text,
                     let user = self?.user,
-                    let username = user.username,
+                    let username = user.getUsername(),
                     let password = self?.password else { return }
                 ForecastWindguruService.instance.addFavoriteSpot(withSpotId: text, username: username, password: password,
                                                                  failure: {
@@ -140,7 +140,7 @@ extension ApiListViewController: UITableViewDelegate {
             alert.addButton("Remove") { [weak self] in
                 guard let text = searchText?.text,
                       let user = self?.user,
-                      let username = user.username,
+                      let username = user.getUsername(),
                       let password = self?.password else { return }
                 ForecastWindguruService.instance.removeFavoriteSpot(withSpotId: text, username: username, password: password,
                  failure: {
@@ -294,7 +294,7 @@ extension ApiListViewController: UITableViewDelegate {
             break
         
         case "c_spots":
-            ForecastWindguruService.instance.customSpots(withUsername: user?.username, password: password, failure: {
+            ForecastWindguruService.instance.customSpots(withUsername: user?.getUsername(), password: password, failure: {
                 (error) in
                 let subTitle = error?.title() ?? ""
                 SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
@@ -312,7 +312,7 @@ extension ApiListViewController: UITableViewDelegate {
             break
             
         case "f_spots":
-            ForecastWindguruService.instance.favoriteSpots(withUsername: user?.username, password: password, failure: {
+            ForecastWindguruService.instance.favoriteSpots(withUsername: user?.getUsername(), password: password, failure: {
                 (error) in
                 let subTitle = error?.title() ?? ""
                 SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
@@ -330,7 +330,7 @@ extension ApiListViewController: UITableViewDelegate {
             break
             
         case "sets":
-            ForecastWindguruService.instance.setSpots(withUsername: user?.username, password: password, failure: {
+            ForecastWindguruService.instance.setSpots(withUsername: user?.getUsername(), password: password, failure: {
                 (error) in
                 let subTitle = error?.title() ?? ""
                 SCLAlertView().showError("Error on \(service)", subTitle: subTitle)

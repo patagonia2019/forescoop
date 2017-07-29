@@ -24,9 +24,9 @@ import ObjectMapper
  */
 
 public class WGError: Mappable {
-    public var returnString: String?
-    public var error_id: Int?
-    public var error_message: String?
+    var returnString: String?
+    var error_id: Int?
+    var error_message: String?
     
     public init(code: Int, desc: String, reason: String? = nil, suggestion: String? = nil,
                 underError error: NSError? = nil, wgdata : Data? = nil)
@@ -82,6 +82,12 @@ public class WGError: Mappable {
             error_message <- map["error_message"]
         }
 #endif
+    
+    public required init(dictionary: [String: Any?]) {
+        returnString = dictionary["return"] as? String
+        error_id = dictionary["error_id"] as? Int
+        error_message = dictionary["error_message"] as? String
+    }
     
     public var description : String {
         var aux : String = ""

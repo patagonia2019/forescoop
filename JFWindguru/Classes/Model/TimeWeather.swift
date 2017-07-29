@@ -95,9 +95,9 @@ import Foundation
 
 public class TimeWeather: Object, Mappable {
 
-    public var keys = ListStringObject()
-    public var strings = ListStringObject()
-    public var floats = ListFloatObject()
+    var keys = ListStringObject()
+    var strings = ListStringObject()
+    var floats = ListFloatObject()
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -120,9 +120,17 @@ public class TimeWeather: Object, Mappable {
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
-        // TODO
-   }
+    public required init(dictionary: [String: Any?]) {
+        for (k,v) in dictionary {
+            keys.append(k)
+            if let str = v as? String {
+                strings.append(str)
+            }
+            else if let str = v as? Float {
+                floats.append(str)
+            }
+        }
+    }
 
 #endif
 

@@ -10,7 +10,7 @@ import Foundation
 
 public struct Knots {
     
-    public var knots : Float = 1
+    var knots : Float = 1
     
     public init(value: Float) {
         knots = value

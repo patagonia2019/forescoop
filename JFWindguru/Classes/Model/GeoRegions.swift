@@ -34,9 +34,9 @@ import Foundation
 public class GeoRegions: Object, Mappable {
 
 #if USE_EXT_FWK
-    public typealias ListGeoRegion    = List<GeoRegion>
+    typealias ListGeoRegion    = List<GeoRegion>
 #else
-    public typealias ListGeoRegion    = [GeoRegion]
+    typealias ListGeoRegion    = [GeoRegion]
 #endif
     
     let geoRegions = ListGeoRegion()
@@ -55,7 +55,7 @@ public class GeoRegions: Object, Mappable {
         }
     }
 #else
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         // TODO
     }
 #endif

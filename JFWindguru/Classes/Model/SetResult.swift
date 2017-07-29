@@ -30,16 +30,16 @@ import Foundation
 public class SetResult: Object, Mappable {
 
     // count: number of results obtained
-    public dynamic var count: Int = 0
+    dynamic var count: Int = 0
     // spots: is a dictionary forecast id/ forecast name
 
 #if USE_EXT_FWK
-    public typealias ListSetInfo    = List<SetInfo>
+    typealias ListSetInfo    = List<SetInfo>
 #else
-    public typealias ListSetInfo    = [SetInfo]
+    typealias ListSetInfo    = [SetInfo]
 #endif
 
-    public var sets = ListSetInfo()
+    var sets = ListSetInfo()
     
 
 #if USE_EXT_FWK
@@ -61,7 +61,7 @@ public class SetResult: Object, Mappable {
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         // TODO
     }
 

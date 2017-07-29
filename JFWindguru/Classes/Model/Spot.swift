@@ -29,9 +29,9 @@ import Foundation
 
 public class Spot: Object, Mappable {
 
-    public dynamic var id_spot: String? = nil
-    public dynamic var spotname: String? = nil
-    public dynamic var country: String? = nil
+    dynamic var id_spot: String? = nil
+    dynamic var spotname: String? = nil
+    dynamic var country: String? = nil
     
 #if USE_EXT_FWK
 
@@ -47,7 +47,7 @@ public class Spot: Object, Mappable {
 
 #else
     
-    public init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init()
         id_spot = dictionary["id_spot"] as? String ?? nil
         spotname = dictionary["spotname"] as? String ?? nil
@@ -71,4 +71,10 @@ public class Spot: Object, Mappable {
     }
     
 
+}
+
+extension Spot {
+    public func id() -> String? {
+        return id_spot
+    }
 }

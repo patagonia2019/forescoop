@@ -35,7 +35,7 @@ import Foundation
 
 public class SpotOwner: Spot {
 
-public dynamic var id_user: String? = nil
+    dynamic var id_user: String? = nil
 
 #if USE_EXT_FWK
     public required init(map: Map) {
@@ -62,7 +62,7 @@ public dynamic var id_user: String? = nil
 
 #else
 
-    override init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init(dictionary: dictionary)
         id_user = dictionary["id_user"] as? String ?? nil
    }

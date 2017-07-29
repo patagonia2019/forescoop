@@ -48,16 +48,16 @@ import Foundation
  */
 
 public class Model: Object, Mappable {
-    public dynamic var id_model : Int = 0
-    public dynamic var model_name: String? = nil
-    public dynamic var model: String? = nil
-    public dynamic var hr_start: Int = 0
-    public var hr_end : Int = 0
-    public var hr_step : Int = 0
-    public var period : Int = 0
-    public var resolution : Int = 0
-    public dynamic var update_time: String?
-    public var show_vars = ListStringObject()
+    dynamic var id_model : Int = 0
+    dynamic var model_name: String? = nil
+    dynamic var model: String? = nil
+    dynamic var hr_start: Int = 0
+    var hr_end : Int = 0
+    var hr_step : Int = 0
+    var period : Int = 0
+    var resolution : Int = 0
+    dynamic var update_time: String?
+    var show_vars = ListStringObject()
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -78,7 +78,7 @@ public class Model: Object, Mappable {
     }
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init()
         id_model = dictionary["id_model"] as? Int ?? 0
         model_name = dictionary["model_name"] as? String ?? nil

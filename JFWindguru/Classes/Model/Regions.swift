@@ -37,12 +37,12 @@ import Foundation
 public class Regions: Object, Mappable {
 
 #if USE_EXT_FWK
-    public typealias ListRegion    = List<Region>
+    typealias ListRegion    = List<Region>
 #else
-    public typealias ListRegion    = [Region]
+    typealias ListRegion    = [Region]
 #endif
 
-    public var regions = ListRegion()
+    var regions = ListRegion()
 
 #if USE_EXT_FWK
     
@@ -61,7 +61,7 @@ public class Regions: Object, Mappable {
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         // TODO
     }
 #endif

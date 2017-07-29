@@ -14,6 +14,7 @@ import Realm
 
 public class StringObject: Object {
     dynamic var value: String? = nil
+
     override public var description: String  {
         return v() ?? ""
     }
@@ -33,6 +34,7 @@ public class StringObject: Object {
 
 public class FloatObject: Object {
     let value = RealmOptional<Float>()
+
     override public var description: String  {
         guard let v = v() else { return "" }
         return "\(v)"
@@ -52,7 +54,9 @@ public class FloatObject: Object {
 }
 
 public class IntObject: Object {
+
     let value = RealmOptional<Int>()
+
     override public var description: String  {
         guard let v = v() else { return "" }
         return "\(v)"
@@ -103,7 +107,10 @@ class ArrayTransform<T:RealmSwift.Object> : TransformType where T:Mappable {
 }
 #else
 public class Object : NSObject {}
-public protocol Mappable {}
+public protocol Mappable {
+    init(dictionary: [String: Any?])
+}
+
 #endif
 
 #if USE_EXT_FWK
@@ -127,7 +134,7 @@ extension List where Iterator.Element == StringObject {
                 aux += "\(value), "
             }
             else {
-                    aux += ", "
+                aux += ", "
             }
         }
         return aux

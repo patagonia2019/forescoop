@@ -15,9 +15,9 @@ import Foundation
 
 public class Time: Object, Mappable {
 
-    public dynamic var hour: Int = 0
-    public dynamic var minutes: Int = 0
-    public dynamic var seconds: Int = 0
+    dynamic var hour: Int = 0
+    dynamic var minutes: Int = 0
+    dynamic var seconds: Int = 0
 
 #if USE_EXT_FWK
 
@@ -41,7 +41,7 @@ public class Time: Object, Mappable {
     }
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
     // TODO
     }
 #endif

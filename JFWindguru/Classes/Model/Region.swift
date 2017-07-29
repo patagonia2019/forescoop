@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /*
- *  GeoRegion
+ *  Region
  *
  *  Discussion:
  *    Model object representing the base class of Region.
@@ -38,7 +38,7 @@ public class Region: Object, Mappable {
 
 #else
 
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init()
         id = dictionary["id"] as? String ?? nil
         name = dictionary["name"] as? String  ?? nil

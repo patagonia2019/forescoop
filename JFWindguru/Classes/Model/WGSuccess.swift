@@ -23,8 +23,9 @@ import ObjectMapper
  */
 
 public class WGSuccess: Mappable {
-    public var returnString: String?
-    public var message: String?
+
+    var returnString: String?
+    var message: String?
     
 #if USE_EXT_FWK
     required public init?(map: Map) {
@@ -36,6 +37,11 @@ public class WGSuccess: Mappable {
         message <- map["message"]
     }
 #endif
+    
+    public required init(dictionary: [String: Any?]) {
+        returnString = dictionary["return"] as? String
+        message = dictionary["message"] as? String
+    }
     
     public var description : String {
         var aux : String = "\(type(of:self)): "

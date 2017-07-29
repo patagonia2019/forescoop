@@ -45,17 +45,17 @@ import Foundation
 
 public class SpotInfo: Spot {
 
-    public dynamic var countryId: Int = 0
-    public dynamic var latitude: Double = 0
-    public dynamic var longitude: Double = 0
-    public dynamic var altitude: Int = 0
-    public dynamic var timezone: String? = nil
-    public dynamic var gmtHourOffset: Int = 0
-    public dynamic var sunrise: String? = nil
-    public dynamic var sunset: String? = nil
-    public dynamic var elapse : Elapse?
-    public var models = ListStringObject()
-    public dynamic var tides: String? = nil
+    dynamic var countryId: Int = 0
+    dynamic var latitude: Double = 0
+    dynamic var longitude: Double = 0
+    dynamic var altitude: Int = 0
+    dynamic var timezone: String? = nil
+    dynamic var gmtHourOffset: Int = 0
+    dynamic var sunrise: String? = nil
+    dynamic var sunset: String? = nil
+    dynamic var elapse : Elapse?
+    var models = ListStringObject()
+    dynamic var tides: String? = nil
 
 #if USE_EXT_FWK
     public required init(map: Map) {
@@ -96,7 +96,7 @@ public class SpotInfo: Spot {
     }
 #else
 
-    public override init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init(dictionary: dictionary)
         countryId = dictionary["countryId"] as? Int ?? 0
         latitude = dictionary["latitude"] as? Double ?? 0.0

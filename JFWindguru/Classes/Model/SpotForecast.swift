@@ -48,12 +48,12 @@ public class SpotForecast: SpotInfo {
     public dynamic var currentModel: String? = nil
 
 #if USE_EXT_FWK
-    public typealias ListForecastModel    = List<ForecastModel>
+    typealias ListForecastModel    = List<ForecastModel>
 #else
-    public typealias ListForecastModel    = [ForecastModel]
+    typealias ListForecastModel    = [ForecastModel]
 #endif
 
-    public var forecasts = ListForecastModel()
+    var forecasts = ListForecastModel()
     
 #if USE_EXT_FWK
     public required init(map: Map) {
@@ -81,11 +81,7 @@ public class SpotForecast: SpotInfo {
             if let modelValue = model.value {
                 tmpForecast <- map["forecast.\(modelValue)"]
                 if let forecast = tmpForecast {
-                    #if USE_EXT_FWK
-                        forecasts.append(ForecastModel(modelValue: modelValue, infoForecast: forecast))
-                    #else
-                        forecasts?[model] = ForecastModel(modelValue: modelValue, infoForecast: forecast)
-                    #endif
+                    forecasts.append(ForecastModel(modelValue: modelValue, infoForecast: forecast))
                     currentModel = model.value
                 }
             }
@@ -94,15 +90,14 @@ public class SpotForecast: SpotInfo {
     
 #else
     
-    public override init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init(dictionary: dictionary)
-        currentModel = dictionary["current_model"] as? String ?? nil
-        if let dict = dictionary["forecasts"] as? Dictionary<String, AnyObject?> {
-            for (_, v) in dict {
-                if let d = v as? Dictionary<String, AnyObject?> {
-                    forecasts.append(ForecastModel.init(dictionary: d))
-                }
-            }
+        guard let forecastDict = dictionary["forecast"] as? [String: Any?] else { return }
+        for (k,v) in forecastDict {
+            let tmpDictionary = [k : v]
+            let forecastModel = ForecastModel.init(dictionary: tmpDictionary)
+            forecasts.append(forecastModel)
+            currentModel = k
         }
     }
 

@@ -26,8 +26,8 @@ import Foundation
 
 public class ForecastModel: Object, Mappable {
 
-    public var model: String?
-    public var info: Forecast?
+    var model: String?
+    var info: Forecast?
 
 #if USE_EXT_FWK
 
@@ -46,8 +46,13 @@ public class ForecastModel: Object, Mappable {
     }
 
 #else
-    init(dictionary: [String: AnyObject?]) {
-        // TODO
+    public required init(dictionary: [String: Any?]) {
+        for (k,v) in dictionary {
+            model = k
+            if let dict = v as? [String:Any?] {
+                info = Forecast.init(dictionary: dict)
+            }
+        }
     }
 #endif
 

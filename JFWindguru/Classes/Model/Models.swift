@@ -24,12 +24,12 @@ import Foundation
 public class Models: Object, Mappable {
     
 #if USE_EXT_FWK
-    public typealias ListModel    = List<Model>
+    typealias ListModel    = List<Model>
 #else
-    public typealias ListModel    = [Model]
+    typealias ListModel    = [Model]
 #endif
 
-    public var models = ListModel()
+    var models = ListModel()
 
 #if USE_EXT_FWK
     
@@ -47,7 +47,7 @@ public class Models: Object, Mappable {
     }
 #else
     
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         // TODO
     }
 

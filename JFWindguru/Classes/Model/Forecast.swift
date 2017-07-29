@@ -44,22 +44,22 @@ import Foundation
 
 public class Forecast: Object, Mappable {
     dynamic var initStamp : Int = 0
-    public var temperature: TimeWeather? // temperature
-    public var cloudCoverTotal: TimeWeather? //  Cloud cover (%) Total
-    public var cloudCoverHigh: TimeWeather? //  Cloud cover (%) High
-    public var cloudCoverMid: TimeWeather? //  Cloud cover (%) Mid
-    public var cloudCoverLow: TimeWeather? //  Cloud cover (%) Low
-    public var relativeHumidity: TimeWeather? //  Relative humidity: relative humidity in percent
-    public var windGust: TimeWeather? //  Wind gusts (knots)
-    public var seaLevelPressure: TimeWeather? //  sea level pressure
-    public var freezingLevel: TimeWeather? //  Freezing Level height in meters (0 degree isoterm)
-    public var precipitation: TimeWeather? //  Precip. (mm/3h)
-    public var windSpeed: TimeWeather? //  Wind speed (knots)
-    public var windDirection: TimeWeather? //  Wind direction
-    public var windDirectionName: TimeWeather? //  wind direction (name)
-    public var temperatureReal: TimeWeather? //  temperature in 2 meters above ground with correction to real altitude of the spot.
-    public dynamic var initDate: Date?
-    public dynamic var modelName: String?
+    var temperature: TimeWeather? // temperature
+    var cloudCoverTotal: TimeWeather? //  Cloud cover (%) Total
+    var cloudCoverHigh: TimeWeather? //  Cloud cover (%) High
+    var cloudCoverMid: TimeWeather? //  Cloud cover (%) Mid
+    var cloudCoverLow: TimeWeather? //  Cloud cover (%) Low
+    var relativeHumidity: TimeWeather? //  Relative humidity: relative humidity in percent
+    var windGust: TimeWeather? //  Wind gusts (knots)
+    var seaLevelPressure: TimeWeather? //  sea level pressure
+    var freezingLevel: TimeWeather? //  Freezing Level height in meters (0 degree isoterm)
+    var precipitation: TimeWeather? //  Precip. (mm/3h)
+    var windSpeed: TimeWeather? //  Wind speed (knots)
+    var windDirection: TimeWeather? //  Wind direction
+    var windDirectionName: TimeWeather? //  wind direction (name)
+    var temperatureReal: TimeWeather? //  temperature in 2 meters above ground with correction to real altitude of the spot.
+    dynamic var initDate: Date?
+    dynamic var modelName: String?
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -87,9 +87,34 @@ public class Forecast: Object, Mappable {
     }
 
 #else
-    init(dictionary: [String: AnyObject?]) {
+    public required init(dictionary: [String: Any?]) {
         super.init()
         initStamp = dictionary["initStamp"] as? Int ?? 0
+        initDate = dictionary["initdate"] as? Date
+        modelName = dictionary["model_name"] as? String
+        for (k, v) in dictionary {
+            if let dict = v as? [String: Any?] {
+                let tw = TimeWeather.init(dictionary: dict)
+                switch k {
+                case "TMP": temperature = tw; break
+                case "TCDC": cloudCoverTotal = tw; break
+                case "HCDC": cloudCoverHigh = tw; break
+                case "MCDC": cloudCoverMid = tw; break
+                case "LCDC": cloudCoverLow = tw; break
+                case "RH": relativeHumidity = tw; break
+                case "GUST": windGust = tw; break
+                case "SLP": seaLevelPressure = tw; break
+                case "FLHGT": freezingLevel = tw; break
+                case "APCP": precipitation = tw; break
+                case "WINDSPD": windSpeed = tw; break
+                case "WINDDIR": windDirection = tw; break
+                case "WINDIRNAME": windDirectionName = tw; break
+                case "TMPE": temperatureReal = tw; break
+                default:
+                    break
+                }
+            }
+        }
     }
 #endif
 
@@ -123,7 +148,7 @@ public class Forecast: Object, Mappable {
         if let windGust = windGust {
             aux += "Wind gust: \(windGust.description)\n"
         }
-       if let windSpeed = windSpeed {
+        if let windSpeed = windSpeed {
             aux += "Wind speed: \(windSpeed.description)\n"
         }
         if let windDirection = windDirection {

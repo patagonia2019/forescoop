@@ -15,10 +15,10 @@ import Foundation
 
 public class Color: Object {
         
-    public dynamic var alpha: Float = 0
-    public dynamic var red: Float = 0
-    public dynamic var green: Float = 0
-    public dynamic var blue: Float = 0
+    dynamic var alpha: Float = 0
+    dynamic var red: Float = 0
+    dynamic var green: Float = 0
+    dynamic var blue: Float = 0
     
     required public init?(a: Float = 0, r: Float = 0, g: Float = 0, b: Float = 0) {
         super.init()
