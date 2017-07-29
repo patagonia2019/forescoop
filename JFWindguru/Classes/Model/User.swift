@@ -198,9 +198,7 @@ public class User: Object, Mappable {
         view_hours_to = dictionary["view_hours_to"] as? Int ?? 0
         temp_limit = dictionary["temp_limit"] as? Int ?? 0
         if let wrl = dictionary["wind_rating_limits"] as? [Float] {
-            for f in wrl {
-                wind_rating_limits.append(f)
-            }
+            wind_rating_limits = wrl
         }
     }
 

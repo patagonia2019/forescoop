@@ -58,7 +58,7 @@ public class Forecast: Object, Mappable {
     var windDirection: TimeWeather? //  Wind direction
     var windDirectionName: TimeWeather? //  wind direction (name)
     var temperatureReal: TimeWeather? //  temperature in 2 meters above ground with correction to real altitude of the spot.
-    dynamic var initDate: Date?
+    dynamic var initDate: String?
     dynamic var modelName: String?
 
 #if USE_EXT_FWK
@@ -82,15 +82,15 @@ public class Forecast: Object, Mappable {
         windDirection <- map["WINDDIR"]
         windDirectionName <- map["WINDIRNAME"]
         temperatureReal <- map["TMPE"]
-        initDate <- (map["initdate"], DateTransform())
+        initDate <- map["initdate"]
         modelName <- map["model_name"]
     }
 
 #else
     public required init(dictionary: [String: Any?]) {
         super.init()
-        initStamp = dictionary["initStamp"] as? Int ?? 0
-        initDate = dictionary["initdate"] as? Date
+        initStamp = dictionary["initstamp"] as? Int ?? 0
+        initDate = dictionary["initdate"] as? String
         modelName = dictionary["model_name"] as? String
         for (k, v) in dictionary {
             if let dict = v as? [String: Any?] {
