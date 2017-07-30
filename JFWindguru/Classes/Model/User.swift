@@ -197,8 +197,36 @@ public class User: Object, Mappable {
         view_hours_from = dictionary["view_hours_from"] as? Int ?? 0
         view_hours_to = dictionary["view_hours_to"] as? Int ?? 0
         temp_limit = dictionary["temp_limit"] as? Int ?? 0
-        if let wrl = dictionary["wind_rating_limits"] as? [Float] {
-            wind_rating_limits = wrl
+        wind_rating_limits = dictionary["wind_rating_limits"] as? [Float] ?? []
+    
+        guard let tmpcolors = dictionary["colors"] as? Dictionary<String, [[Float]]> else { return }
+        for (k,v) in tmpcolors {
+            for c in v {
+                if let color = Color.init(a: c[0], r: c[1], g: c[2], b: c[3]) {
+                    switch k {
+                        case "wind": colors_wind.append(color)
+                        break
+                        case "temp": colors_temp.append(color)
+                        break
+                        case "cloud": colors_cloud.append(color)
+                        break
+                        case "precip": colors_precip.append(color)
+                        break
+                        case "precip1": colors_precip1.append(color)
+                        break
+                        case "press": colors_press.append(color)
+                        break
+                        case "rh": colors_rh.append(color)
+                        break
+                        case "htsgw": colors_htsgw.append(color)
+                        break
+                        case "perpw": colors_perpw.append(color)
+                        break
+                        default:
+                        break
+                    }
+                }
+            }
         }
     }
 

@@ -111,11 +111,7 @@ public class SpotInfo: Spot {
         {
             elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
         }
-        if let modelDicts = dictionary["models"] as? [String] {
-            for model in modelDicts {
-                models.append(model)
-            }
-        }
+        models = dictionary["models"] as? [String] ?? []
         tides = dictionary["tides"] as? String ?? nil
    }
 

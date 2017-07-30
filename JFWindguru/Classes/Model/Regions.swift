@@ -62,7 +62,11 @@ public class Regions: Object, Mappable {
 #else
 
     public required init(dictionary: [String: Any?]) {
-        // TODO
+        for (k,v) in dictionary {
+            let tmpDictionary = ["id": k, "name": v]
+            let region = Region.init(dictionary: tmpDictionary)
+            regions.append(region)
+        }
     }
 #endif
 

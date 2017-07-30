@@ -39,7 +39,7 @@ public class GeoRegions: Object, Mappable {
     typealias ListGeoRegion    = [GeoRegion]
 #endif
     
-    let geoRegions = ListGeoRegion()
+    var geoRegions = ListGeoRegion()
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -48,15 +48,19 @@ public class GeoRegions: Object, Mappable {
 
     public func mapping(map: Map) {
         for json in map.JSON {
-            let jsonKV = ["id": json.key, "name": json.value]
-            if let georegion = Mapper<GeoRegion>().map(JSON: jsonKV) {
+            let tmpDictionary = ["id": json.key, "name": json.value]
+            if let georegion = Mapper<GeoRegion>().map(JSON: tmpDictionary) {
                 geoRegions.append(georegion)
             }
         }
     }
 #else
     public required init(dictionary: [String: Any?]) {
-        // TODO
+        for (k,v) in dictionary {
+            let tmpDictionary = ["id": k, "name": v]
+            let geoRegion = GeoRegion.init(dictionary: tmpDictionary)
+            geoRegions.append(geoRegion)
+        }
     }
 #endif
     

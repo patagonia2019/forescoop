@@ -57,7 +57,11 @@ public class WindguruStation: Object, Mappable {
 #else
 
     public required init(dictionary: [String: Any?]) {
-        // TODO
+        id = dictionary["id"] as? String
+        station = dictionary["station"] as? String
+        distance = dictionary["distance"] as? Int ?? 0
+        id_type = dictionary["id_type"] as? String
+        wind_avg = dictionary["wind_avg"] as? Int ?? 0
     }
 
 #endif

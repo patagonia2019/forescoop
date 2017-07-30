@@ -583,28 +583,40 @@ extension ForecastWindguruService {
     {
         var error : Error? = NSError()
         var data : Data? = Data()
+        var json : [String:Any?]? = nil
         if let response = response {
             data = response.data
             error = response.error
+            do {
+                if let data = data {
+                    json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any?]
+                }
+            }
+            catch {
+                
+            }
         }
-        
+
         if  let response = response,
-            let responseData = response.data,
-            let json = try! JSONSerialization.jsonObject(with: responseData, options:[]) as? [String : Any?],
+            let json = json,
             response.error == nil
         {
-                let t = T.init(dictionary: json)
-                print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
+            let t = T.init(dictionary: json)
+            print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
+            DispatchQueue.main.async(execute: {
                 success(t)
+            })
         }
         else {
             print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
-            failure(WGError.init(code: api.errorCode,
-                                 desc: "failed using=\(url).",
-                reason: "\(api.query) failed",
-                suggestion: "\(#file):\(#line):\(#column):\(#function)",
-                underError: error as NSError?,
-                wgdata: data))
+            DispatchQueue.main.async(execute: {
+                failure(WGError.init(code: api.errorCode,
+                                     desc: "failed using=\(url).",
+                    reason: "\(api.query) failed",
+                    suggestion: "\(#file):\(#line):\(#column):\(#function)",
+                    underError: error as NSError?,
+                    wgdata: data))
+            })
         }
         
     }
@@ -631,16 +643,20 @@ extension ForecastWindguruService {
             let array = Array(Set(jsonString.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
             
             print("SUCCESS url = \(url) - response.result.value \(String(describing: jsonString))")
-            success(array)
+            DispatchQueue.main.async(execute: {
+                success(array)
+            })
         }
         else {
             print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
-            failure(WGError.init(code: api.errorCode,
+            DispatchQueue.main.async(execute: {
+                failure(WGError.init(code: api.errorCode,
                                  desc: "failed using=\(url).",
                 reason: "\(api.query) failed",
                 suggestion: context,
                 underError: error as NSError?,
                 wgdata: data))
+            })
         }
     }
 #endif

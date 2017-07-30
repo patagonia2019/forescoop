@@ -39,7 +39,6 @@ public class SetInfo: Object, Mappable {
 #else
 
     public required init(dictionary: [String: Any?]) {
-        super.init()
         id = dictionary["id"] as? String ?? nil
         name = dictionary["name"] as? String  ?? nil
     }

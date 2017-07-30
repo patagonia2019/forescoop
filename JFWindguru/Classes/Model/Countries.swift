@@ -41,7 +41,7 @@ public class Countries: Object, Mappable {
     typealias ListCountry    = [Country]
 #endif
 
-    let countries = ListCountry()
+    var countries = ListCountry()
 
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -59,7 +59,11 @@ public class Countries: Object, Mappable {
 #else
 
     public required init(dictionary: [String: Any?]) {
-        // TODO
+        for (k,v) in dictionary {
+            let tmpDictionary = ["id": k, "name": v]
+            let country = Country.init(dictionary: tmpDictionary)
+            countries.append(country)
+        }
     }
 #endif
     

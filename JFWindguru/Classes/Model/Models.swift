@@ -48,7 +48,12 @@ public class Models: Object, Mappable {
 #else
     
     public required init(dictionary: [String: Any?]) {
-        // TODO
+        for (_,v) in dictionary {
+            if let v = v as? [String:Any?] {
+                let model = Model.init(dictionary: v)
+                models.append(model)
+            }
+        }
     }
 
 #endif

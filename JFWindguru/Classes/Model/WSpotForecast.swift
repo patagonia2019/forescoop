@@ -71,8 +71,8 @@ public class WSpotForecast: Object, Mappable {
     dynamic var levels = 0
     dynamic var sst: String? = nil
     dynamic var sunrise: String? = nil
-    dynamic var elapse: Elapse?
     dynamic var sunset: String? = nil
+    dynamic var elapse: Elapse?
     dynamic var tz: String? = nil
     dynamic var tzutc: String? = nil
     dynamic var utc_offset = 0
@@ -128,8 +128,38 @@ public class WSpotForecast: Object, Mappable {
 #else
 
     public required init(dictionary: [String: Any?]) {
-        // TODO
-   }
+        id_spot = dictionary["id_spot"] as? Int ?? 0
+        id_user = dictionary["id_user"] as? Int ?? 0
+        nickname = dictionary["nickname"] as? String
+        spotname = dictionary["spotname"] as? String
+        spot = dictionary["spot"] as? String
+        lat = dictionary["lat"] as? Float ?? 0.0
+        lon = dictionary["lon"] as? Float ?? 0.0
+        alt = dictionary["alt"] as? Int ?? 0
+        id_model = dictionary["id_model"] as? String
+        model = dictionary["model"] as? String
+        model_alt = dictionary["model_alt"] as? Int ?? 0
+        levels = dictionary["levels"] as? Int ?? 0
+        sst = dictionary["sst"] as? String
+        sunrise = dictionary["sunrise"] as? String
+        sunset = dictionary["sunset"] as? String
+        if let sunrise = sunrise, let sunset = sunset {
+            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+        }
+        tz = dictionary["tz"] as? String
+        tzutc = dictionary["tzutc"] as? String
+        utc_offset = dictionary["utc_offset"] as? Int ?? 0
+        tzid = dictionary["tzid"] as? String
+        tides = dictionary["tides"] as? Int ?? 0
+        md5chk = dictionary["md5chk"] as? String
+        guard let fcstDict = dictionary["fcst"] as? [String: Any?] else { return }
+        for (k,v) in fcstDict {
+            if let tmpDictionary = v as? [String: Any?],
+                k == id_model {
+                fcst = WForecast.init(dictionary: tmpDictionary)
+            }
+        }
+    }
 
 #endif
     

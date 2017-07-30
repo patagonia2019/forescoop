@@ -52,8 +52,8 @@ public class SetResult: Object, Mappable {
         var dict = [String: String]()
         dict <- map["sets"]
         for (k,v) in dict {
-            let jsonKV = ["id": k, "name": v]
-            if let setInfo = Mapper<SetInfo>().map(JSON: jsonKV) {
+            let tmpDictionary = ["id": k, "name": v]
+            if let setInfo = Mapper<SetInfo>().map(JSON: tmpDictionary) {
                 sets.append(setInfo)
             }
         }            
@@ -62,7 +62,14 @@ public class SetResult: Object, Mappable {
 #else
 
     public required init(dictionary: [String: Any?]) {
-        // TODO
+        count = dictionary["count"] as? Int ?? 0
+        if let dict = dictionary["sets"] as? [String: Any?] {
+            for (k,v) in dict {
+                let tmpDictionary = ["id": k, "name": v]
+                let object = SetInfo.init(dictionary: tmpDictionary)
+                sets.append(object)
+            }
+        }
     }
 
 #endif

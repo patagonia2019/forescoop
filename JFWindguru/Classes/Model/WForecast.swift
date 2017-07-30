@@ -79,16 +79,16 @@ public class WForecast: Object, Mappable {
     var hours               = ListIntObject()
     var img_param           = ListStringObject()
     var img_var_map         = ListStringObject()
-    dynamic var initDate: Date = Date()
-    dynamic var init_d: String = ""
-    dynamic var init_dm: String = ""
-    dynamic var init_h: String = ""
-    dynamic var initstr: String = ""
-    dynamic var model_name: String = ""
-    dynamic var model_longname: String = ""
-    dynamic var id_model: String = ""
-    dynamic var update_last: Date = Date()
-    dynamic var update_next: Date = Date()
+    dynamic var initDate: String? = nil
+    dynamic var init_d: String? = nil
+    dynamic var init_dm: String? = nil
+    dynamic var init_h: String? = nil
+    dynamic var initstr: String? = nil
+    dynamic var model_name: String? = nil
+    dynamic var model_longname: String? = nil
+    dynamic var id_model: String? = nil
+    dynamic var update_last: String? = nil
+    dynamic var update_next: String? = nil
     
 #if USE_EXT_FWK
     required convenience public init?(map: Map) {
@@ -130,7 +130,9 @@ public class WForecast: Object, Mappable {
         hr_h = StringObject.map(map: map, key: "hr_h")
         hr_d = StringObject.map(map: map, key: "hr_d")
         hours = IntObject.map(map: map, key: "hours")
-        initDate <- (map["initdate"], DateTransform())
+        img_param = StringObject.map(map: map, key: "img_param")
+        img_var_map = StringObject.map(map: map, key: "img_var_map")
+        initDate <- map["initdate"]
         init_d <- map["init_d"]
         init_dm <- map["init_dm"]
         init_h <- map["init_h"]
@@ -138,16 +140,58 @@ public class WForecast: Object, Mappable {
         model_name <- map["model_name"]
         model_longname <- map["model_longname"]
         id_model <- map["id_model"]
-        update_last <- (map["update_last"], DateTransform())
-        update_next <- (map["update_next"], DateTransform())
-        img_param = StringObject.map(map: map, key: "img_param")
-        img_var_map = StringObject.map(map: map, key: "img_var_map")
+        update_last <- map["update_last"]
+        update_next <- map["update_next"]
     }
 
 #else
 
     public required init(dictionary: [String: Any?]) {
-        // TODO
+        initStamp = dictionary["initstamp"] as? Int ?? 0
+        temperature = dictionary["TMP"] as? [Float] ?? []
+        cloudCoverTotal = dictionary["TCDC"] as? [Int] ?? []
+        cloudCoverHigh = dictionary["HCDC"] as? [Int] ?? []
+        cloudCoverMid = dictionary["MCDC"] as? [Int] ?? []
+        cloudCoverLow = dictionary["LCDC"] as? [Int] ?? []
+        relativeHumidity = dictionary["RH"] as? [Int] ?? []
+        windGust = dictionary["GUST"] as? [Float] ?? []
+        seaLevelPressure = dictionary["SLP"] as? [Int] ?? []
+        freezingLevel = dictionary["FLHGT"] as? [Int] ?? []
+        precipitation = dictionary["APCP"] as? [Int] ?? []
+        windSpeed = dictionary["WINDSPD"] as? [Float] ?? []
+        windDirection = dictionary["WINDDIR"] as? [Int] ?? []
+        SMERN = dictionary["SMERN"] as? [Int] ?? []
+        SMER = dictionary["SMER"] as? [Int] ?? []
+        temperatureReal = dictionary["TMPE"] as? [Float] ?? []
+        PCPT = dictionary["PCPT"] as? [Int] ?? []
+        HTSGW = dictionary["HTSGW"] as? [Float] ?? []
+        WVHGT = dictionary["WVHGT"] as? [Float] ?? []
+        WVPER = dictionary["WVPER"] as? [Float] ?? []
+        WVDIR = dictionary["WVDIR"] as? [Float] ?? []
+        SWELL1 = dictionary["SWELL1"] as? [Float] ?? []
+        SWPER1 = dictionary["SWPER1"] as? [Float] ?? []
+        SWDIR1 = dictionary["SWDIR1"] as? [Float] ?? []
+        SWELL2 = dictionary["SWELL2"] as? [Float] ?? []
+        SWPER2 = dictionary["SWPER2"] as? [Float] ?? []
+        SWDIR2 = dictionary["SWDIR2"] as? [Float] ?? []
+        PERPW = dictionary["PERPW"] as? [Float] ?? []
+        DIRPW = dictionary["DIRPW"] as? [Float] ?? []
+        hr_weekday = dictionary["hr_weekday"] as? [Int] ?? []
+        hr_h = dictionary["hr_h"] as? [String] ?? []
+        hr_d = dictionary["hr_d"] as? [String] ?? []
+        hours = dictionary["hours"] as? [Int] ?? []
+        img_param = dictionary["img_param"] as? [String] ?? []
+        img_var_map = dictionary["img_var_map"] as? [String] ?? []
+        initDate = dictionary["initdate"] as? String
+        init_d = dictionary["init_d"] as? String
+        init_dm = dictionary["init_dm"] as? String
+        init_h = dictionary["init_h"] as? String
+        initstr = dictionary["initstr"] as? String
+        model_name = dictionary["model_name"] as? String
+        model_longname = dictionary["model_longname"] as? String
+        id_model = dictionary["id_model"] as? String
+        update_last = dictionary["update_last"] as? String
+        update_next = dictionary["update_next"] as? String
     }
 #endif
 
@@ -188,16 +232,16 @@ public class WForecast: Object, Mappable {
         aux += "hours: \(hours.printDescription())\n"
         aux += "img_param: \(img_param.printDescription()), "
         aux += "img_var_map: \(img_var_map.printDescription()).\n"
-        aux += "initDate: \(initDate), "
-        aux += "init_d: \(init_d), "
-        aux += "init_dm: \(init_dm), "
-        aux += "init_h: \(init_h), "
-        aux += "initstr: \(initstr)\n"
-        aux += "modelName: \(model_name), "
-        aux += "model_longname: \(model_longname), "
-        aux += "id_model: \(id_model)\n"
-        aux += "update_last: \(update_last), "
-        aux += "update_next: \(update_next)\n"
+        aux += "initDate: \(initDate ?? ""), "
+        aux += "init_d: \(init_d ?? ""), "
+        aux += "init_dm: \(init_dm ?? ""), "
+        aux += "init_h: \(init_h ?? ""), "
+        aux += "initstr: \(initstr ?? "")\n"
+        aux += "modelName: \(model_name ?? ""), "
+        aux += "model_longname: \(model_longname ?? ""), "
+        aux += "id_model: \(id_model ?? "")\n"
+        aux += "update_last: \(update_last ?? ""), "
+        aux += "update_next: \(update_next ?? "")\n"
         
         return aux
     }
@@ -256,11 +300,7 @@ extension WForecast {
     
     private func windSpeed(hour: Int) -> Float? {
         if windSpeed.count > 0 && hour < windSpeed.count {
-#if USE_EXT_FWK
-            return windSpeed[hour].value.value
-#else
-            return windSpeed[hour]
-#endif
+            return windSpeed[hour].v()
         }
         return nil
     }

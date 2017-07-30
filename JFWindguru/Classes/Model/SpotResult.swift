@@ -71,7 +71,6 @@ public class SpotResult: Object, Mappable {
         count = dictionary["count"] as? Int ?? 0
         if let dict = dictionary["spots"] as? [[String: Any]] {
             for so in dict {
-                print(so)
                 spots.append(SpotOwner.init(dictionary: so))
             }
         }
