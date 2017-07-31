@@ -44,131 +44,173 @@ import Foundation
 
 public class Forecast: Object, Mappable {
     dynamic var initStamp : Int = 0
-    var temperature: TimeWeather? // temperature
-    var cloudCoverTotal: TimeWeather? //  Cloud cover (%) Total
-    var cloudCoverHigh: TimeWeather? //  Cloud cover (%) High
-    var cloudCoverMid: TimeWeather? //  Cloud cover (%) Mid
-    var cloudCoverLow: TimeWeather? //  Cloud cover (%) Low
-    var relativeHumidity: TimeWeather? //  Relative humidity: relative humidity in percent
-    var windGust: TimeWeather? //  Wind gusts (knots)
-    var seaLevelPressure: TimeWeather? //  sea level pressure
-    var freezingLevel: TimeWeather? //  Freezing Level height in meters (0 degree isoterm)
-    var precipitation: TimeWeather? //  Precip. (mm/3h)
-    var windSpeed: TimeWeather? //  Wind speed (knots)
-    var windDirection: TimeWeather? //  Wind direction
-    var windDirectionName: TimeWeather? //  wind direction (name)
-    var temperatureReal: TimeWeather? //  temperature in 2 meters above ground with correction to real altitude of the spot.
-    dynamic var initDate: String?
-    dynamic var modelName: String?
-
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    var TMP: TimeWeather? // temperature
+    var TCDC: TimeWeather? //  Cloud cover (%) Total
+    var HCDC: TimeWeather? //  Cloud cover (%) High
+    var MCDC: TimeWeather? //  Cloud cover (%) Mid
+    var LCDC: TimeWeather? //  Cloud cover (%) Low
+    var RH: TimeWeather? //  Relative humidity: relative humidity in percent
+    var GUST: TimeWeather? //  Wind gusts (knots)
+    var SLP: TimeWeather? //  sea level pressure
+    var FLHGT: TimeWeather? //  Freezing Level height in meters (0 degree isoterm)
+    var APCP: TimeWeather? //  Precip. (mm/3h)
+    var WINDSPD: TimeWeather? //  Wind speed (knots)
+    var WINDDIR: TimeWeather? //  Wind direction
+    var WINDIRNAME: TimeWeather? //  wind direction (name)
+    var TMPE: TimeWeather? //  temperature in 2 meters above ground with correction to real altitude of the spot.
+    dynamic var initdate: String?
+    dynamic var model_name: String?
+    
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        initStamp <- map["initstamp"]
-        temperature <- map["TMP"]
-        cloudCoverTotal <- map["TCDC"]
-        cloudCoverHigh <- map["HCDC"]
-        cloudCoverMid <- map["MCDC"]
-        cloudCoverLow <- map["LCDC"]
-        relativeHumidity <- map["RH"]
-        windGust <- map["GUST"]
-        seaLevelPressure <- map["SLP"]
-        freezingLevel <- map["FLHGT"]
-        precipitation <- map["APCP"]
-        windSpeed <- map["WINDSPD"]
-        windDirection <- map["WINDDIR"]
-        windDirectionName <- map["WINDIRNAME"]
-        temperatureReal <- map["TMPE"]
-        initDate <- map["initdate"]
-        modelName <- map["model_name"]
-    }
-
-#else
-    public required init(dictionary: [String: Any?]) {
-        super.init()
-        initStamp = dictionary["initstamp"] as? Int ?? 0
-        initDate = dictionary["initdate"] as? String
-        modelName = dictionary["model_name"] as? String
-        for (k, v) in dictionary {
-            if let dict = v as? [String: Any?] {
-                let tw = TimeWeather.init(dictionary: dict)
-                switch k {
-                case "TMP": temperature = tw; break
-                case "TCDC": cloudCoverTotal = tw; break
-                case "HCDC": cloudCoverHigh = tw; break
-                case "MCDC": cloudCoverMid = tw; break
-                case "LCDC": cloudCoverLow = tw; break
-                case "RH": relativeHumidity = tw; break
-                case "GUST": windGust = tw; break
-                case "SLP": seaLevelPressure = tw; break
-                case "FLHGT": freezingLevel = tw; break
-                case "APCP": precipitation = tw; break
-                case "WINDSPD": windSpeed = tw; break
-                case "WINDDIR": windDirection = tw; break
-                case "WINDIRNAME": windDirectionName = tw; break
-                case "TMPE": temperatureReal = tw; break
-                default:
-                    break
+        #if USE_EXT_FWK
+            initStamp <- map["initstamp"]
+            TMP <- map["TMP"]
+            TCDC <- map["TCDC"]
+            HCDC <- map["HCDC"]
+            MCDC <- map["MCDC"]
+            LCDC <- map["LCDC"]
+            RH <- map["RH"]
+            GUST <- map["GUST"]
+            SLP <- map["SLP"]
+            FLHGT <- map["FLHGT"]
+            APCP <- map["APCP"]
+            WINDSPD <- map["WINDSPD"]
+            WINDDIR <- map["WINDDIR"]
+            WINDIRNAME <- map["WINDIRNAME"]
+            TMPE <- map["TMPE"]
+            initdate <- map["initdate"]
+            model_name <- map["model_name"]
+        #else
+            initStamp = map["initstamp"] as? Int ?? 0
+            initdate = map["initdate"] as? String
+            model_name = map["model_name"] as? String
+            for (k, v) in map {
+                if let dict = v as? Map {
+                    let tw = TimeWeather.init(map: dict)
+                    switch k {
+                    case "TMP": TMP = tw; break
+                    case "TCDC": TCDC = tw; break
+                    case "HCDC": HCDC = tw; break
+                    case "MCDC": MCDC = tw; break
+                    case "LCDC": LCDC = tw; break
+                    case "RH": RH = tw; break
+                    case "GUST": GUST = tw; break
+                    case "SLP": SLP = tw; break
+                    case "FLHGT": FLHGT = tw; break
+                    case "APCP": APCP = tw; break
+                    case "WINDSPD": WINDSPD = tw; break
+                    case "WINDDIR": WINDDIR = tw; break
+                    case "WINDIRNAME": WINDIRNAME = tw; break
+                    case "TMPE": TMPE = tw; break
+                    default:
+                        break
+                    }
                 }
             }
-        }
+        #endif
     }
-#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): \n"
         aux += "initStamp: \(initStamp)\n"
-        if let cloudCoverTotal = cloudCoverTotal {
-            aux += "Cloud cover Total: \(cloudCoverTotal.description)\n"
+        if let TCDC = TCDC {
+            aux += "Cloud cover Total: \(TCDC.description)\n"
         }
-        if let cloudCoverHigh = cloudCoverHigh {
-            aux += "High: \(cloudCoverHigh.description)\n"
+        if let HCDC = HCDC {
+            aux += "High: \(HCDC.description)\n"
         }
-        if let cloudCoverMid = cloudCoverMid {
-            aux += "Mid: \(cloudCoverMid.description)\n"
+        if let MCDC = MCDC {
+            aux += "Mid: \(MCDC.description)\n"
         }
-        if let cloudCoverLow = cloudCoverLow {
-            aux += "Low: \(cloudCoverLow.description)\n"
+        if let LCDC = LCDC {
+            aux += "Low: \(LCDC.description)\n"
         }
-        if let relativeHumidity = relativeHumidity {
-            aux += "Humidity: \(relativeHumidity.description)\n"
+        if let RH = RH {
+            aux += "Humidity: \(RH.description)\n"
         }
-        if let seaLevelPressure = seaLevelPressure {
-            aux += "Sea Level pressure: \(seaLevelPressure.description)\n"
+        if let SLP = SLP {
+            aux += "Sea Level pressure: \(SLP.description)\n"
         }
-        if let freezingLevel = freezingLevel {
-            aux += "Freezing level: \(freezingLevel.description)\n"
+        if let FLHGT = FLHGT {
+            aux += "Freezing level: \(FLHGT.description)\n"
         }
-        if let precipitation = precipitation {
-            aux += "Precipitation: \(precipitation.description)\n"
+        if let APCP = APCP {
+            aux += "Precipitation: \(APCP.description)\n"
         }
-        if let windGust = windGust {
-            aux += "Wind gust: \(windGust.description)\n"
+        if let GUST = GUST {
+            aux += "Wind gust: \(GUST.description)\n"
         }
-        if let windSpeed = windSpeed {
-            aux += "Wind speed: \(windSpeed.description)\n"
+        if let WINDSPD = WINDSPD {
+            aux += "Wind speed: \(WINDSPD.description)\n"
         }
-        if let windDirection = windDirection {
-            aux += "Wind direccion: \(windDirection.description)\n"
+        if let WINDDIR = WINDDIR {
+            aux += "Wind direccion: \(WINDDIR.description)\n"
         }
-        if let windDirectionName = windDirectionName {
-            aux += "Wind name: \(windDirectionName.description)\n"
+        if let WINDIRNAME = WINDIRNAME {
+            aux += "Wind name: \(WINDIRNAME.description)\n"
         }
-        if let temperature = temperature {
-            aux += "Temp: \(temperature.description)\n"
+        if let TMP = TMP {
+            aux += "Temp: \(TMP.description)\n"
         }
-        if let temperatureReal = temperatureReal {
-            aux += "Temp real: \(temperatureReal.description)\n"
+        if let TMPE = TMPE {
+            aux += "Temp real: \(TMPE.description)\n"
         }
-        if let initDate = initDate {
-            aux += "initDate: \(initDate), "
+        if let initdate = initdate {
+            aux += "initdate: \(initdate), "
         }
-        if let modelName = modelName {
-            aux += "modelName: \(modelName).\n"
+        if let model_name = model_name {
+            aux += "model_name: \(model_name).\n"
         }
         return aux
     }
+}
+
+extension Forecast {
+    func windDirectionName(hh: String?) -> String? {
+        return valueForKey(key : WINDIRNAME, hh: hh) as? String
+    }
+    
+    func windSpeed(hh: String?) -> Float? {
+        return valueForKey(key : WINDSPD, hh: hh) as? Float
+    }
+    
+    func temperatureReal(hh: String?) -> Float? {
+        return valueForKey(key : TMPE, hh: hh) as? Float
+    }
+    
+    func cloudCoverTotal(hh: String?) -> Int? {
+        return valueForKey(key : TCDC, hh: hh) as? Int
+    }
+    
+
+
+    // 
+    // Private parts
+    //
+    private func valueForKey(key : TimeWeather?, hh: String?) -> AnyObject?
+    {
+        guard let key = key,
+              let hhString = hh else { return nil }
+
+        for k in key.keys {
+            if k.v() == hhString {
+                guard let index = key.keys.index(of: k) else { continue }
+                if key.strings.count >= 0 && index < key.strings.count {
+                    return key.strings[index].v() as AnyObject
+                }
+                else if key.floats.count >= 0 && index < key.floats.count{
+                    return key.floats[index].v() as AnyObject
+                }
+            }
+        }
+        return nil
+    }
+
 }

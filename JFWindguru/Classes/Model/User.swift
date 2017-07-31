@@ -131,29 +131,51 @@ public class User: Object, Mappable {
     var colors_htsgw = ListColor()
     var colors_perpw = ListColor()
 
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        id_user <- map["id_user"]
-        username <- map["username"]
-        id_country <- map["id_country"]
-        wind_units <- map["wind_units"]
-        temp_units <- map["temp_units"]
-        wave_units <- map["wave_units"]
-        pro <- map["pro"]
-        no_ads <- map["no_ads"]
-        view_hours_from <- map["view_hours_from"]
-        view_hours_to <- map["view_hours_to"]
-        temp_limit <- map["temp_limit"]
-        
-        wind_rating_limits = FloatObject.map(map: map, key: "wind_rating_limits")
+        var colors = Dictionary<String, [[Float]]>()
+        #if USE_EXT_FWK
+            id_user <- map["id_user"]
+            username <- map["username"]
+            id_country <- map["id_country"]
+            wind_units <- map["wind_units"]
+            temp_units <- map["temp_units"]
+            wave_units <- map["wave_units"]
+            pro <- map["pro"]
+            no_ads <- map["no_ads"]
+            view_hours_from <- map["view_hours_from"]
+            view_hours_to <- map["view_hours_to"]
+            temp_limit <- map["temp_limit"]
+            
+            wind_rating_limits = FloatObject.map(map: map, key: "wind_rating_limits")
+            
+            colors <- map["colors"]
+        #else
 
-        var tmpcolors = Dictionary<String, [[Float]]>()
-        tmpcolors <- map["colors"]
-        for (k,v) in tmpcolors {
+            id_user = map["id_user"] as? Int ?? 0
+            username = map["username"] as? String ?? nil
+            id_country = map["id_country"] as? Int ?? 0
+            wind_units = map["wind_units"] as? String ?? nil
+            temp_units = map["temp_units"] as? String ?? nil
+            wave_units = map["wave_units"] as? String ?? nil
+            pro = map["pro"] as? Int ?? 0
+            no_ads = map["no_ads"] as? Int ?? 0
+            view_hours_from = map["view_hours_from"] as? Int ?? 0
+            view_hours_to = map["view_hours_to"] as? Int ?? 0
+            temp_limit = map["temp_limit"] as? Int ?? 0
+            wind_rating_limits = map["wind_rating_limits"] as? [Float] ?? []
+            
+            if let tmpcolors = map["colors"] as? Dictionary<String, [[Float]]> {
+                colors = tmpcolors
+            }
+        #endif
+        for (k,v) in colors {
             for c in v {
                 if let color = Color.init(a: c[0], r: c[1], g: c[2], b: c[3]) {
                     switch k {
@@ -182,55 +204,7 @@ public class User: Object, Mappable {
             }
         }
     }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        id_user = dictionary["id_user"] as? Int ?? 0
-        username = dictionary["username"] as? String ?? nil
-        id_country = dictionary["id_country"] as? Int ?? 0
-        wind_units = dictionary["wind_units"] as? String ?? nil
-        temp_units = dictionary["temp_units"] as? String ?? nil
-        wave_units = dictionary["wave_units"] as? String ?? nil
-        pro = dictionary["pro"] as? Int ?? 0
-        no_ads = dictionary["no_ads"] as? Int ?? 0
-        view_hours_from = dictionary["view_hours_from"] as? Int ?? 0
-        view_hours_to = dictionary["view_hours_to"] as? Int ?? 0
-        temp_limit = dictionary["temp_limit"] as? Int ?? 0
-        wind_rating_limits = dictionary["wind_rating_limits"] as? [Float] ?? []
     
-        guard let tmpcolors = dictionary["colors"] as? Dictionary<String, [[Float]]> else { return }
-        for (k,v) in tmpcolors {
-            for c in v {
-                if let color = Color.init(a: c[0], r: c[1], g: c[2], b: c[3]) {
-                    switch k {
-                        case "wind": colors_wind.append(color)
-                        break
-                        case "temp": colors_temp.append(color)
-                        break
-                        case "cloud": colors_cloud.append(color)
-                        break
-                        case "precip": colors_precip.append(color)
-                        break
-                        case "precip1": colors_precip1.append(color)
-                        break
-                        case "press": colors_press.append(color)
-                        break
-                        case "rh": colors_rh.append(color)
-                        break
-                        case "htsgw": colors_htsgw.append(color)
-                        break
-                        case "perpw": colors_perpw.append(color)
-                        break
-                        default:
-                        break
-                    }
-                }
-            }
-        }
-    }
-
-#endif
     
     override public var description : String {
         var aux : String = "\(type(of:self)): "

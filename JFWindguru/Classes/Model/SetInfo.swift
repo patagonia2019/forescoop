@@ -26,25 +26,23 @@ public class SetInfo: Object, Mappable {
     dynamic var id: String? = nil
     dynamic var name: String? = nil
 
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        id <- map["id"]
-        name <- map["name"]
-    }
-    
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        id = dictionary["id"] as? String ?? nil
-        name = dictionary["name"] as? String  ?? nil
+        #if USE_EXT_FWK
+            id <- map["id"]
+            name <- map["name"]
+        #else
+            id = map["id"] as? String
+            name = map["name"] as? String
+        #endif
     }
 
-#endif
-    
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         

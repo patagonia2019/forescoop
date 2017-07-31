@@ -112,21 +112,12 @@ public class Facade: NSObject {
             print("error = \(String(describing: error))")
         }) { (spotResult) in
             
-            #if USE_EXT_FWK
-                guard let spotResult = spotResult,
-                    let spots = spotResult.spots,
-                    let spot = spots.last,
-                    let id_spot = spot.id_spot else {
-                        return
-                }
-            #else
-                guard let spotResult = spotResult,
-                    let spot = spotResult.lastSpot(),
-                    let id_spot = spot.id() else {
-                        return
-                }
-            #endif
-            ForecastWindguruService.instance.forecast(bySpotId: id_spot, failure: { (error) in
+            guard let spotResult = spotResult,
+                let spot = spotResult.lastSpot(),
+                let spotId = spot.id() else {
+                    return
+            }
+            ForecastWindguruService.instance.forecast(bySpotId: spotId, failure: { (error) in
                 print("error = \(String(describing: error))")
             }, success: { (spotForecast) in
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: kWDForecastUpdated), object: spotForecast)

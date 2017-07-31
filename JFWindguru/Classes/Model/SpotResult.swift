@@ -47,36 +47,30 @@ public class SpotResult: Object, Mappable {
     //
     // spots: is an array of SpotOwner objects
     //
-#if USE_EXT_FWK
-    public typealias ListSpotOwner    = List<SpotOwner>
-#else
-    public typealias ListSpotOwner    = [SpotOwner]
-#endif
-
-    var spots = ListSpotOwner()
+    var spots = List<SpotOwner>()
  
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        count <- map["count"]
-        spots <- (map["spots"], ArrayTransform<SpotOwner>())
-    }
-    
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        count = dictionary["count"] as? Int ?? 0
-        if let dict = dictionary["spots"] as? [[String: Any]] {
-            for so in dict {
-                spots.append(SpotOwner.init(dictionary: so))
+        #if USE_EXT_FWK
+            count <- map["count"]
+            spots <- (map["spots"], ArrayTransform<SpotOwner>())
+        #else
+            count = map["count"] as? Int ?? 0
+            if let dict = map["spots"] as? [Map] {
+                for so in dict {
+                    if let spotOwner = SpotOwner.init(map: so) {
+                        spots.append(spotOwner)
+                    }
+                }
             }
-        }
-   }
-
-#endif
+        #endif
+    }
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "
@@ -90,6 +84,14 @@ public class SpotResult: Object, Mappable {
 }
 
 extension SpotResult {
+    public func numberOfSpots() -> Int {
+        return spots.count
+    }
+
+    public func firstSpot() -> SpotOwner? {
+        return spots.first
+    }
+
     public func lastSpot() -> SpotOwner? {
         return spots.last
     }

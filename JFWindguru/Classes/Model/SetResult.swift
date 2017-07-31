@@ -33,47 +33,31 @@ public class SetResult: Object, Mappable {
     dynamic var count: Int = 0
     // spots: is a dictionary forecast id/ forecast name
 
-#if USE_EXT_FWK
-    typealias ListSetInfo    = List<SetInfo>
-#else
-    typealias ListSetInfo    = [SetInfo]
-#endif
-
-    var sets = ListSetInfo()
+    var sets = List<SetInfo>()
     
-
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        count <- map["count"]
-        var dict = [String: String]()
-        dict <- map["sets"]
+        #if USE_EXT_FWK
+            count <- map["count"]
+            var dict = [String: String]()
+            dict <- map["sets"]
+        #else
+            count = map["count"] as? Int ?? 0
+            guard let dict = map["sets"] as? Map else { return }
+        #endif
         for (k,v) in dict {
             let tmpDictionary = ["id": k, "name": v]
             if let setInfo = Mapper<SetInfo>().map(JSON: tmpDictionary) {
                 sets.append(setInfo)
             }
-        }            
-    }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        count = dictionary["count"] as? Int ?? 0
-        if let dict = dictionary["sets"] as? [String: Any?] {
-            for (k,v) in dict {
-                let tmpDictionary = ["id": k, "name": v]
-                let object = SetInfo.init(dictionary: tmpDictionary)
-                sets.append(object)
-            }
         }
     }
-
-#endif
-
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

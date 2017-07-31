@@ -51,11 +51,6 @@ import Foundation
  */
 
 public class WSpotForecast: Object, Mappable {
-#if USE_EXT_FWK
-    typealias ListWindguruStation   = List<WindguruStation>
-#else
-    typealias ListWindguruStation   = [WindguruStation]
-#endif
 
     dynamic var id_spot = 0
     dynamic var id_user = 0
@@ -81,88 +76,80 @@ public class WSpotForecast: Object, Mappable {
     dynamic var md5chk: String? = nil
     dynamic var fcst : WForecast?
     dynamic var wgs = false
-    var wgs_arr = ListWindguruStation()
+    var wgs_arr = List<WindguruStation>()
     dynamic var wgs_wind_avg = 0
-    
-
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+  
+    required public convenience init?(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-
+    
     public func mapping(map: Map) {
-        id_spot       <- map["id_spot"]
-        id_user       <- map["id_user"]
-        nickname      <- map["nickname"]
-        spotname      <- map["spotname"]
-        spot          <- map["spot"]
-        lat           <- map["lat"]
-        lon           <- map["lon"]
-        alt           <- map["alt"]
-        id_model      <- map["id_model"]
-        model         <- map["model"]
-        model_alt     <- map["model_alt"]
-        levels        <- map["levels"]
-        sst           <- map["sst"]
-        sunrise       <- map["sunrise"]
-        sunset        <- map["sunset"]
-        if let sunrise = sunrise,
-            let sunset = sunset
-        {
-            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
-        }
-        tz            <- map["tz"]
-        tzutc         <- map["tzutc"]
-        utc_offset    <- map["utc_offset"]
-        tzid          <- map["tzid"]
-        tides         <- map["tides"]
-        md5chk        <- map["md5chk"]
-        wgs           <- map["wgs"]
-        wgs_arr <- (map["wgs_arr"], ArrayTransform<WindguruStation>())
-        wgs_wind_avg  <- map["wgs_wind_avg"]
-
-        guard let id_model = id_model else { return }
-        fcst <- map["fcst.\(id_model)"]
-    }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        id_spot = dictionary["id_spot"] as? Int ?? 0
-        id_user = dictionary["id_user"] as? Int ?? 0
-        nickname = dictionary["nickname"] as? String
-        spotname = dictionary["spotname"] as? String
-        spot = dictionary["spot"] as? String
-        lat = dictionary["lat"] as? Float ?? 0.0
-        lon = dictionary["lon"] as? Float ?? 0.0
-        alt = dictionary["alt"] as? Int ?? 0
-        id_model = dictionary["id_model"] as? String
-        model = dictionary["model"] as? String
-        model_alt = dictionary["model_alt"] as? Int ?? 0
-        levels = dictionary["levels"] as? Int ?? 0
-        sst = dictionary["sst"] as? String
-        sunrise = dictionary["sunrise"] as? String
-        sunset = dictionary["sunset"] as? String
+        #if USE_EXT_FWK
+            id_spot       <- map["id_spot"]
+            id_user       <- map["id_user"]
+            nickname      <- map["nickname"]
+            spotname      <- map["spotname"]
+            spot          <- map["spot"]
+            lat           <- map["lat"]
+            lon           <- map["lon"]
+            alt           <- map["alt"]
+            id_model      <- map["id_model"]
+            model         <- map["model"]
+            model_alt     <- map["model_alt"]
+            levels        <- map["levels"]
+            sst           <- map["sst"]
+            sunrise       <- map["sunrise"]
+            sunset        <- map["sunset"]
+            tz            <- map["tz"]
+            tzutc         <- map["tzutc"]
+            utc_offset    <- map["utc_offset"]
+            tzid          <- map["tzid"]
+            tides         <- map["tides"]
+            md5chk        <- map["md5chk"]
+            wgs           <- map["wgs"]
+            wgs_arr <- (map["wgs_arr"], ArrayTransform<WindguruStation>())
+            wgs_wind_avg  <- map["wgs_wind_avg"]
+            
+            guard let id_model = id_model else { return }
+            fcst <- map["fcst.\(id_model)"]
+        #else
+            id_spot = map["id_spot"] as? Int ?? 0
+            id_user = map["id_user"] as? Int ?? 0
+            nickname = map["nickname"] as? String
+            spotname = map["spotname"] as? String
+            spot = map["spot"] as? String
+            lat = map["lat"] as? Float ?? 0.0
+            lon = map["lon"] as? Float ?? 0.0
+            alt = map["alt"] as? Int ?? 0
+            id_model = map["id_model"] as? String
+            model = map["model"] as? String
+            model_alt = map["model_alt"] as? Int ?? 0
+            levels = map["levels"] as? Int ?? 0
+            sst = map["sst"] as? String
+            sunrise = map["sunrise"] as? String
+            sunset = map["sunset"] as? String
+            tz = map["tz"] as? String
+            tzutc = map["tzutc"] as? String
+            utc_offset = map["utc_offset"] as? Int ?? 0
+            tzid = map["tzid"] as? String
+            tides = map["tides"] as? Int ?? 0
+            md5chk = map["md5chk"] as? String
+            guard let fcstDict = map["fcst"] as? [String: Any] else { return }
+            for (k,v) in fcstDict {
+                if let tmpDictionary = v as? [String: Any],
+                    k == id_model {
+                    fcst = WForecast.init(map: tmpDictionary)
+                }
+            }
+        #endif
         if let sunrise = sunrise, let sunset = sunset {
             elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
         }
-        tz = dictionary["tz"] as? String
-        tzutc = dictionary["tzutc"] as? String
-        utc_offset = dictionary["utc_offset"] as? Int ?? 0
-        tzid = dictionary["tzid"] as? String
-        tides = dictionary["tides"] as? Int ?? 0
-        md5chk = dictionary["md5chk"] as? String
-        guard let fcstDict = dictionary["fcst"] as? [String: Any?] else { return }
-        for (k,v) in fcstDict {
-            if let tmpDictionary = v as? [String: Any?],
-                k == id_model {
-                fcst = WForecast.init(dictionary: tmpDictionary)
-            }
-        }
     }
 
-#endif
-    
     override public var description : String {
         var aux : String = "\(type(of:self)):\n"
         aux += "id_spot : \(id_spot), "
@@ -224,5 +211,37 @@ extension WSpotForecast {
         return "Spot id: \(id_spot)"
     }
     
+    public func forecast() -> WForecast? {
+        return fcst
+    }
+    
+    public func spotId() -> Int {
+        return id_spot
+    }
+    
+    public func timezone() -> String? {
+        if let tz = tz,
+            let tzuttc = tzutc,
+            let tzid = tzid {
+            return "\(tz), \(tzuttc), \(tzid), \(utc_offset)"
+        }
+        return nil
+    }
+    
+    public func coordinates() -> String {
+        return "\(lat), \(lon)\n\(alt) meters"
+    }
+    
+    public func elapsedDay() -> Elapse? {
+        return elapse
+    }
+    
+    public func modelInfo() -> String? {
+        if let id_model = id_model,
+            let model = model {
+            return "\(id_model): \(model), alt: \(model_alt)"
+        }
+        return nil
+    }
 }
 

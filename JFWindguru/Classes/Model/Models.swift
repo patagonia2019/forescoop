@@ -23,41 +23,25 @@ import Foundation
 
 public class Models: Object, Mappable {
     
-#if USE_EXT_FWK
     typealias ListModel    = List<Model>
-#else
-    typealias ListModel    = [Model]
-#endif
 
     var models = ListModel()
 
-#if USE_EXT_FWK
-    
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        for json in map.JSON {
+        for json in map.JSON() {
             if  let jsonValue = json.value as? [String: Any],
                 let model = Mapper<Model>().map(JSON: jsonValue) {
                 models.append(model)
             }
         }
     }
-#else
-    
-    public required init(dictionary: [String: Any?]) {
-        for (_,v) in dictionary {
-            if let v = v as? [String:Any?] {
-                let model = Model.init(dictionary: v)
-                models.append(model)
-            }
-        }
-    }
-
-#endif
-
     
     override public var description : String {
         var aux : String = "\(type(of:self)): "

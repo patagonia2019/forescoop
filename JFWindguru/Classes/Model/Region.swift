@@ -26,25 +26,22 @@ public class Region: Object, Mappable {
     public dynamic var id: String? = nil
     public dynamic var name: String? = nil
     
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-
+    
     public func mapping(map: Map) {
-        id <- map["id"]
-        name <- map["name"]
+        #if USE_EXT_FWK
+            id <- map["id"]
+            name <- map["name"]
+        #else
+            id = map["id"] as? String ?? nil
+            name = map["name"] as? String  ?? nil
+        #endif
     }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        super.init()
-        id = dictionary["id"] as? String ?? nil
-        name = dictionary["name"] as? String  ?? nil
-    }
-
-#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

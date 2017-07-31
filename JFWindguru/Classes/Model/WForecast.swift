@@ -44,22 +44,22 @@ import Foundation
 
 public class WForecast: Object, Mappable {
 
-    dynamic var initStamp   = 0  // initstamp
-    var temperature         = ListFloatObject() // TMP: temperature
-    var cloudCoverTotal     = ListIntObject() // TCDC: Cloud cover (%) Total
-    var cloudCoverHigh      = ListIntObject() // HCDC: Cloud cover (%) High
-    var cloudCoverMid       = ListIntObject() // MCDC: Cloud cover (%) Mid
-    var cloudCoverLow       = ListIntObject() // LCDC: Cloud cover (%) Low
-    var relativeHumidity    = ListIntObject() // RH: Relative humidity: relative humidity in percent
-    var windGust            = ListFloatObject() // GUST: Wind gusts (knots)
-    var seaLevelPressure    = ListIntObject() // SLP: sea level pressure
-    var freezingLevel       = ListIntObject() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
-    var precipitation       = ListIntObject() //  APCP: Precip. (mm/3h)
-    var windSpeed           = ListFloatObject() //  WINDSPD: Wind speed (knots)
-    var windDirection       = ListIntObject() //  WINDDIR: Wind direction
+    dynamic var initstamp   = 0  // initstamp
+    var TMP                 = ListFloatObject() // TMP: temperature
+    var TCDC     = ListIntObject() // TCDC: Cloud cover (%) Total
+    var HCDC      = ListIntObject() // HCDC: Cloud cover (%) High
+    var MCDC       = ListIntObject() // MCDC: Cloud cover (%) Mid
+    var LCDC       = ListIntObject() // LCDC: Cloud cover (%) Low
+    var RH    = ListIntObject() // RH: Relative humidity: relative humidity in percent
+    var GUST            = ListFloatObject() // GUST: Wind gusts (knots)
+    var SLP    = ListIntObject() // SLP: sea level pressure
+    var FLHGT       = ListIntObject() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
+    var APCP       = ListIntObject() //  APCP: Precip. (mm/3h)
+    var WINDSPD           = ListFloatObject() //  WINDSPD: Wind speed (knots)
+    var WINDDIR       = ListIntObject() //  WINDDIR: Wind direction
     var SMERN               = ListIntObject()
     var SMER                = ListIntObject()
-    var temperatureReal     = ListFloatObject() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    var TMPE     = ListFloatObject() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
     var PCPT                = ListIntObject()
     var HTSGW               = ListFloatObject() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
     var WVHGT               = ListFloatObject() // WVHG: Wave height
@@ -90,129 +90,128 @@ public class WForecast: Object, Mappable {
     dynamic var update_last: String? = nil
     dynamic var update_next: String? = nil
     
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init?(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-
+    
     public func mapping(map: Map) {
-        initStamp <- map["initstamp"]
+        #if USE_EXT_FWK
+            initstamp <- map["initstamp"]
+            TMP = FloatObject.map(map: map, key: "TMP")
+            TCDC = IntObject.map(map: map, key: "TCDC")
+            HCDC = IntObject.map(map: map, key: "HCDC")
+            MCDC = IntObject.map(map: map, key: "MCDC")
+            LCDC = IntObject.map(map: map, key: "LCDC")
+            RH = IntObject.map(map: map, key: "RH")
+            GUST = FloatObject.map(map: map, key: "GUST")
+            SLP = IntObject.map(map: map, key: "SLP")
+            FLHGT = IntObject.map(map: map, key: "FLHGT")
+            APCP = IntObject.map(map: map, key: "APCP")
+            WINDSPD = FloatObject.map(map: map, key: "WINDSPD")
+            WINDDIR = IntObject.map(map: map, key: "WINDDIR")
+            SMERN = IntObject.map(map: map, key: "SMERN")
+            SMER = IntObject.map(map: map, key: "SMER")
+            TMPE = FloatObject.map(map: map, key: "TMPE")
+            PCPT = IntObject.map(map: map, key: "PCPT")
+            HTSGW = FloatObject.map(map: map, key: "HTSGW")
+            WVHGT = FloatObject.map(map: map, key: "WVHGT")
+            WVPER = FloatObject.map(map: map, key: "WVPER")
+            WVDIR = FloatObject.map(map: map, key: "WVDIR")
+            SWELL1 = FloatObject.map(map: map, key: "SWELL1")
+            SWPER1 = FloatObject.map(map: map, key: "SWPER1")
+            SWDIR1 = FloatObject.map(map: map, key: "SWDIR1")
+            SWELL2 = FloatObject.map(map: map, key: "SWELL2")
+            SWPER2 = FloatObject.map(map: map, key: "SWPER2")
+            SWDIR2 = FloatObject.map(map: map, key: "SWDIR2")
+            PERPW = FloatObject.map(map: map, key: "PERPW")
+            DIRPW = FloatObject.map(map: map, key: "DIRPW")
+            hr_weekday = IntObject.map(map: map, key: "hr_weekday")
+            hr_h = StringObject.map(map: map, key: "hr_h")
+            hr_d = StringObject.map(map: map, key: "hr_d")
+            hours = IntObject.map(map: map, key: "hours")
+            img_param = StringObject.map(map: map, key: "img_param")
+            img_var_map = StringObject.map(map: map, key: "img_var_map")
+            initDate <- map["initdate"]
+            init_d <- map["init_d"]
+            init_dm <- map["init_dm"]
+            init_h <- map["init_h"]
+            initstr <- map["initstr"]
+            model_name <- map["model_name"]
+            model_longname <- map["model_longname"]
+            id_model <- map["id_model"]
+            update_last <- map["update_last"]
+            update_next <- map["update_next"]
+        #else
 
-        temperature = FloatObject.map(map: map, key: "TMP")
-        cloudCoverTotal = IntObject.map(map: map, key: "TCDC")
-        cloudCoverHigh = IntObject.map(map: map, key: "HCDC")
-        cloudCoverMid = IntObject.map(map: map, key: "MCDC")
-        cloudCoverLow = IntObject.map(map: map, key: "LCDC")
-        relativeHumidity = IntObject.map(map: map, key: "RH")
-        windGust = FloatObject.map(map: map, key: "GUST")
-        seaLevelPressure = IntObject.map(map: map, key: "SLP")
-        freezingLevel = IntObject.map(map: map, key: "FLHGT")
-        precipitation = IntObject.map(map: map, key: "APCP")
-        windSpeed = FloatObject.map(map: map, key: "WINDSPD")
-        windDirection = IntObject.map(map: map, key: "WINDDIR")
-        SMERN = IntObject.map(map: map, key: "SMERN")
-        SMER = IntObject.map(map: map, key: "SMER")
-        temperatureReal = FloatObject.map(map: map, key: "TMPE")
-        PCPT = IntObject.map(map: map, key: "PCPT")
-        HTSGW = FloatObject.map(map: map, key: "HTSGW")
-        WVHGT = FloatObject.map(map: map, key: "WVHGT")
-        WVPER = FloatObject.map(map: map, key: "WVPER")
-        WVDIR = FloatObject.map(map: map, key: "WVDIR")
-        SWELL1 = FloatObject.map(map: map, key: "SWELL1")
-        SWPER1 = FloatObject.map(map: map, key: "SWPER1")
-        SWDIR1 = FloatObject.map(map: map, key: "SWDIR1")
-        SWELL2 = FloatObject.map(map: map, key: "SWELL2")
-        SWPER2 = FloatObject.map(map: map, key: "SWPER2")
-        SWDIR2 = FloatObject.map(map: map, key: "SWDIR2")
-        PERPW = FloatObject.map(map: map, key: "PERPW")
-        DIRPW = FloatObject.map(map: map, key: "DIRPW")
-        hr_weekday = IntObject.map(map: map, key: "hr_weekday")
-        hr_h = StringObject.map(map: map, key: "hr_h")
-        hr_d = StringObject.map(map: map, key: "hr_d")
-        hours = IntObject.map(map: map, key: "hours")
-        img_param = StringObject.map(map: map, key: "img_param")
-        img_var_map = StringObject.map(map: map, key: "img_var_map")
-        initDate <- map["initdate"]
-        init_d <- map["init_d"]
-        init_dm <- map["init_dm"]
-        init_h <- map["init_h"]
-        initstr <- map["initstr"]
-        model_name <- map["model_name"]
-        model_longname <- map["model_longname"]
-        id_model <- map["id_model"]
-        update_last <- map["update_last"]
-        update_next <- map["update_next"]
+            initstamp = map["initstamp"] as? Int ?? 0
+            TMP = map["TMP"] as? [Float] ?? []
+            TCDC = map["TCDC"] as? [Int] ?? []
+            HCDC = map["HCDC"] as? [Int] ?? []
+            MCDC = map["MCDC"] as? [Int] ?? []
+            LCDC = map["LCDC"] as? [Int] ?? []
+            RH = map["RH"] as? [Int] ?? []
+            GUST = map["GUST"] as? [Float] ?? []
+            SLP = map["SLP"] as? [Int] ?? []
+            FLHGT = map["FLHGT"] as? [Int] ?? []
+            APCP = map["APCP"] as? [Int] ?? []
+            WINDSPD = map["WINDSPD"] as? [Float] ?? []
+            WINDDIR = map["WINDDIR"] as? [Int] ?? []
+            SMERN = map["SMERN"] as? [Int] ?? []
+            SMER = map["SMER"] as? [Int] ?? []
+            TMPE = map["TMPE"] as? [Float] ?? []
+            PCPT = map["PCPT"] as? [Int] ?? []
+            HTSGW = map["HTSGW"] as? [Float] ?? []
+            WVHGT = map["WVHGT"] as? [Float] ?? []
+            WVPER = map["WVPER"] as? [Float] ?? []
+            WVDIR = map["WVDIR"] as? [Float] ?? []
+            SWELL1 = map["SWELL1"] as? [Float] ?? []
+            SWPER1 = map["SWPER1"] as? [Float] ?? []
+            SWDIR1 = map["SWDIR1"] as? [Float] ?? []
+            SWELL2 = map["SWELL2"] as? [Float] ?? []
+            SWPER2 = map["SWPER2"] as? [Float] ?? []
+            SWDIR2 = map["SWDIR2"] as? [Float] ?? []
+            PERPW = map["PERPW"] as? [Float] ?? []
+            DIRPW = map["DIRPW"] as? [Float] ?? []
+            hr_weekday = map["hr_weekday"] as? [Int] ?? []
+            hr_h = map["hr_h"] as? [String] ?? []
+            hr_d = map["hr_d"] as? [String] ?? []
+            hours = map["hours"] as? [Int] ?? []
+            img_param = map["img_param"] as? [String] ?? []
+            img_var_map = map["img_var_map"] as? [String] ?? []
+            initDate = map["initdate"] as? String
+            init_d = map["init_d"] as? String
+            init_dm = map["init_dm"] as? String
+            init_h = map["init_h"] as? String
+            initstr = map["initstr"] as? String
+            model_name = map["model_name"] as? String
+            model_longname = map["model_longname"] as? String
+            id_model = map["id_model"] as? String
+            update_last = map["update_last"] as? String
+            update_next = map["update_next"] as? String
+
+        #endif
     }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        initStamp = dictionary["initstamp"] as? Int ?? 0
-        temperature = dictionary["TMP"] as? [Float] ?? []
-        cloudCoverTotal = dictionary["TCDC"] as? [Int] ?? []
-        cloudCoverHigh = dictionary["HCDC"] as? [Int] ?? []
-        cloudCoverMid = dictionary["MCDC"] as? [Int] ?? []
-        cloudCoverLow = dictionary["LCDC"] as? [Int] ?? []
-        relativeHumidity = dictionary["RH"] as? [Int] ?? []
-        windGust = dictionary["GUST"] as? [Float] ?? []
-        seaLevelPressure = dictionary["SLP"] as? [Int] ?? []
-        freezingLevel = dictionary["FLHGT"] as? [Int] ?? []
-        precipitation = dictionary["APCP"] as? [Int] ?? []
-        windSpeed = dictionary["WINDSPD"] as? [Float] ?? []
-        windDirection = dictionary["WINDDIR"] as? [Int] ?? []
-        SMERN = dictionary["SMERN"] as? [Int] ?? []
-        SMER = dictionary["SMER"] as? [Int] ?? []
-        temperatureReal = dictionary["TMPE"] as? [Float] ?? []
-        PCPT = dictionary["PCPT"] as? [Int] ?? []
-        HTSGW = dictionary["HTSGW"] as? [Float] ?? []
-        WVHGT = dictionary["WVHGT"] as? [Float] ?? []
-        WVPER = dictionary["WVPER"] as? [Float] ?? []
-        WVDIR = dictionary["WVDIR"] as? [Float] ?? []
-        SWELL1 = dictionary["SWELL1"] as? [Float] ?? []
-        SWPER1 = dictionary["SWPER1"] as? [Float] ?? []
-        SWDIR1 = dictionary["SWDIR1"] as? [Float] ?? []
-        SWELL2 = dictionary["SWELL2"] as? [Float] ?? []
-        SWPER2 = dictionary["SWPER2"] as? [Float] ?? []
-        SWDIR2 = dictionary["SWDIR2"] as? [Float] ?? []
-        PERPW = dictionary["PERPW"] as? [Float] ?? []
-        DIRPW = dictionary["DIRPW"] as? [Float] ?? []
-        hr_weekday = dictionary["hr_weekday"] as? [Int] ?? []
-        hr_h = dictionary["hr_h"] as? [String] ?? []
-        hr_d = dictionary["hr_d"] as? [String] ?? []
-        hours = dictionary["hours"] as? [Int] ?? []
-        img_param = dictionary["img_param"] as? [String] ?? []
-        img_var_map = dictionary["img_var_map"] as? [String] ?? []
-        initDate = dictionary["initdate"] as? String
-        init_d = dictionary["init_d"] as? String
-        init_dm = dictionary["init_dm"] as? String
-        init_h = dictionary["init_h"] as? String
-        initstr = dictionary["initstr"] as? String
-        model_name = dictionary["model_name"] as? String
-        model_longname = dictionary["model_longname"] as? String
-        id_model = dictionary["id_model"] as? String
-        update_last = dictionary["update_last"] as? String
-        update_next = dictionary["update_next"] as? String
-    }
-#endif
-
     override public var description : String {
         var aux : String = "\(type(of:self)): "
-        aux += "initStamp: \(initStamp)\n"
-        aux += "Cloud cover Total: \(cloudCoverTotal.printDescription())\n"
-        aux += "High: \(cloudCoverHigh.printDescription())\n"
-        aux += "Mid: \(cloudCoverMid.printDescription())\n"
-        aux += "Low: \(cloudCoverLow.printDescription())\n"
-        aux += "Humidity: \(relativeHumidity.printDescription())\n"
-        aux += "Sea Level pressure: \(seaLevelPressure.printDescription())\n"
-        aux += "Freezing level: \(freezingLevel.printDescription())\n"
-        aux += "Precipitation: \(precipitation.printDescription())\n"
-        aux += "Wind gust: \(windGust.printDescription())\n"
-        aux += "Wind speed: \(windSpeed.printDescription())\n"
-        aux += "Wind direccion: \(windDirection.printDescription())\n"
+        aux += "initstamp: \(initstamp)\n"
+        aux += "TCDC = Cloud cover Total: \(TCDC.printDescription())\n"
+        aux += "HCDC = Cloud cover High: \(HCDC.printDescription())\n"
+        aux += "MCDC = Cloud cover Mid: \(MCDC.printDescription())\n"
+        aux += "LCDC = Cloud cover Low: \(LCDC.printDescription())\n"
+        aux += "RH = Humidity: \(RH.printDescription())\n"
+        aux += "SLP = Sea Level pressure: \(SLP.printDescription())\n"
+        aux += "FLHGT = Freezing level: \(FLHGT.printDescription())\n"
+        aux += "APCP = Precipitation: \(APCP.printDescription())\n"
+        aux += "GUST = Wind gust: \(GUST.printDescription())\n"
+        aux += "WINDSPD = Wind speed: \(WINDSPD.printDescription())\n"
+        aux += "WINDDIR = Wind direccion: \(WINDDIR.printDescription())\n"
         aux += "SMERN: \(SMERN.printDescription())\n"
         aux += "SMER: \(SMER.printDescription())\n"
-        aux += "Temp: \(temperature.printDescription())\n"
-        aux += "Temp real: \(temperatureReal.printDescription())\n"
+        aux += "TMP = Temp: \(TMP.printDescription())\n"
+        aux += "TMPE = Temp real: \(TMPE.printDescription())\n"
         aux += "PCPT: \(PCPT.printDescription())\n"
         aux += "HTSGW: \(HTSGW.printDescription())\n"
         aux += "WVHGT: \(WVHGT.printDescription())\n"
@@ -262,24 +261,27 @@ extension WForecast {
         return nil
     }
     
+    public func numberOfHours() -> Int {
+        return hours.count
+    }
 
     public func temperature(hour: Int) -> Float? {
-        if temperature.count > 0 && hour < temperature.count {
-            return temperature[hour].v()
+        if TMP.count > 0 && hour < TMP.count {
+            return TMP[hour].v()
         }
         return nil
     }
     
     public func temperatureReal(hour: Int) -> Float? {
-        if temperatureReal.count > 0 && hour < temperatureReal.count {
-            return temperatureReal[hour].v()
+        if TMPE.count > 0 && hour < TMPE.count {
+            return TMPE[hour].v()
         }
         return nil
     }
     
     public func relativeHumidity(hour: Int) -> Int? {
-        if relativeHumidity.count > 0 && hour < relativeHumidity.count {
-            return relativeHumidity[hour].v()
+        if RH.count > 0 && hour < RH.count {
+            return RH[hour].v()
         }
         return nil
     }
@@ -299,8 +301,8 @@ extension WForecast {
     }
     
     private func windSpeed(hour: Int) -> Float? {
-        if windSpeed.count > 0 && hour < windSpeed.count {
-            return windSpeed[hour].v()
+        if WINDSPD.count > 0 && hour < WINDSPD.count {
+            return WINDSPD[hour].v()
         }
         return nil
     }
@@ -367,8 +369,8 @@ extension WForecast {
     
     
     public func windDirection(hour: Int) -> Int? {
-        if windDirection.count > 0 && hour < windDirection.count {
-            return windDirection[hour].v()
+        if WINDDIR.count > 0 && hour < WINDDIR.count {
+            return WINDDIR[hour].v()
         }
         return nil
     }
@@ -381,8 +383,8 @@ extension WForecast {
     }
     
     public func windGust(hour: Int) -> Float? {
-        if windGust.count > 0 && hour < windGust.count {
-            return windGust[hour].v()
+        if GUST.count > 0 && hour < GUST.count {
+            return GUST[hour].v()
         }
         return nil
     }
@@ -471,36 +473,36 @@ extension WForecast {
     }
     
     public func cloudCoverTotal(hour: Int) -> Int? {
-        if cloudCoverTotal.count > 0 && hour < cloudCoverTotal.count {
-            return cloudCoverTotal[hour].v()
+        if TCDC.count > 0 && hour < TCDC.count {
+            return TCDC[hour].v()
         }
         return nil
     }
     
     public func cloudCoverHigh(hour: Int) -> Int? {
-        if cloudCoverHigh.count > 0 && hour < cloudCoverHigh.count {
-            return cloudCoverHigh[hour].v()
+        if HCDC.count > 0 && hour < HCDC.count {
+            return HCDC[hour].v()
         }
         return nil
     }
     
     public func cloudCoverMid(hour: Int) -> Int? {
-        if cloudCoverMid.count > 0 && hour < cloudCoverMid.count {
-            return cloudCoverMid[hour].v()
+        if MCDC.count > 0 && hour < MCDC.count {
+            return MCDC[hour].v()
         }
         return nil
     }
     
     public func cloudCoverLow(hour: Int) -> Int? {
-        if cloudCoverLow.count > 0 && hour < cloudCoverLow.count {
-            return cloudCoverLow[hour].v()
+        if LCDC.count > 0 && hour < LCDC.count {
+            return LCDC[hour].v()
         }
         return nil
     }
     
     public func precipitation(hour: Int) -> Int? {
-        if precipitation.count > 0 && hour < precipitation.count {
-            return precipitation[hour].v()
+        if APCP.count > 0 && hour < APCP.count {
+            return APCP[hour].v()
         }
         return nil
     }
@@ -513,16 +515,20 @@ extension WForecast {
     }
     
     public func seaLevelPressure(hour: Int) -> Int? {
-        if seaLevelPressure.count > 0 && hour < seaLevelPressure.count {
-            return seaLevelPressure[hour].v()
+        if SLP.count > 0 && hour < SLP.count {
+            return SLP[hour].v()
         }
         return nil
     }
     
     public func freezingLevel(hour: Int) -> Int? {
-        if freezingLevel.count > 0 && hour < freezingLevel.count {
-            return freezingLevel[hour].v()
+        if FLHGT.count > 0 && hour < FLHGT.count {
+            return FLHGT[hour].v()
         }
         return nil
+    }
+    
+    public func lastUpdate() -> String? {
+        return update_last
     }
 }

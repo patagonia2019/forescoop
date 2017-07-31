@@ -506,8 +506,8 @@ extension ForecastWindguruService {
         failure:@escaping (_ error: WGError?) -> Void,
         success:@escaping (_ result: T?) -> Void)
     {
-        var error : Error? = NSError()
-        var data : Data? = Data()
+        var error : Error? = nil
+        var data : Data? = nil
         if let response = response {
             data = response.data
             error = response.error
@@ -543,8 +543,8 @@ extension ForecastWindguruService {
                               failure:@escaping (_ error: WGError?) -> Void,
                               success:@escaping (_ result: [String]) -> Void)
     {
-        var error : Error? = NSError()
-        var data : Data? = Data()
+        var error : Error? = nil
+        var data : Data? = nil
         if let response = response {
             data = response.data
             error = response.error
@@ -574,22 +574,22 @@ extension ForecastWindguruService {
     
 #else
     
-    func mapAndResponse<T: Mappable>(_ response: Response?,
+    func mapAndResponse<T: BaseMappable>(_ response: Response?,
                         url: String,
                         api: ForecastWindguruService.Definition.service.api,
                         context: String,
                         failure:@escaping (_ error: WGError?) -> Void,
                         success:@escaping (_ result: T?) -> Void)
     {
-        var error : Error? = NSError()
-        var data : Data? = Data()
-        var json : [String:Any?]? = nil
+        var error : Error? = nil
+        var data : Data? = nil
+        var json : [String:Any]? = nil
         if let response = response {
             data = response.data
             error = response.error
             do {
                 if let data = data {
-                    json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any?]
+                    json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any]
                 }
             }
             catch {
@@ -599,12 +599,13 @@ extension ForecastWindguruService {
 
         if  let response = response,
             let json = json,
-            response.error == nil
+            response.error == nil,
+            let klass = T.self as? Mappable.Type, // Check if object is Mappable
+            let object = klass.init(map: json) as? T
         {
-            let t = T.init(dictionary: json)
             print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
             DispatchQueue.main.async(execute: {
-                success(t)
+                success(object)
             })
         }
         else {
@@ -628,8 +629,8 @@ extension ForecastWindguruService {
                                   failure:@escaping (_ error: WGError?) -> Void,
                                   success:@escaping (_ result: [String]) -> Void)
     {
-        var error : Error? = NSError()
-        var data : Data? = Data()
+        var error : Error? = nil
+        var data : Data? = nil
         if let response = response {
             data = response.data
             error = response.error

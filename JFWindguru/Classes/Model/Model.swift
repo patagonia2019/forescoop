@@ -59,43 +59,39 @@ public class Model: Object, Mappable {
     dynamic var update_time: String?
     var show_vars = ListStringObject()
 
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-
+    
     public func mapping(map: Map) {
-        id_model    <- map["id_model"]
-        model_name  <- map["model_name"]
-        model       <- map["model"]
-        hr_start    <- map["hr_start"]
-        hr_end      <- map["hr_end"]
-        hr_step     <- map["hr_step"]
-        period      <- map["period"]
-        resolution  <- map["resolution"]
-        update_time <- map["update_time"]
-        show_vars   <- map["show_vars"]
+        #if USE_EXT_FWK
+            id_model    <- map["id_model"]
+            model_name  <- map["model_name"]
+            model       <- map["model"]
+            hr_start    <- map["hr_start"]
+            hr_end      <- map["hr_end"]
+            hr_step     <- map["hr_step"]
+            period      <- map["period"]
+            resolution  <- map["resolution"]
+            update_time <- map["update_time"]
+            show_vars   <- map["show_vars"]
+        #else
+            id_model = map["id_model"] as? Int ?? 0
+            model_name = map["model_name"] as? String ?? nil
+            model = map["model"] as? String ?? nil
+            hr_start = map["hr_start"] as? Int ?? 0
+            hr_end = map["hr_end"] as? Int ?? 0
+            hr_step = map["hr_step"] as? Int ?? 0
+            period = map["period"] as? Int ?? 0
+            resolution = map["resolution"] as? Int ?? 0
+            update_time = map["update_time"] as? String ?? nil
+            show_vars = map["show_vars"] as? [String] ?? []
+        #endif
     }
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        super.init()
-        id_model = dictionary["id_model"] as? Int ?? 0
-        model_name = dictionary["model_name"] as? String ?? nil
-        model = dictionary["model"] as? String ?? nil
-        hr_start = dictionary["hr_start"] as? Int ?? 0
-        hr_end = dictionary["hr_end"] as? Int ?? 0
-        hr_step = dictionary["hr_step"] as? Int ?? 0
-        period = dictionary["period"] as? Int ?? 0
-        resolution = dictionary["resolution"] as? Int ?? 0
-        update_time = dictionary["update_time"] as? String ?? nil
-        if let array = dictionary["show_vars"] as? [String] {
-            for sv in array {
-                show_vars.append(sv)
-            }
-        }
-    }
-#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

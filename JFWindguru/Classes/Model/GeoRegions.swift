@@ -33,37 +33,27 @@ import Foundation
 
 public class GeoRegions: Object, Mappable {
 
-#if USE_EXT_FWK
     typealias ListGeoRegion    = List<GeoRegion>
-#else
-    typealias ListGeoRegion    = [GeoRegion]
-#endif
     
     var geoRegions = ListGeoRegion()
 
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-
+    
     public func mapping(map: Map) {
-        for json in map.JSON {
+        for json in map.JSON() {
             let tmpDictionary = ["id": json.key, "name": json.value]
             if let georegion = Mapper<GeoRegion>().map(JSON: tmpDictionary) {
                 geoRegions.append(georegion)
             }
         }
-    }
-#else
-    public required init(dictionary: [String: Any?]) {
-        for (k,v) in dictionary {
-            let tmpDictionary = ["id": k, "name": v]
-            let geoRegion = GeoRegion.init(dictionary: tmpDictionary)
-            geoRegions.append(geoRegion)
-        }
-    }
-#endif
-    
+    }    
+
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         for region in geoRegions {

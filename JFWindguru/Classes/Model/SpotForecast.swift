@@ -47,19 +47,42 @@ public class SpotForecast: SpotInfo {
     
     public dynamic var currentModel: String? = nil
 
-#if USE_EXT_FWK
-    typealias ListForecastModel    = List<ForecastModel>
-#else
-    typealias ListForecastModel    = [ForecastModel]
-#endif
+    var forecasts = List<ForecastModel>()
 
-    var forecasts = ListForecastModel()
-    
-#if USE_EXT_FWK
-    public required init(map: Map) {
-        super.init()
+    required public convenience init?(map: Map) {
+        self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
+
+    public override func mapping(map: Map) {
+        super.mapping(map: map)
+        #if USE_EXT_FWK
+            for model in models {
+                var tmpForecast : Forecast?
+                if let modelValue = model.value {
+                    tmpForecast <- map["forecast.\(modelValue)"]
+                    if let forecast = tmpForecast {
+                        forecasts.append(ForecastModel(modelValue: modelValue, infoForecast: forecast))
+                        currentModel = model.value
+                    }
+                }
+            }
+        #else
+            guard let forecastDict = map["forecast"] as? [String: Any] else { return }
+            for (k,v) in forecastDict {
+                let tmpDictionary = ["model" : k , "info" : v]
+                let forecastModel = ForecastModel(map: tmpDictionary)
+                forecasts.append(forecastModel)
+                currentModel = k
+            }
+        #endif
+    }
+    
+
+#if USE_EXT_FWK
     required public init(realm: RLMRealm, schema: RLMObjectSchema) {
         super.init(realm: realm, schema: schema)
     }
@@ -71,36 +94,6 @@ public class SpotForecast: SpotInfo {
     required public init(value: Any, schema: RLMSchema) {
         super.init(value: value, schema: schema)
     }
-    
-    
-
-    override public func mapping(map: Map) {
-        super.mapping(map: map)
-        for model in models {
-            var tmpForecast : Forecast?
-            if let modelValue = model.value {
-                tmpForecast <- map["forecast.\(modelValue)"]
-                if let forecast = tmpForecast {
-                    forecasts.append(ForecastModel(modelValue: modelValue, infoForecast: forecast))
-                    currentModel = model.value
-                }
-            }
-        }
-    }
-    
-#else
-    
-    public required init(dictionary: [String: Any?]) {
-        super.init(dictionary: dictionary)
-        guard let forecastDict = dictionary["forecast"] as? [String: Any?] else { return }
-        for (k,v) in forecastDict {
-            let tmpDictionary = [k : v]
-            let forecastModel = ForecastModel.init(dictionary: tmpDictionary)
-            forecasts.append(forecastModel)
-            currentModel = k
-        }
-    }
-
 #endif
 
     override public var description : String {

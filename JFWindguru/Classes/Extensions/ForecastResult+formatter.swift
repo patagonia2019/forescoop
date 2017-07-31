@@ -91,46 +91,13 @@ extension SpotForecast
         return nil
     }
     
-    private func valueForKey(key : TimeWeather) -> AnyObject?
-    {
-        guard let hhString = hourString() else { return nil }
-#if USE_EXT_FWK
-        for k in key.keys {
-            if k.value == hhString {
-                guard let index = key.keys.index(of: k) else { continue }
-                if key.strings.count >= 0 && index < key.strings.count {
-                    return key.strings[index].value as AnyObject
-                }
-                else if key.floats.count >= 0 && index < key.floats.count{
-                    return key.floats[index].value.value as AnyObject
-                }
-            }
-        }
-        return nil
-#else
-    for k in key.keys {
-        if k == hhString {
-            guard let index = key.keys.index(of: k) else { continue }
-            if key.strings.count >= 0 && index < key.strings.count {
-                return key.strings[index] as AnyObject
-            }
-            else if key.floats.count >= 0 && index < key.floats.count{
-                return key.floats[index] as AnyObject
-            }
-        }
-    }
-    return nil
-#endif
-    }
-
     private func cloudCoverTotal() -> Int
     {
         guard let forecast = forecast(),
-            let cloudCoverTotal = forecast.cloudCoverTotal,
-            let value = valueForKey(key: cloudCoverTotal) as? Int else {
+            let cloudCoverTotal = forecast.cloudCoverTotal(hh: hourString()) else {
                 return 0
         }
-        return value
+        return cloudCoverTotal
     }
 
     
@@ -198,34 +165,26 @@ extension SpotForecast
     }
     
     var asCurrentWindDirectionName: String? {
-        guard let forecast = forecast(),
-            let windDirectionName = forecast.windDirectionName,
-            let value = valueForKey(key: windDirectionName) as? String else {
-                return nil
-        }
-        return value
+        guard let forecast = forecast() else { return nil }
+        return forecast.windDirectionName(hh: hourString())
     }
     
     public var asCurrentWindSpeed: String? {
         guard let forecast = forecast(),
-            let windSpeed = forecast.windSpeed,
-            let value = valueForKey(key: windSpeed) as? Float
-            else {
+            let windSpeed = forecast.windSpeed(hh: hourString()) else {
                 return nil
         }
-        return "\(value) knots"
+        return "\(windSpeed) knots"
     }
     
     
     // "11"
     public var asCurrentTemperature: String? {
         guard let forecast = forecast(),
-            let temperatureReal = forecast.temperatureReal,
-            let value = valueForKey(key: temperatureReal) as? Float
-            else {
+            let temperatureReal = forecast.temperatureReal(hh: hourString()) else {
                 return nil
         }
-        return "\(value)"
+        return "\(temperatureReal)"
     }
     
     // "C" or "F"

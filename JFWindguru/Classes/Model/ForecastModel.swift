@@ -29,15 +29,6 @@ public class ForecastModel: Object, Mappable {
     var model: String?
     var info: Forecast?
 
-#if USE_EXT_FWK
-
-    required convenience public init?(map: Map) {
-        self.init()
-    }
-
-    public func mapping(map: Map) {
-    }
-
     convenience public init(modelValue: String, infoForecast: Forecast)
     {
         self.init()
@@ -45,16 +36,24 @@ public class ForecastModel: Object, Mappable {
         info = infoForecast
     }
 
-#else
-    public required init(dictionary: [String: Any?]) {
-        for (k,v) in dictionary {
-            model = k
-            if let dict = v as? [String:Any?] {
-                info = Forecast.init(dictionary: dict)
-            }
-        }
+    required public convenience init(map: Map) {
+        self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-#endif
+    
+    public func mapping(map: Map) {
+        #if USE_EXT_FWK
+            model <- map["model"]
+            info <- map["info"]
+        #else
+            model = map["model"] as? String
+            if let forecastMap = map["info"] as? Map {
+                info = Forecast.init(map: forecastMap)
+            }
+        #endif
+    }
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

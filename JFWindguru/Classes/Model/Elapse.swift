@@ -25,11 +25,15 @@ public class Elapse: Object, Mappable {
         start = Time(elapseStart)
         end = Time(elapseEnd)
     }
-
-#if USE_EXT_FWK
+    
     required convenience public init?(map: Map) {
         self.init()
     }
+
+    public func mapping(map: Map) {
+    }
+
+#if USE_EXT_FWK
     
     required public init(realm: RLMRealm, schema: RLMObjectSchema) {
         super.init(realm: realm, schema: schema)
@@ -43,12 +47,6 @@ public class Elapse: Object, Mappable {
         super.init(value: value, schema: schema)
     }
     
-    public func mapping(map: Map) {
-    }
-#else
-    public required init(dictionary: [String: Any?]) {
-    // TODO
-    }
 #endif
 
     public override var description : String {
@@ -77,5 +75,19 @@ extension Elapse {
             return false
         }
         return true
+    }
+    
+    public func starting() -> String? {
+        if let start = start {
+            return start.description
+        }
+        return nil
+    }
+
+    public func ending() -> String? {
+        if let end = start {
+            return end.description
+        }
+        return nil
     }
 }

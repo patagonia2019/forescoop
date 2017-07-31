@@ -37,11 +37,24 @@ public class SpotOwner: Spot {
 
     dynamic var id_user: String? = nil
 
-#if USE_EXT_FWK
-    public required init(map: Map) {
-        super.init()
+    required public convenience init?(map: Map) {
+        self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
+    public override func mapping(map: Map) {
+        super.mapping(map: map)
+        #if USE_EXT_FWK
+            id_user <- map["id_user"]
+        #else
+            id_user = map["id_user"] as? String ?? nil
+        #endif
+    }
+    
+
+#if USE_EXT_FWK
     required public init(realm: RLMRealm, schema: RLMObjectSchema) {
         super.init(realm: realm, schema: schema)
     }
@@ -54,19 +67,6 @@ public class SpotOwner: Spot {
         super.init(value: value, schema: schema)
     }
     
-    
-    override public func mapping(map: Map) {
-        super.mapping(map: map)
-        id_user <- map["id_user"]
-    }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        super.init(dictionary: dictionary)
-        id_user = dictionary["id_user"] as? String ?? nil
-   }
-
 #endif
 
     override public var description : String {
@@ -79,3 +79,4 @@ public class SpotOwner: Spot {
     }
     
 }
+

@@ -14,19 +14,24 @@ import Foundation
 #endif
 
 public class Time: Object, Mappable {
-
+    
     dynamic var hour: Int = 0
     dynamic var minutes: Int = 0
     dynamic var seconds: Int = 0
 
-#if USE_EXT_FWK
-
-    required convenience public init?(map: Map) {
-        self.init()
+    required public convenience init?(map: Map) {
+        #if USE_EXT_FWK
+            self.init()
+        #else
+            self.init("00:00:00")
+            mapping(map: map)
+        #endif
     }
-
+    
     public func mapping(map: Map) {
     }
+
+#if USE_EXT_FWK
 
     required public init(realm: RLMRealm, schema: RLMObjectSchema) {
         super.init(realm: realm, schema: schema)
@@ -39,32 +44,29 @@ public class Time: Object, Mappable {
     required public init(value: Any, schema: RLMSchema) {
         super.init(value: value, schema: schema)
     }
-#else
-
-    public required init(dictionary: [String: Any?]) {
-    // TODO
-    }
 #endif
     
-    required public init?(_ str: String) {
+    required public init?(_ str: String?) {
         super.init()
         hour = 0
         minutes = 0
         seconds = 0
         
-        let words = str.components(separatedBy: ":")
-        
-        if words.count == 3 {
-            hour = Int(words[0]) ?? 0
-            minutes = Int(words[1]) ?? 0
-            seconds = Int(words[2]) ?? 0
-        }
-        else if words.count == 2 {
-            self.hour = Int(words[0]) ?? 0
-            self.minutes = Int(words[1]) ?? 0
-        }
-        else {
-            assert(false)
+        if let str = str {
+            let words = str.components(separatedBy: ":")
+            
+            if words.count == 3 {
+                hour = Int(words[0]) ?? 0
+                minutes = Int(words[1]) ?? 0
+                seconds = Int(words[2]) ?? 0
+            }
+            else if words.count == 2 {
+                self.hour = Int(words[0]) ?? 0
+                self.minutes = Int(words[1]) ?? 0
+            }
+            else {
+                assert(false)
+            }
         }
     }
     

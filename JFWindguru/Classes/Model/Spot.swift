@@ -33,28 +33,25 @@ public class Spot: Object, Mappable {
     dynamic var spotname: String? = nil
     dynamic var country: String? = nil
     
-#if USE_EXT_FWK
-
-    required public convenience init(map: Map) {
+    
+    required public convenience init?(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        id_spot <- map["id_spot"]
-        spotname <- map["spotname"]
-        country <- map["country"]
+        #if USE_EXT_FWK
+            id_spot <- map["id_spot"]
+            spotname <- map["spotname"]
+            country <- map["country"]
+        #else
+            id_spot = map["id_spot"] as? String ?? nil
+            spotname = map["spotname"] as? String ?? nil
+            country = map["country"] as? String ?? nil
+        #endif
     }
-
-#else
-    
-    public required init(dictionary: [String: Any?]) {
-        super.init()
-        id_spot = dictionary["id_spot"] as? String ?? nil
-        spotname = dictionary["spotname"] as? String ?? nil
-        country = dictionary["country"] as? String ?? nil
-    }
-
-#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

@@ -41,30 +41,29 @@ public class WindguruStation: Object, Mappable {
     dynamic var id_type: String? = nil
     dynamic var wind_avg: Int = 0
 
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init?(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        id <- map["id"]
-        station <- map["station"]
-        distance <- map["distance"]
-        id_type <- map["id_type"]
-        wind_avg <- map["wind_avg"]
+        #if USE_EXT_FWK
+            id <- map["id"]
+            station <- map["station"]
+            distance <- map["distance"]
+            id_type <- map["id_type"]
+            wind_avg <- map["wind_avg"]
+        #else
+            id = map["id"] as? String
+            station = map["station"] as? String
+            distance = map["distance"] as? Int ?? 0
+            id_type = map["id_type"] as? String
+            wind_avg = map["wind_avg"] as? Int ?? 0
+        #endif
     }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        id = dictionary["id"] as? String
-        station = dictionary["station"] as? String
-        distance = dictionary["distance"] as? Int ?? 0
-        id_type = dictionary["id_type"] as? String
-        wind_avg = dictionary["wind_avg"] as? Int ?? 0
-    }
-
-#endif
+    
     override public var description : String {
         var aux : String = "\(type(of:self)): "
         if let id = id {

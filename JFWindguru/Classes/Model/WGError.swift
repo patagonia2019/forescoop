@@ -69,25 +69,24 @@ public class WGError: Mappable {
             id = bundleId
         }
         nserror = NSError(domain: id, code:code, userInfo: dict)
-
-    }
-#if USE_EXT_FWK
-        required public init?(map: Map){
-            
-        }
         
-        public func mapping(map: Map) {
+    }
+    required public init?(map: Map){
+        
+    }
+    
+    public func mapping(map: Map) {
+        #if USE_EXT_FWK
             returnString <- map["return"]
             error_id <- map["error_id"]
             error_message <- map["error_message"]
-        }
-#endif
-    
-    public required init(dictionary: [String: Any?]) {
-        returnString = dictionary["return"] as? String
-        error_id = dictionary["error_id"] as? Int
-        error_message = dictionary["error_message"] as? String
+        #else
+            returnString = map["return"] as? String
+            error_id = map["error_id"] as? Int
+            error_message = map["error_message"] as? String
+        #endif
     }
+    
     
     public var description : String {
         var aux : String = ""

@@ -36,39 +36,23 @@ import Foundation
 
 public class Regions: Object, Mappable {
 
-#if USE_EXT_FWK
-    typealias ListRegion    = List<Region>
-#else
-    typealias ListRegion    = [Region]
-#endif
+    var regions = List<Region>()
 
-    var regions = ListRegion()
-
-#if USE_EXT_FWK
-    
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-
+    
     public func mapping(map: Map) {
-        for json in map.JSON {
+        for json in map.JSON() {
             let jsonKV = ["id": json.key, "name": json.value]
             if let region = Mapper<Region>().map(JSON: jsonKV) {
                 regions.append(region)
             }
         }
     }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        for (k,v) in dictionary {
-            let tmpDictionary = ["id": k, "name": v]
-            let region = Region.init(dictionary: tmpDictionary)
-            regions.append(region)
-        }
-    }
-#endif
 
     override public var description : String {
         var aux : String = "\(type(of:self)): "

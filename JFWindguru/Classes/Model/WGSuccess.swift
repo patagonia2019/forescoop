@@ -27,20 +27,20 @@ public class WGSuccess: Mappable {
     var returnString: String?
     var message: String?
     
-#if USE_EXT_FWK
     required public init?(map: Map) {
-        
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        returnString <- map["return"]
-        message <- map["message"]
-    }
-#endif
-    
-    public required init(dictionary: [String: Any?]) {
-        returnString = dictionary["return"] as? String
-        message = dictionary["message"] as? String
+        #if USE_EXT_FWK
+            returnString <- map["return"]
+            message <- map["message"]
+        #else
+            returnString = map["return"] as? String
+            message = map["message"] as? String
+        #endif
     }
     
     public var description : String {

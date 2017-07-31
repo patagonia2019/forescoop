@@ -35,37 +35,23 @@ import RealmSwift
 
 public class Countries: Object, Mappable {
     
-#if USE_EXT_FWK
-    typealias ListCountry    = List<Country>
-#else
-    typealias ListCountry    = [Country]
-#endif
+    var countries = List<Country>()
 
-    var countries = ListCountry()
-
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+        mapping(map: map)
+        #endif
     }
-    
+
     public func mapping(map: Map) {
-        for json in map.JSON {
+        for json in map.JSON() {
             let jsonKV = ["id": json.key, "name": json.value]
             if let country = Mapper<Country>().map(JSON: jsonKV) {
                 countries.append(country)
             }
         }
     }
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        for (k,v) in dictionary {
-            let tmpDictionary = ["id": k, "name": v]
-            let country = Country.init(dictionary: tmpDictionary)
-            countries.append(country)
-        }
-    }
-#endif
     
     override public var description : String {
         var aux : String = "\(type(of:self)): "

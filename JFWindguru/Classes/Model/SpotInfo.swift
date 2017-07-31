@@ -57,64 +57,56 @@ public class SpotInfo: Spot {
     var models = ListStringObject()
     dynamic var tides: String? = nil
 
-#if USE_EXT_FWK
-    public required init(map: Map) {
-        super.init()
+    required public convenience init?(map: Map) {
+        self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
-    
-    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
-    
-    required public init() {
-        super.init()
-    }
-    
-    required public init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-
     
     public override func mapping(map: Map) {
         super.mapping(map: map)
-
-        countryId <- map["id_country"]
-        latitude <- map["lat"]
-        longitude <- map["lon"]
-        altitude <- map["alt"]
-        timezone <- map["tz"]
-        gmtHourOffset <- map["gmt_hour_offset"]
-        sunrise <- map["sunrise"]
-        sunset <- map["sunset"]
+        #if USE_EXT_FWK
+            countryId <- map["id_country"]
+            latitude <- map["lat"]
+            longitude <- map["lon"]
+            altitude <- map["alt"]
+            timezone <- map["tz"]
+            gmtHourOffset <- map["gmt_hour_offset"]
+            sunrise <- map["sunrise"]
+            sunset <- map["sunset"]
+            models = StringObject.map(map: map, key: "models")
+            tides <- map["tides"]
+        #else
+            countryId = map["countryId"] as? Int ?? 0
+            latitude = map["latitude"] as? Double ?? 0.0
+            longitude = map["longitude"] as? Double ?? 0.0
+            altitude = map["altitude"] as? Int ?? 0
+            timezone = map["timezone"] as? String ?? nil
+            gmtHourOffset = map["gmtHourOffset"] as? Int ?? 0
+            sunrise = map["sunrise"] as? String ?? nil
+            sunset = map["sunset"] as? String ?? nil
+            models = map["models"] as? [String] ?? []
+            tides = map["tides"] as? String ?? nil
+        #endif
         if let sunrise = sunrise,
             let sunset = sunset
         {
             elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
         }
-        models = StringObject.map(map: map, key: "models")
-        tides <- map["tides"]
     }
-#else
+    
 
-    public required init(dictionary: [String: Any?]) {
-        super.init(dictionary: dictionary)
-        countryId = dictionary["countryId"] as? Int ?? 0
-        latitude = dictionary["latitude"] as? Double ?? 0.0
-        longitude = dictionary["longitude"] as? Double ?? 0.0
-        altitude = dictionary["altitude"] as? Int ?? 0
-        timezone = dictionary["timezone"] as? String ?? nil
-        gmtHourOffset = dictionary["gmtHourOffset"] as? Int ?? 0
-        sunrise = dictionary["sunrise"] as? String ?? nil
-        sunset = dictionary["sunset"] as? String ?? nil
-        if let sunrise = sunrise,
-            let sunset = sunset
-        {
-            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
-        }
-        models = dictionary["models"] as? [String] ?? []
-        tides = dictionary["tides"] as? String ?? nil
-   }
-
+#if USE_EXT_FWK
+    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
+        super.init(realm: realm, schema: schema)
+    }
+    required public init() {
+        super.init()
+    }
+    required public init(value: Any, schema: RLMSchema) {
+        super.init(value: value, schema: schema)
+    }
 #endif
  
     override public var description : String {

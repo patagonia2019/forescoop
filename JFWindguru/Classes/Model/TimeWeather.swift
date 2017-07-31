@@ -99,40 +99,38 @@ public class TimeWeather: Object, Mappable {
     var strings = ListStringObject()
     var floats = ListFloatObject()
 
-#if USE_EXT_FWK
-    required convenience public init?(map: Map) {
+    required public convenience init(map: Map) {
         self.init()
+        #if !USE_EXT_FWK
+            mapping(map: map)
+        #endif
     }
     
     public func mapping(map: Map) {
-        for key in map.JSON.keys {
-            var tmpValue : AnyObject?
-            tmpValue <- map[key]
-            keys.append(StringObject.init(value:[key]))
-            if let str = tmpValue as? String {
-                strings.append(StringObject.init(value:[str]))
+        #if USE_EXT_FWK
+            for key in map.JSON.keys {
+                var tmpValue : AnyObject?
+                tmpValue <- map[key]
+                keys.append(StringObject.init(value:[key]))
+                if let str = tmpValue as? String {
+                    strings.append(StringObject.init(value:[str]))
+                }
+                else if let f = tmpValue as? Float {
+                    floats.append(FloatObject.init(value:[f]))
+                }
             }
-            else if let f = tmpValue as? Float {
-                floats.append(FloatObject.init(value:[f]))
+        #else
+            for (k,v) in map {
+                keys.append(k)
+                if let str = v as? String {
+                    strings.append(str)
+                }
+                else if let str = v as? Float {
+                    floats.append(str)
+                }
             }
-        }
+        #endif
     }
-
-#else
-
-    public required init(dictionary: [String: Any?]) {
-        for (k,v) in dictionary {
-            keys.append(k)
-            if let str = v as? String {
-                strings.append(str)
-            }
-            else if let str = v as? Float {
-                floats.append(str)
-            }
-        }
-    }
-
-#endif
 
     override public var description : String {
         
