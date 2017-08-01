@@ -54,6 +54,7 @@ class Communication {
             finish(r)
         }
         task.resume()
+        URLSession.shared.finishTasksAndInvalidate()
 #endif
     }
     
