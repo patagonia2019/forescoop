@@ -44,41 +44,40 @@ import Foundation
 
 public class WForecast: Object, Mappable {
 
-    dynamic var initstamp   = 0  // initstamp
-    var TMP                 = ListFloatObject() // TMP: temperature
-    var TCDC     = ListIntObject() // TCDC: Cloud cover (%) Total
-    var HCDC      = ListIntObject() // HCDC: Cloud cover (%) High
-    var MCDC       = ListIntObject() // MCDC: Cloud cover (%) Mid
-    var LCDC       = ListIntObject() // LCDC: Cloud cover (%) Low
-    var RH    = ListIntObject() // RH: Relative humidity: relative humidity in percent
-    var GUST            = ListFloatObject() // GUST: Wind gusts (knots)
-    var SLP    = ListIntObject() // SLP: sea level pressure
+    var TMP         = ListFloatObject() // TMP: temperature
+    var TCDC        = ListIntObject() // TCDC: Cloud cover (%) Total
+    var HCDC        = ListIntObject() // HCDC: Cloud cover (%) High
+    var MCDC        = ListIntObject() // MCDC: Cloud cover (%) Mid
+    var LCDC        = ListIntObject() // LCDC: Cloud cover (%) Low
+    var RH          = ListIntObject() // RH: Relative humidity: relative humidity in percent
+    var GUST        = ListFloatObject() // GUST: Wind gusts (knots)
+    var SLP         = ListIntObject() // SLP: sea level pressure
     var FLHGT       = ListIntObject() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
-    var APCP       = ListIntObject() //  APCP: Precip. (mm/3h)
-    var WINDSPD           = ListFloatObject() //  WINDSPD: Wind speed (knots)
-    var WINDDIR       = ListIntObject() //  WINDDIR: Wind direction
-    var SMERN               = ListIntObject()
-    var SMER                = ListIntObject()
-    var TMPE     = ListFloatObject() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
-    var PCPT                = ListIntObject()
-    var HTSGW               = ListFloatObject() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
-    var WVHGT               = ListFloatObject() // WVHG: Wave height
-    var WVPER               = ListFloatObject() // WVPER: Mean wave period [s]
-    var WVDIR               = ListFloatObject() // WVDIR: Mean wave direction [°]
-    var SWELL1              = ListFloatObject() // SWELL1: Swell height (m)
-    var SWPER1              = ListFloatObject() // SWPER1: Swell period
-    var SWDIR1              = ListFloatObject() // SWDIR1: Swell direction
-    var SWELL2              = ListFloatObject() // SWELL2: Swell height (m)
-    var SWPER2              = ListFloatObject() // SWPER2: Swell period
-    var SWDIR2              = ListFloatObject() // SWDIR2: Swell direction
-    var PERPW               = ListFloatObject() // PERPW: Peak wave period
-    var DIRPW               = ListFloatObject() // DIRPW: Peak wave direction [°]
-    var hr_weekday          = ListIntObject()
-    var hr_h                = ListStringObject()
-    var hr_d                = ListStringObject()
-    var hours               = ListIntObject()
-    var img_param           = ListStringObject()
-    var img_var_map         = ListStringObject()
+    var APCP        = ListIntObject() //  APCP: Precip. (mm/3h)
+    var WINDSPD     = ListFloatObject() //  WINDSPD: Wind speed (knots)
+    var WINDDIR     = ListIntObject() //  WINDDIR: Wind direction
+    var SMERN       = ListIntObject()
+    var SMER        = ListIntObject()
+    var TMPE        = ListFloatObject() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    var PCPT        = ListIntObject()
+    var HTSGW       = ListFloatObject() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
+    var WVHGT       = ListFloatObject() // WVHG: Wave height
+    var WVPER       = ListFloatObject() // WVPER: Mean wave period [s]
+    var WVDIR       = ListFloatObject() // WVDIR: Mean wave direction [°]
+    var SWELL1      = ListFloatObject() // SWELL1: Swell height (m)
+    var SWPER1      = ListFloatObject() // SWPER1: Swell period
+    var SWDIR1      = ListFloatObject() // SWDIR1: Swell direction
+    var SWELL2      = ListFloatObject() // SWELL2: Swell height (m)
+    var SWPER2      = ListFloatObject() // SWPER2: Swell period
+    var SWDIR2      = ListFloatObject() // SWDIR2: Swell direction
+    var PERPW       = ListFloatObject() // PERPW: Peak wave period
+    var DIRPW       = ListFloatObject() // DIRPW: Peak wave direction [°]
+    var hr_weekday  = ListIntObject()
+    var hr_h        = ListStringObject()
+    var hr_d        = ListStringObject()
+    var hours       = ListIntObject()
+    var img_param   = ListStringObject()
+    var img_var_map = ListStringObject()
     dynamic var initDate: String? = nil
     dynamic var init_d: String? = nil
     dynamic var init_dm: String? = nil
@@ -89,7 +88,8 @@ public class WForecast: Object, Mappable {
     dynamic var id_model: String? = nil
     dynamic var update_last: String? = nil
     dynamic var update_next: String? = nil
-    
+    dynamic var initstamp = 0  // initstamp
+
     required public convenience init?(map: Map) {
         self.init()
         #if !USE_EXT_FWK
@@ -99,7 +99,6 @@ public class WForecast: Object, Mappable {
     
     public func mapping(map: Map) {
         #if USE_EXT_FWK
-            initstamp <- map["initstamp"]
             TMP = FloatObject.map(map: map, key: "TMP")
             TCDC = IntObject.map(map: map, key: "TCDC")
             HCDC = IntObject.map(map: map, key: "HCDC")
@@ -144,9 +143,9 @@ public class WForecast: Object, Mappable {
             id_model <- map["id_model"]
             update_last <- map["update_last"]
             update_next <- map["update_next"]
+            initstamp <- map["initstamp"]
         #else
 
-            initstamp = map["initstamp"] as? Int ?? 0
             TMP = map["TMP"] as? [Float] ?? []
             TCDC = map["TCDC"] as? [Int] ?? []
             HCDC = map["HCDC"] as? [Int] ?? []
@@ -191,7 +190,7 @@ public class WForecast: Object, Mappable {
             id_model = map["id_model"] as? String
             update_last = map["update_last"] as? String
             update_next = map["update_next"] as? String
-
+            initstamp = map["initstamp"] as? Int ?? 0
         #endif
     }
     override public var description : String {
