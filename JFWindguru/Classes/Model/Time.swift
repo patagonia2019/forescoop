@@ -61,8 +61,8 @@ public class Time: Object, Mappable {
                 seconds = Int(words[2]) ?? 0
             }
             else if words.count == 2 {
-                self.hour = Int(words[0]) ?? 0
-                self.minutes = Int(words[1]) ?? 0
+                hour = Int(words[0]) ?? 0
+                minutes = Int(words[1]) ?? 0
             }
             else {
                 assert(false)

@@ -85,7 +85,7 @@ extension Elapse {
     }
 
     public func ending() -> String? {
-        if let end = start {
+        if let end = end {
             return end.description
         }
         return nil

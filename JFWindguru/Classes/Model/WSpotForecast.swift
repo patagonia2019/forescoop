@@ -67,7 +67,6 @@ public class WSpotForecast: Object, Mappable {
     dynamic var sst: String? = nil
     dynamic var sunrise: String? = nil
     dynamic var sunset: String? = nil
-    dynamic var elapse: Elapse?
     dynamic var tz: String? = nil
     dynamic var tzutc: String? = nil
     dynamic var utc_offset = 0
@@ -145,10 +144,15 @@ public class WSpotForecast: Object, Mappable {
                 }
             }
         #endif
-        if let sunrise = sunrise, let sunset = sunset {
-            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
-        }
     }
+    
+    public var elapse: Elapse? {
+        if let sunrise = sunrise, let sunset = sunset {
+            return Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+        }
+        return nil
+    }
+
 
     override public var description : String {
         var aux : String = "\(type(of:self)):\n"
@@ -234,6 +238,14 @@ extension WSpotForecast {
     
     public func elapsedDay() -> Elapse? {
         return elapse
+    }
+    
+    public func sunriseTime() -> String? {
+        return sunrise
+    }
+    
+    public func sunsetTime() -> String? {
+        return sunset
     }
     
     public func modelInfo() -> String? {
