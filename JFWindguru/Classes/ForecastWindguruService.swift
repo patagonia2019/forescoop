@@ -305,6 +305,14 @@ public class ForecastWindguruService: NSObject {
         }
         return bft
     }
+    
+    public func definitionArray() -> Array<[String: Any?]>? {
+        guard let info = info,
+            let definition = info["definition"] as? Array<[String: Any?]> else {
+                return nil
+        }
+        return definition
+    }
 
   
 }

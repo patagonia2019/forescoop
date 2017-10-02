@@ -255,5 +255,6 @@ extension WSpotForecast {
         }
         return nil
     }
+    
 }
 
