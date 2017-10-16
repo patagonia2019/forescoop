@@ -264,6 +264,39 @@ extension WForecast {
         return hours.count
     }
 
+    public func hour24(hour: Int) -> String? {
+        if hr_h.count > 0 && hour < hr_h.count {
+            return hr_h[hour].v()
+        }
+        return nil
+    }
+    
+    public func day(hour: Int) -> String? {
+        if hr_d.count > 0 && hour < hr_d.count {
+            return hr_d[hour].v()
+        }
+        return nil
+    }
+    
+    public func weekday(hour: Int) -> String? {
+        if hr_weekday.count > 0 && hour < hr_weekday.count {
+            if let w = hr_weekday[hour].v() {
+                switch w {
+                case 0: return "Sunday"
+                case 1: return "Monday"
+                case 2: return "Tuesday"
+                case 3: return "Wednesday"
+                case 4: return "Thursday"
+                case 5: return "Friday"
+                case 6: return "Saturday"
+                default:
+                    return nil
+                }
+            }
+        }
+        return nil
+    }
+    
     public func temperature(hour: Int) -> Float? {
         if TMP.count > 0 && hour < TMP.count {
             return TMP[hour].v()
