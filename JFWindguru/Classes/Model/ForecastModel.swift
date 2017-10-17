@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  ForecastModel
@@ -38,21 +34,14 @@ public class ForecastModel: Object, Mappable {
 
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            model <- map["model"]
-            info <- map["info"]
-        #else
-            model = map["model"] as? String
-            if let forecastMap = map["info"] as? Map {
-                info = Forecast.init(map: forecastMap)
-            }
-        #endif
+        model = map["model"] as? String
+        if let forecastMap = map["info"] as? Map {
+            info = Forecast.init(map: forecastMap)
+        }
     }
 
     override public var description : String {

@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-import ObjectMapper
-#endif
 /*
  *  WGSuccess
  *
@@ -28,19 +25,12 @@ public class WGSuccess: Mappable {
     var message: String?
     
     required public init?(map: Map) {
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            returnString <- map["return"]
-            message <- map["message"]
-        #else
-            returnString = map["return"] as? String
-            message = map["message"] as? String
-        #endif
+        returnString = map["return"] as? String
+        message = map["message"] as? String
     }
     
     public var description : String {
@@ -53,6 +43,5 @@ public class WGSuccess: Mappable {
         }
         return aux
     }
-    
     
 }

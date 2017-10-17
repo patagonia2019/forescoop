@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  WForecast
@@ -78,73 +74,24 @@ public class WForecast: Object, Mappable {
     var hours       = ListIntObject()
     var img_param   = ListStringObject()
     var img_var_map = ListStringObject()
-    dynamic var initDate: String? = nil
-    dynamic var init_d: String? = nil
-    dynamic var init_dm: String? = nil
-    dynamic var init_h: String? = nil
-    dynamic var initstr: String? = nil
-    dynamic var model_name: String? = nil
-    dynamic var model_longname: String? = nil
-    dynamic var id_model: String? = nil
-    dynamic var update_last: String? = nil
-    dynamic var update_next: String? = nil
-    dynamic var initstamp = 0  // initstamp
+    var initDate: String? = nil
+    var init_d: String? = nil
+    var init_dm: String? = nil
+    var init_h: String? = nil
+    var initstr: String? = nil
+    var model_name: String? = nil
+    var model_longname: String? = nil
+    var id_model: String? = nil
+    var update_last: String? = nil
+    var update_next: String? = nil
+    var initstamp = 0  // initstamp
 
     required public convenience init?(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            TMP = FloatObject.map(map: map, key: "TMP")
-            TCDC = IntObject.map(map: map, key: "TCDC")
-            HCDC = IntObject.map(map: map, key: "HCDC")
-            MCDC = IntObject.map(map: map, key: "MCDC")
-            LCDC = IntObject.map(map: map, key: "LCDC")
-            RH = IntObject.map(map: map, key: "RH")
-            GUST = FloatObject.map(map: map, key: "GUST")
-            SLP = IntObject.map(map: map, key: "SLP")
-            FLHGT = IntObject.map(map: map, key: "FLHGT")
-            APCP = IntObject.map(map: map, key: "APCP")
-            WINDSPD = FloatObject.map(map: map, key: "WINDSPD")
-            WINDDIR = IntObject.map(map: map, key: "WINDDIR")
-            SMERN = IntObject.map(map: map, key: "SMERN")
-            SMER = IntObject.map(map: map, key: "SMER")
-            TMPE = FloatObject.map(map: map, key: "TMPE")
-            PCPT = IntObject.map(map: map, key: "PCPT")
-            HTSGW = FloatObject.map(map: map, key: "HTSGW")
-            WVHGT = FloatObject.map(map: map, key: "WVHGT")
-            WVPER = FloatObject.map(map: map, key: "WVPER")
-            WVDIR = FloatObject.map(map: map, key: "WVDIR")
-            SWELL1 = FloatObject.map(map: map, key: "SWELL1")
-            SWPER1 = FloatObject.map(map: map, key: "SWPER1")
-            SWDIR1 = FloatObject.map(map: map, key: "SWDIR1")
-            SWELL2 = FloatObject.map(map: map, key: "SWELL2")
-            SWPER2 = FloatObject.map(map: map, key: "SWPER2")
-            SWDIR2 = FloatObject.map(map: map, key: "SWDIR2")
-            PERPW = FloatObject.map(map: map, key: "PERPW")
-            DIRPW = FloatObject.map(map: map, key: "DIRPW")
-            hr_weekday = IntObject.map(map: map, key: "hr_weekday")
-            hr_h = StringObject.map(map: map, key: "hr_h")
-            hr_d = StringObject.map(map: map, key: "hr_d")
-            hours = IntObject.map(map: map, key: "hours")
-            img_param = StringObject.map(map: map, key: "img_param")
-            img_var_map = StringObject.map(map: map, key: "img_var_map")
-            initDate <- map["initdate"]
-            init_d <- map["init_d"]
-            init_dm <- map["init_dm"]
-            init_h <- map["init_h"]
-            initstr <- map["initstr"]
-            model_name <- map["model_name"]
-            model_longname <- map["model_longname"]
-            id_model <- map["id_model"]
-            update_last <- map["update_last"]
-            update_next <- map["update_next"]
-            initstamp <- map["initstamp"]
-        #else
 
             TMP = map["TMP"] as? [Float] ?? []
             TCDC = map["TCDC"] as? [Int] ?? []
@@ -191,7 +138,6 @@ public class WForecast: Object, Mappable {
             update_last = map["update_last"] as? String
             update_next = map["update_next"] as? String
             initstamp = map["initstamp"] as? Int ?? 0
-        #endif
     }
     override public var description : String {
         var aux : String = "\(type(of:self)): "
@@ -280,18 +226,17 @@ extension WForecast {
     
     public func weekday(hour: Int) -> String? {
         if hr_weekday.count > 0 && hour < hr_weekday.count {
-            if let w = hr_weekday[hour].v() {
-                switch w {
-                case 0: return "Sunday"
-                case 1: return "Monday"
-                case 2: return "Tuesday"
-                case 3: return "Wednesday"
-                case 4: return "Thursday"
-                case 5: return "Friday"
-                case 6: return "Saturday"
-                default:
-                    return nil
-                }
+            let w = hr_weekday[hour].v()
+            switch w {
+            case 0: return "Sunday"
+            case 1: return "Monday"
+            case 2: return "Tuesday"
+            case 3: return "Wednesday"
+            case 4: return "Thursday"
+            case 5: return "Friday"
+            case 6: return "Saturday"
+            default:
+                return nil
             }
         }
         return nil

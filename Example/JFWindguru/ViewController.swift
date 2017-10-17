@@ -8,7 +8,6 @@
 
 import UIKit
 import JFWindguru
-import SCLAlertView
 
 class ViewController: UIViewController {
     
@@ -20,17 +19,16 @@ class ViewController: UIViewController {
     @IBOutlet weak var locationLabel: UILabel!
     
     @IBOutlet weak var middleView: UIView!
+    @IBOutlet weak var weatherLabel: UILabel!
     @IBOutlet weak var windSpeedLabel: UILabel!
-    @IBOutlet weak var weatherImage: UIImageView!
-    @IBOutlet weak var windImage: UIImageView!
+    @IBOutlet weak var windDirectionArrowLabel: UILabel!
+    @IBOutlet weak var windDirectionLabel: UILabel!
     
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var temperatureLabel: UILabel!
-    @IBOutlet weak var unitLabel: UILabel!
     
     @IBOutlet weak var loginButton: UIButton!
     
-    var usernameTextField: UITextField?
     var passwordTextField: UITextField?
     
     var user: User?
@@ -68,14 +66,11 @@ class ViewController: UIViewController {
         guard let spotForecast = spotForecast else {
             return
         }
-        if let weatherImageName = spotForecast.asCurrentWeatherImagename {
-            weatherImage.image = UIImage(named: weatherImageName)
-        }
-        if let currentWindDirectionImagename = spotForecast.asCurrentWindDirectionImagename {
-            windImage.image = UIImage(named: currentWindDirectionImagename)
-        }
+        weatherLabel.text = spotForecast.weatherInfo()
+        windDirectionLabel.text = spotForecast.asCurrentWindDirectionName
+        windDirectionArrowLabel.text = "↓"
+        windDirectionArrowLabel.transform = CGAffineTransform.init(rotationAngle: spotForecast.asCurrentWindDirection)
         temperatureLabel.text = spotForecast.asCurrentTemperature
-        unitLabel.text = spotForecast.asCurrentUnit
         locationLabel.text = spotForecast.asCurrentLocation
         windSpeedLabel.text = spotForecast.asCurrentWindSpeed
         hourLabel.text = spotForecast.asHourString
@@ -121,40 +116,61 @@ class ViewController: UIViewController {
     @IBAction func loginButtonAction() {
         loginButton.setTitle("Login", for: .normal)
         
-        let alert = SCLAlertView()
-        usernameTextField = alert.addTextField("username")
-        usernameTextField?.autocorrectionType = .no
-        usernameTextField?.autocapitalizationType = .none
-        passwordTextField = alert.addTextField("password")
-        passwordTextField?.autocorrectionType = .no
-        passwordTextField?.autocapitalizationType = .none
-        passwordTextField?.isSecureTextEntry = true
-        
-        let blockLogin =  { [weak self] in
-            ForecastWindguruService.instance.login(withUsername: self?.usernameTextField?.text, password: self?.passwordTextField?.text,
-                failure: {
-                    (error) in
-                    let subTitle = error?.title() ?? ""
-                    SCLAlertView().showError("Error on Login", subTitle: subTitle)
-            },
-                success: {
-                    [weak self]
-                    (user) in
-                    self?.user = user
-                    var name = "Anonymous"
-                    if let user = user {
-                        name = user.name()
-                    }
-                    SCLAlertView().showSuccess("You are in!", subTitle: "Welcome Windguru user \(name)").setDismissBlock {
-                        self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
-                    }
-                    self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
-            })
+        let alert = UIAlertController(title: "Enter credentials", message: "Please enter Windguru's username/password", preferredStyle: .alert)
+        alert.addTextField { (textfield) in
+            textfield.placeholder = "username"
+            textfield.autocorrectionType = .no
+            textfield.autocapitalizationType = .none
+        }
+        alert.addTextField { (textfield) in
+            textfield.placeholder = "password"
+            textfield.autocorrectionType = .no
+            textfield.autocapitalizationType = .none
+            textfield.isSecureTextEntry = true
         }
         
-        alert.addButton("Login", action: blockLogin)
-        alert.addButton("Login as Anonymous", action: blockLogin)
-        alert.showEdit("Enter credentials", subTitle: "Please enter Windguru's username/password", closeButtonTitle: "Cancel")
+        let failureBlock : ForecastWindguruService.FailureType = {
+            [weak self] (error) in
+            self?.showError(title: "Error on login", error: error)
+        }
+        
+        let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+            let username = alert.textFields?[0] ?? nil
+            let password = alert.textFields?[1] ?? nil
+            ForecastWindguruService.instance.login(withUsername: username?.text,
+                                                   password: password?.text,
+                                                   failure: failureBlock,
+                                                   success: { [weak self] (user) in
+                                                    self?.user = user
+                                                    var name = "Anonymous"
+                                                    if let user = user {
+                                                        name = user.name()
+                                                        self?.passwordTextField = password
+                                                    }
+                                                    let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(name)", preferredStyle: .alert)
+                                                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                                                        self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
+                                                    }))
+                                                    self?.present(alert, animated: true, completion:nil)
+
+                                                    self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
+            })
+        }
+
+        let login = UIAlertAction.init(title: "Login", style: .default, handler: block)
+        alert.addAction(login)
+        let loginAnon = UIAlertAction.init(title: "Login as Anonymous", style: .default, handler: block)
+        alert.addAction(loginAnon)
+        let cancel = UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func showError(title: String, error: WGError?) {
+        let message = error?.title() ?? ""
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

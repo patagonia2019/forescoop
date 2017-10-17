@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  SetResult
@@ -30,27 +26,19 @@ import Foundation
 public class SetResult: Object, Mappable {
 
     // count: number of results obtained
-    dynamic var count: Int = 0
+    var count: Int = 0
     // spots: is a dictionary forecast id/ forecast name
 
     var sets = List<SetInfo>()
     
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            count <- map["count"]
-            var dict = [String: String]()
-            dict <- map["sets"]
-        #else
-            count = map["count"] as? Int ?? 0
-            guard let dict = map["sets"] as? Map else { return }
-        #endif
+        count = map["count"] as? Int ?? 0
+        guard let dict = map["sets"] as? Map else { return }
         for (k,v) in dict {
             let tmpDictionary = ["id": k, "name": v]
             if let setInfo = Mapper<SetInfo>().map(JSON: tmpDictionary) {

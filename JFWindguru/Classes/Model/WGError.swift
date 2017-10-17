@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-import ObjectMapper
-#endif
 /*
  *  WGError
  *
@@ -46,18 +43,7 @@ public class WGError: Mappable {
         if let wgdata = wgdata,
             let jsonString = String(data: wgdata, encoding: .utf8)
         {
-#if USE_EXT_FWK
-            if let wgerror = Mapper<WGError>().map(JSONString: jsonString)
-            {
-                descValue += ". "
-                descValue += wgerror.description
-            }
-            else {
-                descValue += " Response IS " + jsonString
-            }
-#else
             descValue += " Response IS " + jsonString
-#endif
         }
         else {
             descValue += " Response EMPTY"
@@ -72,19 +58,22 @@ public class WGError: Mappable {
         
     }
     required public init?(map: Map){
-        
+        mapping(map: map)
+    }
+    
+    
+    public static func isMappable(map: Map) -> Bool {
+        var ret : Bool = true
+        for key in ["return", "error_id", "error_message"] {
+            ret = ret && map.keys.contains(key)
+        }
+        return ret
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            returnString <- map["return"]
-            error_id <- map["error_id"]
-            error_message <- map["error_message"]
-        #else
-            returnString = map["return"] as? String
-            error_id = map["error_id"] as? Int
-            error_message = map["error_message"] as? String
-        #endif
+        returnString = map["return"] as? String
+        error_id = map["error_id"] as? Int
+        error_message = map["error_message"] as? String
     }
     
     
@@ -117,6 +106,9 @@ extension WGError : Error {
     public func title() -> String {
         if let e = nserror {
             return e.localizedDescription
+        }
+        if let error_message = error_message {
+            return error_message
         }
         return "No Title"
     }

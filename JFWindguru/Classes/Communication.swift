@@ -7,12 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-    import Alamofire
-    import AlamofireObjectMapper
-#endif
 
 struct Response {
     /// The server's response to the URL request.
@@ -41,13 +35,6 @@ struct Response {
 
 class Communication {
     class func request(_ url: String, finish: @escaping (_ response: Response?) -> Void) {
-#if USE_EXT_FWK
-        Alamofire.request(url, method:.get).validate().response {
-            (response: DefaultDataResponse) in
-            let r = Response(response: response.response, data: response.data, error: response.error)
-            finish(r)
-        }
-#else
         let task = URLSession.shared.dataTask(with: URL.init(string: url)!)
         { (data, response, error) in
             let r = Response(response: response, data: data, error: error)
@@ -55,7 +42,6 @@ class Communication {
         }
         task.resume()
         URLSession.shared.finishTasksAndInvalidate()
-#endif
     }
     
 }

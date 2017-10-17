@@ -1,53 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="13196" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
     <device id="watch38" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="watchOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="12029"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="13051"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="ArialHB.ttc">
+            <string>ArialHebrew-Bold</string>
+        </array>
+    </customFonts>
     <scenes>
-        <!--WeatherBackground-->
+        <!--Interface Controller-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller backgroundImage="WeatherBackground" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JFWindguruWatch" customModuleProvider="target">
+                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JFWindguruWatch" customModuleProvider="target">
                     <items>
                         <activity alignment="center" verticalAlignment="center" hidden="YES" id="YDB-l9-fug"/>
                         <group width="136" height="28.5" alignment="left" verticalAlignment="bottom" id="7F8-8J-sx3">
                             <items>
-                                <label width="53.5" height="30" alignment="center" text="-18" textAlignment="right" id="OPu-HQ-L1X">
-                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <fontDescription key="font" type="system" weight="heavy" pointSize="29"/>
-                                </label>
-                                <label width="15" height="16" alignment="center" text="o" textAlignment="left" id="68p-E1-K6v">
-                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <fontDescription key="font" type="system" weight="heavy" pointSize="24"/>
-                                </label>
-                                <label width="22.5" height="30" alignment="center" text="C" textAlignment="left" id="iBa-04-uxo">
+                                <label width="127" height="30" alignment="center" text="-18°C" textAlignment="center" id="OPu-HQ-L1X">
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <fontDescription key="font" type="system" weight="heavy" pointSize="29"/>
                                 </label>
                             </items>
                         </group>
-                        <group width="1" alignment="left" backgroundImage="background" id="ID0-Ra-eft">
+                        <group width="1" alignment="left" id="ID0-Ra-eft">
                             <items>
-                                <label width="42.5" height="30" alignment="right" text="18 hs" textAlignment="right" id="6SG-dW-VMO">
+                                <label width="136" height="30" alignment="right" text="18 hs" textAlignment="center" id="6SG-dW-VMO">
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <fontDescription key="font" style="UICTFontTextStyleBody"/>
                                 </label>
-                                <slider width="89" height="30" alignment="left" value="1" maximum="9" steps="9" id="Qop-uy-EhP">
-                                    <connections>
-                                        <action selector="sliderAction:" destination="AgC-eL-Hgc" id="iRE-wK-QkS"/>
-                                    </connections>
-                                </slider>
                             </items>
                         </group>
                         <group width="1" height="59" alignment="center" verticalAlignment="center" id="QLG-Pz-OOZ">
                             <items>
-                                <imageView width="63" height="64" alignment="left" image="WeatherSun" contentMode="scaleAspectFit" id="0fp-zz-Hzg"/>
-                                <imageView width="20" height="28" alignment="center" verticalAlignment="center" image="WindDirectionS" contentMode="scaleAspectFill" id="1Rk-gW-uZa"/>
+                                <label width="48" height="51" alignment="left" text="☀️" textAlignment="center" id="85b-uu-IQr">
+                                    <fontDescription key="font" name="ArialHebrew-Bold" family="Arial Hebrew" pointSize="37"/>
+                                </label>
+                                <group width="35" alignment="left" layout="vertical" id="eVe-ds-dDY">
+                                    <items>
+                                        <label width="33" height="34" alignment="left" text="↓" textAlignment="center" id="mdh-yl-oHi">
+                                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="font" name="ArialHebrew-Bold" family="Arial Hebrew" pointSize="30"/>
+                                        </label>
+                                        <label width="27" height="21" alignment="left" text="N" textAlignment="center" id="IlZ-PW-k8O">
+                                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="font" name="ArialHebrew-Bold" family="Arial Hebrew" pointSize="13"/>
+                                        </label>
+                                    </items>
+                                    <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                                </group>
                                 <label width="48.5" height="48" alignment="right" verticalAlignment="center" text="1.9 knots" textAlignment="center" numberOfLines="2" minimumScaleFactor="0.5" id="tEM-p1-RIl">
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <fontDescription key="font" style="UICTFontTextStyleBody"/>
@@ -63,19 +69,19 @@
                             </items>
                         </group>
                     </items>
+                    <color key="backgroundColor" red="0.37425214029999998" green="0.42508772379999998" blue="0.6808270528" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <connections>
                         <outlet property="bottomGroup" destination="7F8-8J-sx3" id="n1q-0K-b4N"/>
                         <outlet property="hourLabel" destination="6SG-dW-VMO" id="fzm-CK-ihV"/>
                         <outlet property="locationLabel" destination="uVc-LR-fmw" id="BXF-G1-bBU"/>
                         <outlet property="middleGroup" destination="QLG-Pz-OOZ" id="mnj-Ys-YeE"/>
-                        <outlet property="slider" destination="Qop-uy-EhP" id="Gnu-xv-fRp"/>
                         <outlet property="spinner" destination="YDB-l9-fug" id="Q9s-6k-7Vf"/>
                         <outlet property="temperatureLabel" destination="OPu-HQ-L1X" id="gex-GL-28Z"/>
                         <outlet property="toolbarGroup" destination="ID0-Ra-eft" id="Bug-Lr-ooB"/>
                         <outlet property="topGroup" destination="zNa-yd-0Sd" id="tY4-7U-b5i"/>
-                        <outlet property="unitLabel" destination="iBa-04-uxo" id="R2r-9e-r3C"/>
-                        <outlet property="weatherImage" destination="0fp-zz-Hzg" id="fc9-ag-cIm"/>
-                        <outlet property="windImage" destination="1Rk-gW-uZa" id="exb-YJ-P2p"/>
+                        <outlet property="weatherLabel" destination="85b-uu-IQr" id="MAk-H0-lgt"/>
+                        <outlet property="windDirectionLabel" destination="mdh-yl-oHi" id="msw-J3-zEP"/>
+                        <outlet property="windDirectionNameLabel" destination="IlZ-PW-k8O" id="De3-Rg-bWC"/>
                         <outlet property="windSpeedLabel" destination="tEM-p1-RIl" id="gtG-WX-smD"/>
                     </connections>
                 </controller>

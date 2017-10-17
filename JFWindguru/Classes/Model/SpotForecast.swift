@@ -7,11 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-    import Realm
-#endif
 
 /*
  *  SpotForecast
@@ -45,57 +40,27 @@ import Foundation
 
 public class SpotForecast: SpotInfo {
     
-    public dynamic var currentModel: String? = nil
+    var currentModel: String? = nil
 
     var forecasts = List<ForecastModel>()
 
     required public convenience init?(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
 
     public override func mapping(map: Map) {
         super.mapping(map: map)
-        #if USE_EXT_FWK
-            for model in models {
-                var tmpForecast : Forecast?
-                if let modelValue = model.value {
-                    tmpForecast <- map["forecast.\(modelValue)"]
-                    if let forecast = tmpForecast {
-                        forecasts.append(ForecastModel(modelValue: modelValue, infoForecast: forecast))
-                        currentModel = model.value
-                    }
-                }
-            }
-        #else
-            guard let forecastDict = map["forecast"] as? [String: Any] else { return }
-            for (k,v) in forecastDict {
-                let tmpDictionary = ["model" : k , "info" : v]
-                let forecastModel = ForecastModel(map: tmpDictionary)
-                forecasts.append(forecastModel)
-                currentModel = k
-            }
-        #endif
+        guard let forecastDict = map["forecast"] as? [String: Any] else { return }
+        for (k,v) in forecastDict {
+            let tmpDictionary = ["model" : k , "info" : v]
+            let forecastModel = ForecastModel(map: tmpDictionary)
+            forecasts.append(forecastModel)
+            currentModel = k
+        }
     }
     
-
-#if USE_EXT_FWK
-    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
-    
-    required public init() {
-        super.init()
-    }
-    
-    required public init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-#endif
-
     override public var description : String {
         var aux : String = super.description
         aux += "\(type(of:self)): "
@@ -103,9 +68,6 @@ public class SpotForecast: SpotInfo {
             aux += "currentModel \(currentModel), "
         }
         for model in models {
-            #if USE_EXT_FWK
-            let model = model.value
-            #endif
             for forecast in forecasts {
                 if  let fmodel =  forecast.model, fmodel == model {
                     aux += "Forecast model: \(fmodel)\n\(forecast.description)\n"
@@ -115,5 +77,21 @@ public class SpotForecast: SpotInfo {
         return aux
     }
 
+
+}
+
+
+extension SpotForecast {
+    
+    public func getForecast() -> Forecast?
+    {
+        guard let currentModel = currentModel else { return nil }
+        for forecastModel in forecasts {
+            if forecastModel.model == currentModel {
+                return forecastModel.info
+            }
+        }
+        return nil
+    }
 
 }

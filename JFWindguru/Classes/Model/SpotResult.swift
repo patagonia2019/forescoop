@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  SpotResult
@@ -42,7 +38,7 @@ public class SpotResult: Object, Mappable {
     //
     // count: number of results obtained
     //
-    dynamic var count: Int = 0
+    var count: Int = 0
     
     //
     // spots: is an array of SpotOwner objects
@@ -51,25 +47,18 @@ public class SpotResult: Object, Mappable {
  
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            count <- map["count"]
-            spots <- (map["spots"], ArrayTransform<SpotOwner>())
-        #else
-            count = map["count"] as? Int ?? 0
-            if let dict = map["spots"] as? [Map] {
-                for so in dict {
-                    if let spotOwner = SpotOwner.init(map: so) {
-                        spots.append(spotOwner)
-                    }
+        count = map["count"] as? Int ?? 0
+        if let dict = map["spots"] as? [Map] {
+            for so in dict {
+                if let spotOwner = SpotOwner.init(map: so) {
+                    spots.append(spotOwner)
                 }
             }
-        #endif
+        }
     }
 
     override public var description : String {

@@ -8,10 +8,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  TimeWeather
@@ -101,35 +97,19 @@ public class TimeWeather: Object, Mappable {
 
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            for key in map.JSON.keys {
-                var tmpValue : AnyObject?
-                tmpValue <- map[key]
-                keys.append(StringObject.init(value:[key]))
-                if let str = tmpValue as? String {
-                    strings.append(StringObject.init(value:[str]))
-                }
-                else if let f = tmpValue as? Float {
-                    floats.append(FloatObject.init(value:[f]))
-                }
+        for (k,v) in map {
+            keys.append(k)
+            if let str = v as? String {
+                strings.append(str)
             }
-        #else
-            for (k,v) in map {
-                keys.append(k)
-                if let str = v as? String {
-                    strings.append(str)
-                }
-                else if let str = v as? Float {
-                    floats.append(str)
-                }
+            else if let str = v as? Float {
+                floats.append(str)
             }
-        #endif
+        }
     }
 
     override public var description : String {
@@ -137,31 +117,9 @@ public class TimeWeather: Object, Mappable {
         var aux : String = "\(type(of:self)): "
 
         let orderkeys = keys.sorted { (a, b) -> Bool in
-#if USE_EXT_FWK
-            if let av = a.value, let bv = b.value,
-                let avi = Int(av), let bvi = Int(bv) {
-                return avi < bvi
-            }
-            return false
-#else
             return a < b
-#endif
         }
         for k in orderkeys {
-#if USE_EXT_FWK
-            guard let index = keys.index(of: k),
-                let key = k.value
-                else { return "" }
-            aux += "\(key): "
-            if strings.count >= 0 && index < strings.count {
-                aux += strings[index].v() ?? ""
-            }
-            else if floats.count > 0 && index < floats.count {
-                if let v = floats[index].v() {
-                    aux += "\(v)"
-                }
-            }
-#else
             let key = k
             guard let index = keys.index(of: k) else { return "" }
             aux += "\(key): "
@@ -172,7 +130,6 @@ public class TimeWeather: Object, Mappable {
                 let v = floats[index].v()
                 aux += "\(v)"
             }
-#endif
             aux += ", "
         }
         aux += "\n"

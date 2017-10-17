@@ -7,44 +7,20 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-    import Realm
-#endif
 
 public class Time: Object, Mappable {
     
-    dynamic var hour: Int = 0
-    dynamic var minutes: Int = 0
-    dynamic var seconds: Int = 0
+    var hour: Int = 0
+    var minutes: Int = 0
+    var seconds: Int = 0
 
     required public convenience init?(map: Map) {
-        #if USE_EXT_FWK
-            self.init()
-        #else
-            self.init("00:00:00")
-            mapping(map: map)
-        #endif
+        self.init("00:00:00")
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
     }
-
-#if USE_EXT_FWK
-
-    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
-    
-    required public init() {
-        super.init()
-    }
-    
-    required public init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-#endif
     
     required public init?(_ str: String?) {
         super.init()

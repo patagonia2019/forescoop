@@ -2,37 +2,18 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 use_frameworks!
 
-target 'JFWindguruPure_Example' do
-  pod 'JFWindguru/Pure', :path => '../'
-  pod 'SCLAlertView', '~> 0.7'
-
-  target 'JFWindguruPure_Tests' do
-    inherit! :search_paths
-
-    
-  end
-end
-
-target 'JFWindguruPureWatch Extension' do
-  platform :watchos, '2.2'
-  pod 'JFWindguru/Pure', :path => '../'
-end
-
-
 target 'JFWindguru_Example' do
-  pod 'JFWindguru/ExtFwk', :path => '../'
-  pod 'SCLAlertView', '~> 0.7'
+  pod 'JFWindguru', :path => '../'
 
   target 'JFWindguru_Tests' do
     inherit! :search_paths
-
-    
   end
 end
 
 target 'JFWindguruWatch Extension' do
   platform :watchos, '2.2'
-  pod 'JFWindguru/ExtFwk', :path => '../'
+  pod 'JFWindguru', :path => '../'
 end
+
 
 

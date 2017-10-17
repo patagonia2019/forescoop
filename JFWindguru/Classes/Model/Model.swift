@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  Model
@@ -48,49 +44,34 @@ import Foundation
  */
 
 public class Model: Object, Mappable {
-    dynamic var id_model : Int = 0
-    dynamic var model_name: String? = nil
-    dynamic var model: String? = nil
-    dynamic var hr_start: Int = 0
+    var id_model : Int = 0
+    var model_name: String? = nil
+    var model: String? = nil
+    var hr_start: Int = 0
     var hr_end : Int = 0
     var hr_step : Int = 0
     var period : Int = 0
     var resolution : Int = 0
-    dynamic var update_time: String?
+    var update_time: String?
     var show_vars = ListStringObject()
 
     
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            id_model    <- map["id_model"]
-            model_name  <- map["model_name"]
-            model       <- map["model"]
-            hr_start    <- map["hr_start"]
-            hr_end      <- map["hr_end"]
-            hr_step     <- map["hr_step"]
-            period      <- map["period"]
-            resolution  <- map["resolution"]
-            update_time <- map["update_time"]
-            show_vars   <- map["show_vars"]
-        #else
-            id_model = map["id_model"] as? Int ?? 0
-            model_name = map["model_name"] as? String ?? nil
-            model = map["model"] as? String ?? nil
-            hr_start = map["hr_start"] as? Int ?? 0
-            hr_end = map["hr_end"] as? Int ?? 0
-            hr_step = map["hr_step"] as? Int ?? 0
-            period = map["period"] as? Int ?? 0
-            resolution = map["resolution"] as? Int ?? 0
-            update_time = map["update_time"] as? String ?? nil
-            show_vars = map["show_vars"] as? [String] ?? []
-        #endif
+        id_model = map["id_model"] as? Int ?? 0
+        model_name = map["model_name"] as? String ?? nil
+        model = map["model"] as? String ?? nil
+        hr_start = map["hr_start"] as? Int ?? 0
+        hr_end = map["hr_end"] as? Int ?? 0
+        hr_step = map["hr_step"] as? Int ?? 0
+        period = map["period"] as? Int ?? 0
+        resolution = map["resolution"] as? Int ?? 0
+        update_time = map["update_time"] as? String ?? nil
+        show_vars = map["show_vars"] as? [String] ?? []
     }
 
     override public var description : String {

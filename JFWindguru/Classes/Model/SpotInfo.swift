@@ -7,11 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-    import Realm
-#endif
 
 /*
  *  SpotInfo
@@ -45,69 +40,41 @@ import Foundation
 
 public class SpotInfo: Spot {
 
-    dynamic var countryId: Int = 0
-    dynamic var latitude: Double = 0
-    dynamic var longitude: Double = 0
-    dynamic var altitude: Int = 0
-    dynamic var timezone: String? = nil
-    dynamic var gmtHourOffset: Int = 0
-    dynamic var sunrise: String? = nil
-    dynamic var sunset: String? = nil
-    dynamic var elapse : Elapse?
+    var countryId: Int = 0
+    var latitude: Double = 0
+    var longitude: Double = 0
+    var altitude: Int = 0
+    var timezone: String? = nil
+    var gmtHourOffset: Int = 0
+    var sunrise: String? = nil
+    var sunset: String? = nil
+    var elapse : Elapse?
     var models = ListStringObject()
-    dynamic var tides: String? = nil
+    var tides: String? = nil
 
     required public convenience init?(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public override func mapping(map: Map) {
         super.mapping(map: map)
-        #if USE_EXT_FWK
-            countryId <- map["id_country"]
-            latitude <- map["lat"]
-            longitude <- map["lon"]
-            altitude <- map["alt"]
-            timezone <- map["tz"]
-            gmtHourOffset <- map["gmt_hour_offset"]
-            sunrise <- map["sunrise"]
-            sunset <- map["sunset"]
-            models = StringObject.map(map: map, key: "models")
-            tides <- map["tides"]
-        #else
-            countryId = map["countryId"] as? Int ?? 0
-            latitude = map["latitude"] as? Double ?? 0.0
-            longitude = map["longitude"] as? Double ?? 0.0
-            altitude = map["altitude"] as? Int ?? 0
-            timezone = map["timezone"] as? String ?? nil
-            gmtHourOffset = map["gmtHourOffset"] as? Int ?? 0
-            sunrise = map["sunrise"] as? String ?? nil
-            sunset = map["sunset"] as? String ?? nil
-            models = map["models"] as? [String] ?? []
-            tides = map["tides"] as? String ?? nil
-        #endif
+        countryId = map["countryId"] as? Int ?? 0
+        latitude = map["latitude"] as? Double ?? 0.0
+        longitude = map["longitude"] as? Double ?? 0.0
+        altitude = map["altitude"] as? Int ?? 0
+        timezone = map["timezone"] as? String ?? nil
+        gmtHourOffset = map["gmtHourOffset"] as? Int ?? 0
+        sunrise = map["sunrise"] as? String ?? nil
+        sunset = map["sunset"] as? String ?? nil
+        models = map["models"] as? [String] ?? []
+        tides = map["tides"] as? String ?? nil
         if let sunrise = sunrise,
             let sunset = sunset
         {
             elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
         }
     }
-    
-
-#if USE_EXT_FWK
-    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
-    required public init() {
-        super.init()
-    }
-    required public init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-#endif
  
     override public var description : String {
         var aux : String = super.description
@@ -137,4 +104,11 @@ public class SpotInfo: Spot {
     }
     
     
+}
+
+
+extension SpotInfo {
+    public func elapseContainsTime(date : NSDate) -> Bool {
+        return elapse?.containsTime(date: date) ?? false
+    }
 }

@@ -8,7 +8,6 @@
 
 import Foundation
 import JFWindguru
-import SCLAlertView
 
 class ApiInfoViewController: UIViewController {
     

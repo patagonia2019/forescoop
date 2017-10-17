@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  Spot
@@ -29,28 +25,20 @@ import Foundation
 
 public class Spot: Object, Mappable {
 
-    dynamic var id_spot: String? = nil
-    dynamic var spotname: String? = nil
-    dynamic var country: String? = nil
+    var id_spot: String? = nil
+    var spotname: String? = nil
+    var country: String? = nil
     
     
     required public convenience init?(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            id_spot <- map["id_spot"]
-            spotname <- map["spotname"]
-            country <- map["country"]
-        #else
-            id_spot = map["id_spot"] as? String ?? nil
-            spotname = map["spotname"] as? String ?? nil
-            country = map["country"] as? String ?? nil
-        #endif
+        id_spot = map["id_spot"] as? String ?? nil
+        spotname = map["spotname"] as? String ?? nil
+        country = map["country"] as? String ?? nil
     }
 
     override public var description : String {
@@ -73,5 +61,9 @@ public class Spot: Object, Mappable {
 extension Spot {
     public func id() -> String? {
         return id_spot
+    }
+    
+    public func name() -> String? {
+        return spotname
     }
 }

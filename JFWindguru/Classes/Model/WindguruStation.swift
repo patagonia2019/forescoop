@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  SpotOwner
@@ -35,33 +31,23 @@ import Foundation
 
 public class WindguruStation: Object, Mappable {
 
-    dynamic var id: String? = nil
-    dynamic var station: String? = nil
-    dynamic var distance: Int = 0
-    dynamic var id_type: String? = nil
-    dynamic var wind_avg: Int = 0
+    var id: String? = nil
+    var station: String? = nil
+    var distance: Int = 0
+    var id_type: String? = nil
+    var wind_avg: Int = 0
 
     required public convenience init?(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            id <- map["id"]
-            station <- map["station"]
-            distance <- map["distance"]
-            id_type <- map["id_type"]
-            wind_avg <- map["wind_avg"]
-        #else
-            id = map["id"] as? String
-            station = map["station"] as? String
-            distance = map["distance"] as? Int ?? 0
-            id_type = map["id_type"] as? String
-            wind_avg = map["wind_avg"] as? Int ?? 0
-        #endif
+        id = map["id"] as? String
+        station = map["station"] as? String
+        distance = map["distance"] as? Int ?? 0
+        id_type = map["id_type"] as? String
+        wind_avg = map["wind_avg"] as? Int ?? 0
     }
     
     override public var description : String {

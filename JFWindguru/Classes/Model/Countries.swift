@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-import ObjectMapper
-import RealmSwift
-#endif
 
 /*
  *  Countries
@@ -39,9 +35,7 @@ public class Countries: Object, Mappable {
 
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
         mapping(map: map)
-        #endif
     }
 
     public func mapping(map: Map) {

@@ -7,11 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
-
 
 /*
  *  User
@@ -103,23 +98,19 @@ import Foundation
 
 public class User: Object, Mappable {
     
-#if USE_EXT_FWK
-    typealias ListColor   = List<Color>
-#else
     typealias ListColor   = [Color]
-#endif
 
-    dynamic var id_user : Int = 0
-    dynamic var username: String?
-    dynamic var id_country : Int = 0
-    dynamic var wind_units: String?
-    dynamic var temp_units: String?
-    dynamic var wave_units: String?
-    dynamic var pro : Int = 0
-    dynamic var no_ads : Int = 0
-    dynamic var view_hours_from : Int = 0
-    dynamic var view_hours_to : Int = 0
-    dynamic var temp_limit : Int = 0
+    var id_user : Int = 0
+    var username: String?
+    var id_country : Int = 0
+    var wind_units: String?
+    var temp_units: String?
+    var wave_units: String?
+    var pro : Int = 0
+    var no_ads : Int = 0
+    var view_hours_from : Int = 0
+    var view_hours_to : Int = 0
+    var temp_limit : Int = 0
     var wind_rating_limits = ListFloatObject()
     var colors_wind = ListColor()
     var colors_temp = ListColor()
@@ -133,48 +124,28 @@ public class User: Object, Mappable {
 
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
         var colors = Dictionary<String, [[Float]]>()
-        #if USE_EXT_FWK
-            id_user <- map["id_user"]
-            username <- map["username"]
-            id_country <- map["id_country"]
-            wind_units <- map["wind_units"]
-            temp_units <- map["temp_units"]
-            wave_units <- map["wave_units"]
-            pro <- map["pro"]
-            no_ads <- map["no_ads"]
-            view_hours_from <- map["view_hours_from"]
-            view_hours_to <- map["view_hours_to"]
-            temp_limit <- map["temp_limit"]
-            
-            wind_rating_limits = FloatObject.map(map: map, key: "wind_rating_limits")
-            
-            colors <- map["colors"]
-        #else
 
-            id_user = map["id_user"] as? Int ?? 0
-            username = map["username"] as? String ?? nil
-            id_country = map["id_country"] as? Int ?? 0
-            wind_units = map["wind_units"] as? String ?? nil
-            temp_units = map["temp_units"] as? String ?? nil
-            wave_units = map["wave_units"] as? String ?? nil
-            pro = map["pro"] as? Int ?? 0
-            no_ads = map["no_ads"] as? Int ?? 0
-            view_hours_from = map["view_hours_from"] as? Int ?? 0
-            view_hours_to = map["view_hours_to"] as? Int ?? 0
-            temp_limit = map["temp_limit"] as? Int ?? 0
-            wind_rating_limits = map["wind_rating_limits"] as? [Float] ?? []
-            
-            if let tmpcolors = map["colors"] as? Dictionary<String, [[Float]]> {
-                colors = tmpcolors
-            }
-        #endif
+        id_user = map["id_user"] as? Int ?? 0
+        username = map["username"] as? String ?? nil
+        id_country = map["id_country"] as? Int ?? 0
+        wind_units = map["wind_units"] as? String ?? nil
+        temp_units = map["temp_units"] as? String ?? nil
+        wave_units = map["wave_units"] as? String ?? nil
+        pro = map["pro"] as? Int ?? 0
+        no_ads = map["no_ads"] as? Int ?? 0
+        view_hours_from = map["view_hours_from"] as? Int ?? 0
+        view_hours_to = map["view_hours_to"] as? Int ?? 0
+        temp_limit = map["temp_limit"] as? Int ?? 0
+        wind_rating_limits = map["wind_rating_limits"] as? [Float] ?? []
+        
+        if let tmpcolors = map["colors"] as? Dictionary<String, [[Float]]> {
+            colors = tmpcolors
+        }
         for (k,v) in colors {
             for c in v {
                 if let color = Color.init(a: c[0], r: c[1], g: c[2], b: c[3]) {

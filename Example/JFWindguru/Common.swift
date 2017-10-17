@@ -29,8 +29,4 @@ let kWDKeyCountry : String = "country"
 
 let kWDMinimumDistanceFilterInMeters : Double = 60.0 // update every 200ft
 
-let kWDSearchSpotsUrl = "https://www.windguru.cz/int/jsonapi.php?client=wgapp&q=search_spots&username=southfox&password=zorrito1&search="
-
-let kWDSearchForecastUrl = "https://www.windguru.cz/int/jsonapi.php?client=wgapp&q=forecast&username=southfox&password=zorrito1&id_model=3&id_spot="
-
 let kWDAnimationDuration: Double = 2.0

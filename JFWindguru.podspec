@@ -33,22 +33,8 @@ Use this framework in Swift to get windGURU service for forecasting weather. For
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.2'
 
-  s.subspec 'Pure' do |sp|
-      sp.source_files = 'JFWindguru/Classes/**/*'
-      sp.resources = 'JFWindguru/Assets/**/*.{lproj,xcassets,storyboard,plist,strings}'
-
-  end
-
-  s.subspec 'ExtFwk' do |extfwk|
-      extfwk.source_files = 'JFWindguru/Classes/**/*'
-      extfwk.resources = 'JFWindguru/Assets/**/*.{lproj,xcassets,storyboard,plist,strings}'
-      extfwk.dependency 'AlamofireObjectMapper', '~> 4.0'
-      extfwk.dependency 'RealmSwift'
-      extfwk.pod_target_xcconfig = {
-        'OTHER_SWIFT_FLAGS' => '-DUSE_EXT_FWK',
-      }
-  end
-
+  s.source_files = 'JFWindguru/Classes/**/*'
+  s.resources = 'JFWindguru/Assets/**/*.{lproj,xcassets,storyboard,plist,strings}'
 end
 
 

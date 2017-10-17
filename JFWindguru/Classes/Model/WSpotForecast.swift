@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  SpotForecast
@@ -52,69 +48,39 @@ import Foundation
 
 public class WSpotForecast: Object, Mappable {
 
-    dynamic var id_spot = 0
-    dynamic var id_user = 0
-    dynamic var nickname: String? = nil
-    dynamic var spotname: String? = nil
-    dynamic var spot: String? = nil
-    dynamic var lat: Float = 0.0
-    dynamic var lon: Float = 0.0
-    dynamic var alt = 0
-    dynamic var id_model: String? = nil
-    dynamic var model: String? = nil
-    dynamic var model_alt = 0
-    dynamic var levels = 0
-    dynamic var sst: String? = nil
-    dynamic var sunrise: String? = nil
-    dynamic var sunset: String? = nil
-    dynamic var tz: String? = nil
-    dynamic var tzutc: String? = nil
-    dynamic var utc_offset = 0
-    dynamic var tzid: String? = nil
-    dynamic var tides = 0
-    dynamic var md5chk: String? = nil
-    dynamic var fcst : WForecast?
-    dynamic var wgs = false
+    var id_spot = 0
+    var id_user = 0
+    var nickname: String? = nil
+    var spotname: String? = nil
+    var spot: String? = nil
+    var lat: Float = 0.0
+    var lon: Float = 0.0
+    var alt = 0
+    var id_model: String? = nil
+    var model: String? = nil
+    var model_alt = 0
+    var levels = 0
+    var sst: String? = nil
+    var sunrise: String? = nil
+    var sunset: String? = nil
+    var tz: String? = nil
+    var tzutc: String? = nil
+    var utc_offset = 0
+    var tzid: String? = nil
+    var tides = 0
+    var md5chk: String? = nil
+    var fcst : WForecast?
+    var wgs = false
     var wgs_arr = List<WindguruStation>()
-    dynamic var wgs_wind_avg = 0
+    var wgs_wind_avg = 0
   
     required public convenience init?(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            id_spot       <- map["id_spot"]
-            id_user       <- map["id_user"]
-            nickname      <- map["nickname"]
-            spotname      <- map["spotname"]
-            spot          <- map["spot"]
-            lat           <- map["lat"]
-            lon           <- map["lon"]
-            alt           <- map["alt"]
-            id_model      <- map["id_model"]
-            model         <- map["model"]
-            model_alt     <- map["model_alt"]
-            levels        <- map["levels"]
-            sst           <- map["sst"]
-            sunrise       <- map["sunrise"]
-            sunset        <- map["sunset"]
-            tz            <- map["tz"]
-            tzutc         <- map["tzutc"]
-            utc_offset    <- map["utc_offset"]
-            tzid          <- map["tzid"]
-            tides         <- map["tides"]
-            md5chk        <- map["md5chk"]
-            wgs           <- map["wgs"]
-            wgs_arr <- (map["wgs_arr"], ArrayTransform<WindguruStation>())
-            wgs_wind_avg  <- map["wgs_wind_avg"]
-            
-            guard let id_model = id_model else { return }
-            fcst <- map["fcst.\(id_model)"]
-        #else
+
             id_spot = map["id_spot"] as? Int ?? 0
             id_user = map["id_user"] as? Int ?? 0
             nickname = map["nickname"] as? String
@@ -143,7 +109,6 @@ public class WSpotForecast: Object, Mappable {
                     fcst = WForecast.init(map: tmpDictionary)
                 }
             }
-        #endif
     }
     
     public var elapse: Elapse? {

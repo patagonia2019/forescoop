@@ -7,18 +7,13 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-    import Realm
-#endif
 
 public class Color: Object {
         
-    dynamic var alpha: Float = 0
-    dynamic var red: Float = 0
-    dynamic var green: Float = 0
-    dynamic var blue: Float = 0
+    var alpha: Float = 0
+    var red: Float = 0
+    var green: Float = 0
+    var blue: Float = 0
     
     required public init?(a: Float = 0, r: Float = 0, g: Float = 0, b: Float = 0) {
         super.init()
@@ -28,23 +23,9 @@ public class Color: Object {
         blue = b
     }
     
-#if USE_EXT_FWK
-    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
-    
-    required public init() {
-        super.init()
-    }
-    
-    required public init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-#else
     init(dictionary: [String: AnyObject?]) {
         // TODO
     }
-#endif
     
     public override var description : String {
         var aux : String = "\(type(of:self)): "

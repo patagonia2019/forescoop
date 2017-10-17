@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  Region
@@ -23,24 +19,17 @@ import Foundation
 
 public class Region: Object, Mappable {
 
-    public dynamic var id: String? = nil
-    public dynamic var name: String? = nil
+    var id: String? = nil
+    var name: String? = nil
     
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            id <- map["id"]
-            name <- map["name"]
-        #else
-            id = map["id"] as? String ?? nil
-            name = map["name"] as? String  ?? nil
-        #endif
+        id = map["id"] as? String ?? nil
+        name = map["name"] as? String  ?? nil
     }
 
     override public var description : String {

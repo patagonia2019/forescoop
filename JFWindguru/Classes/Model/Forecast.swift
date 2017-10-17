@@ -7,10 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-#endif
 
 /*
  *  Forecast
@@ -43,7 +39,7 @@ import Foundation
 
 
 public class Forecast: Object, Mappable {
-    dynamic var initStamp : Int = 0
+    var initStamp : Int = 0
     var TMP: TimeWeather? // temperature
     var TCDC: TimeWeather? //  Cloud cover (%) Total
     var HCDC: TimeWeather? //  Cloud cover (%) High
@@ -58,63 +54,41 @@ public class Forecast: Object, Mappable {
     var WINDDIR: TimeWeather? //  Wind direction
     var WINDIRNAME: TimeWeather? //  wind direction (name)
     var TMPE: TimeWeather? //  temperature in 2 meters above ground with correction to real altitude of the spot.
-    dynamic var initdate: String?
-    dynamic var model_name: String?
+    var initdate: String?
+    var model_name: String?
     
     required public convenience init(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public func mapping(map: Map) {
-        #if USE_EXT_FWK
-            initStamp <- map["initstamp"]
-            TMP <- map["TMP"]
-            TCDC <- map["TCDC"]
-            HCDC <- map["HCDC"]
-            MCDC <- map["MCDC"]
-            LCDC <- map["LCDC"]
-            RH <- map["RH"]
-            GUST <- map["GUST"]
-            SLP <- map["SLP"]
-            FLHGT <- map["FLHGT"]
-            APCP <- map["APCP"]
-            WINDSPD <- map["WINDSPD"]
-            WINDDIR <- map["WINDDIR"]
-            WINDIRNAME <- map["WINDIRNAME"]
-            TMPE <- map["TMPE"]
-            initdate <- map["initdate"]
-            model_name <- map["model_name"]
-        #else
-            initStamp = map["initstamp"] as? Int ?? 0
-            initdate = map["initdate"] as? String
-            model_name = map["model_name"] as? String
-            for (k, v) in map {
-                if let dict = v as? Map {
-                    let tw = TimeWeather.init(map: dict)
-                    switch k {
-                    case "TMP": TMP = tw; break
-                    case "TCDC": TCDC = tw; break
-                    case "HCDC": HCDC = tw; break
-                    case "MCDC": MCDC = tw; break
-                    case "LCDC": LCDC = tw; break
-                    case "RH": RH = tw; break
-                    case "GUST": GUST = tw; break
-                    case "SLP": SLP = tw; break
-                    case "FLHGT": FLHGT = tw; break
-                    case "APCP": APCP = tw; break
-                    case "WINDSPD": WINDSPD = tw; break
-                    case "WINDDIR": WINDDIR = tw; break
-                    case "WINDIRNAME": WINDIRNAME = tw; break
-                    case "TMPE": TMPE = tw; break
-                    default:
-                        break
-                    }
+        initStamp = map["initstamp"] as? Int ?? 0
+        initdate = map["initdate"] as? String
+        model_name = map["model_name"] as? String
+        for (k, v) in map {
+            if let dict = v as? Map {
+                let tw = TimeWeather.init(map: dict)
+                switch k {
+                case "TMP": TMP = tw; break
+                case "TCDC": TCDC = tw; break
+                case "HCDC": HCDC = tw; break
+                case "MCDC": MCDC = tw; break
+                case "LCDC": LCDC = tw; break
+                case "RH": RH = tw; break
+                case "GUST": GUST = tw; break
+                case "SLP": SLP = tw; break
+                case "FLHGT": FLHGT = tw; break
+                case "APCP": APCP = tw; break
+                case "WINDSPD": WINDSPD = tw; break
+                case "WINDDIR": WINDDIR = tw; break
+                case "WINDIRNAME": WINDIRNAME = tw; break
+                case "TMPE": TMPE = tw; break
+                default:
+                    break
                 }
             }
-        #endif
+        }
     }
 
     override public var description : String {
@@ -173,20 +147,29 @@ public class Forecast: Object, Mappable {
 }
 
 extension Forecast {
-    func windDirectionName(hh: String?) -> String? {
+    
+    public func windDirectionName(hh: String?) -> String? {
         return valueForKey(key : WINDIRNAME, hh: hh) as? String
     }
     
-    func windSpeed(hh: String?) -> Float? {
+    public func windDirection(hh: String?) -> Float? {
+        return valueForKey(key : WINDDIR, hh: hh) as? Float
+    }
+    
+    public func windSpeed(hh: String?) -> Float? {
         return valueForKey(key : WINDSPD, hh: hh) as? Float
     }
     
-    func temperatureReal(hh: String?) -> Float? {
+    public func temperatureReal(hh: String?) -> Float? {
         return valueForKey(key : TMPE, hh: hh) as? Float
     }
     
-    func cloudCoverTotal(hh: String?) -> Int? {
+    public func cloudCoverTotal(hh: String?) -> Int? {
         return valueForKey(key : TCDC, hh: hh) as? Int
+    }
+
+    public func precipitation(hh: String?) -> Float? {
+        return valueForKey(key : APCP, hh: hh) as? Float
     }
     
 

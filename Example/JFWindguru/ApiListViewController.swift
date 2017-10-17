@@ -8,7 +8,6 @@
 
 import Foundation
 import JFWindguru
-import SCLAlertView
 
 class ApiListViewController: UIViewController {
     
@@ -36,10 +35,12 @@ class ApiListViewController: UIViewController {
                             "c_spots",
                             "set_spots",
                             "sets",
-                            "wforecast_latlon"]
+//                            "wforecast_latlon"
+                            ]
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        tableView.isHidden = false
         tableView.reloadData()
     }
     
@@ -60,471 +61,520 @@ class ApiListViewController: UIViewController {
         }
         return svcs
     }()
-}
+    
+    func showAlert(title: String, error: WGError?) {
+        let message = error?.title() ?? ""
+        showAlert(title: title, message: message)
+    }
+    
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { [weak self] (action) in
+            self?.tableView.isHidden = false
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
 
+}
 
 extension ApiListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         service = services[indexPath.item]
+        
         guard let service = service else { return }
+
+        tableView.isHidden = true
+
+        let failureBlock : ForecastWindguruService.FailureType = {
+            [weak self] (error) in
+            self?.showAlert(title: "Error", error: error)
+        }
+
+        var action : UIAlertAction? = nil
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        
         switch service {
             
         case "set_spots":
-            var searchText: UITextField?
-            let alert = SCLAlertView()
-            searchText = alert.addTextField("set id")
-            searchText?.autocorrectionType = .no
-            searchText?.autocapitalizationType = .none
-            
-            alert.addButton("Add") { [weak self] in
-                guard let text = searchText?.text,
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "set id"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let text = alert.textFields![0].text,
                     let user = self?.user,
                     let username = user.getUsername(),
-                    let password = self?.password else { return }
+                    let password = self?.password
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Set Id]")
+                    return
+                }
                 ForecastWindguruService.instance.addSetSpots(withSetId: text, username: username, password: password,
-                                                                 failure: {
-                                                                    (error) in
-                                                                    let subTitle = error?.title() ?? ""
-                                                                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
+                                                             failure: failureBlock,
+                                                             success: { [weak self]
                     (spots) in
+                    self?.tableView.isHidden = false
                     guard let spots = spots else {
-                        let subTitle = "Cannot add set id"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "Cannot add set id")
                         return
                     }
                     self?.info = spots.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Add Set id", subTitle: "Please enter a set id (i.e. 229823)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "Add", style: .default, handler: block)
+            alert.title = "Add Set id"
+            alert.message = "Please enter a set id (i.e. 229823)"
             break
+            
             
         case "add_f_spot":
-            var searchText: UITextField?
-            let alert = SCLAlertView()
-            searchText = alert.addTextField("spot id")
-            searchText?.autocorrectionType = .no
-            searchText?.autocapitalizationType = .none
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "spot id"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
             
-            alert.addButton("Add") { [weak self] in
-                guard let text = searchText?.text,
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let text = alert.textFields![0].text,
+                    text.characters.count > 0,
                     let user = self?.user,
                     let username = user.getUsername(),
-                    let password = self?.password else { return }
+                    let password = self?.password
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
+                    return
+                }
                 ForecastWindguruService.instance.addFavoriteSpot(withSpotId: text, username: username, password: password,
-                                                                 failure: {
-                                                                    (error) in
-                                                                    let subTitle = error?.title() ?? ""
-                                                                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
+                                                             failure: failureBlock,
+                                                             success: { [weak self]
                     (result) in
+                    self?.tableView.isHidden = false
                     guard let result = result else {
-                        let subTitle = "Cannot add spot id"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "Cannot add spot id")
                         return
                     }
-                    SCLAlertView().showSuccess("\(service) success", subTitle: result.description)
-                }
+                    self?.showAlert(title: "\(service) success", message: result.description)
+                })
             }
-            alert.showEdit("Add Favorite", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "Add", style: .default, handler: block)
+            alert.title = "Add Favorite"
+            alert.message = "Please enter a spot id (i.e. 64141)"
             break
-            
+
         case "remove_f_spot":
-            var searchText: UITextField?
-            let alert = SCLAlertView()
-            searchText = alert.addTextField("spot id")
-            searchText?.autocorrectionType = .no
-            searchText?.autocapitalizationType = .none
-            
-            alert.addButton("Remove") { [weak self] in
-                guard let text = searchText?.text,
-                      let user = self?.user,
-                      let username = user.getUsername(),
-                      let password = self?.password else { return }
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "spot id"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let text = alert.textFields![0].text,
+                    text.characters.count > 0,
+                    let user = self?.user,
+                    let username = user.getUsername(),
+                    let password = self?.password
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
+                    return
+                }
                 ForecastWindguruService.instance.removeFavoriteSpot(withSpotId: text, username: username, password: password,
-                 failure: {
-                    (error) in
-                    let subTitle = error?.title() ?? ""
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
+                                                                    failure: failureBlock,
+                                                                    success: { [weak self]
                     (result) in
+                    self?.tableView.isHidden = false
                     guard let result = result else {
-                        let subTitle = "Cannot remove spot id"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "Cannot remove spot id")
                         return
                     }
-                    SCLAlertView().showSuccess("\(service) success", subTitle: result.description)
-                }
+                    self?.showAlert(title: "\(service) success", message: result.description)
+                })
             }
-            alert.showEdit("Remove Favorite", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            
+            action = UIAlertAction.init(title: "Remove", style: .default, handler: block)
+            alert.title = "Remove Favorite"
+            alert.message = "Please enter a spot id (i.e. 64141)"
             break
             
+
         case "forecast":
-            let alert = SCLAlertView()
-            var spotIdText: UITextField?
-            spotIdText = alert.addTextField("spot id")
-            spotIdText?.autocorrectionType = .no
-            spotIdText?.autocapitalizationType = .none
-
-            var modelIdText: UITextField?
-            modelIdText = alert.addTextField("model")
-            modelIdText?.autocorrectionType = .no
-            modelIdText?.autocapitalizationType = .none
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "spot id"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
             
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "model"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
 
-            alert.addButton("Forecast") { [weak self] in
-                guard let spotId = spotIdText?.text,
-                    let modelId = modelIdText?.text
-                    else { return }
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let spotId = alert.textFields![0].text,
+                    spotId.characters.count > 0
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
+                    return
+                }
+                
+                var modelId = alert.textFields![1].text
+                if modelId?.characters.count == 0 {
+                    modelId = nil
+                }
+
                 ForecastWindguruService.instance.forecast(bySpotId: spotId,
                                                           model: modelId,
-                                                          failure: {
-                                                            (error) in
-                                                            let subTitle = error?.title() ?? ""
-                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+                                                          failure: failureBlock,
+                                                          success: { [weak self]
                     (spotForecast) in
+                    self?.tableView.isHidden = false
                     guard let spotForecast = spotForecast else {
-                        let subTitle = "No forecast result"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No forecast result")
                         return
                     }
                     self?.info = spotForecast.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141), omdel id (i.e 3)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "Forecast", style: .default, handler: block)
+            alert.title = "Enter spot id"
+            alert.message = "Please enter a spot id (i.e. 64141), model id (i.e 3)"
             break
-            
+
             
         case "spot":
-            var spotIdTextField: UITextField?
-            let alert = SCLAlertView()
-            spotIdTextField = alert.addTextField("spot id")
-            spotIdTextField?.autocorrectionType = .no
-            spotIdTextField?.autocapitalizationType = .none
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "spot id"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
             
-            alert.addButton("get Spot Info") { [weak self] in
-                guard let text = spotIdTextField?.text else { return }
-                ForecastWindguruService.instance.spotInfo(bySpotId: text,
-                  failure: {
-                    (error) in
-                    let subTitle = error?.title() ?? ""
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let spotId = alert.textFields![0].text,
+                    spotId.characters.count > 0
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
+                    return
+                }
+                ForecastWindguruService.instance.spotInfo(bySpotId: spotId,
+                                                          failure: failureBlock,
+                                                          success: { [weak self]
                     (spotInfo) in
+                    self?.tableView.isHidden = false
                     guard let spotInfo = spotInfo else {
-                        let subTitle = "No spot info"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No spot info")
                         return
                     }
                     self?.info = spotInfo.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "Get Spot Info", style: .default, handler: block)
+            alert.title = "Enter spot id"
+            alert.message = "Please enter a spot id (i.e. 64141)"
             break
             
-            
+
         case "spots":
-            var countryText: UITextField?
-            var regionText: UITextField?
-            let alert = SCLAlertView()
-            countryText = alert.addTextField("country id# (optional)")
-            countryText?.autocorrectionType = .no
-            countryText?.autocapitalizationType = .none
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "country id# (optional)"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
             
-            regionText = alert.addTextField("region id# (optional)")
-            regionText?.autocorrectionType = .no
-            regionText?.autocapitalizationType = .none
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "region id# (optional)"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
             
-            alert.addButton("get spots") { [weak self] in
-                ForecastWindguruService.instance.spots(withCountryId: countryText?.text, regionId: regionText?.text,
-                   failure: {
-                    (error) in
-                    let subTitle = error?.title() ?? ""
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                ForecastWindguruService.instance.spots(withCountryId: alert.textFields![0].text,
+                                                       regionId: alert.textFields![1].text,
+                                                       failure: failureBlock,
+                                                       success: { [weak self]
                     (spotResult) in
+                    self?.tableView.isHidden = false
                     guard let spotResult = spotResult else {
-                        let subTitle = "No spots"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No spots")
                         return
                     }
                     self?.info = spotResult.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter country/region", subTitle: "Please enter info to search (i.e. country = 76, region = 209)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "Get Spots", style: .default, handler: block)
+            alert.title = "Enter country/region"
+            alert.message = "Please enter info to search (i.e. country = 76, region = 209)"
             break
             
-            
+
             
         case "search_spots":
-            var searchText: UITextField?
-            let alert = SCLAlertView()
-            searchText = alert.addTextField("Location")
-            searchText?.autocorrectionType = .no
-            searchText?.autocapitalizationType = .none
-            
-            alert.addButton("Search Spots") { [weak self] in
-                guard let text = searchText?.text else { return }
-                ForecastWindguruService.instance.searchSpots(byLocation: text,
-                    failure: {
-                    (error) in
-                    let subTitle = error?.title() ?? ""
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "Location"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let location = alert.textFields![0].text,
+                    location.characters.count > 0
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Location]")
+                    return
+                }
+                ForecastWindguruService.instance.searchSpots(byLocation: location,
+                                                             failure: failureBlock,
+                                                             success: { [weak self]
                     (spotResult) in
+                    self?.tableView.isHidden = false
                     guard let spotResult = spotResult else {
-                        let subTitle = "No spots"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No spots")
                         return
                     }
                     self?.info = spotResult.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter location", subTitle: "Please enter a spot to search (i.e. Bariloche)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "Search Spots", style: .default, handler: block)
+            alert.title = "Enter location"
+            alert.message = "Please enter a spot to search (i.e. Bariloche)"
             break
-        
+
+            
         case "c_spots":
-            ForecastWindguruService.instance.customSpots(withUsername: user?.getUsername(), password: password, failure: {
-                (error) in
-                let subTitle = error?.title() ?? ""
-                SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-            }) {
-                [weak self]
+            ForecastWindguruService.instance.customSpots(withUsername: user?.getUsername(), password: password,
+                                                         failure: failureBlock,
+                                                         success: { [weak self]
                 (spots) in
+                self?.tableView.isHidden = false
                 guard let spots = spots else {
-                    let subTitle = "No custom spots"
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                    self?.showAlert(title: "Error on \(service)", message: "No custom spots")
                     return
                 }
                 self?.info = spots.description
                 self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            }
+            })
             break
-            
+
         case "f_spots":
-            ForecastWindguruService.instance.favoriteSpots(withUsername: user?.getUsername(), password: password, failure: {
-                (error) in
-                let subTitle = error?.title() ?? ""
-                SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-            }) {
-                [weak self]
+            ForecastWindguruService.instance.favoriteSpots(withUsername: user?.getUsername(), password: password,
+                                                           failure: failureBlock,
+                                                           success: { [weak self]
                 (spots) in
+                self?.tableView.isHidden = false
                 guard let spots = spots else {
-                    let subTitle = "No favorites"
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                    self?.showAlert(title: "Error on \(service)", message: "No favorites spots")
                     return
                 }
                 self?.info = spots.description
                 self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            }
+            })
             break
-            
+
         case "sets":
-            ForecastWindguruService.instance.setSpots(withUsername: user?.getUsername(), password: password, failure: {
-                (error) in
-                let subTitle = error?.title() ?? ""
-                SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-            }) {
-                [weak self]
+            ForecastWindguruService.instance.setSpots(withUsername: user?.getUsername(), password: password,
+                                                      failure: failureBlock,
+                                                      success: { [weak self]
                 (sets) in
+                self?.tableView.isHidden = false
                 guard let sets = sets else {
-                    let subTitle = "No sets"
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                    self?.showAlert(title: "Error on \(service)", message: "No sets")
                     return
                 }
                 self?.info = sets.description
                 self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            }
+            })
             break
-            
+
         case "model_info":
-            var modelIdTextField: UITextField?
-            let alert = SCLAlertView()
-            modelIdTextField = alert.addTextField("model id (optional)")
-            modelIdTextField?.autocorrectionType = .no
-            modelIdTextField?.autocapitalizationType = .none
             
-            alert.addButton("get model/s") { [weak self] in
-                ForecastWindguruService.instance.modelInfo(onlyModelId: modelIdTextField?.text,
-                                                           failure: {
-                                                            (error) in
-                                                            let subTitle = error?.title() ?? ""
-                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "model id # (optional)"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+            
+            var modelId = alert.textFields![0].text
+            if modelId?.characters.count == 0 {
+                modelId = nil
+            }
+
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                ForecastWindguruService.instance.modelInfo(onlyModelId: modelId,
+                                                           failure: failureBlock,
+                                                           success: { [weak self]
                     (model) in
+                    self?.tableView.isHidden = false
                     guard let model = model else {
-                        let subTitle = "No models"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No model/s")
                         return
                     }
                     self?.info = model.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter model id", subTitle: "Please enter a model id (i.e. 3)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "get model/s", style: .default, handler: block)
+            alert.title = "Enter model id"
+            alert.message = "Please enter a model id (i.e. 3)"
             break
-            
+
+
         case "models_latlon":
-            let alert = SCLAlertView()
-            var latTextField: UITextField?
-            latTextField = alert.addTextField("latitude")
-            latTextField?.autocorrectionType = .no
-            latTextField?.autocapitalizationType = .none
-            var lonTextField: UITextField?
-            lonTextField = alert.addTextField("longitude")
-            lonTextField?.autocorrectionType = .no
-            lonTextField?.autocapitalizationType = .none
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "latitude"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "longitude"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
             
-            alert.addButton("query lat/lon") {
-                guard let latText = latTextField?.text,
-                    let lonText = lonTextField?.text else { return }
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let latText = alert.textFields![0].text,
+                    let lonText = alert.textFields![0].text,
+                    latText.characters.count > 0,
+                    lonText.characters.count > 0
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [lat] / [lon]")
+                    return
+                }
+
                 ForecastWindguruService.instance.models(bylat: latText, lon: lonText,
-                failure: {
-                    (error) in
-                    let subTitle = error?.title() ?? ""
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
+                                                        failure: failureBlock,
+                                                        success: { [weak self]
                     (models) in
+                    self?.tableView.isHidden = false
                     guard let models = models else {
-                        let subTitle = "No models"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No model/s")
                         return
                     }
-                    SCLAlertView().showSuccess("\(service) success", subTitle: models.description)
-                }
+                    self?.showAlert(title: "\(service) success", message: models.description)
+                })
             }
-            alert.showEdit("Enter latitude/longitude", subTitle: "Please enter (i.e. -41 / -71)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "query lat/lon", style: .default, handler: block)
+            alert.title = "Enter latitude/longitude"
+            alert.message = "Please enter (i.e. -41 / -71)"
+
             break
-            
+
         case "wforecast":
-            let alert = SCLAlertView()
-            var spotIdText: UITextField?
-            spotIdText = alert.addTextField("spot id")
-            spotIdText?.autocorrectionType = .no
-            spotIdText?.autocapitalizationType = .none
-            
-            var modelIdText: UITextField?
-            modelIdText = alert.addTextField("model")
-            modelIdText?.autocorrectionType = .no
-            modelIdText?.autocapitalizationType = .none
-            
-            alert.addButton("Forecast") { [weak self] in
-                guard let spotId = spotIdText?.text,
-                      let modelId = modelIdText?.text
-                        else { return }
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "spot id #"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "model id #"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                guard let spotId = alert.textFields![0].text,
+                    spotId.characters.count > 0
+                else {
+                    self?.showAlert(title: "\(service)", message: "Missing mandatory field: [spot id]")
+                    return
+                }
+                var modelId = alert.textFields![1].text
+                if modelId?.characters.count == 0 {
+                    modelId = nil
+                }
                 ForecastWindguruService.instance.wforecast(bySpotId: spotId,
                                                            model: modelId,
-                                                          failure: {
-                                                            (error) in
-                                                            let subTitle = error?.title() ?? ""
-                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+                                                           failure: failureBlock,
+                                                           success: { [weak self]
                     (spotForecast) in
+                    self?.tableView.isHidden = false
                     guard let spotForecast = spotForecast else {
-                        let subTitle = "No forecast result"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No forecast results")
                         return
                     }
                     self?.info = spotForecast.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter spot id", subTitle: "Please enter a spot id (i.e. 64141)", closeButtonTitle: "Cancel")
-            break
+
+            action = UIAlertAction.init(title: "Forecast", style: .default, handler: block)
+            alert.title = "Enter spot id"
+            alert.message = "Please enter a spot id (i.e. 64141)"
             
+            break
+
 
         case "geo_regions":
-            ForecastWindguruService.instance.geoRegions(withFailure: {
-                (error) in
-                let subTitle = error?.title() ?? ""
-                SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-            }) {
-                [weak self]
+            ForecastWindguruService.instance.geoRegions(withFailure: failureBlock,
+                success: { [weak self]
                 (georegions) in
+                self?.tableView.isHidden = false
                 guard let georegions = georegions else {
-                    let subTitle = "No georegions"
-                    SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                    self?.showAlert(title: "Error on \(service)", message: "No georegions")
                     return
                 }
                 self?.info = georegions.description
                 self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            }
+            })
             break
             
-            
+
             
         case "countries":
-            var regionIdTextField: UITextField?
-            let alert = SCLAlertView()
-            regionIdTextField = alert.addTextField("region id (optional)")
-            regionIdTextField?.autocorrectionType = .no
-            regionIdTextField?.autocapitalizationType = .none
-            
-            alert.addButton("get country/s") { [weak self] in
-                ForecastWindguruService.instance.countries(byRegionId: regionIdTextField?.text,
-                                                           failure: {
-                                                            (error) in
-                                                            let subTitle = error?.title() ?? ""
-                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "region id (optional)"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                ForecastWindguruService.instance.countries(byRegionId: alert.textFields![0].text,
+                                                           failure: failureBlock,
+                                                           success: { [weak self]
                     (countries) in
+                    self?.tableView.isHidden = false
                     guard let countries = countries else {
-                        let subTitle = "No countries"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No countries")
                         return
                     }
                     self?.info = countries.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter region id", subTitle: "Please enter a region id (i.e. 5)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "get country/s", style: .default, handler: block)
+            alert.title = "Enter region id"
+            alert.message = "Please enter a region id (i.e. 5)"
             break
             
-            
-            
+
         case "regions":
-            var countryIdTextField: UITextField?
-            let alert = SCLAlertView()
-            countryIdTextField = alert.addTextField("country id (optional)")
-            countryIdTextField?.autocorrectionType = .no
-            countryIdTextField?.autocapitalizationType = .none
-            
-            alert.addButton("get region/s") { [weak self] in
-                ForecastWindguruService.instance.regions(byCountryId: countryIdTextField?.text,
-                                                           failure: {
-                                                            (error) in
-                                                            let subTitle = error?.title() ?? ""
-                                                            SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
-                }) {
-                    [weak self]
+            alert.addTextField { (textfield) in
+                textfield.placeholder = "country id (optional)"
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+            }
+
+            let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+                ForecastWindguruService.instance.regions(byCountryId: alert.textFields![0].text,
+                                                         failure: failureBlock,
+                                                         success: { [weak self]
                     (regions) in
+                    self?.tableView.isHidden = false
                     guard let regions = regions else {
-                        let subTitle = "No regions"
-                        SCLAlertView().showError("Error on \(service)", subTitle: subTitle)
+                        self?.showAlert(title: "Error on \(service)", message: "No regions")
                         return
                     }
                     self?.info = regions.description
                     self?.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                }
+                })
             }
-            alert.showEdit("Enter country id", subTitle: "Please enter a country id (i.e. 76)", closeButtonTitle: "Cancel")
+            action = UIAlertAction.init(title: "get region/s", style: .default, handler: block)
+            alert.title = "Enter country id"
+            alert.message = "Please enter a country id (i.e. 76)"
             break
-            
-            
-            
 
             
         case "user":
@@ -534,11 +584,20 @@ extension ApiListViewController: UITableViewDelegate {
             }
             break
             
-            
         default:
             break
             
         }
+        
+        if let action = action {
+            alert.addAction(action)
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak self] (action) in
+                self?.tableView.isHidden = false
+            })
+            alert.addAction(cancel)
+            self.present(alert, animated: true, completion: nil)
+        }
+
     }
 }
 

@@ -8,7 +8,6 @@
 
 import Foundation
 
-#if !USE_EXT_FWK
 
 public typealias IntObject    = Int
 public typealias FloatObject  = Float
@@ -130,4 +129,4 @@ extension Int {
     }
 }
 
-#endif
+

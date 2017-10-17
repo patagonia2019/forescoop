@@ -17,14 +17,13 @@ class InterfaceController: WKInterfaceController {
     @IBOutlet var topGroup: WKInterfaceGroup!
     @IBOutlet var middleGroup: WKInterfaceGroup!
     @IBOutlet var bottomGroup: WKInterfaceGroup!
-    @IBOutlet var slider: WKInterfaceSlider!
-    @IBOutlet var weatherImage: WKInterfaceImage!
-    @IBOutlet var windImage: WKInterfaceImage!
     @IBOutlet var temperatureLabel: WKInterfaceLabel!
-    @IBOutlet var unitLabel: WKInterfaceLabel!
     @IBOutlet var locationLabel: WKInterfaceLabel!
     @IBOutlet var windSpeedLabel: WKInterfaceLabel!
     @IBOutlet var hourLabel: WKInterfaceLabel!
+    @IBOutlet var weatherLabel: WKInterfaceLabel!
+    @IBOutlet var windDirectionNameLabel: WKInterfaceLabel!
+    @IBOutlet var windDirectionLabel: WKInterfaceLabel!
     
     var spotForecast: SpotForecast!
     var sliderHeight: Float!

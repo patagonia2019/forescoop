@@ -7,11 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-    import Realm
-#endif
 
 /*
  *  SpotOwner
@@ -35,39 +30,17 @@ import Foundation
 
 public class SpotOwner: Spot {
 
-    dynamic var id_user: String? = nil
+    var id_user: String? = nil
 
     required public convenience init?(map: Map) {
         self.init()
-        #if !USE_EXT_FWK
-            mapping(map: map)
-        #endif
+        mapping(map: map)
     }
     
     public override func mapping(map: Map) {
         super.mapping(map: map)
-        #if USE_EXT_FWK
-            id_user <- map["id_user"]
-        #else
-            id_user = map["id_user"] as? String ?? nil
-        #endif
+        id_user = map["id_user"] as? String ?? nil
     }
-    
-
-#if USE_EXT_FWK
-    required public init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
-    
-    required public init() {
-        super.init()
-    }
-    
-    required public init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-    
-#endif
 
     override public var description : String {
         var aux : String = super.description

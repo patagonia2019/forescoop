@@ -7,12 +7,6 @@
 //
 
 import Foundation
-#if USE_EXT_FWK
-    import ObjectMapper
-    import RealmSwift
-    import Alamofire
-    import AlamofireObjectMapper
-#endif
 
 
 extension ForecastWindguruService {
@@ -53,11 +47,11 @@ extension ForecastWindguruService {
     //                        parameter.no_wave])
 
     public func forecast(bySpotId spotId: String,
-                           model modelId: String = Definition.defaultModel,
+                           model modelId: String? = nil,
                                  failure: @escaping FailureType,
                                  success: @escaping (_ spotForecast: SpotForecast?) -> Void)
     {
-        let tokens = [Definition.service.api.parameter.id_model : modelId,
+        let tokens = [Definition.service.api.parameter.id_model : modelId ?? Definition.defaultModel,
                       Definition.service.api.parameter.id_spot : spotId]
         let api = Definition.service.api.forecast
         let url = Definition.service.url(api: api, tokens: tokens)
@@ -81,13 +75,13 @@ extension ForecastWindguruService {
     //                          parameter.no_wave])
     
     public func wforecast(bySpotId spotId: String,
-                            model modelId: String = Definition.defaultModel,
+                            model modelId: String? = nil,
                                  username: String? = nil,
                                  password: String? = nil,
                                   failure: @escaping FailureType,
                                   success: @escaping (_ spotForecast: WSpotForecast?) -> Void)
     {
-        var tokens = [Definition.service.api.parameter.id_model : modelId,
+        var tokens = [Definition.service.api.parameter.id_model : modelId ?? Definition.defaultModel,
                       Definition.service.api.parameter.id_spot : spotId]
         if let username = username, username.characters.count > 0,
             let password = password, password.characters.count > 0 {
@@ -498,82 +492,6 @@ extension ForecastWindguruService {
     /*
      * Privates part
      */
-#if USE_EXT_FWK
-    func mapAndResponse<T: BaseMappable>(_ response: Response?,
-        url: String,
-        api: ForecastWindguruService.Definition.service.api,
-        context: String,
-        failure:@escaping (_ error: WGError?) -> Void,
-        success:@escaping (_ result: T?) -> Void)
-    {
-        var error : Error? = nil
-        var data : Data? = nil
-        if let response = response {
-            data = response.data
-            error = response.error
-        }
-
-        if  let response = response,
-            response.error == nil,
-            let responseData = response.data,
-            let jsonString = String(data: responseData, encoding: .utf8),
-            let responseResultValue = Mapper<T>(shouldIncludeNilValues: true).map(JSONString: jsonString),
-            let error = Mapper<WGError>().map(JSONString: jsonString),
-            (error.toJSON().count == 0 || error.returnString == "OK")
-        {
-            print("SUCCESS url = \(url) - response.result.value \(jsonString)")
-            success(responseResultValue)
-        }
-        else {
-            print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
-            failure(WGError.init(code: api.errorCode,
-                                 desc: "failed using=\(url).",
-                reason: "\(api.query) failed",
-                suggestion: "\(#file):\(#line):\(#column):\(#function)",
-                underError: error as NSError?,
-                wgdata: data))
-        }
-
-    }
-
-    func mapAndResponseWithString(_ response: Response?,
-                            url: String,
-                              api: ForecastWindguruService.Definition.service.api,
-                              context: String,
-                              failure:@escaping (_ error: WGError?) -> Void,
-                              success:@escaping (_ result: [String]) -> Void)
-    {
-        var error : Error? = nil
-        var data : Data? = nil
-        if let response = response {
-            data = response.data
-            error = response.error
-        }
-        
-        if  let response = response,
-            response.error == nil,
-            let responseData = response.data,
-            let jsonString = String(data: responseData, encoding: .utf8),
-            Mapper<WGError>().map(JSONString: jsonString) == nil
-        {
-            let array = Array(Set(jsonString.localizedLowercase.replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\"", with: "").components(separatedBy: ","))).sorted()
-            
-            print("SUCCESS url = \(url) - response.result.value \(String(describing: jsonString))")
-            success(array)
-        }
-        else {
-            print("FAILURE url = \(url) - response.result.error \(String(describing: error))")
-            failure(WGError.init(code: api.errorCode,
-                                 desc: "failed using=\(url).",
-                reason: "\(api.query) failed",
-                suggestion: context,
-                underError: error as NSError?,
-                wgdata: data))
-        }
-    }
-    
-#else
-    
     func mapAndResponse<T: BaseMappable>(_ response: Response?,
                         url: String,
                         api: ForecastWindguruService.Definition.service.api,
@@ -590,16 +508,23 @@ extension ForecastWindguruService {
             do {
                 if let data = data {
                     json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any]
+                    if let json = json,
+                        WGError.isMappable(map: json) == true
+                    {
+                        DispatchQueue.main.async(execute: {
+                            failure(WGError.init(map: json))
+                        })
+                        return
+                    }
                 }
             }
             catch {
                 
             }
         }
-
-        if  let response = response,
-            let json = json,
-            response.error == nil,
+        
+        if  let json = json,
+            error == nil,
             let klass = T.self as? Mappable.Type, // Check if object is Mappable
             let object = klass.init(map: json) as? T
         {
@@ -660,5 +585,4 @@ extension ForecastWindguruService {
             })
         }
     }
-#endif
 }
