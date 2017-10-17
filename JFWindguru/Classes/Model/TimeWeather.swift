@@ -132,7 +132,6 @@ public class TimeWeather: Object, Mappable {
             }
             aux += ", "
         }
-        aux += "\n"
         return aux
     }
 
