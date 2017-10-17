@@ -105,13 +105,13 @@
 		7057C8941F11D62F007A7FC2 /* Facade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Facade.swift; sourceTree = "<group>"; };
 		7057C8961F11DABC007A7FC2 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		70BAA9BC1F276B4F004CD577 /* JFWindguru_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JFWindguru_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		70BAA9BD1F276B50004CD577 /* JFWindguruPure_Example-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruPure_Example-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruPure_Example-Info.plist"; sourceTree = "<absolute>"; };
+		70BAA9BD1F276B50004CD577 /* JFWindguru_Example-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguru_Example-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguru_Example-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9CC1F276B6F004CD577 /* JFWindguru_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JFWindguru_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		70BAA9CD1F276B6F004CD577 /* JFWindguruPure_Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruPure_Tests-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruPure_Tests-Info.plist"; sourceTree = "<absolute>"; };
+		70BAA9CD1F276B6F004CD577 /* JFWindguru_Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguru_Tests-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguru_Tests-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9DA1F276B79004CD577 /* JFWindguruWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JFWindguruWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		70BAA9DB1F276B79004CD577 /* JFWindguruPureWatch-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruPureWatch-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruPureWatch-Info.plist"; sourceTree = "<absolute>"; };
+		70BAA9DB1F276B79004CD577 /* JFWindguruWatch-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruWatch-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruWatch-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9EE1F276B83004CD577 /* JFWindguruWatch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "JFWindguruWatch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		70BAA9EF1F276B83004CD577 /* JFWindguruPureWatch Extension-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruPureWatch Extension-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruPureWatch Extension-Info.plist"; sourceTree = "<absolute>"; };
+		70BAA9EF1F276B83004CD577 /* JFWindguruWatch Extension-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruWatch Extension-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruWatch Extension-Info.plist"; sourceTree = "<absolute>"; };
 		70BAF9B71F958DB7008E0424 /* ForecastResult+formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ForecastResult+formatter.swift"; sourceTree = "<group>"; };
 		70BAF9B81F958DB7008E0424 /* SpotResult+formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotResult+formatter.swift"; sourceTree = "<group>"; };
 		70C791BA1F126112008B1F30 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -212,10 +212,10 @@
 				607FACD11AFB9204008FA782 /* Products */,
 				B7BD308B2C5ACB7DC09326FE /* Pods */,
 				457E480755B3B9731D3C8AFE /* Frameworks */,
-				70BAA9BD1F276B50004CD577 /* JFWindguruPure_Example-Info.plist */,
-				70BAA9CD1F276B6F004CD577 /* JFWindguruPure_Tests-Info.plist */,
-				70BAA9DB1F276B79004CD577 /* JFWindguruPureWatch-Info.plist */,
-				70BAA9EF1F276B83004CD577 /* JFWindguruPureWatch Extension-Info.plist */,
+				70BAA9BD1F276B50004CD577 /* JFWindguru_Example-Info.plist */,
+				70BAA9CD1F276B6F004CD577 /* JFWindguru_Tests-Info.plist */,
+				70BAA9DB1F276B79004CD577 /* JFWindguruWatch-Info.plist */,
+				70BAA9EF1F276B83004CD577 /* JFWindguruWatch Extension-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -843,7 +843,7 @@
 			baseConfigurationReference = 154C254CD77976B0E205DF68 /* Pods-JFWindguru_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "JFWindguruPure_Example-Info.plist";
+				INFOPLIST_FILE = "JFWindguru_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
@@ -859,7 +859,7 @@
 			baseConfigurationReference = A4A85B64D047BA2623491E8D /* Pods-JFWindguru_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "JFWindguruPure_Example-Info.plist";
+				INFOPLIST_FILE = "JFWindguru_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
@@ -882,13 +882,13 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "JFWindguruPure_Tests-Info.plist";
+				INFOPLIST_FILE = "JFWindguru_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JFWindguruPure_Example.app/JFWindguruPure_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JFWindguru_Example.app/JFWindguru_Example";
 			};
 			name = Debug;
 		};
@@ -900,13 +900,13 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "JFWindguruPure_Tests-Info.plist";
+				INFOPLIST_FILE = "JFWindguru_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JFWindguruPure_Example.app/JFWindguruPure_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JFWindguru_Example.app/JFWindguru_Example";
 			};
 			name = Release;
 		};
@@ -919,8 +919,8 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				IBSC_MODULE = JFWindguruPureWatch_Extension;
-				INFOPLIST_FILE = "JFWindguruPureWatch-Info.plist";
+				IBSC_MODULE = JFWindguruWatch_Extension;
+				INFOPLIST_FILE = "JFWindguruWatch-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -940,8 +940,8 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				IBSC_MODULE = JFWindguruPureWatch_Extension;
-				INFOPLIST_FILE = "JFWindguruPureWatch-Info.plist";
+				IBSC_MODULE = JFWindguruWatch_Extension;
+				INFOPLIST_FILE = "JFWindguruWatch-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -962,7 +962,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
-				INFOPLIST_FILE = "JFWindguruPureWatch Extension-Info.plist";
+				INFOPLIST_FILE = "JFWindguruWatch Extension-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp.watchkitextension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -985,7 +985,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
-				INFOPLIST_FILE = "JFWindguruPureWatch Extension-Info.plist";
+				INFOPLIST_FILE = "JFWindguruWatch Extension-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example.watchkitapp.watchkitextension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
