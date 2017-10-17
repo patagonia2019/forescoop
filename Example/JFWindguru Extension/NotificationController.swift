@@ -1,9 +1,9 @@
 //
 //  NotificationController.swift
-//  JFWindguruWatch Extension
+//  JFWindguru Extension
 //
-//  Created by javierfuchs on 7/9/17.
-//  Copyright © 2017 Mobile Patagonia. All rights reserved.
+//  Created by javierfuchs on 10/17/17.
+//  Copyright © 2017 CocoaPods. All rights reserved.
 //
 
 import WatchKit

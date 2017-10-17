@@ -10,7 +10,7 @@ target 'JFWindguru_Example' do
   end
 end
 
-target 'JFWindguruWatch Extension' do
+target 'JFWindguru Extension' do
   platform :watchos, '2.2'
   pod 'JFWindguru', :path => '../'
 end

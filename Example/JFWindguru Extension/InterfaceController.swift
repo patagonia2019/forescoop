@@ -1,9 +1,9 @@
 //
 //  InterfaceController.swift
-//  JFWindguruWatch Extension
+//  JFWindguru Extension
 //
-//  Created by javierfuchs on 7/9/17.
-//  Copyright © 2017 Mobile Patagonia. All rights reserved.
+//  Created by javierfuchs on 10/17/17.
+//  Copyright © 2017 CocoaPods. All rights reserved.
 //
 
 import WatchKit
@@ -24,14 +24,13 @@ class InterfaceController: WKInterfaceController {
     @IBOutlet var weatherLabel: WKInterfaceLabel!
     @IBOutlet var windDirectionNameLabel: WKInterfaceLabel!
     @IBOutlet var windDirectionLabel: WKInterfaceLabel!
-    
+
     var spotForecast: SpotForecast!
     var sliderHeight: Float!
 
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
-        // Configure interface objects here.
     }
     
     override func willActivate() {
@@ -51,30 +50,23 @@ class InterfaceController: WKInterfaceController {
     override func didDeactivate() {
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
-        
         unobserveNotification()
-        
+
     }
-    
-    @IBAction func sliderAction(_ value: Float) {
-        
-    }
-    
-    
-    
+
     fileprivate func updateForecastView()
     {
         guard let spotForecast = spotForecast else {
             return
         }
-        weatherImage.setImageNamed(spotForecast.asCurrentWeatherImagename)
-        windImage.setImageNamed(spotForecast.asCurrentWindDirectionImagename)
         temperatureLabel.setText(spotForecast.asCurrentTemperature)
-        unitLabel.setText(spotForecast.asCurrentUnit)
         locationLabel.setText(spotForecast.asCurrentLocation)
         windSpeedLabel.setText(spotForecast.asCurrentWindSpeed)
         hourLabel.setText(spotForecast.asHourString)
-            
+        weatherLabel.setText(spotForecast.weatherInfo())
+        windDirectionLabel.setText(spotForecast.asCurrentWindDirectionName)
+        windDirectionNameLabel.setText(spotForecast.asCurrentWindDirectionName)
+        
         showWeatherInfo()
     }
     
@@ -114,5 +106,5 @@ class InterfaceController: WKInterfaceController {
         }
     }
     
-    
+
 }
