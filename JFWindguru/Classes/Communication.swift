@@ -33,8 +33,8 @@ struct Response {
     }
 }
 
-class Communication {
-    class func request(_ url: String, finish: @escaping (_ response: Response?) -> Void) {
+struct Communication {
+    static func request(_ url: String, finish: @escaping (_ response: Response?) -> Void) {
         let task = URLSession.shared.dataTask(with: URL.init(string: url)!)
         { (data, response, error) in
             let r = Response(response: response, data: data, error: error)

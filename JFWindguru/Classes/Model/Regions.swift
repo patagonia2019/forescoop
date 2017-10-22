@@ -48,7 +48,7 @@ public class Regions: Object, Mappable {
         }
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         for region in regions {
             aux += "\(region.description)\n"

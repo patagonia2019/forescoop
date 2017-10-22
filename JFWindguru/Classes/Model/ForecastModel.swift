@@ -44,7 +44,7 @@ public class ForecastModel: Object, Mappable {
         }
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         if let model = model {
             aux += "Model # \(model)\n"

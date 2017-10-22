@@ -47,7 +47,7 @@ public class Countries: Object, Mappable {
         }
     }
     
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         for country in countries {
             aux += "\(country.description)\n"

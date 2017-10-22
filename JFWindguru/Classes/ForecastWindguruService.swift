@@ -18,7 +18,7 @@ import Foundation
  */
 
 
-public class ForecastWindguruService: NSObject {
+public class ForecastWindguruService {
 
     public typealias FailureType = (_ error: WGError?) -> Void
 

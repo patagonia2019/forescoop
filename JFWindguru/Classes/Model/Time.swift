@@ -46,7 +46,7 @@ public class Time: Object, Mappable {
         }
     }
     
-    public override var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += String(format: "%02d:%02d:%02d", hour, minutes, seconds)
         return aux

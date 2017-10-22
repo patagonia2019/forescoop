@@ -47,7 +47,7 @@ public class SetResult: Object, Mappable {
         }
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "\(count) sets, "
         for setInfo in sets {

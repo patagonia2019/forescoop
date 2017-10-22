@@ -41,7 +41,7 @@ public class Spot: Object, Mappable {
         country = map["country"] as? String ?? nil
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         if let id_spot = id_spot {
             aux += "Spot # \(id_spot), "

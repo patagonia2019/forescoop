@@ -139,7 +139,7 @@ public class WForecast: Object, Mappable {
             update_next = map["update_next"] as? String
             initstamp = map["initstamp"] as? Int ?? 0
     }
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "initstamp: \(initstamp)\n"
         aux += "TCDC = Cloud cover Total: \(TCDC)\n"

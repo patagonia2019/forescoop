@@ -32,7 +32,7 @@ public class SetInfo: Object, Mappable {
         name = map["name"] as? String
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         
         if let id = id {

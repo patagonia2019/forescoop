@@ -177,7 +177,7 @@ public class User: Object, Mappable {
     }
     
     
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "#\(id_user), "
         

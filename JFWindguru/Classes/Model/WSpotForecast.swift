@@ -119,7 +119,7 @@ public class WSpotForecast: Object, Mappable {
     }
 
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)):\n"
         aux += "id_spot : \(id_spot), "
         aux += "id_user : \(id_user)\n"

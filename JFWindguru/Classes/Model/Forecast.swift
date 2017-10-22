@@ -91,7 +91,7 @@ public class Forecast: Object, Mappable {
         }
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): \n"
         aux += "initStamp: \(initStamp)\n"
         if let TCDC = TCDC {

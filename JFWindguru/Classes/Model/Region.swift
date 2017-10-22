@@ -32,7 +32,7 @@ public class Region: Object, Mappable {
         name = map["name"] as? String  ?? nil
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         
         if let id = id {

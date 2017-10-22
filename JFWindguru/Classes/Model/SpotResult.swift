@@ -61,7 +61,7 @@ public class SpotResult: Object, Mappable {
         }
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "\n\(count) spots.\n"
         for spot in spots {

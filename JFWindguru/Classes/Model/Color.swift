@@ -8,15 +8,14 @@
 
 import Foundation
 
-public class Color: Object {
+public struct Color {
         
     var alpha: Float = 0
     var red: Float = 0
     var green: Float = 0
     var blue: Float = 0
     
-    required public init?(a: Float = 0, r: Float = 0, g: Float = 0, b: Float = 0) {
-        super.init()
+    public init?(a: Float = 0, r: Float = 0, g: Float = 0, b: Float = 0) {
         alpha = a
         red = r
         green = g
@@ -27,7 +26,7 @@ public class Color: Object {
         // TODO
     }
     
-    public override var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "(\(alpha),\(red),\(green),\(blue))"
         return aux

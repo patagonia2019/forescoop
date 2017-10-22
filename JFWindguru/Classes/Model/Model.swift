@@ -74,7 +74,7 @@ public class Model: Object, Mappable {
         show_vars = map["show_vars"] as? [String] ?? []
     }
 
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "Model # \(id_model), "
         if let model_name = model_name {

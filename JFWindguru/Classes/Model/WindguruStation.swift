@@ -50,7 +50,7 @@ public class WindguruStation: Object, Mappable {
         wind_avg = map["wind_avg"] as? Int ?? 0
     }
     
-    override public var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         if let id = id {
             aux += "id \(id) "

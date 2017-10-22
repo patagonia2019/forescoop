@@ -28,7 +28,7 @@ public class Elapse: Object, Mappable {
     public func mapping(map: Map) {
     }
 
-    public override var description : String {
+    public var description : String {
         var aux : String = "\(type(of:self)): "
         if let start = start {
             aux += "start \(start), "
