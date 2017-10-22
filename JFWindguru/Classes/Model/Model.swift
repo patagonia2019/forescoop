@@ -53,15 +53,15 @@ public class Model: Object, Mappable {
     var period : Int = 0
     var resolution : Int = 0
     var update_time: String?
-    var show_vars = ListStringObject()
+    var show_vars = [String]()
 
     
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         id_model = map["id_model"] as? Int ?? 0
         model_name = map["model_name"] as? String ?? nil
         model = map["model"] as? String ?? nil

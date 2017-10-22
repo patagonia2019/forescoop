@@ -40,40 +40,40 @@ import Foundation
 
 public class WForecast: Object, Mappable {
 
-    var TMP         = ListFloatObject() // TMP: temperature
-    var TCDC        = ListIntObject() // TCDC: Cloud cover (%) Total
-    var HCDC        = ListIntObject() // HCDC: Cloud cover (%) High
-    var MCDC        = ListIntObject() // MCDC: Cloud cover (%) Mid
-    var LCDC        = ListIntObject() // LCDC: Cloud cover (%) Low
-    var RH          = ListIntObject() // RH: Relative humidity: relative humidity in percent
-    var GUST        = ListFloatObject() // GUST: Wind gusts (knots)
-    var SLP         = ListIntObject() // SLP: sea level pressure
-    var FLHGT       = ListIntObject() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
-    var APCP        = ListIntObject() //  APCP: Precip. (mm/3h)
-    var WINDSPD     = ListFloatObject() //  WINDSPD: Wind speed (knots)
-    var WINDDIR     = ListIntObject() //  WINDDIR: Wind direction
-    var SMERN       = ListIntObject()
-    var SMER        = ListIntObject()
-    var TMPE        = ListFloatObject() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
-    var PCPT        = ListIntObject()
-    var HTSGW       = ListFloatObject() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
-    var WVHGT       = ListFloatObject() // WVHG: Wave height
-    var WVPER       = ListFloatObject() // WVPER: Mean wave period [s]
-    var WVDIR       = ListFloatObject() // WVDIR: Mean wave direction [°]
-    var SWELL1      = ListFloatObject() // SWELL1: Swell height (m)
-    var SWPER1      = ListFloatObject() // SWPER1: Swell period
-    var SWDIR1      = ListFloatObject() // SWDIR1: Swell direction
-    var SWELL2      = ListFloatObject() // SWELL2: Swell height (m)
-    var SWPER2      = ListFloatObject() // SWPER2: Swell period
-    var SWDIR2      = ListFloatObject() // SWDIR2: Swell direction
-    var PERPW       = ListFloatObject() // PERPW: Peak wave period
-    var DIRPW       = ListFloatObject() // DIRPW: Peak wave direction [°]
-    var hr_weekday  = ListIntObject()
-    var hr_h        = ListStringObject()
-    var hr_d        = ListStringObject()
-    var hours       = ListIntObject()
-    var img_param   = ListStringObject()
-    var img_var_map = ListStringObject()
+    var TMP         = [Float]() // TMP: temperature
+    var TCDC        = [Int]() // TCDC: Cloud cover (%) Total
+    var HCDC        = [Int]() // HCDC: Cloud cover (%) High
+    var MCDC        = [Int]() // MCDC: Cloud cover (%) Mid
+    var LCDC        = [Int]() // LCDC: Cloud cover (%) Low
+    var RH          = [Int]() // RH: Relative humidity: relative humidity in percent
+    var GUST        = [Float]() // GUST: Wind gusts (knots)
+    var SLP         = [Int]() // SLP: sea level pressure
+    var FLHGT       = [Int]() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
+    var APCP        = [Int]() //  APCP: Precip. (mm/3h)
+    var WINDSPD     = [Float]() //  WINDSPD: Wind speed (knots)
+    var WINDDIR     = [Int]() //  WINDDIR: Wind direction
+    var SMERN       = [Int]()
+    var SMER        = [Int]()
+    var TMPE        = [Float]() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    var PCPT        = [Int]()
+    var HTSGW       = [Float]() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
+    var WVHGT       = [Float]() // WVHG: Wave height
+    var WVPER       = [Float]() // WVPER: Mean wave period [s]
+    var WVDIR       = [Float]() // WVDIR: Mean wave direction [°]
+    var SWELL1      = [Float]() // SWELL1: Swell height (m)
+    var SWPER1      = [Float]() // SWPER1: Swell period
+    var SWDIR1      = [Float]() // SWDIR1: Swell direction
+    var SWELL2      = [Float]() // SWELL2: Swell height (m)
+    var SWPER2      = [Float]() // SWPER2: Swell period
+    var SWDIR2      = [Float]() // SWDIR2: Swell direction
+    var PERPW       = [Float]() // PERPW: Peak wave period
+    var DIRPW       = [Float]() // DIRPW: Peak wave direction [°]
+    var hr_weekday  = [Int]()
+    var hr_h        = [String]()
+    var hr_d        = [String]()
+    var hours       = [Int]()
+    var img_param   = [String]()
+    var img_var_map = [String]()
     var initDate: String? = nil
     var init_d: String? = nil
     var init_dm: String? = nil
@@ -86,12 +86,12 @@ public class WForecast: Object, Mappable {
     var update_next: String? = nil
     var initstamp = 0  // initstamp
 
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
 
             TMP = map["TMP"] as? [Float] ?? []
             TCDC = map["TCDC"] as? [Int] ?? []
@@ -212,21 +212,21 @@ extension WForecast {
 
     public func hour24(hour: Int) -> String? {
         if hr_h.count > 0 && hour < hr_h.count {
-            return hr_h[hour].v()
+            return hr_h[hour]
         }
         return nil
     }
     
     public func day(hour: Int) -> String? {
         if hr_d.count > 0 && hour < hr_d.count {
-            return hr_d[hour].v()
+            return hr_d[hour]
         }
         return nil
     }
     
     public func weekday(hour: Int) -> String? {
         if hr_weekday.count > 0 && hour < hr_weekday.count {
-            let w = hr_weekday[hour].v()
+            let w = hr_weekday[hour]
             switch w {
             case 0: return "Sunday"
             case 1: return "Monday"
@@ -244,42 +244,42 @@ extension WForecast {
     
     public func temperature(hour: Int) -> Float? {
         if TMP.count > 0 && hour < TMP.count {
-            return TMP[hour].v()
+            return TMP[hour]
         }
         return nil
     }
     
     public func temperatureReal(hour: Int) -> Float? {
         if TMPE.count > 0 && hour < TMPE.count {
-            return TMPE[hour].v()
+            return TMPE[hour]
         }
         return nil
     }
     
     public func relativeHumidity(hour: Int) -> Int? {
         if RH.count > 0 && hour < RH.count {
-            return RH[hour].v()
+            return RH[hour]
         }
         return nil
     }
     
     public func smern(hour: Int) -> Int? {
         if SMERN.count > 0 && hour < SMERN.count {
-            return SMERN[hour].v()
+            return SMERN[hour]
         }
         return nil
     }
     
     public func smer(hour: Int) -> Int? {
         if SMER.count > 0 && hour < SMERN.count {
-            return SMER[hour].v()
+            return SMER[hour]
         }
         return nil
     }
     
     private func windSpeed(hour: Int) -> Float? {
         if WINDSPD.count > 0 && hour < WINDSPD.count {
-            return WINDSPD[hour].v()
+            return WINDSPD[hour]
         }
         return nil
     }
@@ -347,7 +347,7 @@ extension WForecast {
     
     public func windDirection(hour: Int) -> Int? {
         if WINDDIR.count > 0 && hour < WINDDIR.count {
-            return WINDDIR[hour].v()
+            return WINDDIR[hour]
         }
         return nil
     }
@@ -361,146 +361,146 @@ extension WForecast {
     
     public func windGust(hour: Int) -> Float? {
         if GUST.count > 0 && hour < GUST.count {
-            return GUST[hour].v()
+            return GUST[hour]
         }
         return nil
     }
     
     public func perpw(hour: Int) -> Float? {
         if PERPW.count > 0 && hour < PERPW.count {
-            return PERPW[hour].v()
+            return PERPW[hour]
         }
         return nil
     }
     
     public func wvhgt(hour: Int) -> Float? {
         if WVHGT.count > 0 && hour < WVHGT.count {
-            return WVHGT[hour].v()
+            return WVHGT[hour]
         }
         return nil
     }
     
     public func wvper(hour: Int) -> Float? {
         if WVPER.count > 0 && hour < WVPER.count {
-            return WVPER[hour].v()
+            return WVPER[hour]
         }
         return nil
     }
 
     public func wvdir(hour: Int) -> Float? {
         if WVDIR.count > 0 && hour < WVDIR.count {
-            return WVDIR[hour].v()
+            return WVDIR[hour]
         }
         return nil
     }
     
     public func swell1(hour: Int) -> Float? {
         if SWELL1.count > 0 && hour < SWELL1.count {
-            return SWELL1[hour].v()
+            return SWELL1[hour]
         }
         return nil
     }
     
     public func swper1(hour: Int) -> Float? {
         if SWPER1.count > 0 && hour < SWPER1.count {
-            return SWPER1[hour].v()
+            return SWPER1[hour]
         }
         return nil
     }
     
     public func swdir1(hour: Int) -> Float? {
         if SWDIR1.count > 0 && hour < SWDIR1.count {
-            return SWDIR1[hour].v()
+            return SWDIR1[hour]
         }
         return nil
     }
 
     public func swell2(hour: Int) -> Float? {
         if SWELL2.count > 0 && hour < SWELL2.count {
-            return SWELL2[hour].v()
+            return SWELL2[hour]
         }
         return nil
     }
     
     public func swper2(hour: Int) -> Float? {
         if SWPER2.count > 0 && hour < SWPER2.count {
-            return SWPER2[hour].v()
+            return SWPER2[hour]
         }
         return nil
     }
     
     public func swdir2(hour: Int) -> Float? {
         if SWDIR2.count > 0 && hour < SWDIR2.count {
-            return SWDIR2[hour].v()
+            return SWDIR2[hour]
         }
         return nil
     }
     
     public func dirpw(hour: Int) -> Float? {
         if DIRPW.count > 0 && hour < DIRPW.count {
-            return DIRPW[hour].v()
+            return DIRPW[hour]
         }
         return nil
     }
     public func htsgw(hour: Int) -> Float? {
         if HTSGW.count > 0 && hour < HTSGW.count {
-            return HTSGW[hour].v()
+            return HTSGW[hour]
         }
         return nil
     }
     
     public func cloudCoverTotal(hour: Int) -> Int? {
         if TCDC.count > 0 && hour < TCDC.count {
-            return TCDC[hour].v()
+            return TCDC[hour]
         }
         return nil
     }
     
     public func cloudCoverHigh(hour: Int) -> Int? {
         if HCDC.count > 0 && hour < HCDC.count {
-            return HCDC[hour].v()
+            return HCDC[hour]
         }
         return nil
     }
     
     public func cloudCoverMid(hour: Int) -> Int? {
         if MCDC.count > 0 && hour < MCDC.count {
-            return MCDC[hour].v()
+            return MCDC[hour]
         }
         return nil
     }
     
     public func cloudCoverLow(hour: Int) -> Int? {
         if LCDC.count > 0 && hour < LCDC.count {
-            return LCDC[hour].v()
+            return LCDC[hour]
         }
         return nil
     }
     
     public func precipitation(hour: Int) -> Int? {
         if APCP.count > 0 && hour < APCP.count {
-            return APCP[hour].v()
+            return APCP[hour]
         }
         return nil
     }
     
     public func pcpt(hour: Int) -> Int? {
         if PCPT.count > 0 && hour < PCPT.count {
-            return PCPT[hour].v()
+            return PCPT[hour]
         }
         return nil
     }
     
     public func seaLevelPressure(hour: Int) -> Int? {
         if SLP.count > 0 && hour < SLP.count {
-            return SLP[hour].v()
+            return SLP[hour]
         }
         return nil
     }
     
     public func freezingLevel(hour: Int) -> Int? {
         if FLHGT.count > 0 && hour < FLHGT.count {
-            return FLHGT[hour].v()
+            return FLHGT[hour]
         }
         return nil
     }

@@ -32,12 +32,12 @@ public class SpotOwner: Spot {
 
     var id_user: String? = nil
 
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public override func mapping(map: Map) {
+    public override func mapping(map: [String:Any]) {
         super.mapping(map: map)
         id_user = map["id_user"] as? String ?? nil
     }

@@ -91,16 +91,16 @@ import Foundation
 
 public class TimeWeather: Object, Mappable {
 
-    var keys = ListStringObject()
-    var strings = ListStringObject()
-    var floats = ListFloatObject()
+    var keys = [String]()
+    var strings = [String]()
+    var floats = [Float]()
 
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         for (k,v) in map {
             keys.append(k)
             if let str = v as? String {
@@ -124,10 +124,10 @@ public class TimeWeather: Object, Mappable {
             guard let index = keys.index(of: k) else { return "" }
             aux += "\(key): "
             if strings.count >= 0 && index < strings.count {
-                aux += strings[index].v()
+                aux += strings[index]
             }
             else if floats.count > 0 && index < floats.count {
-                let v = floats[index].v()
+                let v = floats[index]
                 aux += "\(v)"
             }
             aux += ", "

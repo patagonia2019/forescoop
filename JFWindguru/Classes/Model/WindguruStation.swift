@@ -37,12 +37,12 @@ public class WindguruStation: Object, Mappable {
     var id_type: String? = nil
     var wind_avg: Int = 0
 
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         id = map["id"] as? String
         station = map["station"] as? String
         distance = map["distance"] as? Int ?? 0

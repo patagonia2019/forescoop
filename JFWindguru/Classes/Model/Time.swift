@@ -14,12 +14,12 @@ public class Time: Object, Mappable {
     var minutes: Int = 0
     var seconds: Int = 0
 
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init("00:00:00")
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
     }
     
     required public init?(_ str: String?) {

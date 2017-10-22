@@ -24,11 +24,11 @@ public class WGSuccess: Mappable {
     var returnString: String?
     var message: String?
     
-    required public init?(map: Map) {
+    required public init?(map: [String:Any]) {
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         returnString = map["return"] as? String
         message = map["message"] as? String
     }

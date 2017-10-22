@@ -30,12 +30,12 @@ public class Spot: Object, Mappable {
     var country: String? = nil
     
     
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         id_spot = map["id_spot"] as? String ?? nil
         spotname = map["spotname"] as? String ?? nil
         country = map["country"] as? String ?? nil

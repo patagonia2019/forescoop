@@ -43,16 +43,16 @@ public class SpotResult: Object, Mappable {
     //
     // spots: is an array of SpotOwner objects
     //
-    var spots = List<SpotOwner>()
+    var spots = Array<SpotOwner>()
  
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         count = map["count"] as? Int ?? 0
-        if let dict = map["spots"] as? [Map] {
+        if let dict = map["spots"] as? [[String:Any]] {
             for so in dict {
                 if let spotOwner = SpotOwner.init(map: so) {
                     spots.append(spotOwner)

@@ -57,17 +57,17 @@ public class Forecast: Object, Mappable {
     var initdate: String?
     var model_name: String?
     
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         initStamp = map["initstamp"] as? Int ?? 0
         initdate = map["initdate"] as? String
         model_name = map["model_name"] as? String
         for (k, v) in map {
-            if let dict = v as? Map {
+            if let dict = v as? [String:Any] {
                 let tw = TimeWeather.init(map: dict)
                 switch k {
                 case "TMP": TMP = tw; break
@@ -183,13 +183,13 @@ extension Forecast {
               let hhString = hh else { return nil }
 
         for k in key.keys {
-            if k.v() == hhString {
+            if k == hhString {
                 guard let index = key.keys.index(of: k) else { continue }
                 if key.strings.count >= 0 && index < key.strings.count {
-                    return key.strings[index].v() as AnyObject
+                    return key.strings[index] as AnyObject
                 }
                 else if key.floats.count >= 0 && index < key.floats.count{
-                    return key.floats[index].v() as AnyObject
+                    return key.floats[index] as AnyObject
                 }
             }
         }

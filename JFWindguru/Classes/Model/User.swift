@@ -111,7 +111,7 @@ public class User: Object, Mappable {
     var view_hours_from : Int = 0
     var view_hours_to : Int = 0
     var temp_limit : Int = 0
-    var wind_rating_limits = ListFloatObject()
+    var wind_rating_limits = [Float]()
     var colors_wind = ListColor()
     var colors_temp = ListColor()
     var colors_cloud = ListColor()
@@ -122,12 +122,12 @@ public class User: Object, Mappable {
     var colors_htsgw = ListColor()
     var colors_perpw = ListColor()
 
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         var colors = Dictionary<String, [[Float]]>()
 
         id_user = map["id_user"] as? Int ?? 0

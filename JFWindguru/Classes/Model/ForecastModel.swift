@@ -32,14 +32,14 @@ public class ForecastModel: Object, Mappable {
         info = infoForecast
     }
 
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         model = map["model"] as? String
-        if let forecastMap = map["info"] as? Map {
+        if let forecastMap = map["info"] as? [String:Any] {
             info = Forecast.init(map: forecastMap)
         }
     }

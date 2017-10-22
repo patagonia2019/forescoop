@@ -19,16 +19,16 @@ import Foundation
 
 public class Models: Object, Mappable {
     
-    typealias ListModel    = List<Model>
+    typealias ListModel    = Array<Model>
 
     var models = ListModel()
 
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         for json in map.JSON() {
             if  let jsonValue = json.value as? [String: Any],
                 let model = Mapper<Model>().map(JSON: jsonValue) {

@@ -22,12 +22,12 @@ public class SetInfo: Object, Mappable {
     var id: String? = nil
     var name: String? = nil
 
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         id = map["id"] as? String
         name = map["name"] as? String
     }

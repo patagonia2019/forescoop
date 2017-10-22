@@ -32,14 +32,14 @@ import Foundation
 
 public class Regions: Object, Mappable {
 
-    var regions = List<Region>()
+    var regions = Array<Region>()
 
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         for json in map.JSON() {
             let jsonKV = ["id": json.key, "name": json.value]
             if let region = Mapper<Region>().map(JSON: jsonKV) {

@@ -49,15 +49,15 @@ public class SpotInfo: Spot {
     var sunrise: String? = nil
     var sunset: String? = nil
     var elapse : Elapse?
-    var models = ListStringObject()
+    var models = [String]()
     var tides: String? = nil
 
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public override func mapping(map: Map) {
+    public override func mapping(map: [String:Any]) {
         super.mapping(map: map)
         countryId = map["countryId"] as? Int ?? 0
         latitude = map["latitude"] as? Double ?? 0.0

@@ -57,12 +57,12 @@ public class WGError: Mappable {
         nserror = NSError(domain: id, code:code, userInfo: dict)
         
     }
-    required public init?(map: Map){
+    required public init?(map: [String:Any]){
         mapping(map: map)
     }
     
     
-    public static func isMappable(map: Map) -> Bool {
+    public static func isMappable(map: [String:Any]) -> Bool {
         var ret : Bool = true
         for key in ["return", "error_id", "error_message"] {
             ret = ret && map.keys.contains(key)
@@ -70,7 +70,7 @@ public class WGError: Mappable {
         return ret
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         returnString = map["return"] as? String
         error_id = map["error_id"] as? Int
         error_message = map["error_message"] as? String

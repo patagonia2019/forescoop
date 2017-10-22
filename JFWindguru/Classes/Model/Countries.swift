@@ -31,14 +31,14 @@ import Foundation
 
 public class Countries: Object, Mappable {
     
-    var countries = List<Country>()
+    var countries = Array<Country>()
 
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
 
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         for json in map.JSON() {
             let jsonKV = ["id": json.key, "name": json.value]
             if let country = Mapper<Country>().map(JSON: jsonKV) {

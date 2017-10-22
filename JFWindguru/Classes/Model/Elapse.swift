@@ -21,11 +21,11 @@ public class Elapse: Object, Mappable {
         end = Time(elapseEnd)
     }
     
-    required convenience public init?(map: Map) {
+    required convenience public init?(map: [String:Any]) {
         self.init()
     }
 
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
     }
 
     public var description : String {

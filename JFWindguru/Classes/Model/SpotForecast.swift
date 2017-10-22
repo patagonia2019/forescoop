@@ -42,15 +42,15 @@ public class SpotForecast: SpotInfo {
     
     var currentModel: String? = nil
 
-    var forecasts = List<ForecastModel>()
+    var forecasts = Array<ForecastModel>()
 
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
 
-    public override func mapping(map: Map) {
+    public override func mapping(map: [String:Any]) {
         super.mapping(map: map)
         guard let forecastDict = map["forecast"] as? [String: Any] else { return }
         for (k,v) in forecastDict {

@@ -71,15 +71,15 @@ public class WSpotForecast: Object, Mappable {
     var md5chk: String? = nil
     var fcst : WForecast?
     var wgs = false
-    var wgs_arr = List<WindguruStation>()
+    var wgs_arr = Array<WindguruStation>()
     var wgs_wind_avg = 0
   
-    required public convenience init?(map: Map) {
+    required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
 
             id_spot = map["id_spot"] as? Int ?? 0
             id_user = map["id_user"] as? Int ?? 0

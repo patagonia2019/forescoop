@@ -29,17 +29,17 @@ import Foundation
 
 public class GeoRegions: Object, Mappable {
 
-    typealias ListGeoRegion    = List<GeoRegion>
+    typealias ListGeoRegion    = Array<GeoRegion>
     
     var geoRegions = ListGeoRegion()
 
     
-    required public convenience init(map: Map) {
+    required public convenience init(map: [String:Any]) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: Map) {
+    public func mapping(map: [String:Any]) {
         for json in map.JSON() {
             let tmpDictionary = ["id": json.key, "name": json.value]
             if let georegion = Mapper<GeoRegion>().map(JSON: tmpDictionary) {
