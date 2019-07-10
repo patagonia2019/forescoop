@@ -28,12 +28,12 @@ Use this framework in Swift to get windGURU service for forecasting weather. For
   s.source           = { :git => 'https://github.com/southfox/JFWindguru.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '9.0'
-  s.osx.deployment_target = '10.9'
-  s.tvos.deployment_target = '9.0'
-  s.watchos.deployment_target = '2.2'
+  s.ios.deployment_target = '12.0'
+  s.osx.deployment_target = '10.14'
+  s.tvos.deployment_target = '12.0'
+  s.watchos.deployment_target = '5.2'
 
-  s.source_files = 'JFWindguru/Classes/**/*'
+  s.source_files = 'JFWindguru/Classes/**/*.swift'
   s.resources = 'JFWindguru/Assets/**/*.{lproj,xcassets,storyboard,plist,strings}'
 end
 

@@ -133,9 +133,9 @@ extension SpotForecast
         return forecast.windDirectionName(hh: hourString())
     }
     
-    var asCurrentWindDirection: CGFloat {
+    var asCurrentWindDirection: Float {
         guard let forecast = getForecast() else { return 0.0 }
-        return CGFloat(forecast.windDirection(hh: hourString()) ?? 0.0)
+        return Float(forecast.windDirection(hh: hourString()) ?? 0.0)
     }
     
     public var asCurrentWindSpeed: String? {

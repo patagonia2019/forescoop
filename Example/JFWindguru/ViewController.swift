@@ -69,7 +69,7 @@ class ViewController: UIViewController {
         weatherLabel.text = spotForecast.weatherInfo()
         windDirectionLabel.text = spotForecast.asCurrentWindDirectionName
         windDirectionArrowLabel.text = "↓"
-        windDirectionArrowLabel.transform = CGAffineTransform.init(rotationAngle: spotForecast.asCurrentWindDirection)
+        windDirectionArrowLabel.transform = CGAffineTransform.init(rotationAngle: CGFloat(spotForecast.asCurrentWindDirection))
         temperatureLabel.text = spotForecast.asCurrentTemperature
         locationLabel.text = spotForecast.asCurrentLocation
         windSpeedLabel.text = spotForecast.asCurrentWindSpeed

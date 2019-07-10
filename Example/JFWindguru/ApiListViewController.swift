@@ -139,7 +139,7 @@ extension ApiListViewController: UITableViewDelegate {
             
             let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
                 guard let text = alert.textFields![0].text,
-                    text.characters.count > 0,
+                    text.count > 0,
                     let user = self?.user,
                     let username = user.getUsername(),
                     let password = self?.password
@@ -172,7 +172,7 @@ extension ApiListViewController: UITableViewDelegate {
             }
             let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
                 guard let text = alert.textFields![0].text,
-                    text.characters.count > 0,
+                    text.count > 0,
                     let user = self?.user,
                     let username = user.getUsername(),
                     let password = self?.password
@@ -214,14 +214,14 @@ extension ApiListViewController: UITableViewDelegate {
 
             let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
                 guard let spotId = alert.textFields![0].text,
-                    spotId.characters.count > 0
+                    spotId.count > 0
                 else {
                     self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
                 }
                 
                 var modelId = alert.textFields![1].text
-                if modelId?.characters.count == 0 {
+                if modelId?.count == 0 {
                     modelId = nil
                 }
 
@@ -254,7 +254,7 @@ extension ApiListViewController: UITableViewDelegate {
             
             let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
                 guard let spotId = alert.textFields![0].text,
-                    spotId.characters.count > 0
+                    spotId.count > 0
                 else {
                     self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
@@ -322,7 +322,7 @@ extension ApiListViewController: UITableViewDelegate {
 
             let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
                 guard let location = alert.textFields![0].text,
-                    location.characters.count > 0
+                    location.count > 0
                 else {
                     self?.showAlert(title: "\(service)", message: "Missing mandatory field: [Location]")
                     return
@@ -400,7 +400,7 @@ extension ApiListViewController: UITableViewDelegate {
             }
             
             var modelId = alert.textFields![0].text
-            if modelId?.characters.count == 0 {
+            if modelId?.count == 0 {
                 modelId = nil
             }
 
@@ -439,8 +439,8 @@ extension ApiListViewController: UITableViewDelegate {
             let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
                 guard let latText = alert.textFields![0].text,
                     let lonText = alert.textFields![0].text,
-                    latText.characters.count > 0,
-                    lonText.characters.count > 0
+                    latText.count > 0,
+                    lonText.count > 0
                 else {
                     self?.showAlert(title: "\(service)", message: "Missing mandatory field: [lat] / [lon]")
                     return
@@ -477,13 +477,13 @@ extension ApiListViewController: UITableViewDelegate {
             }
             let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
                 guard let spotId = alert.textFields![0].text,
-                    spotId.characters.count > 0
+                    spotId.count > 0
                 else {
                     self?.showAlert(title: "\(service)", message: "Missing mandatory field: [spot id]")
                     return
                 }
                 var modelId = alert.textFields![1].text
-                if modelId?.characters.count == 0 {
+                if modelId?.count == 0 {
                     modelId = nil
                 }
                 ForecastWindguruService.instance.wforecast(bySpotId: spotId,

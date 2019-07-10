@@ -83,8 +83,8 @@ extension ForecastWindguruService {
     {
         var tokens = [Definition.service.api.parameter.id_model : modelId ?? Definition.defaultModel,
                       Definition.service.api.parameter.id_spot : spotId]
-        if let username = username, username.characters.count > 0,
-            let password = password, password.characters.count > 0 {
+        if let username = username, username.count > 0,
+            let password = password, password.count > 0 {
             tokens = [Definition.service.api.parameter.username : username,
                       Definition.service.api.parameter.password : password]
         }
@@ -133,8 +133,8 @@ extension ForecastWindguruService {
                                           success: @escaping (_ spots: SpotResult?) -> Void) {
         
         var tokens : [String: String?] = [:]
-        if let username = username, username.characters.count > 0,
-            let password = password, password.characters.count > 0 {
+        if let username = username, username.count > 0,
+            let password = password, password.count > 0 {
             tokens = [Definition.service.api.parameter.username : username,
                       Definition.service.api.parameter.password : password]
         }
@@ -396,8 +396,8 @@ extension ForecastWindguruService {
                          success: @escaping (_ models: [String]?) -> Void) {
         
         var tokens : [String: String?] = [:]
-        if let lat = lat, lat.characters.count > 0,
-           let lon = lon, lon.characters.count > 0 {
+        if let lat = lat, lat.count > 0,
+           let lon = lon, lon.count > 0 {
             tokens[Definition.service.api.parameter.lat] = lat
             tokens[Definition.service.api.parameter.lon] = lon
         }

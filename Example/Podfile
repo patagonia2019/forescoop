@@ -3,6 +3,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
 target 'JFWindguru_Example' do
+  platform :ios, '12.0'
   pod 'JFWindguru', :path => '../'
 
   target 'JFWindguru_Tests' do
@@ -11,9 +12,20 @@ target 'JFWindguru_Example' do
 end
 
 target 'JFWindguru Extension' do
-  platform :watchos, '2.2'
+  platform :watchos, '5.2'
   pod 'JFWindguru', :path => '../'
 end
 
+
+target 'JFWindguruTVOS' do
+  platform :tvos, '12.0'
+  pod 'JFWindguru', :path => '../'
+end
+
+
+target 'JFWindguruMacOS' do
+  platform :macos, '10.14'
+  pod 'JFWindguru', :path => '../'
+end
 
 

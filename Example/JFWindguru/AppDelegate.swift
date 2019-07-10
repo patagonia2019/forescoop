@@ -6,6 +6,32 @@
 //  Copyright (c) 2017 southfox. All rights reserved.
 //
 
+#if os(macOS)
+import Cocoa
+
+@NSApplicationMain
+class AppDelegate: NSObject, NSApplicationDelegate {
+    
+    var started: Bool = false
+    
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // Insert code here to initialize your application
+    }
+    
+    func applicationWillTerminate(_ aNotification: Notification) {
+    }
+    
+    func applicationWillResignActive(_ notification: Notification) {
+        Facade.instance.stop()
+    }
+    
+    func applicationDidBecomeActive(_ notification: Notification) {
+        Facade.instance.start()
+    }
+}
+
+#else
+
 import UIKit
 
 @UIApplicationMain
@@ -14,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
         return true
@@ -49,3 +75,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+#endif
