@@ -27,3 +27,4 @@ southfox, javier.fuchs@gmail.com
 ## License
 
 JFWindguru is available under the MIT license. See the LICENSE file for more info.
+
