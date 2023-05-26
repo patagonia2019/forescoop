@@ -48,13 +48,12 @@ public class SpotForecast: SpotInfo {
         self.init()
         mapping(map: map)
     }
-    
 
     public override func mapping(map: [String:Any]) {
         super.mapping(map: map)
         guard let forecastDict = map["forecast"] as? [String: Any] else { return }
         for (k,v) in forecastDict {
-            let tmpDictionary = ["model" : k , "info" : v]
+            let tmpDictionary = ["model" : k, "info" : v]
             let forecastModel = ForecastModel(map: tmpDictionary)
             forecasts.append(forecastModel)
             currentModel = k
@@ -76,15 +75,11 @@ public class SpotForecast: SpotInfo {
         }
         return aux
     }
-
-
 }
 
-
-extension SpotForecast {
+public extension SpotForecast {
     
-    public func getForecast() -> Forecast?
-    {
+    var forecast: Forecast? {
         guard let currentModel = currentModel else { return nil }
         for forecastModel in forecasts {
             if forecastModel.model == currentModel {
@@ -93,5 +88,129 @@ extension SpotForecast {
         }
         return nil
     }
+    
+    /// Information comes in UTC, contains the every 3 hours information
+    var weatherInfo: String {
+        
+        var str : String = ""
+        if isNight {
+            str = "🌙"
+        } else {
+            str = "☀️"
+        }
+        if isRaining {
+            str += "🌧"
+        } else if isCloudy {
+            str += "🌥"
+        }
+        return str
+    }
+    
+    var asHourString: String {
+        var hourString: String
+        let hh: Int = currentHour
 
+        hourString = String(format: "%02d hs", hh)
+        
+        return hourString
+    }
+    
+    var asCurrentWindDirectionName: String? {
+        forecast?.windDirectionName(hh: currentHourString)
+    }
+    
+    var asCurrentWindDirection: Float {
+        Float(forecast?.windDirection(hh: currentHourString) ?? 0.0)
+    }
+    
+    var asCurrentWindSpeed: String? {
+        guard let forecast = forecast,
+            let windSpeed = forecast.windSpeed(hh: currentHourString) else {
+                return nil
+        }
+        return "\(windSpeed) knots"
+    }
+    
+    // "11"
+    var asCurrentTemperature: String? {
+        guard let forecast = forecast,
+            let temperatureReal = forecast.temperatureReal(hh: currentHourString) else {
+                return nil
+        }
+        return "\(temperatureReal)\(asCurrentUnit)"
+    }
+    
+    // "C" or "F"
+    var asCurrentUnit: String {
+        "°C"
+    }
+    
+    // name contains the location in this object
+    var asCurrentLocation: String? {
+        name
+    }
+}
+
+private extension SpotForecast {
+    
+    var isNight: Bool {
+        elapseContainsTime(date: NSDate())
+    }
+    
+    var isSunny: Bool {
+        // if TCDC is == 0
+        cloudCoverTotal == 0
+    }
+    
+    var isCloudy: Bool {
+        !isSunny
+    }
+    
+    var cloudCoverTotal: Int {
+        guard let forecast = forecast,
+              let cloudCoverTotal = forecast.cloudCoverTotal(hh: currentHourString) else {
+            return 0
+        }
+        return cloudCoverTotal
+    }
+    
+    var isRaining: Bool {
+        precipitation > 0.0
+    }
+    
+    var precipitation: Float {
+        guard let forecast = forecast,
+              let cloudCoverTotal = forecast.precipitation(hh: currentHourString) else {
+            return 0
+        }
+        return cloudCoverTotal
+    }
+    
+    var currentHourInt: Int {
+        let date = NSDate()
+        let calendar = NSCalendar.current
+        let hour = calendar.component(.hour, from: date as Date)
+        
+        // TODO: Timezone
+        return hour
+    }
+    
+    var currentHour: Int {
+        var hour: Int = currentHourInt
+        let remainder = hour % 3
+
+        hour -= remainder
+
+        // TODO: here the increment
+        return hour
+    }
+    
+    var currentHourString: String? {
+        var hourString: String
+        let hh: Int = currentHour
+        
+        hourString = String(format: "%d", hh)
+        
+        return hourString
+    }
 }

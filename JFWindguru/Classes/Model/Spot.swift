@@ -28,8 +28,7 @@ public class Spot: Object, Mappable {
     var id_spot: String? = nil
     var spotname: String? = nil
     var country: String? = nil
-    
-    
+
     required public convenience init?(map: [String:Any]) {
         self.init()
         mapping(map: map)
@@ -54,16 +53,14 @@ public class Spot: Object, Mappable {
         }
         return aux
     }
-    
-
 }
 
-extension Spot {
-    public func id() -> String? {
-        return id_spot
+public extension Spot {
+    var id: String? {
+        id_spot
     }
     
-    public func name() -> String? {
-        return spotname
+    var name: String? {
+        spotname
     }
 }

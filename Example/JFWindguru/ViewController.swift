@@ -66,7 +66,7 @@ class ViewController: UIViewController {
         guard let spotForecast = spotForecast else {
             return
         }
-        weatherLabel.text = spotForecast.weatherInfo()
+        weatherLabel.text = spotForecast.weatherInfo
         windDirectionLabel.text = spotForecast.asCurrentWindDirectionName
         windDirectionArrowLabel.text = "↓"
         windDirectionArrowLabel.transform = CGAffineTransform.init(rotationAngle: CGFloat(spotForecast.asCurrentWindDirection))
@@ -144,7 +144,7 @@ class ViewController: UIViewController {
                                                     self?.user = user
                                                     var name = "Anonymous"
                                                     if let user = user {
-                                                        name = user.name()
+                                                        name = user.name
                                                         self?.passwordTextField = password
                                                     }
                                                     let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(name)", preferredStyle: .alert)
@@ -176,7 +176,7 @@ class ViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? ApiListViewController {
             if let user = user {
-                vc.title = "Logged in as:" + user.name()
+                vc.title = "Logged in as:" + user.name
                 vc.user = user
                 vc.password = passwordTextField?.text
             }

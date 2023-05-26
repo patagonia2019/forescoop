@@ -72,16 +72,20 @@ public class SpotResult: Object, Mappable {
     
 }
 
-extension SpotResult {
-    public func numberOfSpots() -> Int {
-        return spots.count
+public extension SpotResult {
+    var numberOfSpots: Int {
+        spots.count
     }
 
-    public func firstSpot() -> SpotOwner? {
-        return spots.first
+    var firstSpot: SpotOwner? {
+        spots.first
     }
 
-    public func lastSpot() -> SpotOwner? {
-        return spots.last
+    var lastSpot: SpotOwner? {
+        spots.last
+    }
+    
+    var asSpotName: String {
+        lastSpot?.name ?? ""
     }
 }

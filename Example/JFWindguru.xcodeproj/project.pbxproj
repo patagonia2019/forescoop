@@ -7,20 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0DB277C153B79CD6F38D1FC2 /* Pods_JFWindguruPure_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24620BFFAD658E1280C2BF1F /* Pods_JFWindguruPure_Tests.framework */; };
 		1A4E4792060F3B5D36787476 /* Pods_JFWindguruMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 277F62B6751ED0C92D633C16 /* Pods_JFWindguruMacOS.framework */; };
 		43E8FFAB17F2BE007FAB98B2 /* Pods_JFWindguru_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8B6F7D64CB8768B1C50F88E /* Pods_JFWindguru_Extension.framework */; };
 		4A583A6271A36CA804170C15 /* Pods_JFWindguruTVOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AFC1C05CFBC2BA11B2E76F8 /* Pods_JFWindguruTVOS.framework */; };
 		7066F6D11F95ADD400D126C1 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7066F6CF1F95ADD400D126C1 /* Interface.storyboard */; };
 		7066F6D31F95ADD400D126C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7066F6D21F95ADD400D126C1 /* Assets.xcassets */; };
-		7066F6DA1F95ADD400D126C1 /* JFWindguru Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7066F6D91F95ADD400D126C1 /* JFWindguru Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7066F6DA1F95ADD400D126C1 /* JFWindguru Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7066F6D91F95ADD400D126C1 /* JFWindguru Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7066F6DF1F95ADD400D126C1 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7066F6DE1F95ADD400D126C1 /* InterfaceController.swift */; };
 		7066F6E11F95ADD400D126C1 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7066F6E01F95ADD400D126C1 /* ExtensionDelegate.swift */; };
 		7066F6E31F95ADD400D126C1 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7066F6E21F95ADD400D126C1 /* NotificationController.swift */; };
 		7066F6E51F95ADD400D126C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7066F6E41F95ADD400D126C1 /* Assets.xcassets */; };
 		7066F6EA1F95ADD400D126C1 /* JFWindguru.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 7066F6CD1F95ADD400D126C1 /* JFWindguru.app */; };
 		7066F6F21F95AF4900D126C1 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		7066F6F31F95AF7F00D126C1 /* ForecastResult+formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BAF9B71F958DB7008E0424 /* ForecastResult+formatter.swift */; };
 		7066F6F41F95B11200D126C1 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
@@ -31,8 +29,6 @@
 		70BAA9B41F276B4F004CD577 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		70BAA9C31F276B6F004CD577 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		70BAA9C51F276B6F004CD577 /* Pods_JFWindguru_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D93F0B6B65CBA403B7743FBC /* Pods_JFWindguru_Tests.framework */; };
-		70BAF9B91F958DE4008E0424 /* ForecastResult+formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BAF9B71F958DB7008E0424 /* ForecastResult+formatter.swift */; };
-		70BAF9BA1F958DE7008E0424 /* SpotResult+formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BAF9B81F958DB7008E0424 /* SpotResult+formatter.swift */; };
 		70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
 		70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
 		98688A0B22D5936700A09AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0A22D5936700A09AD0 /* Assets.xcassets */; };
@@ -40,9 +36,6 @@
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98688A1522D5938900A09AD0 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		98688A1622D5938E00A09AD0 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
-		987A6DBA22D594B800662010 /* ForecastResult+formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BAF9B71F958DB7008E0424 /* ForecastResult+formatter.swift */; };
-		987A6DBB22D594BC00662010 /* SpotResult+formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BAF9B81F958DB7008E0424 /* SpotResult+formatter.swift */; };
-		987A6DBC22D594C500662010 /* SpotResult+formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BAF9B81F958DB7008E0424 /* SpotResult+formatter.swift */; };
 		987A6DCA22D595D200662010 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A6DC922D595D200662010 /* ViewController.swift */; };
 		987A6DCD22D595D200662010 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCB22D595D200662010 /* Main.storyboard */; };
 		987A6DCF22D595D400662010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCE22D595D400662010 /* Assets.xcassets */; };
@@ -77,15 +70,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		7066F6EE1F95ADD400D126C1 /* Embed App Extensions */ = {
+		7066F6EE1F95ADD400D126C1 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				7066F6DA1F95ADD400D126C1 /* JFWindguru Extension.appex in Embed App Extensions */,
+				7066F6DA1F95ADD400D126C1 /* JFWindguru Extension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		70BAA9B71F276B4F004CD577 /* Embed Watch Content */ = {
@@ -108,7 +101,6 @@
 		1AA98D0A028465017AAFA6FD /* Pods-JFWindguruWatch Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguruWatch Extension.release.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguruWatch Extension/Pods-JFWindguruWatch Extension.release.xcconfig"; sourceTree = "<group>"; };
 		1C5A4F4DEFBBC5BC99065D10 /* Pods-JFWindguru_Tests_NF.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru_Tests_NF.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru_Tests_NF/Pods-JFWindguru_Tests_NF.debug.xcconfig"; sourceTree = "<group>"; };
 		23F02F7889E74D1D4C0E2B41 /* Pods-JFWindguru-NoExternalFwk-Watch Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru-NoExternalFwk-Watch Extension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru-NoExternalFwk-Watch Extension/Pods-JFWindguru-NoExternalFwk-Watch Extension.debug.xcconfig"; sourceTree = "<group>"; };
-		24620BFFAD658E1280C2BF1F /* Pods_JFWindguruPure_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JFWindguruPure_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		24D07A369532A7136ACE3C45 /* Pods-JFWindguru_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru_Tests/Pods-JFWindguru_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		25EAF558B682E3180F43A5FB /* Pods-JFWindguruPureWatch Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguruPureWatch Extension.release.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguruPureWatch Extension/Pods-JFWindguruPureWatch Extension.release.xcconfig"; sourceTree = "<group>"; };
 		277F62B6751ED0C92D633C16 /* Pods_JFWindguruMacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JFWindguruMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -150,14 +142,12 @@
 		70BAA9CD1F276B6F004CD577 /* JFWindguru_Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguru_Tests-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguru_Tests-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9DB1F276B79004CD577 /* JFWindguruWatch-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruWatch-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruWatch-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9EF1F276B83004CD577 /* JFWindguruWatch Extension-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JFWindguruWatch Extension-Info.plist"; path = "/Users/javierfuchs/Job/southfox/jfwindguru/Example/JFWindguruWatch Extension-Info.plist"; sourceTree = "<absolute>"; };
-		70BAF9B71F958DB7008E0424 /* ForecastResult+formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ForecastResult+formatter.swift"; sourceTree = "<group>"; };
-		70BAF9B81F958DB7008E0424 /* SpotResult+formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotResult+formatter.swift"; sourceTree = "<group>"; };
 		70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiListViewController.swift; sourceTree = "<group>"; };
 		70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiInfoViewController.swift; sourceTree = "<group>"; };
 		75BD7544F10B01620940CE62 /* Pods-JFWindguru-NoExternalFwk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguru-NoExternalFwk.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguru-NoExternalFwk/Pods-JFWindguru-NoExternalFwk.debug.xcconfig"; sourceTree = "<group>"; };
 		7C15CDBB380936AAAB9C6643 /* Pods-JFWindguruWatch Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguruWatch Extension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguruWatch Extension/Pods-JFWindguruWatch Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		86D56F18FE10F14EF37E3A39 /* Pods-JFWindguruPure_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFWindguruPure_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFWindguruPure_Tests/Pods-JFWindguruPure_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		88CC4239D10EA3B99ED1ADC3 /* JFWindguru.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JFWindguru.podspec; path = ../JFWindguru.podspec; sourceTree = "<group>"; };
+		88CC4239D10EA3B99ED1ADC3 /* JFWindguru.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JFWindguru.podspec; path = ../JFWindguru.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		917FA449C8A9F880844B10B1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		932252DD611C98BB366C0670 /* Pods_JFWindguru_NoExternalFwk_Watch_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JFWindguru_NoExternalFwk_Watch_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96D67F8158364D9A95EDB700 /* Pods_JFWindguruWatch_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JFWindguruWatch_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -218,7 +208,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				70BAA9C51F276B6F004CD577 /* Pods_JFWindguru_Tests.framework in Frameworks */,
-				0DB277C153B79CD6F38D1FC2 /* Pods_JFWindguruPure_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,7 +243,6 @@
 				932252DD611C98BB366C0670 /* Pods_JFWindguru_NoExternalFwk_Watch_Extension.framework */,
 				0E2722899EBED28B401D9D3F /* Pods_JFWindguruPureWatch_Extension.framework */,
 				E6F44748CD56744570056B45 /* Pods_JFWindguruPure_Example.framework */,
-				24620BFFAD658E1280C2BF1F /* Pods_JFWindguruPure_Tests.framework */,
 				96D67F8158364D9A95EDB700 /* Pods_JFWindguruWatch_Extension.framework */,
 				C8B6F7D64CB8768B1C50F88E /* Pods_JFWindguru_Extension.framework */,
 				277F62B6751ED0C92D633C16 /* Pods_JFWindguruMacOS.framework */,
@@ -303,7 +291,6 @@
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
 				7057C8941F11D62F007A7FC2 /* Facade.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
-				70BAF9B61F958DB7008E0424 /* Extensions */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
 				70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -373,15 +360,6 @@
 			path = "JFWindguru Extension";
 			sourceTree = "<group>";
 		};
-		70BAF9B61F958DB7008E0424 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				70BAF9B71F958DB7008E0424 /* ForecastResult+formatter.swift */,
-				70BAF9B81F958DB7008E0424 /* SpotResult+formatter.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
 		98688A0522D5936400A09AD0 /* JFWindguruMacOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -445,7 +423,7 @@
 			buildConfigurationList = 7066F6EF1F95ADD400D126C1 /* Build configuration list for PBXNativeTarget "JFWindguru" */;
 			buildPhases = (
 				7066F6CB1F95ADD400D126C1 /* Resources */,
-				7066F6EE1F95ADD400D126C1 /* Embed App Extensions */,
+				7066F6EE1F95ADD400D126C1 /* Embed Foundation Extensions */,
 				53DBC3D4C4C0250E8C514F7C /* Frameworks */,
 			);
 			buildRules = (
@@ -562,7 +540,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					7066F6CC1F95ADD400D126C1 = {
@@ -572,17 +550,19 @@
 					7066F6D81F95ADD400D126C1 = {
 						CreatedOnToolsVersion = 9.0;
 						DevelopmentTeam = 27XTSJS68A;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 					};
 					70BAA9A41F276B4F004CD577 = {
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = "";
 					};
 					70BAA9BE1F276B6F004CD577 = {
+						LastSwiftMigration = "";
 						TestTargetID = 70BAA9A41F276B4F004CD577;
 					};
 					98688A0322D5936400A09AD0 = {
 						CreatedOnToolsVersion = 10.2.1;
-						DevelopmentTeam = 27XTSJS68A;
+						DevelopmentTeam = DC76Z3W5Y8;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.NetworkExtensions = {
@@ -684,15 +664,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JFWindguruTVOS/Pods-JFWindguruTVOS-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/JFWindguru-tvOS/JFWindguru.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JFWindguru.framework",
 			);
@@ -706,15 +682,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JFWindguruMacOS/Pods-JFWindguruMacOS-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/JFWindguru-macOS/JFWindguru.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JFWindguru.framework",
 			);
@@ -864,10 +836,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7066F6F31F95AF7F00D126C1 /* ForecastResult+formatter.swift in Sources */,
 				7066F6F21F95AF4900D126C1 /* Common.swift in Sources */,
 				7066F6E31F95ADD400D126C1 /* NotificationController.swift in Sources */,
-				987A6DBC22D594C500662010 /* SpotResult+formatter.swift in Sources */,
 				7066F6F41F95B11200D126C1 /* Facade.swift in Sources */,
 				7066F6E11F95ADD400D126C1 /* ExtensionDelegate.swift in Sources */,
 				7066F6DF1F95ADD400D126C1 /* InterfaceController.swift in Sources */,
@@ -879,8 +849,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */,
-				70BAF9BA1F958DE7008E0424 /* SpotResult+formatter.swift in Sources */,
-				70BAF9B91F958DE4008E0424 /* ForecastResult+formatter.swift in Sources */,
 				70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */,
 				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
 				70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */,
@@ -901,8 +869,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				987A6DBA22D594B800662010 /* ForecastResult+formatter.swift in Sources */,
-				987A6DBB22D594BC00662010 /* SpotResult+formatter.swift in Sources */,
 				98688A1522D5938900A09AD0 /* Common.swift in Sources */,
 				98688A1622D5938E00A09AD0 /* Facade.swift in Sources */,
 				98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */,
@@ -1007,6 +973,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1064,6 +1031,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1112,7 +1080,7 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 5.2;
 			};
@@ -1137,7 +1105,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 5.2;
 			};
@@ -1205,7 +1173,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1221,7 +1189,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.JFWindguru-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -1242,7 +1210,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JFWindguru_Example.app/JFWindguru_Example";
 			};
 			name = Debug;
@@ -1260,7 +1228,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JFWindguru_Example.app/JFWindguru_Example";
 			};
 			name = Release;
@@ -1278,14 +1246,17 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = JFWindguruMacOS/JFWindguruMacOS.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 27XTSJS68A;
+				DEVELOPMENT_TEAM = DC76Z3W5Y8;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = JFWindguruMacOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jfuchs.windguru-macos.JFWindguruMacOS";
@@ -1309,13 +1280,16 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = JFWindguruMacOS/JFWindguruMacOS.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 27XTSJS68A;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = DC76Z3W5Y8;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = JFWindguruMacOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jfuchs.windguru-macos.JFWindguruMacOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";

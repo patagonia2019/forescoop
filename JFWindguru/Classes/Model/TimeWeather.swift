@@ -121,7 +121,7 @@ public class TimeWeather: Object, Mappable {
         }
         for k in orderkeys {
             let key = k
-            guard let index = keys.index(of: k) else { return "" }
+            guard let index = keys.firstIndex(of: k) else { return "" }
             aux += "\(key): "
             if strings.count >= 0 && index < strings.count {
                 aux += strings[index]

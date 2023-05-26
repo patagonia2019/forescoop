@@ -184,7 +184,7 @@ extension Forecast {
 
         for k in key.keys {
             if k == hhString {
-                guard let index = key.keys.index(of: k) else { continue }
+                guard let index = key.keys.firstIndex(of: k) else { continue }
                 if key.strings.count >= 0 && index < key.strings.count {
                     return key.strings[index] as AnyObject
                 }

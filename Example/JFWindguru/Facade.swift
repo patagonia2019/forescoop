@@ -113,9 +113,9 @@ public class Facade: NSObject {
         }) { (spotResult) in
             
             guard let spotResult = spotResult,
-                let spot = spotResult.lastSpot(),
-                let spotId = spot.id() else {
-                    return
+                  let spot = spotResult.lastSpot,
+                  let spotId = spot.id else {
+                return
             }
             ForecastWindguruService.instance.forecast(bySpotId: spotId, failure: { (error) in
                 print("error = \(String(describing: error))")

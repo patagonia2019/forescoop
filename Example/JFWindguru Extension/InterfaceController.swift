@@ -63,7 +63,7 @@ class InterfaceController: WKInterfaceController {
         locationLabel.setText(spotForecast.asCurrentLocation)
         windSpeedLabel.setText(spotForecast.asCurrentWindSpeed)
         hourLabel.setText(spotForecast.asHourString)
-        weatherLabel.setText(spotForecast.weatherInfo())
+        weatherLabel.setText(spotForecast.weatherInfo)
         windDirectionLabel.setText(spotForecast.asCurrentWindDirectionName)
         windDirectionNameLabel.setText(spotForecast.asCurrentWindDirectionName)
         

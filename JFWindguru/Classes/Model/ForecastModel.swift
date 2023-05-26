@@ -25,8 +25,7 @@ public class ForecastModel: Object, Mappable {
     var model: String?
     var info: Forecast?
 
-    convenience public init(modelValue: String, infoForecast: Forecast)
-    {
+    convenience public init(modelValue: String, infoForecast: Forecast) {
         self.init()
         model = modelValue
         info = infoForecast

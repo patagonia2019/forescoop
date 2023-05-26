@@ -98,7 +98,7 @@ import Foundation
 
 public class User: Object, Mappable {
     
-    typealias ListColor   = [Color]
+    typealias ListColor = [Color]
 
     var id_user : Int = 0
     var username: String?
@@ -241,22 +241,12 @@ public class User: Object, Mappable {
     }
 }
 
-extension User {
-    public func name() -> String {
-        if isAnonymous() {
-            return "Anonymous"
-        }
-        return username ?? ""
+public extension User {
+    var name: String {
+        isAnonymous ? "Anonymous" : username ?? ""
     }
     
-    public func isAnonymous() -> Bool {
-        if let username = username, username != "" {
-            return false
-        }
-        return true
-    }
-    
-    public func getUsername() -> String? {
-        return username
+    var isAnonymous: Bool {
+        username?.isEmpty == true
     }
 }
