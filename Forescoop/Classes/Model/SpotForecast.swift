@@ -92,7 +92,7 @@ public extension SpotForecast {
     /// Information comes in UTC, contains the every 3 hours information
     var weatherInfo: String {
         
-        var str : String = ""
+        var str: String = ""
         if isNight {
             str = "🌙"
         } else {

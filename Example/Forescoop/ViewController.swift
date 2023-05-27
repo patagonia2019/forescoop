@@ -43,8 +43,7 @@ class ViewController: UIViewController {
         
         hideWeatherInfo()
         
-        if spotForecast != nil
-        {
+        if spotForecast != nil {
             updateForecastView()
         }
         
@@ -54,15 +53,25 @@ class ViewController: UIViewController {
         super.viewDidDisappear(animated)
         
         unobserveNotification()
-        
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    private func updateForecastView()
-    {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let vc = segue.destination as? ApiListViewController,
+              let user = user else { return }
+        
+        vc.title = "Logged in as:" + user.name
+        vc.user = user
+        vc.password = passwordTextField?.text
+    }
+}
+
+private extension ViewController {
+    func updateForecastView() {
         guard let spotForecast = spotForecast else {
             return
         }
@@ -79,8 +88,7 @@ class ViewController: UIViewController {
     }
 
 
-    private func observeNotification()
-    {
+    func observeNotification() {
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main) {
             [weak self] (note) in
             if let object: SpotForecast = note.object as? SpotForecast {
@@ -89,21 +97,18 @@ class ViewController: UIViewController {
             }}
     }
     
-    private func unobserveNotification()
-    {
+    func unobserveNotification() {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil)
-        
     }
     
-    private func hideWeatherInfo()
-    {
+    func hideWeatherInfo() {
         toolbarView.alpha = 0
         topView.alpha = 0
         middleView.alpha = 0
         bottomView.alpha = 0
     }
     
-    private func showWeatherInfo()
+    func showWeatherInfo()
     {
         UIView.animate(withDuration: kWDAnimationDuration) { [weak self] () -> Void in
             self?.toolbarView.alpha = 1
@@ -134,7 +139,7 @@ class ViewController: UIViewController {
             self?.showError(title: "Error on login", error: error)
         }
         
-        let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+        let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
             let username = alert.textFields?[0] ?? nil
             let password = alert.textFields?[1] ?? nil
             ForecastWindguruService.instance.login(withUsername: username?.text,
@@ -173,13 +178,4 @@ class ViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? ApiListViewController {
-            if let user = user {
-                vc.title = "Logged in as:" + user.name
-                vc.user = user
-                vc.password = passwordTextField?.text
-            }
-        }
-    }
 }
