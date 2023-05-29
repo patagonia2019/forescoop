@@ -8,8 +8,8 @@ def forescoop
 end
 
 target 'Forescoop_Example' do
-  platform :ios, '12.0'
-  forescoop
+  platform :ios, '13.0'
+  windguru
 
   target 'Forescoop_Tests' do
     inherit! :search_paths

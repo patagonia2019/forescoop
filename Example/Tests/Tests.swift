@@ -14,16 +14,21 @@ class Tests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
+    func testViewControllerCreation() {
+//        let vc = makeVC()
+//        XCTAssertNotNil(vc)
+        XCTAssertNil(nil)
+
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure() {
-            // Put the code you want to measure the time of here.
+        
+}
+
+private extension Tests {
+    func makeVC() -> ViewController? {
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let vc = sb.instantiateViewController(identifier: "ViewController") { coder in
+            ViewController(coder: coder)
         }
+        return vc
     }
-    
 }

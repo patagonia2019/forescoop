@@ -39,6 +39,7 @@
 		987A6DCA22D595D200662010 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A6DC922D595D200662010 /* ViewController.swift */; };
 		987A6DCD22D595D200662010 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCB22D595D200662010 /* Main.storyboard */; };
 		987A6DCF22D595D400662010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCE22D595D400662010 /* Assets.xcassets */; };
+		98D31F812A251AE200916A59 /* ViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D31F802A251AE200916A59 /* ViewControllerTests.swift */; };
 		98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98DC785622D5964700F72DBA /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		98DC785722D5964A00F72DBA /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
@@ -313,6 +314,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				98D31F802A251AE200916A59 /* ViewControllerTests.swift */,
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -861,6 +863,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98D31F812A251AE200916A59 /* ViewControllerTests.swift in Sources */,
 				70BAA9C31F276B6F004CD577 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1197,6 +1200,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 24D07A369532A7136ACE3C45 /* Pods-Forescoop_Tests.debug.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1219,6 +1223,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9B797BC5480538A94EFE2069 /* Pods-Forescoop_Tests.release.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
