@@ -11,19 +11,36 @@ import XCTest
 
 final class ViewControllerTests: XCTestCase {
 
+    private var vc: ViewController!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        vc = sb.instantiateViewController(identifier: "ViewController") { coder in
+            ViewController(coder: coder)
+        }
+        vc.loadViewIfNeeded()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        vc = nil
     }
 
+    // Test init
+    // Test viewDidLoad
+    // - default / initial values
+    // - on success / on failure?
+    
     func testInitVC() throws {
-        let sb = UIStoryboard(name: "Main", bundle: nil)
-        let vc = sb.instantiateViewController(identifier: "ViewController") { coder in
-            ViewController(coder: coder)
-        }
+        XCTAssertNotNil(vc)
+        XCTAssertTrue(vc.isViewLoaded)
+        XCTAssertEqual(vc.loginButton.title(for: .normal), "Login")
+        XCTAssertTrue(vc.hourLabel.text?.isEmpty == false)
     }
+    
+    // How to test the observer, KWDForecastUpdated
+    // Where spotForecast is updated?
+    // Was the UI upadated?
+    // Does it fire a network request?
+    
 
 }
