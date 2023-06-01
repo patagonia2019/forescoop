@@ -99,7 +99,7 @@ public class SpotInfo: Spot {
         if let tides = tides {
             aux += "tides \(tides).\n"
         }
-        aux += "models \(models.printDescription()), "
+        aux += "models \(models.description), "
         return aux
     }
     

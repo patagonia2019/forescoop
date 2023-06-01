@@ -91,7 +91,7 @@ public class Model: Object, Mappable {
             aux += "update_time \(update_time)\n"
         }
         if show_vars.count > 0 {
-            aux += "show_vars \(show_vars.printDescription())\n"
+            aux += "show_vars \(show_vars.description)\n"
         }
         return aux
     }

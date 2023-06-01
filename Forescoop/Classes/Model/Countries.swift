@@ -39,20 +39,10 @@ public class Countries: Object, Mappable {
     }
 
     public func mapping(map: [String:Any]) {
-        for json in map.JSON() {
-            let jsonKV = ["id": json.key, "name": json.value]
-            if let country = Mapper<Country>().map(JSON: jsonKV) {
-                countries.append(country)
-            }
-        }
+        countries = map.JSON().compactMap({Mapper<Country>().map(JSON: ["id": $0.key, "name": $0.value])})
     }
     
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        for country in countries {
-            aux += "\(country.description)\n"
-        }
-        aux += "\n"
-        return aux
+        "\(type(of:self)): " + countries.compactMap({$0.description}).joined(separator: "\n") + "\n"
     }
 }

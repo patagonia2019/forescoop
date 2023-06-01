@@ -64,38 +64,8 @@ open class DateTransform {
     }
 }
 
-extension Array where Iterator.Element == String {
-    public func printDescription() -> String {
-        var aux : String = "\(type(of:self)): "
-        
-        for i in 0..<count {
-            let r = self[i]
-            aux += "\(r), "
-        }
-        return aux
+extension Array {
+    public var description: String {
+        "\(type(of:self)): " + compactMap({"\($0)"}).joined(separator: ", ")
     }
 }
-extension Array where Iterator.Element == Int {
-    public func printDescription() -> String {
-        var aux : String = "\(type(of:self)): "
-        
-        for i in 0..<count {
-            let r = self[i]
-            aux += "\(r), "
-        }
-        return aux
-    }
-}
-extension Array where Iterator.Element == Float {
-    public func printDescription() -> String {
-        var aux : String = "\(type(of:self)): "
-        
-        for i in 0..<count {
-            let r = self[i]
-            aux += "\(r), "
-        }
-        return aux
-    }
-}
-
-
