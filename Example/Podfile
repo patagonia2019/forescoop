@@ -2,35 +2,35 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 use_frameworks!
 
-def windguru
-  pod 'JFWindguru', :path => '../',
+def forescoop
+  pod 'Forescoop', :path => '../',
   :testspecs => ['Tests']
 end
 
-target 'JFWindguru_Example' do
+target 'Forescoop_Example' do
   platform :ios, '12.0'
-  windguru
+  forescoop
 
-  target 'JFWindguru_Tests' do
+  target 'Forescoop_Tests' do
     inherit! :search_paths
   end
 end
 
-target 'JFWindguru Extension' do
+target 'Forescoop Extension' do
   platform :watchos, '5.2'
-  windguru
+  forescoop
 end
 
 
-target 'JFWindguruTVOS' do
+target 'ForescoopTVOS' do
   platform :tvos, '12.0'
-  windguru
+  forescoop
 end
 
 
-target 'JFWindguruMacOS' do
+target 'ForescoopMacOS' do
   platform :macos, '10.14'
-  windguru
+  forescoop
 end
 
 

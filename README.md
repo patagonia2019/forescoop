@@ -1,9 +1,9 @@
-# JFWindguru
+# Forescoop
 
-[![CI Status](http://img.shields.io/travis/southfox/JFWindguru.svg?style=flat)](https://travis-ci.org/southfox/JFWindguru)
-[![Version](https://img.shields.io/cocoapods/v/JFWindguru.svg?style=flat)](http://cocoapods.org/pods/JFWindguru)
-[![License](https://img.shields.io/cocoapods/l/JFWindguru.svg?style=flat)](http://cocoapods.org/pods/JFWindguru)
-[![Platform](https://img.shields.io/cocoapods/p/JFWindguru.svg?style=flat)](http://cocoapods.org/pods/JFWindguru)
+[![CI Status](http://img.shields.io/travis/southfox/Forescoop.svg?style=flat)](https://travis-ci.org/southfox/Forescoop)
+[![Version](https://img.shields.io/cocoapods/v/Forescoop.svg?style=flat)](http://cocoapods.org/pods/Forescoop)
+[![License](https://img.shields.io/cocoapods/l/Forescoop.svg?style=flat)](http://cocoapods.org/pods/Forescoop)
+[![Platform](https://img.shields.io/cocoapods/p/Forescoop.svg?style=flat)](http://cocoapods.org/pods/Forescoop)
 
 ## Example
 
@@ -13,11 +13,11 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Installation
 
-JFWindguru is available through [CocoaPods](http://cocoapods.org). To install
+Forescoop is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "JFWindguru"
+pod "Forescoop"
 ```
 
 ## Author
@@ -26,4 +26,4 @@ southfox, javier.fuchs@gmail.com
 
 ## License
 
-JFWindguru is available under the MIT license. See the LICENSE file for more info.
+Forescoop is available under the MIT license. See the LICENSE file for more info.

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="13196" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="bB8-Cw-md0">
+    <device id="watch38" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="13051"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="ArialHB.ttc">
+            <string>ArialHebrew-Bold</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Interface Controller-->
+        <scene sceneID="svS-mz-Pub">
+            <objects>
+                <controller id="bB8-Cw-md0" customClass="InterfaceController" customModule="ForescoopWatch" customModuleProvider="target">
+                    <items>
+                        <activity alignment="center" verticalAlignment="center" hidden="YES" id="Ma0-0I-Zrk"/>
+                        <group width="136" height="28.5" alignment="left" verticalAlignment="bottom" id="fBa-fh-nwY">
+                            <items>
+                                <label width="127" height="30" alignment="center" text="-18°C" textAlignment="center" id="3LH-Lw-XBz">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" weight="heavy" pointSize="29"/>
+                                </label>
+                            </items>
+                        </group>
+                        <group width="1" alignment="left" id="ufh-JE-iJV">
+                            <items>
+                                <label width="136" height="30" alignment="right" text="18 hs" textAlignment="center" id="yh1-a9-4qo">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                </label>
+                            </items>
+                        </group>
+                        <group width="134" height="59" alignment="center" verticalAlignment="center" id="Qbu-Gd-nxB">
+                            <items>
+                                <label alignment="left" text="☀️" textAlignment="center" minimumScaleFactor="0.29999999999999999" id="hKI-1K-amS">
+                                    <fontDescription key="font" name="ArialHebrew-Bold" family="Arial Hebrew" pointSize="37"/>
+                                </label>
+                                <group width="35" alignment="left" layout="vertical" id="LhY-Vf-fNm">
+                                    <items>
+                                        <label width="33" height="34" alignment="left" text="↓" textAlignment="center" id="YFf-Ch-6ji">
+                                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="font" name="ArialHebrew-Bold" family="Arial Hebrew" pointSize="30"/>
+                                        </label>
+                                        <label width="27" height="21" alignment="left" text="N" textAlignment="center" id="0SL-2U-mzi">
+                                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="font" name="ArialHebrew-Bold" family="Arial Hebrew" pointSize="13"/>
+                                        </label>
+                                    </items>
+                                    <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                                </group>
+                                <label width="48.5" height="48" alignment="right" verticalAlignment="center" text="1.9 knots" textAlignment="center" numberOfLines="2" minimumScaleFactor="0.5" id="NEr-qt-Qc6">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                </label>
+                            </items>
+                        </group>
+                        <group width="1" height="20" alignment="left" id="3hA-dO-2lF">
+                            <items>
+                                <label width="1" height="30" alignment="left" text="Bariloche" textAlignment="center" minimumScaleFactor="0.5" id="al0-Kv-Mqs">
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                </label>
+                            </items>
+                        </group>
+                    </items>
+                    <color key="backgroundColor" red="0.37425214029999998" green="0.42508772379999998" blue="0.6808270528" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <connections>
+                        <outlet property="bottomGroup" destination="fBa-fh-nwY" id="upl-hw-nY2"/>
+                        <outlet property="hourLabel" destination="yh1-a9-4qo" id="rxw-oQ-2BR"/>
+                        <outlet property="locationLabel" destination="al0-Kv-Mqs" id="rei-j5-U6n"/>
+                        <outlet property="middleGroup" destination="Qbu-Gd-nxB" id="nBh-lQ-SCz"/>
+                        <outlet property="spinner" destination="Ma0-0I-Zrk" id="e5z-vV-tdK"/>
+                        <outlet property="temperatureLabel" destination="3LH-Lw-XBz" id="JgY-1E-QnT"/>
+                        <outlet property="toolbarGroup" destination="ufh-JE-iJV" id="nYr-KQ-OCD"/>
+                        <outlet property="topGroup" destination="3hA-dO-2lF" id="Syj-hx-SBB"/>
+                        <outlet property="weatherLabel" destination="hKI-1K-amS" id="VfT-Wb-fCA"/>
+                        <outlet property="windDirectionLabel" destination="YFf-Ch-6ji" id="ZBU-1L-4aR"/>
+                        <outlet property="windDirectionNameLabel" destination="0SL-2U-mzi" id="lHl-Sr-qG5"/>
+                        <outlet property="windSpeedLabel" destination="NEr-qt-Qc6" id="Kag-oR-ZxC"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="220" y="345"/>
+        </scene>
+        <!--Static Notification Interface Controller-->
+        <scene sceneID="AEw-b0-oYE">
+            <objects>
+                <notificationController id="YCC-NB-fut">
+                    <items>
+                        <label alignment="left" text="Alert Label" id="IdU-wH-bcW"/>
+                    </items>
+                    <notificationCategory key="notificationCategory" identifier="myCategory" id="JfB-70-Muf"/>
+                    <connections>
+                        <outlet property="notificationAlertLabel" destination="IdU-wH-bcW" id="JKC-fr-R95"/>
+                        <segue destination="4sK-HA-Art" kind="relationship" relationship="dynamicNotificationInterface" id="kXh-Jw-8B1"/>
+                    </connections>
+                </notificationController>
+            </objects>
+            <point key="canvasLocation" x="220" y="643"/>
+        </scene>
+        <!--Notification Controller-->
+        <scene sceneID="ZPc-GJ-vnh">
+            <objects>
+                <controller id="4sK-HA-Art" customClass="NotificationController" customModule="Forescoop" customModuleProvider="target"/>
+            </objects>
+            <point key="canvasLocation" x="468" y="643"/>
+        </scene>
+    </scenes>
+</document>
