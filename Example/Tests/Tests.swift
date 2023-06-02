@@ -1,6 +1,6 @@
 import UIKit
 import XCTest
-import JFWindguru
+import Forescoop
 
 class Tests: XCTestCase {
     
