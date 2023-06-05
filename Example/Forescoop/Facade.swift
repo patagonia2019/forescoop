@@ -29,36 +29,35 @@ public class Facade: NSObject {
     //
     // Singleton
     //
-    public static let instance = Facade()
+    static var instance: Facade? {
+        get {
+            if kUseFacade == true {
+                return Facade()
+            }
+            let tmpInstance: Facade? = nil
+            return tmpInstance
+        }
+    }
     
-    
-    //
-    // start service manager
-    //
-    public func start()
-    {
+    /// start service manager
+    func start() {
         startForecastServices()
     }
     
-    //
-    // stop service manager
-    //
-    public func stop()
-    {
+    /// stop service manager
+    func stop() {
         stopForecastServices()
     }
     
-    
-    public func getCurrentLocation() -> String?
-    {
-        return currentLocality
+    /// current locality
+    var currentLocation: String? {
+        currentLocality
     }
-    
-    //
-    // Return the absolute file path of the group
-    //
-    private func absoluteFilePath() -> URL?
-    {
+}
+
+private extension Facade {
+    /// Return the absolute file path of the group
+    var absoluteFilePath: URL? {
         #if false
             guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: kWDGroup) else {
                 return nil
@@ -72,12 +71,9 @@ public class Facade: NSObject {
         return filePath
     }
     
-    //
-    // Write the file
-    //
-    private func writeNote(note: String, location: [String: String?])
-    {
-        guard let filePath = absoluteFilePath() else {
+    /// Write the file
+    func writeNote(note: String, location: [String: String?]) {
+        guard let filePath = absoluteFilePath else {
             return
         }
         let dict: NSDictionary = [note : location]
@@ -86,26 +82,21 @@ public class Facade: NSObject {
     }
     
     
-    //
-    // Forecast group of code
-    //
-    private func startForecastServices()
-    {
-        let locality = "Cupertino"
-        let country = "US"
+    /// Forecast group of code
+    func startForecastServices() {
+        let locality = "Bariloche"
+        let country = "AR"
         currentLocality = locality
         currentCountry = country
         
         updateForecast()
     }
     
-    private func stopForecastServices()
-    {
+    func stopForecastServices() {
     }
     
-    private func updateForecast()
-    {
-        guard let location = getCurrentLocation() else {
+    func updateForecast() {
+        guard let location = currentLocation else {
             return
         }
         ForecastWindguruService.instance.searchSpots(byLocation: location, failure: { (error) in
@@ -124,6 +115,4 @@ public class Facade: NSObject {
             })
        }
     }
-
-
 }

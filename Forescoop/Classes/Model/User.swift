@@ -199,7 +199,7 @@ public class User: Object, Mappable {
         aux += "view_hours_from \(view_hours_from), "
         aux += "view_hours_to \(view_hours_to), "
         aux += "temp_limit \(temp_limit), "
-        aux += "wind_rating_limits \(wind_rating_limits.printDescription())\n"
+        aux += "wind_rating_limits \(wind_rating_limits.description)\n"
 
         aux += "colors_wind: "
         for c in colors_wind { aux += c.description + "; " }

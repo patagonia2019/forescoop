@@ -43,7 +43,7 @@ public class SpotResult: Object, Mappable {
     //
     // spots: is an array of SpotOwner objects
     //
-    var spots = Array<SpotOwner>()
+    var spots: [SpotOwner]?
  
     required public convenience init(map: [String:Any]) {
         self.init()
@@ -52,37 +52,26 @@ public class SpotResult: Object, Mappable {
     
     public func mapping(map: [String:Any]) {
         count = map["count"] as? Int ?? 0
-        if let dict = map["spots"] as? [[String:Any]] {
-            for so in dict {
-                if let spotOwner = SpotOwner.init(map: so) {
-                    spots.append(spotOwner)
-                }
-            }
-        }
+        spots = (map["spots"] as? [[String:Any]])?.compactMap({SpotOwner(map: $0)})
     }
 
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += "\n\(count) spots.\n"
-        for spot in spots {
-            aux += "\(spot.description)\n"
-        }
-        return aux
+        "\(type(of:self)): " + "\n\(count) spots.\n" + (spots != nil ? spots!.compactMap({"\($0)"}).joined(separator: ", ") : "")
     }
     
 }
 
 public extension SpotResult {
     var numberOfSpots: Int {
-        spots.count
+        spots?.count ?? 0
     }
 
     var firstSpot: SpotOwner? {
-        spots.first
+        spots?.first
     }
 
     var lastSpot: SpotOwner? {
-        spots.last
+        spots?.last
     }
     
     var asSpotName: String {

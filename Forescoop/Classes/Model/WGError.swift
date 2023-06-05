@@ -157,3 +157,25 @@ extension WGError : Error {
     
 }
 
+public enum CustomError: Error {
+    // Throw when an issue with the parsing
+    case invalidParsing
+
+    // Throw in all other cases
+    case unexpected(code: Int?, message: String?)
+}
+
+extension CustomError: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .invalidParsing:
+            return "The pasing is not valid."
+        case .unexpected(let code, let message):
+            if let code = code, let message = message {
+                return "[\(code): \(message)]."
+            } else {
+                return "An unexpected error occurred"
+            }
+        }
+    }
+}

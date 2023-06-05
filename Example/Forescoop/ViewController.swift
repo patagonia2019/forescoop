@@ -33,39 +33,39 @@ class ViewController: UIViewController {
     
     var user: User?
     
-    var spotForecast: SpotForecast!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
         observeNotification()
-        
         hideWeatherInfo()
-        
-        if spotForecast != nil
-        {
-            updateForecastView()
-        }
-        
     }
+    
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
         unobserveNotification()
+    }
         
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let vc = segue.destination as? ApiListViewController,
+              let user = user else { return }
+        
+        vc.title = "Logged in as:" + user.name
+        vc.user = user
+        vc.password = passwordTextField?.text
     }
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+}
+
+private extension ViewController {
     
-    private func updateForecastView()
-    {
+    func updateForecastUsingFacade(spotForecast: SpotForecast?) {
         guard let spotForecast = spotForecast else {
             return
         }
+        showForecastView(spotForecast: spotForecast)
+    }
+    
+    func showForecastView(spotForecast: SpotForecast?) {
+        guard let spotForecast = spotForecast else { return }
         weatherLabel.text = spotForecast.weatherInfo
         windDirectionLabel.text = spotForecast.asCurrentWindDirectionName
         windDirectionArrowLabel.text = "↓"
@@ -78,32 +78,30 @@ class ViewController: UIViewController {
         showWeatherInfo()
     }
 
-
-    private func observeNotification()
-    {
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main) {
-            [weak self] (note) in
-            if let object: SpotForecast = note.object as? SpotForecast {
-                self?.spotForecast = object
-                self?.updateForecastView()
-            }}
+    func observeNotification() {
+        if kUseFacade {
+            NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main) {
+                [weak self] (note) in
+                if let object: SpotForecast = note.object as? SpotForecast {
+                    self?.updateForecastUsingFacade(spotForecast: object)
+                }}
+        }
     }
     
-    private func unobserveNotification()
-    {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil)
-        
+    func unobserveNotification() {
+        if kUseFacade {
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil)
+        }
     }
     
-    private func hideWeatherInfo()
-    {
+    func hideWeatherInfo() {
         toolbarView.alpha = 0
         topView.alpha = 0
         middleView.alpha = 0
         bottomView.alpha = 0
     }
     
-    private func showWeatherInfo()
+    func showWeatherInfo()
     {
         UIView.animate(withDuration: kWDAnimationDuration) { [weak self] () -> Void in
             self?.toolbarView.alpha = 1
@@ -134,7 +132,7 @@ class ViewController: UIViewController {
             self?.showError(title: "Error on login", error: error)
         }
         
-        let block : ((UIAlertAction) -> Void)? = { [weak self]  (action) in
+        let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
             let username = alert.textFields?[0] ?? nil
             let password = alert.textFields?[1] ?? nil
             ForecastWindguruService.instance.login(withUsername: username?.text,
@@ -173,13 +171,4 @@ class ViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? ApiListViewController {
-            if let user = user {
-                vc.title = "Logged in as:" + user.name
-                vc.user = user
-                vc.password = passwordTextField?.text
-            }
-        }
-    }
 }

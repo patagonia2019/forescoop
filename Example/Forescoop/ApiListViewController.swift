@@ -18,24 +18,24 @@ class ApiListViewController: UIViewController {
     var info = String()
 
     let anonymBasedServices = ["user",
-                             "geo_regions",
-                             "countries",
-                             "regions",
-                             "spot",
-                             "spots",
-                             "search_spots",
-                             "model_info",
-                             "models_latlon",
-                             "forecast",
-                             "wforecast"]
-
+                               "geo_regions",
+                               "countries",
+                               "regions",
+                               "spot",
+                               "spots",
+                               "search_spots",
+                               "model_info",
+                               "models_latlon",
+                               "forecast",
+                               "wforecast"]
+    
     let userBasedServices = ["add_f_spot",
-                            "remove_f_spot",
-                            "f_spots",
-                            "c_spots",
-                            "set_spots",
-                            "sets",
-//                            "wforecast_latlon"
+                             "remove_f_spot",
+                             "f_spots",
+                             "c_spots",
+                             "set_spots",
+                             "sets",
+                             // "wforecast_latlon"
                             ]
     
     override func viewWillAppear(_ animated: Bool) {
