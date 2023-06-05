@@ -29,8 +29,15 @@ public class Facade: NSObject {
     //
     // Singleton
     //
-    static let instance = Facade()
-    
+    static var instance: Facade? {
+        get {
+            if kUseFacade == true {
+                return Facade()
+            }
+            let tmpInstance: Facade? = nil
+            return tmpInstance
+        }
+    }
     
     /// start service manager
     func start() {

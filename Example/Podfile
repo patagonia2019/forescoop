@@ -2,14 +2,16 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 use_frameworks!
 
-def forescoop
+project 'Forescoop.xcodeproj'
+
+def sharedLib
   pod 'Forescoop', :path => '../',
   :testspecs => ['Tests']
 end
 
 target 'Forescoop_Example' do
   platform :ios, '13.0'
-  windguru
+  sharedLib
 
   target 'Forescoop_Tests' do
     inherit! :search_paths
@@ -17,20 +19,20 @@ target 'Forescoop_Example' do
 end
 
 target 'Forescoop Extension' do
-  platform :watchos, '5.2'
-  forescoop
+  platform :watchos, '6.0'
+  sharedLib
 end
 
 
 target 'ForescoopTVOS' do
   platform :tvos, '12.0'
-  forescoop
+  sharedLib
 end
 
 
 target 'ForescoopMacOS' do
-  platform :macos, '10.14'
-  forescoop
+  platform :macos, '12.0'
+  sharedLib
 end
 
 

@@ -33,33 +33,18 @@ class ViewController: UIViewController {
     
     var user: User?
     
-    var spotForecast: SpotForecast!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
         observeNotification()
-        
         hideWeatherInfo()
-        
-        if spotForecast != nil {
-            updateForecastView()
-        }
-        
     }
+    
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
         unobserveNotification()
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+        
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let vc = segue.destination as? ApiListViewController,
               let user = user else { return }
@@ -71,10 +56,16 @@ class ViewController: UIViewController {
 }
 
 private extension ViewController {
-    func updateForecastView() {
+    
+    func updateForecastUsingFacade(spotForecast: SpotForecast?) {
         guard let spotForecast = spotForecast else {
             return
         }
+        showForecastView(spotForecast: spotForecast)
+    }
+    
+    func showForecastView(spotForecast: SpotForecast?) {
+        guard let spotForecast = spotForecast else { return }
         weatherLabel.text = spotForecast.weatherInfo
         windDirectionLabel.text = spotForecast.asCurrentWindDirectionName
         windDirectionArrowLabel.text = "↓"
@@ -87,18 +78,20 @@ private extension ViewController {
         showWeatherInfo()
     }
 
-
     func observeNotification() {
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main) {
-            [weak self] (note) in
-            if let object: SpotForecast = note.object as? SpotForecast {
-                self?.spotForecast = object
-                self?.updateForecastView()
-            }}
+        if kUseFacade {
+            NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main) {
+                [weak self] (note) in
+                if let object: SpotForecast = note.object as? SpotForecast {
+                    self?.updateForecastUsingFacade(spotForecast: object)
+                }}
+        }
     }
     
     func unobserveNotification() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil)
+        if kUseFacade {
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil)
+        }
     }
     
     func hideWeatherInfo() {
