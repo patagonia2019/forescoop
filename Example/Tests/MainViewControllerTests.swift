@@ -1,5 +1,5 @@
 //
-//  ViewControllerTests.swift
+//  MainViewControllerTests.swift
 //  JFWindguru_Tests
 //
 //  Created by fox on 29/05/2023.
@@ -7,16 +7,16 @@
 //
 
 import XCTest
-@testable import JFWindguru_Example
+@testable import Forescoop_Example
 
-final class ViewControllerTests: XCTestCase {
+final class MainViewControllerTests: XCTestCase {
 
-    private var vc: ViewController!
+    private var vc: MainViewController!
     
     override func setUpWithError() throws {
         let sb = UIStoryboard(name: "Main", bundle: nil)
-        vc = sb.instantiateViewController(identifier: "ViewController") { coder in
-            ViewController(coder: coder)
+        vc = sb.instantiateViewController(identifier: "MainViewController") { coder in
+            MainViewController(coder: coder)
         }
         vc.loadViewIfNeeded()
     }
