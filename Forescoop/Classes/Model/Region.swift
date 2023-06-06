@@ -22,26 +22,20 @@ public class Region: Object, Mappable {
     var id: String? = nil
     var name: String? = nil
     
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         id = map["id"] as? String ?? nil
         name = map["name"] as? String  ?? nil
     }
 
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        
-        if let id = id {
-            aux += "id: \(id), "
-        }
-        if let name = name {
-            aux += "name: \(name)"
-        }
-        return aux
+        ["\(type(of:self)): ", id, name].compactMap {$0}.joined(separator: ", ")
     }
     
 }

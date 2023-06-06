@@ -122,12 +122,14 @@ public class User: Object, Mappable {
     var colors_htsgw = ListColor()
     var colors_perpw = ListColor()
 
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         var colors = Dictionary<String, [[Float]]>()
 
         id_user = map["id_user"] as? Int ?? 0

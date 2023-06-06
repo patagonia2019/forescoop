@@ -29,29 +29,21 @@ public class Spot: Object, Mappable {
     var spotname: String? = nil
     var country: String? = nil
 
-    required public convenience init?(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         id_spot = map["id_spot"] as? String ?? nil
         spotname = map["spotname"] as? String ?? nil
         country = map["country"] as? String ?? nil
     }
 
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        if let id_spot = id_spot {
-            aux += "Spot # \(id_spot), "
-        }
-        if let spotname = spotname {
-            aux += "name \(spotname), "
-        }
-        if let country = country {
-            aux += "country \(country).\n"
-        }
-        return aux
+        ["\(type(of:self)): ", id_spot, spotname, country].compactMap {$0}.joined(separator: ", ")
     }
 }
 

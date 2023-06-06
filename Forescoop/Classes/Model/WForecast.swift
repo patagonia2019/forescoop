@@ -86,59 +86,62 @@ public class WForecast: Object, Mappable {
     var update_next: String? = nil
     var initstamp = 0  // initstamp
 
-    required public convenience init?(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
-
-            TMP = map["TMP"] as? [Float] ?? []
-            TCDC = map["TCDC"] as? [Int] ?? []
-            HCDC = map["HCDC"] as? [Int] ?? []
-            MCDC = map["MCDC"] as? [Int] ?? []
-            LCDC = map["LCDC"] as? [Int] ?? []
-            RH = map["RH"] as? [Int] ?? []
-            GUST = map["GUST"] as? [Float] ?? []
-            SLP = map["SLP"] as? [Int] ?? []
-            FLHGT = map["FLHGT"] as? [Int] ?? []
-            APCP = map["APCP"] as? [Int] ?? []
-            WINDSPD = map["WINDSPD"] as? [Float] ?? []
-            WINDDIR = map["WINDDIR"] as? [Int] ?? []
-            SMERN = map["SMERN"] as? [Int] ?? []
-            SMER = map["SMER"] as? [Int] ?? []
-            TMPE = map["TMPE"] as? [Float] ?? []
-            PCPT = map["PCPT"] as? [Int] ?? []
-            HTSGW = map["HTSGW"] as? [Float] ?? []
-            WVHGT = map["WVHGT"] as? [Float] ?? []
-            WVPER = map["WVPER"] as? [Float] ?? []
-            WVDIR = map["WVDIR"] as? [Float] ?? []
-            SWELL1 = map["SWELL1"] as? [Float] ?? []
-            SWPER1 = map["SWPER1"] as? [Float] ?? []
-            SWDIR1 = map["SWDIR1"] as? [Float] ?? []
-            SWELL2 = map["SWELL2"] as? [Float] ?? []
-            SWPER2 = map["SWPER2"] as? [Float] ?? []
-            SWDIR2 = map["SWDIR2"] as? [Float] ?? []
-            PERPW = map["PERPW"] as? [Float] ?? []
-            DIRPW = map["DIRPW"] as? [Float] ?? []
-            hr_weekday = map["hr_weekday"] as? [Int] ?? []
-            hr_h = map["hr_h"] as? [String] ?? []
-            hr_d = map["hr_d"] as? [String] ?? []
-            hours = map["hours"] as? [Int] ?? []
-            img_param = map["img_param"] as? [String] ?? []
-            img_var_map = map["img_var_map"] as? [String] ?? []
-            initDate = map["initdate"] as? String
-            init_d = map["init_d"] as? String
-            init_dm = map["init_dm"] as? String
-            init_h = map["init_h"] as? String
-            initstr = map["initstr"] as? String
-            model_name = map["model_name"] as? String
-            model_longname = map["model_longname"] as? String
-            id_model = map["id_model"] as? String
-            update_last = map["update_last"] as? String
-            update_next = map["update_next"] as? String
-            initstamp = map["initstamp"] as? Int ?? 0
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+        
+        
+        TMP = map["TMP"] as? [Float] ?? []
+        TCDC = map["TCDC"] as? [Int] ?? []
+        HCDC = map["HCDC"] as? [Int] ?? []
+        MCDC = map["MCDC"] as? [Int] ?? []
+        LCDC = map["LCDC"] as? [Int] ?? []
+        RH = map["RH"] as? [Int] ?? []
+        GUST = map["GUST"] as? [Float] ?? []
+        SLP = map["SLP"] as? [Int] ?? []
+        FLHGT = map["FLHGT"] as? [Int] ?? []
+        APCP = map["APCP"] as? [Int] ?? []
+        WINDSPD = map["WINDSPD"] as? [Float] ?? []
+        WINDDIR = map["WINDDIR"] as? [Int] ?? []
+        SMERN = map["SMERN"] as? [Int] ?? []
+        SMER = map["SMER"] as? [Int] ?? []
+        TMPE = map["TMPE"] as? [Float] ?? []
+        PCPT = map["PCPT"] as? [Int] ?? []
+        HTSGW = map["HTSGW"] as? [Float] ?? []
+        WVHGT = map["WVHGT"] as? [Float] ?? []
+        WVPER = map["WVPER"] as? [Float] ?? []
+        WVDIR = map["WVDIR"] as? [Float] ?? []
+        SWELL1 = map["SWELL1"] as? [Float] ?? []
+        SWPER1 = map["SWPER1"] as? [Float] ?? []
+        SWDIR1 = map["SWDIR1"] as? [Float] ?? []
+        SWELL2 = map["SWELL2"] as? [Float] ?? []
+        SWPER2 = map["SWPER2"] as? [Float] ?? []
+        SWDIR2 = map["SWDIR2"] as? [Float] ?? []
+        PERPW = map["PERPW"] as? [Float] ?? []
+        DIRPW = map["DIRPW"] as? [Float] ?? []
+        hr_weekday = map["hr_weekday"] as? [Int] ?? []
+        hr_h = map["hr_h"] as? [String] ?? []
+        hr_d = map["hr_d"] as? [String] ?? []
+        hours = map["hours"] as? [Int] ?? []
+        img_param = map["img_param"] as? [String] ?? []
+        img_var_map = map["img_var_map"] as? [String] ?? []
+        initDate = map["initdate"] as? String
+        init_d = map["init_d"] as? String
+        init_dm = map["init_dm"] as? String
+        init_h = map["init_h"] as? String
+        initstr = map["initstr"] as? String
+        model_name = map["model_name"] as? String
+        model_longname = map["model_longname"] as? String
+        id_model = map["id_model"] as? String
+        update_last = map["update_last"] as? String
+        update_next = map["update_next"] as? String
+        initstamp = map["initstamp"] as? Int ?? 0
     }
+    
     public var description : String {
         var aux : String = "\(type(of:self)): "
         aux += "initstamp: \(initstamp)\n"

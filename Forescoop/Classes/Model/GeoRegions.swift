@@ -29,32 +29,32 @@ import Foundation
 
 public class GeoRegions: Object, Mappable {
 
-    typealias ListGeoRegion    = Array<GeoRegion>
+    typealias ListGeoRegion = Array<GeoRegion>
     
     var geoRegions = ListGeoRegion()
-
     
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         for json in map.JSON() {
-            let tmpDictionary = ["id": json.key, "name": json.value]
-            if let georegion = Mapper<GeoRegion>().map(JSON: tmpDictionary) {
+            if let georegion = Mapper<GeoRegion>().map(JSON: ["id": json.key, "name": json.value]) {
                 geoRegions.append(georegion)
             }
         }
     }    
 
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        for region in geoRegions {
-            aux += "\(region.description)\n"
-        }
-        aux += "\n"
-        return aux
+        [
+            "\(type(of:self)) \n",
+            geoRegions.compactMap{ $0.description }.joined(separator: "\n")
+        ]
+            .compactMap{$0}
+            .joined(separator: "\n")
     }
     
 }

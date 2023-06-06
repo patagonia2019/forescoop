@@ -21,22 +21,15 @@ public class Elapse: Object, Mappable {
         end = Time(elapseEnd)
     }
     
-    required convenience public init?(map: [String:Any]) {
+    required convenience public init?(map: [String:Any]?) {
         self.init()
     }
 
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
     }
 
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        if let start = start {
-            aux += "start \(start), "
-        }
-        if let end = end {
-            aux += "end \(end)."
-        }
-        return aux
+        ["\(type(of:self)): ", start?.description, end?.description].compactMap {$0}.joined(separator: ", ")
     }
 }
 
@@ -56,17 +49,11 @@ extension Elapse {
         return true
     }
     
-    public func starting() -> String? {
-        if let start = start {
-            return start.description
-        }
-        return nil
+    public var starting: String? {
+        start?.description
     }
 
-    public func ending() -> String? {
-        if let end = end {
-            return end.description
-        }
-        return nil
+    public var ending: String? {
+        end?.description
     }
 }

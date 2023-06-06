@@ -31,11 +31,8 @@ public class Facade: NSObject {
     //
     static var instance: Facade? {
         get {
-            if kUseFacade == true {
-                return Facade()
-            }
-            let tmpInstance: Facade? = nil
-            return tmpInstance
+            let facade: Facade? = kUseFacade == true ? Facade() : nil
+            return facade
         }
     }
     

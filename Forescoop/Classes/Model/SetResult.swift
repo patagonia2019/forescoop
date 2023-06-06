@@ -31,12 +31,14 @@ public class SetResult: Object, Mappable {
 
     var sets = Array<SetInfo>()
     
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         count = map["count"] as? Int ?? 0
         guard let dict = map["sets"] as? [String:Any] else { return }
         for (k,v) in dict {
@@ -48,12 +50,7 @@ public class SetResult: Object, Mappable {
     }
 
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += "\(count) sets, "
-        for setInfo in sets {
-            aux += "\(setInfo.description)\n"
-        }
-        return aux
+        "\(type(of:self)): " + sets.compactMap{$0.description}.joined(separator: "\n")
     }
 
 }

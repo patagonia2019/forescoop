@@ -24,10 +24,10 @@ class Tests: XCTestCase {
 }
 
 private extension Tests {
-    func makeVC() -> ViewController? {
+    func makeVC() -> MainViewController? {
         let sb = UIStoryboard(name: "Main", bundle: nil)
-        let vc = sb.instantiateViewController(identifier: "ViewController") { coder in
-            ViewController(coder: coder)
+        let vc = sb.instantiateViewController(identifier: "MainViewController") { coder in
+            MainViewController(coder: coder)
         }
         return vc
     }

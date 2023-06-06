@@ -31,4 +31,4 @@ let kWDMinimumDistanceFilterInMeters : Double = 60.0 // update every 200ft
 
 let kWDAnimationDuration: Double = 2.0
 
-let kUseFacade: Bool = true
+let kUseFacade: Bool = false

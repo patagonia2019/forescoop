@@ -27,9 +27,7 @@ public struct Color {
     }
     
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += "(\(alpha),\(red),\(green),\(blue))"
-        return aux
+        "\(type(of:self)): (\(alpha),\(red),\(green),\(blue))"
     }
     
 }

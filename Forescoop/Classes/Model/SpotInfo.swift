@@ -52,12 +52,14 @@ public class SpotInfo: Spot {
     var models = [String]()
     var tides: String? = nil
 
-    required public convenience init?(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]) {
+    public override func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         super.mapping(map: map)
         countryId = map["countryId"] as? Int ?? 0
         latitude = map["latitude"] as? Double ?? 0.0
@@ -77,30 +79,25 @@ public class SpotInfo: Spot {
     }
  
     override public var description : String {
-        var aux : String = super.description
-        aux += "\(type(of:self)): "
-        aux += "country # \(countryId), "
-        aux += "latitude \(latitude), "
-        aux += "longitude \(longitude), "
-        aux += "altitude # \(altitude), "
-        if let timezone = timezone {
-            aux += "timezone \(timezone), "
-        }
-        aux += "gmtHourOffset \(gmtHourOffset), "
-        if let sunrise = sunrise {
-            aux += "sunrise \(sunrise), "
-        }
-        if let sunset = sunset {
-            aux += "sunset \(sunset)\n"
-        }
-        if let elapse = elapse {
-            aux += "elapse \(elapse)\n"
-        }
-        if let tides = tides {
-            aux += "tides \(tides).\n"
-        }
-        aux += "models \(models.description), "
-        return aux
+        [
+            super.description,
+            "\n\(type(of:self))\n",
+            [
+                "country # \(countryId)",
+                "latitude \(latitude)",
+                "longitude \(longitude)",
+                "altitude # \(altitude)"
+            ].joined(separator: ", "),
+            [
+                timezone,
+                "gmtHourOffset: \(gmtHourOffset)",
+                sunrise,
+                sunset,
+                elapse?.description,
+                tides,
+                models.joined(separator: ", ")
+            ].compactMap {$0}.joined(separator: "\n")
+        ].joined(separator: "\n")
     }
     
     

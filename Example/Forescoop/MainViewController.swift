@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MainViewController.swift
 //  Forescoop
 //
 //  Created by Javier Fuchs on 07/06/2017.
@@ -9,7 +9,7 @@
 import UIKit
 import Forescoop
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     
     @IBOutlet weak var toolbarView: UIView!
     @IBOutlet weak var horizontalSlider: UISlider!
@@ -55,7 +55,7 @@ class ViewController: UIViewController {
     }
 }
 
-private extension ViewController {
+private extension MainViewController {
     
     func updateForecastUsingFacade(spotForecast: SpotForecast?) {
         guard let spotForecast = spotForecast else {
@@ -85,6 +85,11 @@ private extension ViewController {
                 if let object: SpotForecast = note.object as? SpotForecast {
                     self?.updateForecastUsingFacade(spotForecast: object)
                 }}
+        } else {
+            Task {
+                let object = try await updateAWForecast()
+                self.updateForecastUsingFacade(spotForecast: object)
+            }
         }
     }
     
@@ -169,6 +174,13 @@ private extension ViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    func updateAWForecast() async throws -> SpotForecast? {
+        guard let spotId = try? await ForecastWindguruService.instance.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+        let spotForecast = try? await ForecastWindguruService.instance.forecast(bySpotId: spotId)
+        return spotForecast
     }
     
 }

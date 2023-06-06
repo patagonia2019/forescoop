@@ -19,7 +19,7 @@
 		7066F6F41F95B11200D126C1 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
-		70BAA9AD1F276B4F004CD577 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
+		70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		70BAA9B21F276B4F004CD577 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		70BAA9B31F276B4F004CD577 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
@@ -114,7 +114,7 @@
 		599BC0A3C8451B7BD8E27315 /* Pods-Forescoop Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop Extension.debug.xcconfig"; path = "Target Support Files/Pods-Forescoop Extension/Pods-Forescoop Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		607FACD71AFB9204008FA782 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -257,7 +257,7 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
 				7057C8941F11D62F007A7FC2 /* Facade.swift */,
-				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
 				70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -829,7 +829,7 @@
 				70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */,
 				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
 				70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */,
-				70BAA9AD1F276B4F004CD577 /* ViewController.swift in Sources */,
+				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
