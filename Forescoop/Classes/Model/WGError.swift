@@ -57,7 +57,7 @@ public class WGError: Mappable {
         nserror = NSError(domain: id, code:code, userInfo: dict)
         
     }
-    required public init?(map: [String:Any]){
+    required public init?(map: [String: Any]?){
         mapping(map: map)
     }
     
@@ -70,7 +70,9 @@ public class WGError: Mappable {
         return ret
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         returnString = map["return"] as? String
         error_id = map["error_id"] as? Int
         error_message = map["error_message"] as? String
@@ -158,6 +160,8 @@ extension WGError : Error {
 }
 
 public enum CustomError: Error {
+    case cannotFindSpotId
+
     // Throw when an issue with the parsing
     case invalidParsing
 
@@ -168,6 +172,8 @@ public enum CustomError: Error {
 extension CustomError: CustomStringConvertible {
     public var description: String {
         switch self {
+        case .cannotFindSpotId:
+            return "The spot id is not right."
         case .invalidParsing:
             return "The pasing is not valid."
         case .unexpected(let code, let message):

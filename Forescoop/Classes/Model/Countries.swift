@@ -33,16 +33,17 @@ public class Countries: Object, Mappable {
     
     var countries = Array<Country>()
 
-    required public convenience init(map: [String:Any]) {
+    required public convenience init(map: [String:Any]?) {
         self.init()
         mapping(map: map)
     }
 
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
         countries = map.JSON().compactMap({Mapper<Country>().map(JSON: ["id": $0.key, "name": $0.value])})
     }
     
     public var description : String {
-        "\(type(of:self)): " + countries.compactMap({$0.description}).joined(separator: "\n") + "\n"
+        "\(type(of:self))\n" + countries.compactMap({$0.description}).joined(separator: "\n") + "\n"
     }
 }

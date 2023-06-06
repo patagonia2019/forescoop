@@ -16,31 +16,27 @@
 		7066F6E51F95ADD400D126C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7066F6E41F95ADD400D126C1 /* Assets.xcassets */; };
 		7066F6EA1F95ADD400D126C1 /* Forescoop.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 7066F6CD1F95ADD400D126C1 /* Forescoop.app */; };
 		7066F6F21F95AF4900D126C1 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		7066F6F41F95B11200D126C1 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
-		70BAA9AD1F276B4F004CD577 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
+		70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		70BAA9B21F276B4F004CD577 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		70BAA9B31F276B4F004CD577 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		70BAA9B41F276B4F004CD577 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
-		70BAA9C31F276B6F004CD577 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
 		70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
 		9802C5522A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; };
-		9802C5532A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9802C5532A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		98688A0B22D5936700A09AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0A22D5936700A09AD0 /* Assets.xcassets */; };
 		98688A0E22D5936700A09AD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0C22D5936700A09AD0 /* Main.storyboard */; };
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98688A1522D5938900A09AD0 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		98688A1622D5938E00A09AD0 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		987A6DCA22D595D200662010 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A6DC922D595D200662010 /* ViewController.swift */; };
 		987A6DCD22D595D200662010 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCB22D595D200662010 /* Main.storyboard */; };
 		987A6DCF22D595D400662010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCE22D595D400662010 /* Assets.xcassets */; };
+		9890080F2A2ED3E7009A978F /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */; };
 		98D31F812A251AE200916A59 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98DC785622D5964700F72DBA /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		98DC785722D5964A00F72DBA /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		A9A0FB86835207541A95EFE3 /* Pods_ForescoopTVOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA8E9011A369B20537D6B51F /* Pods_ForescoopTVOS.framework */; };
 		ACA48C0FF40E8D9D717E2B06 /* Pods_Forescoop_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1C34F395EDC848118D31F2 /* Pods_Forescoop_Example.framework */; };
 		B2CFC4D879032F29ECBC62A7 /* Pods_Forescoop_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C42F2F58BB006D7379ECFE85 /* Pods_Forescoop_Extension.framework */; };
@@ -114,14 +110,12 @@
 		599BC0A3C8451B7BD8E27315 /* Pods-Forescoop Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop Extension.debug.xcconfig"; path = "Target Support Files/Pods-Forescoop Extension/Pods-Forescoop Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		607FACD71AFB9204008FA782 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ForescoopMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7057C8941F11D62F007A7FC2 /* Facade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Facade.swift; sourceTree = "<group>"; };
 		7057C8961F11DABC007A7FC2 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		7066F6CD1F95ADD400D126C1 /* Forescoop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Forescoop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7066F6D01F95ADD400D126C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -156,6 +150,7 @@
 		987A6DCC22D595D200662010 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		987A6DCE22D595D400662010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		987A6DD022D595D400662010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		9BEE45CBF8F8B0326949C9EE /* Pods-Forescoop_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop_Example.release.xcconfig"; path = "Target Support Files/Pods-Forescoop_Example/Pods-Forescoop_Example.release.xcconfig"; sourceTree = "<group>"; };
 		A641F969015F49D4C08D0F7D /* Pods-Forescoop_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop_Tests.debug.xcconfig"; path = "Target Support Files/Pods-Forescoop_Tests/Pods-Forescoop_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		AB7E8D6BE83A94F8F937E0B1 /* Pods-Forescoop Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop Extension.release.xcconfig"; path = "Target Support Files/Pods-Forescoop Extension/Pods-Forescoop Extension.release.xcconfig"; sourceTree = "<group>"; };
@@ -256,8 +251,7 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
-				7057C8941F11D62F007A7FC2 /* Facade.swift */,
-				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
 				70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -280,7 +274,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				607FACEB1AFB9204008FA782 /* Tests.swift */,
+				9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -527,7 +521,7 @@
 					};
 					98688A0322D5936400A09AD0 = {
 						CreatedOnToolsVersion = 10.2.1;
-						DevelopmentTeam = DC76Z3W5Y8;
+						DevelopmentTeam = 27XTSJS68A;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.NetworkExtensions = {
@@ -815,7 +809,6 @@
 			files = (
 				7066F6F21F95AF4900D126C1 /* Common.swift in Sources */,
 				7066F6E31F95ADD400D126C1 /* NotificationController.swift in Sources */,
-				7066F6F41F95B11200D126C1 /* Facade.swift in Sources */,
 				7066F6E11F95ADD400D126C1 /* ExtensionDelegate.swift in Sources */,
 				7066F6DF1F95ADD400D126C1 /* InterfaceController.swift in Sources */,
 			);
@@ -828,8 +821,7 @@
 				70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */,
 				70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */,
 				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
-				70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */,
-				70BAA9AD1F276B4F004CD577 /* ViewController.swift in Sources */,
+				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -838,8 +830,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9890080F2A2ED3E7009A978F /* MainViewControllerTests.swift in Sources */,
 				98D31F812A251AE200916A59 /* (null) in Sources */,
-				70BAA9C31F276B6F004CD577 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -848,7 +840,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				98688A1522D5938900A09AD0 /* Common.swift in Sources */,
-				98688A1622D5938E00A09AD0 /* Facade.swift in Sources */,
 				98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -860,7 +851,6 @@
 				98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */,
 				98DC785622D5964700F72DBA /* Common.swift in Sources */,
 				987A6DCA22D595D200662010 /* ViewController.swift in Sources */,
-				98DC785722D5964A00F72DBA /* Facade.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1234,7 +1224,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = DC76Z3W5Y8;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ForescoopMacOS/Info.plist;

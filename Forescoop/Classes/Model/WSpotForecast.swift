@@ -74,41 +74,42 @@ public class WSpotForecast: Object, Mappable {
     var wgs_arr = Array<WindguruStation>()
     var wgs_wind_avg = 0
   
-    required public convenience init?(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
-
-            id_spot = map["id_spot"] as? Int ?? 0
-            id_user = map["id_user"] as? Int ?? 0
-            nickname = map["nickname"] as? String
-            spotname = map["spotname"] as? String
-            spot = map["spot"] as? String
-            lat = map["lat"] as? Float ?? 0.0
-            lon = map["lon"] as? Float ?? 0.0
-            alt = map["alt"] as? Int ?? 0
-            id_model = map["id_model"] as? String
-            model = map["model"] as? String
-            model_alt = map["model_alt"] as? Int ?? 0
-            levels = map["levels"] as? Int ?? 0
-            sst = map["sst"] as? String
-            sunrise = map["sunrise"] as? String
-            sunset = map["sunset"] as? String
-            tz = map["tz"] as? String
-            tzutc = map["tzutc"] as? String
-            utc_offset = map["utc_offset"] as? Int ?? 0
-            tzid = map["tzid"] as? String
-            tides = map["tides"] as? Int ?? 0
-            md5chk = map["md5chk"] as? String
-            guard let fcstDict = map["fcst"] as? [String: Any] else { return }
-            for (k,v) in fcstDict {
-                if let tmpDictionary = v as? [String: Any],
-                    k == id_model {
-                    fcst = WForecast.init(map: tmpDictionary)
-                }
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+        
+        id_spot = map["id_spot"] as? Int ?? 0
+        id_user = map["id_user"] as? Int ?? 0
+        nickname = map["nickname"] as? String
+        spotname = map["spotname"] as? String
+        spot = map["spot"] as? String
+        lat = map["lat"] as? Float ?? 0.0
+        lon = map["lon"] as? Float ?? 0.0
+        alt = map["alt"] as? Int ?? 0
+        id_model = map["id_model"] as? String
+        model = map["model"] as? String
+        model_alt = map["model_alt"] as? Int ?? 0
+        levels = map["levels"] as? Int ?? 0
+        sst = map["sst"] as? String
+        sunrise = map["sunrise"] as? String
+        sunset = map["sunset"] as? String
+        tz = map["tz"] as? String
+        tzutc = map["tzutc"] as? String
+        utc_offset = map["utc_offset"] as? Int ?? 0
+        tzid = map["tzid"] as? String
+        tides = map["tides"] as? Int ?? 0
+        md5chk = map["md5chk"] as? String
+        guard let fcstDict = map["fcst"] as? [String: Any] else { return }
+        for (k,v) in fcstDict {
+            if let tmpDictionary = v as? [String: Any],
+               k == id_model {
+                fcst = WForecast.init(map: tmpDictionary)
             }
+        }
     }
     
     public var elapse: Elapse? {

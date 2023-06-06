@@ -31,26 +31,19 @@ public class ForecastModel: Object, Mappable {
         info = infoForecast
     }
 
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         model = map["model"] as? String
-        if let forecastMap = map["info"] as? [String:Any] {
-            info = Forecast.init(map: forecastMap)
-        }
+        info = Forecast.init(map: map["info"] as? [String:Any])
     }
 
-    public var description : String {
-        var aux : String = "\(type(of:self)): "
-        if let model = model {
-            aux += "Model # \(model)\n"
-        }
-        if let info = info {
-            aux += "\(info.description).\n"
-        }
-        return aux
+    public var description: String {
+        ["\(type(of:self)): ", model?.description, info?.description].compactMap{$0}.joined(separator: "\n")
     }
 }

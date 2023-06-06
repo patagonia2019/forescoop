@@ -45,12 +45,14 @@ public class SpotResult: Object, Mappable {
     //
     var spots: [SpotOwner]?
  
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         count = map["count"] as? Int ?? 0
         spots = (map["spots"] as? [[String:Any]])?.compactMap({SpotOwner(map: $0)})
     }

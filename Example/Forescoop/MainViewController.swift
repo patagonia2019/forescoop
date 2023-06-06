@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MainViewController.swift
 //  Forescoop
 //
 //  Created by Javier Fuchs on 07/06/2017.
@@ -9,7 +9,7 @@
 import UIKit
 import Forescoop
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     
     @IBOutlet weak var toolbarView: UIView!
     @IBOutlet weak var horizontalSlider: UISlider!
@@ -35,16 +35,10 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        observeNotification()
+        updateForecast()
         hideWeatherInfo()
     }
     
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        unobserveNotification()
-    }
-        
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let vc = segue.destination as? ApiListViewController,
               let user = user else { return }
@@ -55,14 +49,7 @@ class ViewController: UIViewController {
     }
 }
 
-private extension ViewController {
-    
-    func updateForecastUsingFacade(spotForecast: SpotForecast?) {
-        guard let spotForecast = spotForecast else {
-            return
-        }
-        showForecastView(spotForecast: spotForecast)
-    }
+private extension MainViewController {
     
     func showForecastView(spotForecast: SpotForecast?) {
         guard let spotForecast = spotForecast else { return }
@@ -74,26 +61,17 @@ private extension ViewController {
         locationLabel.text = spotForecast.asCurrentLocation
         windSpeedLabel.text = spotForecast.asCurrentWindSpeed
         hourLabel.text = spotForecast.asHourString
-        
         showWeatherInfo()
     }
 
-    func observeNotification() {
-        if kUseFacade {
-            NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main) {
-                [weak self] (note) in
-                if let object: SpotForecast = note.object as? SpotForecast {
-                    self?.updateForecastUsingFacade(spotForecast: object)
-                }}
+    func updateForecast() {
+        Task { [weak self] in
+            guard let spotId = try? await ForecastWindguruService.instance.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+            let spotForecast = try? await ForecastWindguruService.instance.forecast(bySpotId: spotId)
+            self?.showForecastView(spotForecast: spotForecast)
         }
     }
-    
-    func unobserveNotification() {
-        if kUseFacade {
-            NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil)
-        }
-    }
-    
+        
     func hideWeatherInfo() {
         toolbarView.alpha = 0
         topView.alpha = 0
@@ -171,4 +149,9 @@ private extension ViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+    func updateAWForecast() async throws -> SpotForecast? {
+        guard let spotId = try? await ForecastWindguruService.instance.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+        let spotForecast = try? await ForecastWindguruService.instance.forecast(bySpotId: spotId)
+        return spotForecast
+    }
 }

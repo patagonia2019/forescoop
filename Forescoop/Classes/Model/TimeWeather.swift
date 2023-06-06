@@ -90,49 +90,29 @@ import Foundation
 
 
 public class TimeWeather: Object, Mappable {
+    
+    var info = [String: Any]()
 
-    var keys = [String]()
-    var strings = [String]()
-    var floats = [Float]()
-
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
-        for (k,v) in map {
-            keys.append(k)
-            if let str = v as? String {
-                strings.append(str)
-            }
-            else if let str = v as? Float {
-                floats.append(str)
-            }
-        }
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+        info = map.compactMapValues { $0 }
     }
 
     public var description : String {
-        
-        var aux : String = "\(type(of:self)): "
-
-        let orderkeys = keys.sorted { (a, b) -> Bool in
+        let orderkeys = info.keys.sorted { (a, b) -> Bool in
             return a < b
         }
-        for k in orderkeys {
-            let key = k
-            guard let index = keys.firstIndex(of: k) else { return "" }
-            aux += "\(key): "
-            if strings.count >= 0 && index < strings.count {
-                aux += strings[index]
-            }
-            else if floats.count > 0 && index < floats.count {
-                let v = floats[index]
-                aux += "\(v)"
-            }
-            aux += ", "
-        }
-        return aux
+        return "\(type(of:self)): " + orderkeys.compactMap {"\($0) : \(info[$0] ?? "-")"}.joined(separator: ", ")
     }
-
+    
+    public func value<T>(hh: String?) -> T? {
+        guard let hh = hh else { return nil }
+        guard info.keys.contains(hh) else { return nil }
+        return info[hh] as? T
+    }
 }

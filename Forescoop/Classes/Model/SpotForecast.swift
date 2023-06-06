@@ -44,49 +44,36 @@ public class SpotForecast: SpotInfo {
 
     var forecasts = Array<ForecastModel>()
 
-    required public convenience init?(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
 
-    public override func mapping(map: [String:Any]) {
+    public override func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         super.mapping(map: map)
         guard let forecastDict = map["forecast"] as? [String: Any] else { return }
-        for (k,v) in forecastDict {
-            let tmpDictionary = ["model" : k, "info" : v]
-            let forecastModel = ForecastModel(map: tmpDictionary)
-            forecasts.append(forecastModel)
-            currentModel = k
-        }
+        forecasts = forecastDict.compactMap { ForecastModel(map: ["model" : $0.key, "info" : $0.value]) }
+        currentModel = forecasts.last?.model
     }
     
     override public var description : String {
-        var aux : String = super.description
-        aux += "\(type(of:self)): "
-        if let currentModel = currentModel {
-            aux += "currentModel \(currentModel), "
-        }
-        for model in models {
-            for forecast in forecasts {
-                if  let fmodel =  forecast.model, fmodel == model {
-                    aux += "Forecast model: \(fmodel)\n\(forecast.description)\n"
-                }
-            }
-        }
-        return aux
+        [
+            super.description,
+            "\(type(of:self)): ",
+            currentModel?.description,
+            forecasts.compactMap({$0.description}).joined(separator: "\n")
+        ]
+            .compactMap{$0}
+            .joined(separator: "\n")
     }
 }
 
 public extension SpotForecast {
     
     var forecast: Forecast? {
-        guard let currentModel = currentModel else { return nil }
-        for forecastModel in forecasts {
-            if forecastModel.model == currentModel {
-                return forecastModel.info
-            }
-        }
-        return nil
+        forecasts.first(where: {$0.model == currentModel})?.info
     }
     
     /// Information comes in UTC, contains the every 3 hours information

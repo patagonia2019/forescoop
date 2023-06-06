@@ -56,12 +56,14 @@ public class Model: Object, Mappable {
     var show_vars = [String]()
 
     
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         id_model = map["id_model"] as? Int ?? 0
         model_name = map["model_name"] as? String ?? nil
         model = map["model"] as? String ?? nil
@@ -75,24 +77,16 @@ public class Model: Object, Mappable {
     }
 
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += "Model # \(id_model), "
-        if let model_name = model_name {
-            aux += "name \(model_name), "
-        }
-        if let model = model {
-            aux += "model \(model).\n"
-        }
-        aux += "hr_start \(hr_start), "
-        aux += "hr_end \(hr_end), "
-        aux += "period \(period), "
-        aux += "resolution \(resolution).\n"
-        if let update_time = update_time {
-            aux += "update_time \(update_time)\n"
-        }
-        if show_vars.count > 0 {
-            aux += "show_vars \(show_vars.description)\n"
-        }
-        return aux
+        [
+            "\(type(of:self)): ",
+            "Model # \(id_model) ",
+            model_name,
+            model,
+            "\(hr_start) : \(hr_end) : \(hr_step) : \(period) : \(resolution)",
+            update_time,
+            show_vars.compactMap{$0}.joined(separator: ", ")
+        ]
+            .compactMap{$0}
+            .joined(separator: "\n")
     }
 }

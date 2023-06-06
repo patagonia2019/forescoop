@@ -32,23 +32,20 @@ public class SpotOwner: Spot {
 
     var id_user: String? = nil
 
-    required public convenience init?(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]) {
+    public override func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         super.mapping(map: map)
-        id_user = map["id_user"] as? String ?? nil
+        id_user = map["id_user"] as? String
     }
 
-    override public var description : String {
-        var aux : String = super.description
-        aux += "\(type(of:self)): "
-        if let id_user = id_user {
-            aux += "\nuser id \(id_user).\n"
-        }
-        return aux
+    override public var description: String {
+        [super.description, "\(type(of:self)): ", id_user].compactMap{$0}.joined(separator: "\n")
     }
     
 }

@@ -14,12 +14,12 @@ public class Time: Object, Mappable {
     var minutes: Int = 0
     var seconds: Int = 0
 
-    required public convenience init?(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init("00:00:00")
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
     }
     
     required public init?(_ str: String?) {
@@ -47,21 +47,14 @@ public class Time: Object, Mappable {
     }
     
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += String(format: "%02d:%02d:%02d", hour, minutes, seconds)
-        return aux
+        "\(type(of:self)): " + String(format: "%02d:%02d:%02d", hour, minutes, seconds)
     }
-
 }
 
 extension Time {
     
     public func asDate() -> Date? {
-        var interval = Double(hour)
-        interval += Double(minutes * 60)
-        interval += Double(seconds * 60 * 60)
-        let date = Date.init(timeInterval:interval, since: Date.init())
-        return date
+        Date.init(timeInterval: Double(hour) + Double(minutes * 60) + Double(seconds * 60 * 60), since: Date.init())
     }
 
 }

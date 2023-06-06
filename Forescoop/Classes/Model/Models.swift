@@ -23,12 +23,14 @@ public class Models: Object, Mappable {
 
     var models = ListModel()
 
-    required public convenience init(map: [String:Any]) {
+    required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]) {
+    public func mapping(map: [String:Any]?) {
+        guard let map = map else { return }
+
         for json in map.JSON() {
             if  let jsonValue = json.value as? [String: Any],
                 let model = Mapper<Model>().map(JSON: jsonValue) {
@@ -38,11 +40,7 @@ public class Models: Object, Mappable {
     }
     
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        for model in models {
-            aux += model.description + "\n"
-        }
-        return aux
+        "\(type(of:self)): " + models.compactMap{$0.description}.joined(separator: "\n")
     }
     
 }
