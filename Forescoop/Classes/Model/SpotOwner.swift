@@ -45,7 +45,7 @@ public class SpotOwner: Spot {
     }
 
     override public var description: String {
-        [super.description, "\(type(of:self)): ", id_user].compactMap{$0}.joined(separator: "\n")
+        [super.description, "\(type(of:self))", id_user].compactMap{$0}.joined(separator: ", ")
     }
     
 }

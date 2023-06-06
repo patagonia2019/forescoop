@@ -35,6 +35,53 @@ import Foundation
  *       "tides": "0",
  *   }
  *
+ /*
+  ▿ 13 elements
+    ▿ 0 : 2 elements
+      - key : "lat"
+      - value : -41.1281
+    ▿ 1 : 2 elements
+      - key : "alt"
+      - value : 770
+    ▿ 2 : 2 elements
+      - key : "id_spot"
+      - value : 64141
+    ▿ 3 : 2 elements
+      - key : "sunrise"
+      - value : 09:08
+    ▿ 4 : 2 elements
+      - key : "lon"
+      - value : -71.348
+    ▿ 5 : 2 elements
+      - key : "gmt_hour_offset"
+      - value : -3
+    ▿ 6 : 2 elements
+      - key : "spotname"
+      - value : Bariloche
+    ▿ 7 : 2 elements
+      - key : "models"
+      ▿ value : 4 elements
+        - 0 : 100
+        - 1 : 3
+        - 2 : 45
+        - 3 : 59
+    ▿ 8 : 2 elements
+      - key : "tides"
+      - value : 0
+    ▿ 9 : 2 elements
+      - key : "sunset"
+      - value : 18:20
+    ▿ 10 : 2 elements
+      - key : "id_country"
+      - value : 32
+    ▿ 11 : 2 elements
+      - key : "country"
+      - value : Argentina
+    ▿ 12 : 2 elements
+      - key : "tz"
+      - value : America/Argentina/Mendoza
+
+  */
  *
  */
 
@@ -49,7 +96,7 @@ public class SpotInfo: Spot {
     var sunrise: String? = nil
     var sunset: String? = nil
     var elapse : Elapse?
-    var models = [String]()
+    var models = [Int]()
     var tides: String? = nil
 
     required public convenience init?(map: [String: Any]?) {
@@ -61,42 +108,35 @@ public class SpotInfo: Spot {
         guard let map = map else { return }
 
         super.mapping(map: map)
-        countryId = map["countryId"] as? Int ?? 0
-        latitude = map["latitude"] as? Double ?? 0.0
-        longitude = map["longitude"] as? Double ?? 0.0
-        altitude = map["altitude"] as? Int ?? 0
-        timezone = map["timezone"] as? String ?? nil
-        gmtHourOffset = map["gmtHourOffset"] as? Int ?? 0
+        latitude = map["lat"] as? Double ?? 0.0
+        longitude = map["lon"] as? Double ?? 0.0
+        altitude = map["alt"] as? Int ?? 0
+        timezone = map["tz"] as? String ?? nil
+        gmtHourOffset = map["gmt_hour_offset"] as? Int ?? 0
         sunrise = map["sunrise"] as? String ?? nil
         sunset = map["sunset"] as? String ?? nil
-        models = map["models"] as? [String] ?? []
+        models = map["models"] as? [Int] ?? []
         tides = map["tides"] as? String ?? nil
-        if let sunrise = sunrise,
-            let sunset = sunset
-        {
-            elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
-        }
+        elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
     }
  
     override public var description : String {
         [
             super.description,
-            "\n\(type(of:self))\n",
+            "\nSpotInfo\n",
             [
                 "country # \(countryId)",
                 "latitude \(latitude)",
                 "longitude \(longitude)",
-                "altitude # \(altitude)"
-            ].joined(separator: ", "),
-            [
+                "altitude # \(altitude)",
                 timezone,
                 "gmtHourOffset: \(gmtHourOffset)",
                 sunrise,
                 sunset,
                 elapse?.description,
                 tides,
-                models.joined(separator: ", ")
-            ].compactMap {$0}.joined(separator: "\n")
+                "\(models)"
+            ].compactMap {$0}.joined(separator: ", ")
         ].joined(separator: "\n")
     }
     

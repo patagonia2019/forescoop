@@ -34,6 +34,6 @@ public class Country: Object, Mappable {
     }
     
     public var description : String {
-        ["\(type(of:self)): ", id, name].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", id, name].compactMap {$0}.joined(separator: ", ")
     }
 }

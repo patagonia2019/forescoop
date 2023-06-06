@@ -53,8 +53,8 @@ public class WSpotForecast: Object, Mappable {
     var nickname: String? = nil
     var spotname: String? = nil
     var spot: String? = nil
-    var lat: Float = 0.0
-    var lon: Float = 0.0
+    var lat: Double = 0.0
+    var lon: Double = 0.0
     var alt = 0
     var id_model: String? = nil
     var model: String? = nil
@@ -69,10 +69,10 @@ public class WSpotForecast: Object, Mappable {
     var tzid: String? = nil
     var tides = 0
     var md5chk: String? = nil
-    var fcst : WForecast?
+    var fcst: [WForecast]?
     var wgs = false
-    var wgs_arr = Array<WindguruStation>()
-    var wgs_wind_avg = 0
+    var wgs_arr: [WindguruStation]?
+    var wgs_wind_avg: Float = 0.0
   
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -87,8 +87,8 @@ public class WSpotForecast: Object, Mappable {
         nickname = map["nickname"] as? String
         spotname = map["spotname"] as? String
         spot = map["spot"] as? String
-        lat = map["lat"] as? Float ?? 0.0
-        lon = map["lon"] as? Float ?? 0.0
+        lat = map["lat"] as? Double ?? 0.0
+        lon = map["lon"] as? Double ?? 0.0
         alt = map["alt"] as? Int ?? 0
         id_model = map["id_model"] as? String
         model = map["model"] as? String
@@ -103,13 +103,16 @@ public class WSpotForecast: Object, Mappable {
         tzid = map["tzid"] as? String
         tides = map["tides"] as? Int ?? 0
         md5chk = map["md5chk"] as? String
-        guard let fcstDict = map["fcst"] as? [String: Any] else { return }
-        for (k,v) in fcstDict {
-            if let tmpDictionary = v as? [String: Any],
-               k == id_model {
-                fcst = WForecast.init(map: tmpDictionary)
-            }
-        }
+        wgs_arr = (map["wgs_arr"] as? [[String: Any]])?.compactMap { WindguruStation.init(map: $0)}
+        wgs_wind_avg = map["wgs_wind_avg"] as? Float ?? 0.0
+        fcst = (map["fcst"] as? [String: Any])?.compactMap({WForecast.init(map: $0.value as? [String: Any])})
+//        guard let fcstDict = map["fcst"] as? [String: Any] else { return }
+//        for (k,v) in fcstDict {
+//            if let tmpDictionary = v as? [String: Any],
+//               k == id_model {
+//                fcst = WForecast.init(map: tmpDictionary)
+//            }
+//        }
     }
     
     public var elapse: Elapse? {
@@ -144,26 +147,28 @@ public class WSpotForecast: Object, Mappable {
         aux += "tides       : \(tides), "
         if let md5chk       = md5chk        { aux += "md5chk      : \(md5chk)\n" }
         if let fcst = fcst {
-            aux += "Forecast\n \(fcst.description)\n"
+            aux += "Forecast: {"
+            aux += fcst.compactMap{$0.description}.joined(separator: "\n")
+            aux += "}"
         }
         aux += "wgs_wind_avg: \(wgs_wind_avg)\n"
-        for wgs in wgs_arr {
-            aux += "WGS: \(wgs.description)\n"
+        if let wgs_arr = wgs_arr {
+            aux += "WGS: {"
+            aux += wgs_arr.compactMap{$0.description}.joined(separator: "\n")
+            aux += "}"
         }
         return aux
     }
 }
 
-extension WSpotForecast {
+public extension WSpotForecast {
     
-    public func locationName() -> String? {
-        guard let windguruStation = wgs_arr.first
-            else { return nil }
-        return windguruStation.station
+    var locationName: String? {
+        wgs_arr?.first?.station
     }
     
-    public func spotName() -> String {
-        if let locationName = locationName() {
+    var spotName: String {
+        if let locationName = locationName {
             return locationName
         }
         if let spot = spot {
@@ -181,15 +186,15 @@ extension WSpotForecast {
         return "Spot id: \(id_spot)"
     }
     
-    public func forecast() -> WForecast? {
-        return fcst
+    var forecast: WForecast? {
+        fcst?.first(where: {$0.id_model == id_model})
     }
     
-    public func spotId() -> Int {
-        return id_spot
+    var spotId: Int {
+        id_spot
     }
     
-    public func timezone() -> String? {
+    var timezone: String? {
         if let tz = tz,
             let tzuttc = tzutc,
             let tzid = tzid {
@@ -198,29 +203,27 @@ extension WSpotForecast {
         return nil
     }
     
-    public func coordinates() -> String {
-        return "\(lat), \(lon)\n\(alt) meters"
+    var coordinates: String {
+        "\(lat), \(lon)\n\(alt) meters"
     }
     
-    public func elapsedDay() -> Elapse? {
-        return elapse
+    var elapsedDay: Elapse? {
+        elapse
     }
     
-    public func sunriseTime() -> String? {
-        return sunrise
+    var sunriseTime: String? {
+        sunrise
     }
     
-    public func sunsetTime() -> String? {
-        return sunset
+    var sunsetTime: String? {
+        sunset
     }
     
-    public func modelInfo() -> String? {
+    var modelInfo: String? {
         if let id_model = id_model,
             let model = model {
             return "\(id_model): \(model), alt: \(model_alt)"
         }
         return nil
     }
-    
 }
-

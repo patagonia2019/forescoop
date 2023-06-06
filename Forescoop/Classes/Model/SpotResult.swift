@@ -58,7 +58,7 @@ public class SpotResult: Object, Mappable {
     }
 
     public var description : String {
-        "\(type(of:self)): " + "\n\(count) spots.\n" + (spots != nil ? spots!.compactMap({"\($0)"}).joined(separator: ", ") : "")
+        "\(type(of:self))" + "\n\(count) spots.\n" + (spots != nil ? spots!.compactMap({"\($0.description)"}).joined(separator: "\n") : "")
     }
     
 }

@@ -78,15 +78,15 @@ public class Model: Object, Mappable {
 
     public var description : String {
         [
-            "\(type(of:self)): ",
+            "\(type(of:self))",
             "Model # \(id_model) ",
             model_name,
             model,
-            "\(hr_start) : \(hr_end) : \(hr_step) : \(period) : \(resolution)",
+            "[\(hr_start)|\(hr_end)|\(hr_step) (\(period), \(resolution))]",
             update_time,
-            show_vars.compactMap{$0}.joined(separator: ", ")
+            "{\(show_vars.compactMap{$0}.joined(separator: ", "))}"
         ]
             .compactMap{$0}
-            .joined(separator: "\n")
+            .joined(separator: ", ")
     }
 }

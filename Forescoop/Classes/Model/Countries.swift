@@ -31,7 +31,7 @@ import Foundation
 
 public class Countries: Object, Mappable {
     
-    var countries = Array<Country>()
+    var countries = [Country]()
 
     required public convenience init(map: [String:Any]?) {
         self.init()

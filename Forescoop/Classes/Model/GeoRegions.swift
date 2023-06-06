@@ -50,11 +50,12 @@ public class GeoRegions: Object, Mappable {
 
     public var description : String {
         [
-            "\(type(of:self)) \n",
-            geoRegions.compactMap{ $0.description }.joined(separator: "\n")
-        ]
-            .compactMap{$0}
-            .joined(separator: "\n")
+            "\(type(of:self))\n\n",
+            geoRegions
+                .compactMap{ $0.description }
+                .joined(separator: "\n")
+        ].compactMap{$0}
+         .joined(separator: "\n")
     }
     
 }

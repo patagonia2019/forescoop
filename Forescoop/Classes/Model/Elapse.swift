@@ -29,7 +29,7 @@ public class Elapse: Object, Mappable {
     }
 
     public var description : String {
-        ["\(type(of:self)): ", start?.description, end?.description].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", start?.description, end?.description].compactMap {$0}.joined(separator: ", ")
     }
 }
 

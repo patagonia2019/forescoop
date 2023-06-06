@@ -43,7 +43,7 @@ public class Spot: Object, Mappable {
     }
 
     public var description : String {
-        ["\(type(of:self)): ", id_spot, spotname, country].compactMap {$0}.joined(separator: ", ")
+        ["Spot", id_spot, spotname, country].compactMap {$0}.joined(separator: ", ")
     }
 }
 

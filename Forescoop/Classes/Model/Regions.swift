@@ -51,7 +51,7 @@ public class Regions: Object, Mappable {
     }
 
     public var description : String {
-        "\(type(of:self)): " + regions.compactMap{$0.description}.joined(separator: "\n")
+        "\(type(of:self))\n\n" + regions.compactMap{$0.description}.joined(separator: "\n")
     }
     
 }

@@ -132,31 +132,25 @@ extension Forecast {
     
     public func windDirectionName(hh: String?) -> String? {
         return weathers?["WINDIRNAME"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["WINDIRNAME"], hh: hh) as? String
     }
     
     public func windDirection(hh: String?) -> Float? {
         return weathers?["WINDDIR"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["WINDDIR"], hh: hh) as? Float
     }
     
     public func windSpeed(hh: String?) -> Float? {
         return weathers?["WINDSPD"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["WINDSPD"], hh: hh) as? Float
     }
     
     public func temperatureReal(hh: String?) -> Float? {
         return weathers?["TMPE"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["TMPE"], hh: hh) as? Float
     }
     
     public func cloudCoverTotal(hh: String?) -> Int? {
         return weathers?["TCDC"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["TCDC"], hh: hh) as? Int
     }
 
     public func precipitation(hh: String?) -> Float? {
         return weathers?["APCP"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["APCP"], hh: hh) as? Float
     }
 }

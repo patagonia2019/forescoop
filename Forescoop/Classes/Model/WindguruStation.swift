@@ -53,19 +53,7 @@ public class WindguruStation: Object, Mappable {
     }
     
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        if let id = id {
-            aux += "id \(id) "
-        }
-        if let station = station {
-            aux += "station \(station) "
-        }
-        aux += "distance \(distance) "
-        if let id_type = id_type {
-            aux += "id_type \(id_type) "
-        }
-        aux += "wind_avg \(wind_avg) "
-        return aux
+        ["\(type(of:self))", id, station, "\(distance)", id_type, "\(wind_avg)"].compactMap {$0}.joined(separator: ", ")
     }
     
     

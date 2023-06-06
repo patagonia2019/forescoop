@@ -404,12 +404,12 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.autocapitalizationType = .none
             }
             
-            var modelId = alert.textFields![0].text
-            if modelId?.count == 0 {
-                modelId = nil
-            }
-
             let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
+
+                var modelId = alert.textFields![0].text
+                if modelId?.count == 0 {
+                    modelId = nil
+                }
 
                 ForecastWindguruService.instance.modelInfo(onlyModelId: modelId,
                                                            failure: failureBlock,
