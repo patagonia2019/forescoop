@@ -16,9 +16,7 @@
 		7066F6E51F95ADD400D126C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7066F6E41F95ADD400D126C1 /* Assets.xcassets */; };
 		7066F6EA1F95ADD400D126C1 /* Forescoop.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 7066F6CD1F95ADD400D126C1 /* Forescoop.app */; };
 		7066F6F21F95AF4900D126C1 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		7066F6F41F95B11200D126C1 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		70BAA9B21F276B4F004CD577 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -33,14 +31,12 @@
 		98688A0E22D5936700A09AD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0C22D5936700A09AD0 /* Main.storyboard */; };
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98688A1522D5938900A09AD0 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		98688A1622D5938E00A09AD0 /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		987A6DCA22D595D200662010 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A6DC922D595D200662010 /* ViewController.swift */; };
 		987A6DCD22D595D200662010 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCB22D595D200662010 /* Main.storyboard */; };
 		987A6DCF22D595D400662010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCE22D595D400662010 /* Assets.xcassets */; };
 		98D31F812A251AE200916A59 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98DC785622D5964700F72DBA /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		98DC785722D5964A00F72DBA /* Facade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8941F11D62F007A7FC2 /* Facade.swift */; };
 		A9A0FB86835207541A95EFE3 /* Pods_ForescoopTVOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA8E9011A369B20537D6B51F /* Pods_ForescoopTVOS.framework */; };
 		ACA48C0FF40E8D9D717E2B06 /* Pods_Forescoop_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1C34F395EDC848118D31F2 /* Pods_Forescoop_Example.framework */; };
 		B2CFC4D879032F29ECBC62A7 /* Pods_Forescoop_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C42F2F58BB006D7379ECFE85 /* Pods_Forescoop_Extension.framework */; };
@@ -121,7 +117,6 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ForescoopMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7057C8941F11D62F007A7FC2 /* Facade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Facade.swift; sourceTree = "<group>"; };
 		7057C8961F11DABC007A7FC2 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		7066F6CD1F95ADD400D126C1 /* Forescoop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Forescoop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7066F6D01F95ADD400D126C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -256,7 +251,6 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
-				7057C8941F11D62F007A7FC2 /* Facade.swift */,
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
 				70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */,
@@ -815,7 +809,6 @@
 			files = (
 				7066F6F21F95AF4900D126C1 /* Common.swift in Sources */,
 				7066F6E31F95ADD400D126C1 /* NotificationController.swift in Sources */,
-				7066F6F41F95B11200D126C1 /* Facade.swift in Sources */,
 				7066F6E11F95ADD400D126C1 /* ExtensionDelegate.swift in Sources */,
 				7066F6DF1F95ADD400D126C1 /* InterfaceController.swift in Sources */,
 			);
@@ -828,7 +821,6 @@
 				70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */,
 				70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */,
 				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
-				70BAA9AC1F276B4F004CD577 /* Facade.swift in Sources */,
 				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
 			);
@@ -848,7 +840,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				98688A1522D5938900A09AD0 /* Common.swift in Sources */,
-				98688A1622D5938E00A09AD0 /* Facade.swift in Sources */,
 				98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -860,7 +851,6 @@
 				98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */,
 				98DC785622D5964700F72DBA /* Common.swift in Sources */,
 				987A6DCA22D595D200662010 /* ViewController.swift in Sources */,
-				98DC785722D5964A00F72DBA /* Facade.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

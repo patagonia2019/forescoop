@@ -28,37 +28,17 @@ class InterfaceController: WKInterfaceController {
     var spotForecast: SpotForecast!
     var sliderHeight: Float!
 
-    override func awake(withContext context: Any?) {
-        super.awake(withContext: context)
-        
-    }
-    
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
-        
-        observeNotification()
-        
+        updateForecast()
         hideWeatherInfo()
-        
-        if spotForecast != nil
-        {
-            updateForecastView()
-        }
     }
-    
-    override func didDeactivate() {
-        // This method is called when watch view controller is no longer visible
-        super.didDeactivate()
-        unobserveNotification()
+}
 
-    }
-
-    fileprivate func updateForecastView()
-    {
-        guard let spotForecast = spotForecast else {
-            return
-        }
+private extension InterfaceController {
+    func showForecastView(spotForecast: SpotForecast?) {
+        guard let spotForecast = spotForecast else { return }
         temperatureLabel.setText(spotForecast.asCurrentTemperature)
         locationLabel.setText(spotForecast.asCurrentLocation)
         windSpeedLabel.setText(spotForecast.asCurrentWindSpeed)
@@ -70,34 +50,22 @@ class InterfaceController: WKInterfaceController {
         showWeatherInfo()
     }
     
-    
-    fileprivate func observeNotification()
-    {
-        unobserveNotification()
+    func updateForecast() {
+        Task { [weak self] in
+            guard let spotId = try? await ForecastWindguruService.instance.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+            let spotForecast = try? await ForecastWindguruService.instance.forecast(bySpotId: spotId)
+            self?.showForecastView(spotForecast: spotForecast)
+        }
+    }
         
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil, queue: OperationQueue.main, using: {
-            [weak self]
-            note in if let object: SpotForecast = note.object as? SpotForecast {
-                self?.spotForecast = object
-                self?.updateForecastView()
-            }})
-    }
-    
-    fileprivate func unobserveNotification()
-    {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: kWDForecastUpdated), object: nil);
-    }
-    
-    fileprivate func hideWeatherInfo()
-    {
+    func hideWeatherInfo() {
         toolbarGroup.setAlpha(0)
         topGroup.setAlpha(0)
         middleGroup.setAlpha(0)
         bottomGroup.setAlpha(0)
     }
     
-    fileprivate func showWeatherInfo()
-    {
+    func showWeatherInfo() {
         animate(withDuration: 1.0) { [weak self] () -> Void in
             self?.toolbarGroup.setAlpha(1)
             self?.topGroup.setAlpha(1)
@@ -105,6 +73,4 @@ class InterfaceController: WKInterfaceController {
             self?.bottomGroup.setAlpha(1)
         }
     }
-    
-
 }
