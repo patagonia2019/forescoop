@@ -39,7 +39,9 @@ import Foundation
  */
 
 public class WForecast: Object, Mappable {
-
+    
+    // TODO: Maybe refactor this... -> var info = [String: Any]()
+    
     var TMP         = [Float]() // TMP: temperature
     var TCDC        = [Int]() // TCDC: Cloud cover (%) Total
     var HCDC        = [Int]() // HCDC: Cloud cover (%) High
@@ -51,7 +53,7 @@ public class WForecast: Object, Mappable {
     var FLHGT       = [Int]() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
     var APCP        = [Int]() //  APCP: Precip. (mm/3h)
     var WINDSPD     = [Float]() //  WINDSPD: Wind speed (knots)
-    var WINDDIR     = [Int]() //  WINDDIR: Wind direction
+    var windDir: [WindDirection]?
     var SMERN       = [Int]()
     var SMER        = [Int]()
     var TMPE        = [Float]() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
@@ -85,7 +87,7 @@ public class WForecast: Object, Mappable {
     var update_last: String? = nil
     var update_next: String? = nil
     var initstamp = 0  // initstamp
-
+    
     required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
@@ -93,7 +95,6 @@ public class WForecast: Object, Mappable {
     
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
-        
         
         TMP = map["TMP"] as? [Float] ?? []
         TCDC = map["TCDC"] as? [Int] ?? []
@@ -106,7 +107,7 @@ public class WForecast: Object, Mappable {
         FLHGT = map["FLHGT"] as? [Int] ?? []
         APCP = map["APCP"] as? [Int] ?? []
         WINDSPD = map["WINDSPD"] as? [Float] ?? []
-        WINDDIR = map["WINDDIR"] as? [Int] ?? []
+        windDir = (map["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)}
         SMERN = map["SMERN"] as? [Int] ?? []
         SMER = map["SMER"] as? [Int] ?? []
         TMPE = map["TMPE"] as? [Float] ?? []
@@ -143,91 +144,77 @@ public class WForecast: Object, Mappable {
     }
     
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += "initstamp: \(initstamp)\n"
-        aux += "TCDC = Cloud cover Total: \(TCDC)\n"
-        aux += "HCDC = Cloud cover High: \(HCDC)\n"
-        aux += "MCDC = Cloud cover Mid: \(MCDC)\n"
-        aux += "LCDC = Cloud cover Low: \(LCDC)\n"
-        aux += "RH = Humidity: \(RH)\n"
-        aux += "SLP = Sea Level pressure: \(SLP)\n"
-        aux += "FLHGT = Freezing level: \(FLHGT)\n"
-        aux += "APCP = Precipitation: \(APCP)\n"
-        aux += "GUST = Wind gust: \(GUST)\n"
-        aux += "WINDSPD = Wind speed: \(WINDSPD)\n"
-        aux += "WINDDIR = Wind direccion: \(WINDDIR)\n"
-        aux += "SMERN: \(SMERN)\n"
-        aux += "SMER: \(SMER)\n"
-        aux += "TMP = Temp: \(TMP)\n"
-        aux += "TMPE = Temp real: \(TMPE)\n"
-        aux += "PCPT: \(PCPT)\n"
-        aux += "HTSGW: \(HTSGW)\n"
-        aux += "WVHGT: \(WVHGT)\n"
-        aux += "WVPER: \(WVPER)\n"
-        aux += "WVDIR: \(WVDIR)\n"
-        aux += "SWELL1: \(SWELL1)\n"
-        aux += "SWPER1: \(SWPER1)\n"
-        aux += "SWDIR1: \(SWDIR1)\n"
-        aux += "SWELL2: \(SWELL2)\n"
-        aux += "SWPER2: \(SWPER2)\n"
-        aux += "SWDIR2: \(SWDIR2)\n"
-        aux += "PERPW: \(PERPW)\n"
-        aux += "DIRPW: \(DIRPW)\n"
-        aux += "hr_weekday: \(hr_weekday)\n"
-        aux += "hr_h: \(hr_h)\n"
-        aux += "hr_d: \(hr_d)\n"
-        aux += "hours: \(hours)\n"
-        aux += "img_param: \(img_param), "
-        aux += "img_var_map: \(img_var_map).\n"
-        aux += "initDate: \(initDate ?? ""), "
-        aux += "init_d: \(init_d ?? ""), "
-        aux += "init_dm: \(init_dm ?? ""), "
-        aux += "init_h: \(init_h ?? ""), "
-        aux += "initstr: \(initstr ?? "")\n"
-        aux += "modelName: \(model_name ?? ""), "
-        aux += "model_longname: \(model_longname ?? ""), "
-        aux += "id_model: \(id_model ?? "")\n"
-        aux += "update_last: \(update_last ?? ""), "
-        aux += "update_next: \(update_next ?? "")\n"
-        
-        return aux
+        ["\(type(of:self))",
+         "initstamp: \(initstamp)",
+         "TCDC = Cloud cover Total: \(TCDC)",
+         "HCDC = Cloud cover High: \(HCDC)",
+         "MCDC = Cloud cover Mid: \(MCDC)",
+         "LCDC = Cloud cover Low: \(LCDC)",
+         "RH = Humidity: \(RH)",
+         "SLP = Sea Level pressure: \(SLP)",
+         "FLHGT = Freezing level: \(FLHGT)",
+         "APCP = Precipitation: \(APCP)",
+         "GUST = Wind gust: \(GUST)",
+         "WINDSPD = Wind speed: \(WINDSPD)",
+         "WINDDIR = Wind direccion: \(windDir?.compactMap{$0.description} ?? [])",
+         "SMERN: \(SMERN)",
+         "SMER: \(SMER)",
+         "TMP = Temp: \(TMP)",
+         "TMPE = Temp real: \(TMPE)",
+         "PCPT: \(PCPT)",
+         "HTSGW: \(HTSGW)",
+         "WVHGT: \(WVHGT)",
+         "WVPER: \(WVPER)",
+         "WVDIR: \(WVDIR)",
+         "SWELL1: \(SWELL1)",
+         "SWPER1: \(SWPER1)",
+         "SWDIR1: \(SWDIR1)",
+         "SWELL2: \(SWELL2)",
+         "SWPER2: \(SWPER2)",
+         "SWDIR2: \(SWDIR2)",
+         "PERPW: \(PERPW)",
+         "DIRPW: \(DIRPW)",
+         "hr_weekday: \(hr_weekday)",
+         "hr_h: \(hr_h)",
+         "hr_d: \(hr_d)",
+         "hours: \(hours)",
+         "img_param: \(img_param), ",
+         "img_var_map: \(img_var_map).",
+         "initDate: \(initDate ?? ""), ",
+         "init_d: \(init_d ?? ""), ",
+         "init_dm: \(init_dm ?? ""), ",
+         "init_h: \(init_h ?? ""), ",
+         "initstr: \(initstr ?? "")",
+         "modelName: \(model_name ?? ""), ",
+         "model_longname: \(model_longname ?? ""), ",
+         "id_model: \(id_model ?? "")",
+         "update_last: \(update_last ?? ""), ",
+         "update_next: \(update_next ?? "")",
+        ].compactMap {$0}.joined(separator: ", ")
     }
-    
-
 }
 
-extension WForecast {
+public extension WForecast {
     
-    // Thanks: https://www.campbellsci.com/blog/convert-wind-directions
-    static public func windDirectionName(direction: Int) -> String? {
-        let compass = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW","N"]
-        let module = Double(direction % 360)
-        let index = Int(module / 22.5) + 1 // degrees for each sector
-        if index >= 0 && index < compass.count {
-            return compass[index]
-        }
-        return nil
-    }
-    
-    public func numberOfHours() -> Int {
-        return hours.count
+    var numberOfHours: Int {
+        hours.count
     }
 
-    public func hour24(hour: Int) -> String? {
+    func hour24(hour: Int) -> String? {
         if hr_h.count > 0 && hour < hr_h.count {
             return hr_h[hour]
         }
         return nil
     }
     
-    public func day(hour: Int) -> String? {
+    func day(hour: Int) -> String? {
         if hr_d.count > 0 && hour < hr_d.count {
             return hr_d[hour]
         }
         return nil
     }
     
-    public func weekday(hour: Int) -> String? {
+    func weekday(hour: Int) -> String? {
         if hr_weekday.count > 0 && hour < hr_weekday.count {
             let w = hr_weekday[hour]
             switch w {
@@ -245,53 +232,53 @@ extension WForecast {
         return nil
     }
     
-    public func temperature(hour: Int) -> Float? {
+    func temperature(hour: Int) -> Float? {
         if TMP.count > 0 && hour < TMP.count {
             return TMP[hour]
         }
         return nil
     }
     
-    public func temperatureReal(hour: Int) -> Float? {
+    func temperatureReal(hour: Int) -> Float? {
         if TMPE.count > 0 && hour < TMPE.count {
             return TMPE[hour]
         }
         return nil
     }
     
-    public func relativeHumidity(hour: Int) -> Int? {
+    func relativeHumidity(hour: Int) -> Int? {
         if RH.count > 0 && hour < RH.count {
             return RH[hour]
         }
         return nil
     }
     
-    public func smern(hour: Int) -> Int? {
+    func smern(hour: Int) -> Int? {
         if SMERN.count > 0 && hour < SMERN.count {
             return SMERN[hour]
         }
         return nil
     }
     
-    public func smer(hour: Int) -> Int? {
+    func smer(hour: Int) -> Int? {
         if SMER.count > 0 && hour < SMERN.count {
             return SMER[hour]
         }
         return nil
     }
     
-    private func windSpeed(hour: Int) -> Float? {
+    func windSpeed(hour: Int) -> Float? {
         if WINDSPD.count > 0 && hour < WINDSPD.count {
             return WINDSPD[hour]
         }
         return nil
     }
     
-    public func windSpeedKnots(hour: Int) -> Float? {
-        return windSpeed(hour:hour)
+    func windSpeedKnots(hour: Int) -> Float? {
+        windSpeed(hour:hour)
     }
     
-    public func windSpeedKmh(hour: Int) -> Float? {
+    func windSpeedKmh(hour: Int) -> Float? {
         if let knots = windSpeed(hour:hour) {
             var knotsBft = Knots.init(value: knots)
             return knotsBft.kmh()
@@ -299,7 +286,7 @@ extension WForecast {
         return nil
     }
     
-    public func windSpeedMph(hour: Int) -> Float? {
+    func windSpeedMph(hour: Int) -> Float? {
         if let knots = windSpeed(hour:hour) {
             var knotsBft = Knots.init(value: knots)
             return knotsBft.mph()
@@ -307,7 +294,7 @@ extension WForecast {
         return nil
     }
     
-    public func windSpeedMps(hour: Int) -> Float? {
+    func windSpeedMps(hour: Int) -> Float? {
         if let knots = windSpeed(hour:hour) {
             var knotsBft = Knots.init(value: knots)
             return knotsBft.mps()
@@ -315,7 +302,7 @@ extension WForecast {
         return nil
     }
     
-    public func windSpeedBft(hour: Int) -> Int? {
+    func windSpeedBft(hour: Int) -> Int? {
         if let knots = windSpeed(hour:hour) {
             var knotsBft = Knots.init(value: knots)
             return knotsBft.bft()
@@ -323,7 +310,7 @@ extension WForecast {
         return nil
     }
     
-    public func windSpeedBftEffect(hour: Int) -> String? {
+    func windSpeedBftEffect(hour: Int) -> String? {
         if let knots = windSpeed(hour:hour) {
             var knotsBft = Knots.init(value: knots)
             return knotsBft.effect()
@@ -331,7 +318,7 @@ extension WForecast {
         return nil
     }
     
-    public func windSpeedBftEffectOnSea(hour: Int) -> String? {
+    func windSpeedBftEffectOnSea(hour: Int) -> String? {
         if let knots = windSpeed(hour:hour) {
             var knotsBft = Knots.init(value: knots)
             return knotsBft.effectOnSea()
@@ -339,7 +326,7 @@ extension WForecast {
         return nil
     }
     
-    public func windSpeedBftEffectOnLand(hour: Int) -> String? {
+    func windSpeedBftEffectOnLand(hour: Int) -> String? {
         if let knots = windSpeed(hour:hour) {
             var knotsBft = Knots.init(value: knots)
             return knotsBft.effectOnLand()
@@ -347,168 +334,169 @@ extension WForecast {
         return nil
     }
     
-    
-    public func windDirection(hour: Int) -> Int? {
-        if WINDDIR.count > 0 && hour < WINDDIR.count {
-            return WINDDIR[hour]
+    func windDirection(hour: Int) -> Int? {
+        guard let windDir = windDir else { return nil }
+        if windDir.count > 0 && hour < windDir.count {
+            return windDir[hour].value
         }
         return nil
     }
     
-    public func windDirectionName(hour: Int) -> String? {
-        if let direction = windDirection(hour: hour) {
-            return WForecast.windDirectionName(direction:direction)
+    func windDirectionName(hour: Int) -> String? {
+        guard let windDir = windDir else { return nil }
+        if windDir.count > 0 && hour < windDir.count {
+            return windDir[hour].name
         }
         return nil
     }
     
-    public func windGust(hour: Int) -> Float? {
+    func windGust(hour: Int) -> Float? {
         if GUST.count > 0 && hour < GUST.count {
             return GUST[hour]
         }
         return nil
     }
     
-    public func perpw(hour: Int) -> Float? {
+    func perpw(hour: Int) -> Float? {
         if PERPW.count > 0 && hour < PERPW.count {
             return PERPW[hour]
         }
         return nil
     }
     
-    public func wvhgt(hour: Int) -> Float? {
+    func wvhgt(hour: Int) -> Float? {
         if WVHGT.count > 0 && hour < WVHGT.count {
             return WVHGT[hour]
         }
         return nil
     }
     
-    public func wvper(hour: Int) -> Float? {
+    func wvper(hour: Int) -> Float? {
         if WVPER.count > 0 && hour < WVPER.count {
             return WVPER[hour]
         }
         return nil
     }
 
-    public func wvdir(hour: Int) -> Float? {
+    func wvdir(hour: Int) -> Float? {
         if WVDIR.count > 0 && hour < WVDIR.count {
             return WVDIR[hour]
         }
         return nil
     }
     
-    public func swell1(hour: Int) -> Float? {
+    func swell1(hour: Int) -> Float? {
         if SWELL1.count > 0 && hour < SWELL1.count {
             return SWELL1[hour]
         }
         return nil
     }
     
-    public func swper1(hour: Int) -> Float? {
+    func swper1(hour: Int) -> Float? {
         if SWPER1.count > 0 && hour < SWPER1.count {
             return SWPER1[hour]
         }
         return nil
     }
     
-    public func swdir1(hour: Int) -> Float? {
+    func swdir1(hour: Int) -> Float? {
         if SWDIR1.count > 0 && hour < SWDIR1.count {
             return SWDIR1[hour]
         }
         return nil
     }
 
-    public func swell2(hour: Int) -> Float? {
+    func swell2(hour: Int) -> Float? {
         if SWELL2.count > 0 && hour < SWELL2.count {
             return SWELL2[hour]
         }
         return nil
     }
     
-    public func swper2(hour: Int) -> Float? {
+    func swper2(hour: Int) -> Float? {
         if SWPER2.count > 0 && hour < SWPER2.count {
             return SWPER2[hour]
         }
         return nil
     }
     
-    public func swdir2(hour: Int) -> Float? {
+    func swdir2(hour: Int) -> Float? {
         if SWDIR2.count > 0 && hour < SWDIR2.count {
             return SWDIR2[hour]
         }
         return nil
     }
     
-    public func dirpw(hour: Int) -> Float? {
+    func dirpw(hour: Int) -> Float? {
         if DIRPW.count > 0 && hour < DIRPW.count {
             return DIRPW[hour]
         }
         return nil
     }
-    public func htsgw(hour: Int) -> Float? {
+    func htsgw(hour: Int) -> Float? {
         if HTSGW.count > 0 && hour < HTSGW.count {
             return HTSGW[hour]
         }
         return nil
     }
     
-    public func cloudCoverTotal(hour: Int) -> Int? {
+    func cloudCoverTotal(hour: Int) -> Int? {
         if TCDC.count > 0 && hour < TCDC.count {
             return TCDC[hour]
         }
         return nil
     }
     
-    public func cloudCoverHigh(hour: Int) -> Int? {
+    func cloudCoverHigh(hour: Int) -> Int? {
         if HCDC.count > 0 && hour < HCDC.count {
             return HCDC[hour]
         }
         return nil
     }
     
-    public func cloudCoverMid(hour: Int) -> Int? {
+    func cloudCoverMid(hour: Int) -> Int? {
         if MCDC.count > 0 && hour < MCDC.count {
             return MCDC[hour]
         }
         return nil
     }
     
-    public func cloudCoverLow(hour: Int) -> Int? {
+    func cloudCoverLow(hour: Int) -> Int? {
         if LCDC.count > 0 && hour < LCDC.count {
             return LCDC[hour]
         }
         return nil
     }
     
-    public func precipitation(hour: Int) -> Int? {
+    func precipitation(hour: Int) -> Int? {
         if APCP.count > 0 && hour < APCP.count {
             return APCP[hour]
         }
         return nil
     }
     
-    public func pcpt(hour: Int) -> Int? {
+    func pcpt(hour: Int) -> Int? {
         if PCPT.count > 0 && hour < PCPT.count {
             return PCPT[hour]
         }
         return nil
     }
     
-    public func seaLevelPressure(hour: Int) -> Int? {
+    func seaLevelPressure(hour: Int) -> Int? {
         if SLP.count > 0 && hour < SLP.count {
             return SLP[hour]
         }
         return nil
     }
     
-    public func freezingLevel(hour: Int) -> Int? {
+    func freezingLevel(hour: Int) -> Int? {
         if FLHGT.count > 0 && hour < FLHGT.count {
             return FLHGT[hour]
         }
         return nil
     }
     
-    public func lastUpdate() -> String? {
-        return update_last
+    var lastUpdate: String? {
+        update_last
     }
 }

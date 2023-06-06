@@ -36,14 +36,6 @@ public class WGSuccess: Mappable {
     }
     
     public var description : String {
-        var aux : String = "\(type(of:self)): "
-        if let returnString = returnString {
-            aux += "\(returnString): "
-        }
-        if let message = message {
-            aux += "\(message)\n"
-        }
-        return aux
+        ["\(type(of:self))", returnString, message].compactMap {$0}.joined(separator: ", ")
     }
-    
 }

@@ -55,6 +55,4 @@ public class WindguruStation: Object, Mappable {
     public var description : String {
         ["\(type(of:self))", id, station, "\(distance)", id_type, "\(wind_avg)"].compactMap {$0}.joined(separator: ", ")
     }
-    
-    
 }

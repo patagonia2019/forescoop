@@ -106,62 +106,40 @@ public class WSpotForecast: Object, Mappable {
         wgs_arr = (map["wgs_arr"] as? [[String: Any]])?.compactMap { WindguruStation.init(map: $0)}
         wgs_wind_avg = map["wgs_wind_avg"] as? Float ?? 0.0
         fcst = (map["fcst"] as? [String: Any])?.compactMap({WForecast.init(map: $0.value as? [String: Any])})
-//        guard let fcstDict = map["fcst"] as? [String: Any] else { return }
-//        for (k,v) in fcstDict {
-//            if let tmpDictionary = v as? [String: Any],
-//               k == id_model {
-//                fcst = WForecast.init(map: tmpDictionary)
-//            }
-//        }
     }
     
-    public var elapse: Elapse? {
-        if let sunrise = sunrise, let sunset = sunset {
-            return Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
-        }
-        return nil
-    }
-
-
     public var description : String {
-        var aux : String = "\(type(of:self)):\n"
-        aux += "id_spot : \(id_spot), "
-        aux += "id_user : \(id_user)\n"
-        if let nickname     = nickname      { aux += "nickname : \(nickname), " }
-        if let spotname     = spotname      { aux += "spotname : \(spotname), " }
-        if let spot         = spot          { aux += "spot : \(spot)\n" }
-        aux += "lat         : \(lat), "
-        aux += "lon         : \(lon), "
-        aux += "alt         : \(alt)\n"
-        if let id_model     = id_model      { aux += "id_model : \(id_model), " }
-        if let model        = model         { aux += "model : \(model), " }
-        aux += "model_alt   : \(model_alt), "
-        aux += "levels      : \(levels)\n"
-        if let sst          = sst           { aux += "sst : \(sst)\n" }
-        if let sunrise      = sunrise       { aux += "sunrise : \(sunrise), " }
-        if let sunset       = sunset        { aux += "sunset : \(sunset)\n" }
-        if let tz           = tz            { aux += "tz : \(tz), " }
-        if let tzutc        = tzutc         { aux += "tzutc : \(tzutc), " }
-        aux += "utc_offset  : \(utc_offset), "
-        if let tzid         = tzid          { aux += "tzid : \(tzid)\n" }
-        aux += "tides       : \(tides), "
-        if let md5chk       = md5chk        { aux += "md5chk      : \(md5chk)\n" }
-        if let fcst = fcst {
-            aux += "Forecast: {"
-            aux += fcst.compactMap{$0.description}.joined(separator: "\n")
-            aux += "}"
-        }
-        aux += "wgs_wind_avg: \(wgs_wind_avg)\n"
-        if let wgs_arr = wgs_arr {
-            aux += "WGS: {"
-            aux += wgs_arr.compactMap{$0.description}.joined(separator: "\n")
-            aux += "}"
-        }
-        return aux
+        ["\(type(of:self))",
+         "id_spot : \(id_spot)",
+         "id_user : \(id_user)",
+         nickname,
+         spotname,
+         spot,
+         "lat/lon/alt: \(lat)/\(lon)/\(alt)",
+         id_model,
+         model,
+         "\(model_alt)",
+         "\(levels)",
+         sst,
+         sunrise,
+         sunset,
+         tz,
+         tzutc,
+         "\(utc_offset)",
+         tzid,
+         md5chk,
+         "wgs_wind_avg: \(wgs_wind_avg)",
+         fcst?.compactMap{$0.description}.joined(separator: "\n"),
+         wgs_arr?.compactMap{$0.description}.joined(separator: "\n")
+        ].compactMap {$0}.joined(separator: ", ")
     }
 }
 
 public extension WSpotForecast {
+    
+    var elapse: Elapse? {
+        Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+    }
     
     var locationName: String? {
         wgs_arr?.first?.station
