@@ -26,7 +26,7 @@
 		70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
 		70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
 		9802C5522A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; };
-		9802C5532A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9802C5532A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		98688A0B22D5936700A09AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0A22D5936700A09AD0 /* Assets.xcassets */; };
 		98688A0E22D5936700A09AD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0C22D5936700A09AD0 /* Main.storyboard */; };
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -521,7 +521,7 @@
 					};
 					98688A0322D5936400A09AD0 = {
 						CreatedOnToolsVersion = 10.2.1;
-						DevelopmentTeam = DC76Z3W5Y8;
+						DevelopmentTeam = 27XTSJS68A;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.NetworkExtensions = {
@@ -1224,7 +1224,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = DC76Z3W5Y8;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ForescoopMacOS/Info.plist;

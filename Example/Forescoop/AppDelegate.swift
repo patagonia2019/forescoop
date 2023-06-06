@@ -22,11 +22,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationWillResignActive(_ notification: Notification) {
-        Facade.instance?.stop()
     }
     
     func applicationDidBecomeActive(_ notification: Notification) {
-        Facade.instance?.start()
     }
 }
 
