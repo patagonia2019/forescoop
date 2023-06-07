@@ -1,6 +1,6 @@
 //
 //  Model.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/13/17.
 //

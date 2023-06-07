@@ -1,6 +1,6 @@
 //
 //  SpotInfo.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/16/17.
 //
@@ -99,7 +99,7 @@ public class SpotInfo: Spot {
     var models = [Int]()
     var tides: String? = nil
 
-    required public convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
@@ -136,13 +136,13 @@ public class SpotInfo: Spot {
                 elapse?.description,
                 tides,
                 "\(models)"
-            ].compactMap {$0}.joined(separator: ", ")
-        ].joined(separator: "\n")
+            ]
+                .compactMap {$0}
+                .joined(separator: ", ")
+        ]
+            .joined(separator: "\n")
     }
-    
-    
 }
-
 
 extension SpotInfo {
     public func elapseContainsTime(date : NSDate) -> Bool {

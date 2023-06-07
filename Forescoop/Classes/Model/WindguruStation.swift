@@ -1,6 +1,6 @@
 //
 //  WindguruStation.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/17/17.
 //
@@ -37,7 +37,7 @@ public class WindguruStation: Object, Mappable {
     var id_type: String? = nil
     var wind_avg: Int = 0
 
-    required public convenience init?(map: [String: Any]?) {
+    required convenience public init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
@@ -53,6 +53,8 @@ public class WindguruStation: Object, Mappable {
     }
     
     public var description : String {
-        ["\(type(of:self))", id, station, "\(distance)", id_type, "\(wind_avg)"].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", id, station, "\(distance)", id_type, "\(wind_avg)"]
+            .compactMap {$0}
+            .joined(separator: ", ")
     }
 }

@@ -1,6 +1,6 @@
 //
 //  SetInfo.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/27/17.
 //
@@ -35,7 +35,7 @@ public class SetInfo: Object, Mappable {
     }
 
     public var description : String {
-        ["\(type(of:self)): ", id, name].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", id, name].compactMap {$0}.joined(separator: ", ")
     }
     
 }

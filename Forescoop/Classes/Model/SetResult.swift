@@ -50,7 +50,7 @@ public class SetResult: Object, Mappable {
     }
 
     public var description : String {
-        "\(type(of:self)): " + sets.compactMap{$0.description}.joined(separator: "\n")
+        "\(type(of:self)) " + sets.compactMap{$0.description}.joined(separator: "\n")
     }
 
 }

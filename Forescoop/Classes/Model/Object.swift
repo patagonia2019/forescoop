@@ -1,6 +1,6 @@
 //
 //  Object.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/31/17.
 //
@@ -15,7 +15,7 @@ public protocol BaseMappable {
 }
 
 public final class Mapper<N: BaseMappable> {
-    public func map(JSON map: [String:Any]?) -> N? {
+    func map(JSON map: [String:Any]?) -> N? {
         if let klass = N.self as? Mappable.Type, let jsonMap = map { // Check if object is Mappable
             if var object = klass.init(map: jsonMap) as? N {
                 object.mapping(map: map)
@@ -27,7 +27,7 @@ public final class Mapper<N: BaseMappable> {
 }
 
 extension Dictionary {
-    public func JSON() -> Dictionary {
+    func JSON() -> Dictionary {
         return self
     }
 }
@@ -36,7 +36,6 @@ public protocol Mappable: BaseMappable {
     /// This function can be used to validate JSON prior to mapping. Return nil to cancel mapping at this point
     init?(map: [String:Any]?)
 }
-
 
 open class DateTransform {
     public typealias Object = Date
@@ -64,8 +63,8 @@ open class DateTransform {
     }
 }
 
-extension Array {
-    public var description: String {
-        "\(type(of:self)): " + compactMap{"\($0)"}.joined(separator: ", ")
+public extension Array {
+     var description: String {
+        "\(type(of:self)) " + compactMap{"\($0)"}.joined(separator: ", ")
     }
 }

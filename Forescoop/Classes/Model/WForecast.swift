@@ -1,6 +1,6 @@
 //
 //  WForecast.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/17/17.
 //
@@ -53,7 +53,7 @@ public class WForecast: Object, Mappable {
     var FLHGT       = [Int]() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
     var APCP        = [Int]() //  APCP: Precip. (mm/3h)
     var WINDSPD     = [Float]() //  WINDSPD: Wind speed (knots)
-    var windDir: [WindDirection]?
+    var windDirection = [WindDirection]()
     var SMERN       = [Int]()
     var SMER        = [Int]()
     var TMPE        = [Float]() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
@@ -107,7 +107,7 @@ public class WForecast: Object, Mappable {
         FLHGT = map["FLHGT"] as? [Int] ?? []
         APCP = map["APCP"] as? [Int] ?? []
         WINDSPD = map["WINDSPD"] as? [Float] ?? []
-        windDir = (map["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)}
+        windDirection = (map["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)} ?? []
         SMERN = map["SMERN"] as? [Int] ?? []
         SMER = map["SMER"] as? [Int] ?? []
         TMPE = map["TMPE"] as? [Float] ?? []
@@ -144,53 +144,56 @@ public class WForecast: Object, Mappable {
     }
     
     public var description : String {
-        ["\(type(of:self))",
-         "initstamp: \(initstamp)",
-         "TCDC = Cloud cover Total: \(TCDC)",
-         "HCDC = Cloud cover High: \(HCDC)",
-         "MCDC = Cloud cover Mid: \(MCDC)",
-         "LCDC = Cloud cover Low: \(LCDC)",
-         "RH = Humidity: \(RH)",
-         "SLP = Sea Level pressure: \(SLP)",
-         "FLHGT = Freezing level: \(FLHGT)",
-         "APCP = Precipitation: \(APCP)",
-         "GUST = Wind gust: \(GUST)",
-         "WINDSPD = Wind speed: \(WINDSPD)",
-         "WINDDIR = Wind direccion: \(windDir?.compactMap{$0.description} ?? [])",
-         "SMERN: \(SMERN)",
-         "SMER: \(SMER)",
-         "TMP = Temp: \(TMP)",
-         "TMPE = Temp real: \(TMPE)",
-         "PCPT: \(PCPT)",
-         "HTSGW: \(HTSGW)",
-         "WVHGT: \(WVHGT)",
-         "WVPER: \(WVPER)",
-         "WVDIR: \(WVDIR)",
-         "SWELL1: \(SWELL1)",
-         "SWPER1: \(SWPER1)",
-         "SWDIR1: \(SWDIR1)",
-         "SWELL2: \(SWELL2)",
-         "SWPER2: \(SWPER2)",
-         "SWDIR2: \(SWDIR2)",
-         "PERPW: \(PERPW)",
-         "DIRPW: \(DIRPW)",
-         "hr_weekday: \(hr_weekday)",
-         "hr_h: \(hr_h)",
-         "hr_d: \(hr_d)",
-         "hours: \(hours)",
-         "img_param: \(img_param), ",
-         "img_var_map: \(img_var_map).",
-         "initDate: \(initDate ?? ""), ",
-         "init_d: \(init_d ?? ""), ",
-         "init_dm: \(init_dm ?? ""), ",
-         "init_h: \(init_h ?? ""), ",
-         "initstr: \(initstr ?? "")",
-         "modelName: \(model_name ?? ""), ",
-         "model_longname: \(model_longname ?? ""), ",
-         "id_model: \(id_model ?? "")",
-         "update_last: \(update_last ?? ""), ",
-         "update_next: \(update_next ?? "")",
-        ].compactMap {$0}.joined(separator: ", ")
+        [
+            "\(type(of:self))",
+            "initstamp: \(initstamp)",
+            "TCDC = Cloud cover Total: \(TCDC)",
+            "HCDC = Cloud cover High: \(HCDC)",
+            "MCDC = Cloud cover Mid: \(MCDC)",
+            "LCDC = Cloud cover Low: \(LCDC)",
+            "RH = Humidity: \(RH)",
+            "SLP = Sea Level pressure: \(SLP)",
+            "FLHGT = Freezing level: \(FLHGT)",
+            "APCP = Precipitation: \(APCP)",
+            "GUST = Wind gust: \(GUST)",
+            "WINDSPD = Wind speed: \(WINDSPD)",
+            "WINDDIR = Wind direccion: \(windDirection.compactMap{$0.description})",
+            "SMERN: \(SMERN)",
+            "SMER: \(SMER)",
+            "TMP = Temp: \(TMP)",
+            "TMPE = Temp real: \(TMPE)",
+            "PCPT: \(PCPT)",
+            "HTSGW: \(HTSGW)",
+            "WVHGT: \(WVHGT)",
+            "WVPER: \(WVPER)",
+            "WVDIR: \(WVDIR)",
+            "SWELL1: \(SWELL1)",
+            "SWPER1: \(SWPER1)",
+            "SWDIR1: \(SWDIR1)",
+            "SWELL2: \(SWELL2)",
+            "SWPER2: \(SWPER2)",
+            "SWDIR2: \(SWDIR2)",
+            "PERPW: \(PERPW)",
+            "DIRPW: \(DIRPW)",
+            "hr_weekday: \(hr_weekday)",
+            "hr_h: \(hr_h)",
+            "hr_d: \(hr_d)",
+            "hours: \(hours)",
+            "img_param: \(img_param), ",
+            "img_var_map: \(img_var_map).",
+            "initDate: \(initDate ?? ""), ",
+            "init_d: \(init_d ?? ""), ",
+            "init_dm: \(init_dm ?? ""), ",
+            "init_h: \(init_h ?? ""), ",
+            "initstr: \(initstr ?? "")",
+            "modelName: \(model_name ?? ""), ",
+            "model_longname: \(model_longname ?? ""), ",
+            "id_model: \(id_model ?? "")",
+            "update_last: \(update_last ?? ""), ",
+            "update_next: \(update_next ?? "")",
+        ]
+            .compactMap {$0}
+            .joined(separator: ", ")
     }
 }
 
@@ -279,75 +282,41 @@ public extension WForecast {
     }
     
     func windSpeedKmh(hour: Int) -> Float? {
-        if let knots = windSpeed(hour:hour) {
-            var knotsBft = Knots.init(value: knots)
-            return knotsBft.kmh()
-        }
-        return nil
+        Knots(value: windSpeed(hour:hour)).kmh
     }
     
     func windSpeedMph(hour: Int) -> Float? {
-        if let knots = windSpeed(hour:hour) {
-            var knotsBft = Knots.init(value: knots)
-            return knotsBft.mph()
-        }
-        return nil
+        Knots(value: windSpeed(hour:hour)).mph
     }
     
     func windSpeedMps(hour: Int) -> Float? {
-        if let knots = windSpeed(hour:hour) {
-            var knotsBft = Knots.init(value: knots)
-            return knotsBft.mps()
-        }
-        return nil
+        Knots(value: windSpeed(hour:hour)).mps
     }
     
     func windSpeedBft(hour: Int) -> Int? {
-        if let knots = windSpeed(hour:hour) {
-            var knotsBft = Knots.init(value: knots)
-            return knotsBft.bft()
-        }
-        return nil
+        Knots(value: windSpeed(hour:hour)).bft
     }
     
     func windSpeedBftEffect(hour: Int) -> String? {
-        if let knots = windSpeed(hour:hour) {
-            var knotsBft = Knots.init(value: knots)
-            return knotsBft.effect()
-        }
-        return nil
+        Knots(value: windSpeed(hour: hour)).effect
     }
     
     func windSpeedBftEffectOnSea(hour: Int) -> String? {
-        if let knots = windSpeed(hour:hour) {
-            var knotsBft = Knots.init(value: knots)
-            return knotsBft.effectOnSea()
-        }
-        return nil
+        Knots(value: windSpeed(hour: hour)).effectOnSea
     }
     
     func windSpeedBftEffectOnLand(hour: Int) -> String? {
-        if let knots = windSpeed(hour:hour) {
-            var knotsBft = Knots.init(value: knots)
-            return knotsBft.effectOnLand()
-        }
-        return nil
+        Knots(value: windSpeed(hour: hour)).effectOnLand
     }
-    
+        
     func windDirection(hour: Int) -> Int? {
-        guard let windDir = windDir else { return nil }
-        if windDir.count > 0 && hour < windDir.count {
-            return windDir[hour].value
-        }
-        return nil
+        assert(windDirection.count > 0 && hour < windDirection.count)
+        return windDirection[hour].value
     }
     
     func windDirectionName(hour: Int) -> String? {
-        guard let windDir = windDir else { return nil }
-        if windDir.count > 0 && hour < windDir.count {
-            return windDir[hour].name
-        }
-        return nil
+        assert(windDirection.count > 0 && hour < windDirection.count)
+        return windDirection[hour].name
     }
     
     func windGust(hour: Int) -> Float? {

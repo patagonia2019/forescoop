@@ -1,6 +1,6 @@
 //
 //  SpotResult.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/17/17.
 //

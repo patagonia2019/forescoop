@@ -32,7 +32,7 @@ public class SpotOwner: Spot {
 
     var id_user: String? = nil
 
-    required public convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }

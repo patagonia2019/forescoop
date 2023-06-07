@@ -1,6 +1,6 @@
 //
 //  WSpotForecast.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/17/17.
 //
@@ -42,8 +42,6 @@ import Foundation
  *     "wgs_arr": [ <WindguruStation>],
  *     "wgs_wind_avg": 2
  * }
- *
- *
  */
 
 public class WSpotForecast: Object, Mappable {
@@ -103,35 +101,40 @@ public class WSpotForecast: Object, Mappable {
         tzid = map["tzid"] as? String
         tides = map["tides"] as? Int ?? 0
         md5chk = map["md5chk"] as? String
-        wgs_arr = (map["wgs_arr"] as? [[String: Any]])?.compactMap { WindguruStation.init(map: $0)}
+        wgs_arr = (map["wgs_arr"] as? [[String: Any]])?
+            .compactMap { WindguruStation.init(map: $0)}
         wgs_wind_avg = map["wgs_wind_avg"] as? Float ?? 0.0
-        fcst = (map["fcst"] as? [String: Any])?.compactMap({WForecast.init(map: $0.value as? [String: Any])})
+        fcst = (map["fcst"] as? [String: Any])?
+            .compactMap({WForecast.init(map: $0.value as? [String: Any])})
     }
     
     public var description : String {
-        ["\(type(of:self))",
-         "id_spot : \(id_spot)",
-         "id_user : \(id_user)",
-         nickname,
-         spotname,
-         spot,
-         "lat/lon/alt: \(lat)/\(lon)/\(alt)",
-         id_model,
-         model,
-         "\(model_alt)",
-         "\(levels)",
-         sst,
-         sunrise,
-         sunset,
-         tz,
-         tzutc,
-         "\(utc_offset)",
-         tzid,
-         md5chk,
-         "wgs_wind_avg: \(wgs_wind_avg)",
-         fcst?.compactMap{$0.description}.joined(separator: "\n"),
-         wgs_arr?.compactMap{$0.description}.joined(separator: "\n")
-        ].compactMap {$0}.joined(separator: ", ")
+        [
+            "\(type(of:self))",
+            "id_spot : \(id_spot)",
+            "id_user : \(id_user)",
+            nickname,
+            spotname,
+            spot,
+            "lat/lon/alt: \(lat)/\(lon)/\(alt)",
+            id_model,
+            model,
+            "\(model_alt)",
+            "\(levels)",
+            sst,
+            sunrise,
+            sunset,
+            tz,
+            tzutc,
+            "\(utc_offset)",
+            tzid,
+            md5chk,
+            "wgs_wind_avg: \(wgs_wind_avg)",
+            fcst?.compactMap{$0.description}.joined(separator: "\n"),
+            wgs_arr?.compactMap{$0.description}.joined(separator: "\n")
+        ]
+            .compactMap {$0}
+            .joined(separator: ", ")
     }
 }
 
@@ -146,22 +149,7 @@ public extension WSpotForecast {
     }
     
     var spotName: String {
-        if let locationName = locationName {
-            return locationName
-        }
-        if let spot = spot {
-            return spot
-        }
-        if let spotname = spotname {
-            return spotname
-        }
-        if let nickname = nickname {
-            return nickname
-        }
-        if let tzid = tzid {
-            return tzid
-        }
-        return "Spot id: \(id_spot)"
+        locationName ?? spot ?? spotname ?? nickname ?? tzid ?? "Spot id: \(id_spot)"
     }
     
     var forecast: WForecast? {

@@ -1,6 +1,6 @@
 //
 //  Models.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/13/17.
 //
@@ -32,12 +32,6 @@ public class Models: Object, Mappable {
         guard let map = map else { return }
 
         models = map.JSON().compactMap{$0.value as? [String: Any]}.compactMap {Mapper<Model>().map(JSON:$0)}
-//        for json in map.JSON() {
-//            if  let jsonValue = json.value as? [String: Any],
-//                let model = Mapper<Model>().map(JSON: jsonValue) {
-//                models.append(model)
-//            }
-//        }
     }
     
     public var description : String {

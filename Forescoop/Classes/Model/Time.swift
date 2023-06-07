@@ -1,6 +1,6 @@
 //
 //  Time.swift
-//  Pods
+//  Forescoop
 //
 //  Created by Javier Fuchs on 6/6/16.
 //
@@ -47,14 +47,12 @@ public class Time: Object, Mappable {
     }
     
     public var description : String {
-        "\(type(of:self)): " + String(format: "%02d:%02d:%02d", hour, minutes, seconds)
+        "\(type(of:self)) " + String(format: "%02d:%02d:%02d", hour, minutes, seconds)
     }
 }
 
 extension Time {
-    
     public func asDate() -> Date? {
         Date.init(timeInterval: Double(hour) + Double(minutes * 60) + Double(seconds * 60 * 60), since: Date.init())
     }
-
 }

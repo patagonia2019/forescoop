@@ -44,7 +44,7 @@ public class SpotForecast: SpotInfo {
 
     var forecasts = Array<ForecastModel>()
 
-    required public convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
@@ -63,7 +63,9 @@ public class SpotForecast: SpotInfo {
             super.description,
             "\(type(of:self)): ",
             currentModel?.description,
-            forecasts.compactMap({$0.description}).joined(separator: "\n")
+            forecasts
+                .compactMap({$0.description})
+                .joined(separator: "\n")
         ]
             .compactMap{$0}
             .joined(separator: "\n")

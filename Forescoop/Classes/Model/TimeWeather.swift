@@ -105,7 +105,7 @@ public class TimeWeather: Object, Mappable {
     }
 
     public var description : String {
-        "\(type(of:self)): " + orderedKeys.compactMap {"\($0) : \(info[$0] ?? "-")"}.joined(separator: ", ")
+        "\(type(of:self))" + orderedKeys.compactMap {"\($0) : \(info[$0] ?? "-")"}.joined(separator: ", ")
     }
     
     public func value<T>(hh: String?) -> T? {

@@ -1,6 +1,6 @@
 //
 //  WGError.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/11/17.
 //
@@ -24,7 +24,8 @@ public class WGError: Mappable {
     var returnString: String?
     var error_id: Int?
     var error_message: String?
-    
+    var nserror: NSError?
+
     public init(code: Int, desc: String, reason: String? = nil, suggestion: String? = nil,
                 underError error: NSError? = nil, wgdata : Data? = nil)
     {
@@ -55,12 +56,11 @@ public class WGError: Mappable {
             id = bundleId
         }
         nserror = NSError(domain: id, code:code, userInfo: dict)
-        
     }
+    
     required public init?(map: [String: Any]?){
         mapping(map: map)
     }
-    
     
     public static func isMappable(map: [String:Any]) -> Bool {
         var ret : Bool = true
@@ -80,27 +80,16 @@ public class WGError: Mappable {
     
     
     public var description : String {
-        var aux : String = ""
-        if let returnString = returnString {
-            aux += "\(returnString): "
-        }
-        if let error_id = error_id {
-            aux += "# \(error_id), "
-        }
-        if let error_message = error_message {
-            aux += "\(error_message)."
-        }
-        if let nserror = nserror {
-            aux += "code=\(nserror.code). "
-            aux += "\(nserror.localizedDescription)\n"
-        }
-        aux += "Please contact us claiming this error."
-        return aux
+        [
+            "\(type(of:self))",
+            returnString,
+            error_id?.description,
+            error_message,
+            nserror?.description
+        ]
+            .compactMap {$0}
+            .joined(separator: ", ")
     }
-    
-
-    public var nserror: NSError?
-    
 }
 
 extension WGError : Error {

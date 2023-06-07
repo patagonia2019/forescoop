@@ -41,9 +41,16 @@ public class Spot: Object, Mappable {
         spotname = map["spotname"] as? String ?? nil
         country = map["country"] as? String ?? nil
     }
-
+    
     public var description : String {
-        ["Spot", id_spot, spotname, country].compactMap {$0}.joined(separator: ", ")
+        [
+            "Spot",
+            id_spot,
+            spotname,
+            country
+        ]
+            .compactMap {$0}
+            .joined(separator: ", ")
     }
 }
 

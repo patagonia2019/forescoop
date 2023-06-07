@@ -1,6 +1,6 @@
 //
 //  GeoRegions.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/14/17.
 //
@@ -54,8 +54,9 @@ public class GeoRegions: Object, Mappable {
             geoRegions
                 .compactMap{ $0.description }
                 .joined(separator: "\n")
-        ].compactMap{$0}
-         .joined(separator: "\n")
+        ]
+            .compactMap{$0}
+            .joined(separator: "\n")
     }
     
 }
