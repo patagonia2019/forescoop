@@ -95,6 +95,19 @@ import Foundation
  *
  */
 
+enum TypeOfColor: String {
+    case wind
+    case temperature = "temp"
+    case cloud
+    case precipitation = "precip"
+    case precip1
+    case pressure = "press"
+    case rh
+    case wpower
+    case tide
+    case initial = "init"
+}
+
 
 public class User: Object, Mappable {
     
@@ -131,7 +144,7 @@ public class User: Object, Mappable {
         view_hours_from = map["view_hours_from"] as? Int ?? 0
         view_hours_to = map["view_hours_to"] as? Int ?? 0
         temp_limit = map["temp_limit"] as? Int ?? 0
-        wind_rating_limits = map["wind_rating_limits"] as? [Float] ?? []
+        wind_rating_limits = (map["wind_rating_limits"] as? [Double])?.compactMap({Float($0)}) ?? []
         customColors = (map["colors"] as? [String: Any])?
             .compactMapValues { value in
                 (value as? [[Double]])?
@@ -183,13 +196,86 @@ public extension Array where Iterator.Element == Float {
 
 public extension User {
     enum Constant: String {
-        case Anonymous // temperature
+        case Anonymous
     }
     var name: String {
         isAnonymous ? Constant.Anonymous.rawValue : username ?? ""
     }
-    
     var isAnonymous: Bool {
         username?.isEmpty == true
     }
+    var countryIdentifier: Int {
+        id_country
+    }
+    var windUnits: String? {
+        wind_units
+    }
+    var temperatureUnits: String? {
+        temp_units
+    }
+    var waveUnits: String? {
+        wave_units
+    }
+    var isPro: Bool {
+        pro != 0
+    }
+    var noAdvertisement: Bool {
+        no_ads != 0
+    }
+    var viewHoursFrom: Int {
+        view_hours_from
+    }
+    var viewHoursTo: Int {
+        view_hours_to
+    }
+    var temperatureLimit: Int {
+        temp_limit
+    }
+    var windRatingLimits: [Float] {
+        wind_rating_limits
+    }
+    var windColor: [CustomColor] {
+        customColors?[TypeOfColor.wind.rawValue] ?? []
+    }
+    var temperatureColor: [CustomColor] {
+        customColors?[TypeOfColor.temperature.rawValue] ?? []
+    }
+    var cloudColor: [CustomColor] {
+        customColors?[TypeOfColor.cloud.rawValue] ?? []
+    }
+    var precipitationColor: [CustomColor] {
+        customColors?[TypeOfColor.precipitation.rawValue] ?? []
+    }
+    var precip1Color: [CustomColor] {
+        customColors?[TypeOfColor.precip1.rawValue] ?? []
+    }
+    var pressureColor: [CustomColor] {
+        customColors?[TypeOfColor.pressure.rawValue] ?? []
+    }
+    var rhColor: [CustomColor] {
+        customColors?[TypeOfColor.rh.rawValue] ?? []
+    }
+    var wpowerColor: [CustomColor] {
+        customColors?[TypeOfColor.wpower.rawValue] ?? []
+    }
+    var tideColor: [CustomColor] {
+        customColors?[TypeOfColor.tide.rawValue] ?? []
+    }
+    var initialColor: [CustomColor] {
+        customColors?[TypeOfColor.initial.rawValue] ?? []
+    }
+    
+    /*
+     case wind
+     case temperature = "temp"
+     case cloud
+     case precipitation = "precip"
+     case precip1
+     case pressure = "press"
+     case rh
+     case wpower
+     case tide
+     case initial = "init"
+
+     */
 }

@@ -40,4 +40,10 @@ public class Region: Object, Mappable {
     
 }
 
+public extension Region {
+    var oficinalName: String? {
+        name
+    }
+}
+
 

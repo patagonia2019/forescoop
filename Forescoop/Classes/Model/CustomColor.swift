@@ -7,16 +7,23 @@
 //
 
 import Foundation
+import UIKit
 
 public struct CustomColor {
     
-    var info: String?
-    var alpha: Float
-    var red: Float
-    var green: Float
-    var blue: Float
+    let info: String?
+    let alpha: Float
+    let red: Float
+    let green: Float
+    let blue: Float
     
     public var description : String {
         "\(type(of:self)): (\(info ?? "")\(alpha),\(red),\(green),\(blue))"
+    }
+}
+
+public extension CustomColor {
+    var color: UIColor {
+        UIColor(red: CGFloat(red/255), green: CGFloat(green/255), blue: CGFloat(blue/255), alpha: CGFloat(alpha))
     }
 }

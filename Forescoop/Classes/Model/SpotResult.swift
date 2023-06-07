@@ -79,4 +79,8 @@ public extension SpotResult {
     var asSpotName: String {
         lastSpot?.name ?? ""
     }
+    
+    func find(nickname: String) -> Spot? {
+        spots?.first(where: {$0.nickname == nickname})
+    }
 }

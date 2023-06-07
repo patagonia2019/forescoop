@@ -25,9 +25,10 @@ import Foundation
 
 public class Spot: Object, Mappable {
 
-    var id_spot: String? = nil
-    var spotname: String? = nil
-    var country: String? = nil
+    var id_spot: String?
+    var spotname: String?
+    var country: String?
+    var nickname: String?
 
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -37,9 +38,10 @@ public class Spot: Object, Mappable {
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
 
-        id_spot = map["id_spot"] as? String ?? nil
-        spotname = map["spotname"] as? String ?? nil
-        country = map["country"] as? String ?? nil
+        id_spot = map["id_spot"] as? String
+        spotname = map["spotname"] as? String
+        country = map["country"] as? String
+        nickname = map["nickname"] as? String
     }
     
     public var description : String {
@@ -47,7 +49,8 @@ public class Spot: Object, Mappable {
             "Spot",
             id_spot,
             spotname,
-            country
+            country,
+            nickname
         ]
             .compactMap {$0}
             .joined(separator: ", ")
@@ -61,5 +64,13 @@ public extension Spot {
     
     var name: String? {
         spotname
+    }
+    
+    var countryName: String? {
+        country
+    }
+    
+    var nickName: String? {
+        nickname
     }
 }

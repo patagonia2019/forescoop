@@ -40,3 +40,9 @@ public class GeoRegion: Object, Mappable {
             .joined(separator: ", ")
     }
 }
+
+public extension GeoRegion {
+    var oficialName: String? {
+        name
+    }
+}

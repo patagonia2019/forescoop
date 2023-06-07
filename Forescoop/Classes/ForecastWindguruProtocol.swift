@@ -8,6 +8,9 @@
 import Foundation
 
 public protocol ForecastWindguruProtocol {
+    
+    init()
+
     // user = api(query: routine.user,
     //        errorCode: err.user.rawValue,
     //       parameters: [parameter.username,

@@ -19,7 +19,7 @@ import Foundation
 
 public class ForecastWindguruService: ForecastWindguruProtocol {
 
-    public init() {}
+    required public init() {}
     
     public struct Definition {
         static let defaultModel = "3"

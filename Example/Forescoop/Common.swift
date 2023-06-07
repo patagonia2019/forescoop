@@ -15,14 +15,4 @@ import Foundation
  *    Some common and global constants.
  */
 
-let kWDWatchPlist: String = "WDWatch.plist"
-
-let kWDGroup : String = "group.fuchs.forescoop"
-
-let kWDKeyLocality : String = "locality"
-
-let kWDKeyCountry : String = "country"
-
-let kWDMinimumDistanceFilterInMeters : Double = 60.0 // update every 200ft
-
 let kWDAnimationDuration: Double = 2.0

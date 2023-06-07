@@ -9,6 +9,8 @@ import Foundation
 
 public class ForecastWindguruMockup: ForecastWindguruProtocol {
     
+    required public init() {}
+    
     // MARK - Async / Wait
     public func searchSpots(byLocation location: String) async throws -> SpotResult? {
         SpotResult.init(map: nil)
