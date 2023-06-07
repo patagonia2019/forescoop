@@ -7,16 +7,17 @@
 //
 
 import XCTest
+import Forescoop
 @testable import Forescoop_Example
 
 final class MainViewControllerTests: XCTestCase {
 
     private var vc: MainViewController!
-    
     override func setUpWithError() throws {
         let sb = UIStoryboard(name: "Main", bundle: nil)
         vc = sb.instantiateViewController(identifier: "MainViewController") { coder in
-            MainViewController(coder: coder)
+            let forecastService = ForecastWindguruService()
+            return MainViewController(coder: coder, forecastService: forecastService)
         }
         vc.loadViewIfNeeded()
     }

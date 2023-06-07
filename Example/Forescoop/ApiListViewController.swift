@@ -16,6 +16,7 @@ class ApiListViewController: UIViewController {
     var password: String?
     var service: String?
     var info = String()
+    var forecastService: ForecastWindguruProtocol? = nil// = ForecastWindguruService()
 
     let anonymBasedServices = ["user",
                                "geo_regions",
@@ -107,7 +108,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Set Id]")
                     return
                 }
-                ForecastWindguruService.instance.addSetSpots(withSetId: text, username: user.name, password: password,
+                self.forecastService?.addSetSpots(withSetId: text, username: user.name, password: password,
                                                              failure: failureBlock,
                                                              success: { [weak self]
                     (spots) in
@@ -143,7 +144,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
                 }
-                ForecastWindguruService.instance.addFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password,
+                self.forecastService?.addFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password,
                                                              failure: failureBlock,
                                                              success: { [weak self] (result) in
                     guard let self = self else { return }
@@ -175,7 +176,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
                 }
-                ForecastWindguruService.instance.removeFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password,
+                self.forecastService?.removeFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password,
                                                                     failure: failureBlock,
                                                                     success: { [weak self] (result) in
                     guard let self = self else { return }
@@ -222,7 +223,7 @@ extension ApiListViewController: UITableViewDelegate {
                     modelId = nil
                 }
 
-                ForecastWindguruService.instance.forecast(bySpotId: spotId,
+                self.forecastService?.forecast(bySpotId: spotId,
                                                           model: modelId,
                                                           failure: failureBlock,
                                                           success: { [weak self] (spotForecast) in
@@ -258,9 +259,9 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
                 }
-                ForecastWindguruService.instance.spotInfo(bySpotId: spotId,
-                                                          failure: failureBlock,
-                                                          success: { [weak self] (spotInfo) in
+                self.forecastService?.spotInfo(bySpotId: spotId,
+                                               failure: failureBlock,
+                                               success: { [weak self] (spotInfo) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
                     guard let spotInfo = spotInfo else {
@@ -292,10 +293,10 @@ extension ApiListViewController: UITableViewDelegate {
             
             let block : ((UIAlertAction) -> Void)? = { (action) in
                 
-                ForecastWindguruService.instance.spots(withCountryId: alert.textFields![0].text,
-                                                       regionId: alert.textFields![1].text,
-                                                       failure: failureBlock,
-                                                       success: { [weak self]
+                self.forecastService?.spots(withCountryId: alert.textFields![0].text,
+                                             regionId: alert.textFields![1].text,
+                                             failure: failureBlock,
+                                             success: { [weak self]
                     (spotResult) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
@@ -329,7 +330,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Location]")
                     return
                 }
-                ForecastWindguruService.instance.searchSpots(byLocation: location,
+                self.forecastService?.searchSpots(byLocation: location,
                                                              failure: failureBlock,
                                                              success: { [weak self] (spotResult) in
                     guard let self = self else { return }
@@ -349,7 +350,7 @@ extension ApiListViewController: UITableViewDelegate {
 
             
         case "c_spots":
-            ForecastWindguruService.instance.customSpots(withUsername: user?.name, password: password,
+            forecastService?.customSpots(withUsername: user?.name, password: password,
                                                          failure: failureBlock,
                                                          success: { [weak self] (spots) in
                 guard let self = self else { return }
@@ -365,7 +366,7 @@ extension ApiListViewController: UITableViewDelegate {
             break
 
         case "f_spots":
-            ForecastWindguruService.instance.favoriteSpots(withUsername: user?.name, password: password,
+            forecastService?.favoriteSpots(withUsername: user?.name, password: password,
                                                            failure: failureBlock,
                                                            success: { [weak self] (spots) in
                 guard let self = self else { return }
@@ -381,7 +382,7 @@ extension ApiListViewController: UITableViewDelegate {
             break
 
         case "sets":
-            ForecastWindguruService.instance.setSpots(withUsername: user?.name, password: password,
+            forecastService?.setSpots(withUsername: user?.name, password: password,
                                                       failure: failureBlock,
                                                       success: { [weak self] (sets) in
                 guard let self = self else { return }
@@ -411,9 +412,9 @@ extension ApiListViewController: UITableViewDelegate {
                     modelId = nil
                 }
 
-                ForecastWindguruService.instance.modelInfo(onlyModelId: modelId,
-                                                           failure: failureBlock,
-                                                           success: { [weak self] (model) in
+                self?.forecastService?.modelInfo(onlyModelId: modelId,
+                                                 failure: failureBlock,
+                                                 success: { [weak self] (model) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
                     guard let model = model else {
@@ -453,9 +454,9 @@ extension ApiListViewController: UITableViewDelegate {
                     return
                 }
 
-                ForecastWindguruService.instance.models(bylat: latText, lon: lonText,
-                                                        failure: failureBlock,
-                                                        success: { [weak self] (models) in
+                self.forecastService?.models(bylat: latText, lon: lonText,
+                                             failure: failureBlock,
+                                             success: { [weak self] (models) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
                     guard let models = models else {
@@ -494,10 +495,12 @@ extension ApiListViewController: UITableViewDelegate {
                 if modelId?.isEmpty == true {
                     modelId = nil
                 }
-                ForecastWindguruService.instance.wforecast(bySpotId: spotId,
-                                                           model: modelId,
-                                                           failure: failureBlock,
-                                                           success: { [weak self] (spotForecast) in
+                self.forecastService?.wforecast(bySpotId: spotId,
+                                                model: modelId,
+                                                username: self.user?.name,
+                                                password: self.password,
+                                                failure: failureBlock,
+                                                success: { [weak self] (spotForecast) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
                     guard let spotForecast = spotForecast else {
@@ -517,7 +520,7 @@ extension ApiListViewController: UITableViewDelegate {
 
 
         case "geo_regions":
-            ForecastWindguruService.instance.geoRegions(withFailure: failureBlock,
+            forecastService?.geoRegions(withFailure: failureBlock,
                 success: { [weak self] (georegions) in
                 guard let self = self else { return }
 
@@ -541,9 +544,9 @@ extension ApiListViewController: UITableViewDelegate {
             }
             let block : ((UIAlertAction) -> Void)? = { (action) in
 
-                ForecastWindguruService.instance.countries(byRegionId: alert.textFields![0].text,
-                                                           failure: failureBlock,
-                                                           success: { [weak self] (countries) in
+                self.forecastService?.countries(byRegionId: alert.textFields![0].text,
+                                                failure: failureBlock,
+                                                success: { [weak self] (countries) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
                     guard let countries = countries else {
@@ -569,9 +572,9 @@ extension ApiListViewController: UITableViewDelegate {
 
             let block : ((UIAlertAction) -> Void)? = { (action) in
 
-                ForecastWindguruService.instance.regions(byCountryId: alert.textFields![0].text,
-                                                         failure: failureBlock,
-                                                         success: { [weak self] (regions) in
+                self.forecastService?.regions(byCountryId: alert.textFields![0].text,
+                                              failure: failureBlock,
+                                              success: { [weak self] (regions) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
                     guard let regions = regions else {

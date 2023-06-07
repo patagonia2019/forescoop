@@ -30,8 +30,23 @@ class MainViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     
     var passwordTextField: UITextField?
+    var forecastService: ForecastWindguruProtocol? = ForecastWindguruService()
     
     var user: User?
+    
+    init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?, forecastService: ForecastWindguruProtocol? = nil) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.forecastService = forecastService
+    }
+    
+    required convenience init?(coder: NSCoder, forecastService: ForecastWindguruProtocol? = nil) {
+        self.init(coder: coder)
+        self.forecastService = forecastService
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +57,7 @@ class MainViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let vc = segue.destination as? ApiListViewController,
               let user = user else { return }
-        
+        vc.forecastService = forecastService
         vc.title = "Logged in as:" + user.name
         vc.user = user
         vc.password = passwordTextField?.text
@@ -66,8 +81,8 @@ private extension MainViewController {
 
     func updateForecast() {
         Task { [weak self] in
-            guard let spotId = try? await ForecastWindguruService.instance.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
-            let spotForecast = try? await ForecastWindguruService.instance.forecast(bySpotId: spotId)
+            guard let spotId = try? await self?.forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+            let spotForecast = try? await self?.forecastService?.forecast(bySpotId: spotId, model: nil)
             self?.showForecastView(spotForecast: spotForecast)
         }
     }
@@ -113,26 +128,26 @@ private extension MainViewController {
         let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
             let username = alert.textFields?[0] ?? nil
             let password = alert.textFields?[1] ?? nil
-            ForecastWindguruService.instance.login(withUsername: username?.text,
-                                                   password: password?.text,
-                                                   failure: failureBlock,
-                                                   success: { [weak self] (user) in
-                                                    self?.user = user
-                                                    var name = "Anonymous"
-                                                    if let user = user {
-                                                        name = user.name
-                                                        self?.passwordTextField = password
-                                                    }
-                                                    let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(name)", preferredStyle: .alert)
-                                                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
-                                                        self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
-                                                    }))
-                                                    self?.present(alert, animated: true, completion:nil)
-
-                                                    self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
+            self?.forecastService?.login(withUsername: username?.text,
+                                         password: password?.text,
+                                         failure: failureBlock,
+                                         success: { [weak self] (user) in
+                self?.user = user
+                var name = User.Constant.Anonymous.rawValue
+                if let user = user {
+                    name = user.name
+                    self?.passwordTextField = password
+                }
+                let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(name)", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                    self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
+                }))
+                self?.present(alert, animated: true, completion:nil)
+                
+                self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
             })
         }
-
+        
         let login = UIAlertAction.init(title: "Login", style: .default, handler: block)
         alert.addAction(login)
         let loginAnon = UIAlertAction.init(title: "Login as Anonymous", style: .default, handler: block)
@@ -150,8 +165,8 @@ private extension MainViewController {
     }
     
     func updateAWForecast() async throws -> SpotForecast? {
-        guard let spotId = try? await ForecastWindguruService.instance.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
-        let spotForecast = try? await ForecastWindguruService.instance.forecast(bySpotId: spotId)
+        guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+        let spotForecast = try? await forecastService?.forecast(bySpotId: spotId, model: nil)
         return spotForecast
     }
 }
