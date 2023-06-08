@@ -13,7 +13,7 @@ public class Elapse {
     var start: DateTime?
     var end: DateTime?
     
-    required public init?(_ starting: String? = nil, _ ending: String? = nil, _ gmtHourOffset: Float) {
+    required public init?(_ starting: String? = nil, _ ending: String? = nil, _ gmtHourOffset: Int) {
         guard let starting = starting,
             let ending = ending else { return nil }
         start = DateTime(starting, gmtHourOffset: gmtHourOffset, format: "HH:mm")

@@ -137,11 +137,33 @@ class ModelTests: XCTestCase {
         checkSpotInfo(spotInfo: spotForecast)
         XCTAssertEqual(spotForecast?.numberOfForecasts, 1)
         XCTAssertEqual(spotForecast?.model, "3")
+        let forecastModel = spotForecast?.forecastModel
+        XCTAssertEqual(forecastModel?.modelIdentifier, "3")
         let forecast = spotForecast?.forecast
         XCTAssertNotNil(forecast)
         XCTAssertEqual(forecast?.initializationStamp, 1686160800)
-        XCTAssertEqual(forecast?.initializationDate, DateTime("2023-06-07 18:00:00", gmtHourOffset: 0)?.asDate)
+        XCTAssertEqual(forecast?.gmtHourOffset, -3)
+        XCTAssertEqual(forecast?.initializationDate, DateTime("2023-06-07 18:00:00", gmtHourOffset: forecast?.gmtHourOffset ?? 0)?.asDate)
         XCTAssertEqual(forecast?.modelName, "GFS 13 km")
+
+        /// Testing weather data
+        XCTAssertEqual(forecast?.numberOfWeathers, 15)
+
+        XCTAssertEqual(forecast?.windDirectionName(hh: "10"), "NW")
+        XCTAssertEqual(forecast?.windDirection(hh: "10"), 304)
+        XCTAssertEqual(forecast?.windSpeed(hh: "10"), 11.5)
+        XCTAssertEqual(forecast?.temperature(hh: "10"), 4.3)
+        XCTAssertEqual(forecast?.temperatureReal(hh: "10"), 6.3)
+        XCTAssertEqual(forecast?.cloudCoverTotal(hh: "10"), 100)
+        XCTAssertEqual(forecast?.cloudCoverHigh(hh: "10"), 0)
+        XCTAssertEqual(forecast?.cloudCoverMid(hh: "10"), 5)
+        XCTAssertEqual(forecast?.cloudCoverLow(hh: "10"), 100)
+        XCTAssertEqual(forecast?.relativeHumidity(hh: "10"), 95.0)
+        XCTAssertEqual(forecast?.windGusts(hh: "10"), 43.4)
+        XCTAssertEqual(forecast?.seaLevelPressure(hh: "10"), 1002.0)
+        XCTAssertEqual(forecast?.freezingLevelHeightInMeters(hh: "10"), 2590.0)
+        XCTAssertEqual(forecast?.precipitation(hh: "165"), 0)
+        XCTAssertEqual(forecast?.precipitation1(hh: "10"), 0.8)
     }
 }
 

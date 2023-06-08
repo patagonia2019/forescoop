@@ -141,7 +141,7 @@ public class WSpotForecast: Object, Mappable {
 public extension WSpotForecast {
     
     var elapse: Elapse? {
-        Elapse(sunrise, sunset, Float(utc_offset))
+        Elapse(sunrise, sunset, utc_offset)
     }
     
     var locationName: String? {

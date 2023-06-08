@@ -41,6 +41,7 @@ public class ForecastModel: Object, Mappable {
         
         model = map["model"] as? String
         info = Forecast.init(map: map["info"] as? [String:Any])
+        info?.gmtHourOffset = map["gmt_hour_offset"] as? Int ?? 0
     }
     
     public var description: String {
@@ -51,5 +52,15 @@ public class ForecastModel: Object, Mappable {
         ]
             .compactMap{$0}
             .joined(separator: "\n")
+    }
+}
+
+public extension ForecastModel {
+    var modelIdentifier: String? {
+        model
+    }
+
+    var forecast: Forecast? {
+        info
     }
 }

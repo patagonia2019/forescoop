@@ -159,7 +159,7 @@ public extension SpotInfo {
     }
     
     var elapse: Elapse? {
-        Elapse(sunrise, sunset, Float(gmtHourOffset))
+        Elapse(sunrise, sunset, gmtHourOffset)
     }
     
     var timezone: TimeZone? {

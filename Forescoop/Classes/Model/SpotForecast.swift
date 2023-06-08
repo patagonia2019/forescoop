@@ -54,7 +54,7 @@ public class SpotForecast: SpotInfo {
 
         super.mapping(map: map)
         guard let forecastDict = map["forecast"] as? [String: Any] else { return }
-        forecasts = forecastDict.compactMap { ForecastModel(map: ["model" : $0.key, "info" : $0.value]) }
+        forecasts = forecastDict.compactMap { ForecastModel(map: ["model" : $0.key, "info" : $0.value, "gmt_hour_offset": gmtHourOffset]) }
         currentModel = forecasts.last?.model
     }
     
@@ -82,8 +82,12 @@ public extension SpotForecast {
         currentModel
     }
     
+    var forecastModel: ForecastModel? {
+        forecasts.first(where: {$0.model == currentModel})
+    }
+    
     var forecast: Forecast? {
-        forecasts.first(where: {$0.model == currentModel})?.info
+        forecastModel?.forecast
     }
     
     /// Information comes in UTC, contains the every 3 hours information
@@ -171,7 +175,7 @@ private extension SpotForecast {
         precipitation > 0.0
     }
     
-    var precipitation: Float {
+    var precipitation: Double {
         forecast?.precipitation(hh: currentHourString) ?? 0
     }
     
