@@ -10,14 +10,14 @@ import Foundation
 
 public class Elapse {
         
-    var start: Time?
-    var end: Time?
+    var start: DateTime?
+    var end: DateTime?
     
     required public init?(_ starting: String? = nil, _ ending: String? = nil, _ gmtHourOffset: Float) {
         guard let starting = starting,
             let ending = ending else { return nil }
-        start = Time(starting, gmtHourOffset: gmtHourOffset)
-        end = Time(ending, gmtHourOffset: gmtHourOffset)
+        start = DateTime(starting, gmtHourOffset: gmtHourOffset, format: "HH:mm")
+        end = DateTime(ending, gmtHourOffset: gmtHourOffset, format: "HH:mm")
     }
     
     public var description : String {

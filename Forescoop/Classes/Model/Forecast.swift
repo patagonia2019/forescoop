@@ -88,29 +88,39 @@ public class Forecast: Object, Mappable {
     }
 }
 
-extension Forecast {
+public extension Forecast {
     
-    public func windDirectionName(hh: String?) -> String? {
-        return weathers?["WINDIRNAME"]?.value(hh: hh)
+    func windDirectionName(hh: String?) -> String? {
+        weathers?[TypeOfWeather.WINDIRNAME.rawValue]?.value(hh: hh)
     }
     
-    public func windDirection(hh: String?) -> Float? {
-        return weathers?["WINDDIR"]?.value(hh: hh)
+    func windDirection(hh: String?) -> Float? {
+        weathers?[TypeOfWeather.WINDDIR.rawValue]?.value(hh: hh)
     }
     
-    public func windSpeed(hh: String?) -> Float? {
-        return weathers?["WINDSPD"]?.value(hh: hh)
+    func windSpeed(hh: String?) -> Float? {
+        weathers?[TypeOfWeather.WINDSPD.rawValue]?.value(hh: hh)
     }
     
-    public func temperatureReal(hh: String?) -> Float? {
-        return weathers?["TMPE"]?.value(hh: hh)
+    func temperatureReal(hh: String?) -> Float? {
+        weathers?[TypeOfWeather.TMPE.rawValue]?.value(hh: hh)
     }
     
-    public func cloudCoverTotal(hh: String?) -> Int? {
-        return weathers?["TCDC"]?.value(hh: hh)
+    func cloudCoverTotal(hh: String?) -> Int? {
+        weathers?[TypeOfWeather.TCDC.rawValue]?.value(hh: hh)
     }
 
-    public func precipitation(hh: String?) -> Float? {
-        return weathers?["APCP"]?.value(hh: hh)
+    func precipitation(hh: String?) -> Float? {
+        weathers?[TypeOfWeather.APCP.rawValue]?.value(hh: hh)
+    }
+    
+    var initializationStamp: Int {
+        initStamp
+    }
+    var initializationDate: Date? {
+        DateTime(initdate, gmtHourOffset: 0)?.asDate
+    }
+    var modelName: String? {
+        model_name
     }
 }

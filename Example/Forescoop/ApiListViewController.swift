@@ -224,9 +224,9 @@ extension ApiListViewController: UITableViewDelegate {
                 }
 
                 self.forecastService?.forecast(bySpotId: spotId,
-                                                          model: modelId,
-                                                          failure: failureBlock,
-                                                          success: { [weak self] (spotForecast) in
+                                               model: modelId,
+                                               failure: failureBlock,
+                                               success: { [weak self] (spotForecast) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
                     guard let spotForecast = spotForecast else {

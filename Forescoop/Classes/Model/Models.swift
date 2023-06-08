@@ -43,5 +43,4 @@ public extension Models {
     var sorted: [Model] {
         content.sorted(by: {$0.oficinalName ?? "" < $1.oficinalName ?? ""})
     }
-
 }

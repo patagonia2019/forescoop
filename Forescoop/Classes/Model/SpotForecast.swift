@@ -74,6 +74,14 @@ public class SpotForecast: SpotInfo {
 
 public extension SpotForecast {
     
+    var numberOfForecasts: Int {
+        forecasts.count
+    }
+    
+    var model: String? {
+        currentModel
+    }
+    
     var forecast: Forecast? {
         forecasts.first(where: {$0.model == currentModel})?.info
     }
@@ -156,11 +164,7 @@ private extension SpotForecast {
     }
     
     var cloudCoverTotal: Int {
-        guard let forecast = forecast,
-              let cloudCoverTotal = forecast.cloudCoverTotal(hh: currentHourString) else {
-            return 0
-        }
-        return cloudCoverTotal
+        forecast?.cloudCoverTotal(hh: currentHourString) ?? 0
     }
     
     var isRaining: Bool {
@@ -168,11 +172,7 @@ private extension SpotForecast {
     }
     
     var precipitation: Float {
-        guard let forecast = forecast,
-              let cloudCoverTotal = forecast.precipitation(hh: currentHourString) else {
-            return 0
-        }
-        return cloudCoverTotal
+        forecast?.precipitation(hh: currentHourString) ?? 0
     }
     
     var currentHourInt: Int {

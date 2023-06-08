@@ -12,6 +12,7 @@ class ModelTests: XCTestCase {
     private var regionsDict: [String: Any]?
     private var spotInfoDict: [String: Any]?
     private var modelsDict: [String: Any]?
+    private var spotForecastDict: [String: Any]?
 
     override func setUp() {
         super.setUp()
@@ -30,6 +31,8 @@ class ModelTests: XCTestCase {
         XCTAssertNotNil(spotInfoDict)
         modelsDict = definition?.json(jsonFile: "Models")
         XCTAssertNotNil(modelsDict)
+        spotForecastDict = definition?.json(jsonFile: "SpotForecast")
+        XCTAssertNotNil(spotForecastDict)
     }
     
     override func tearDown() {
@@ -110,21 +113,7 @@ class ModelTests: XCTestCase {
 
     func testSpotInfo() {
         let spotInfo = SpotInfo(map: spotInfoDict)
-        XCTAssertNotNil(spotInfo)
-        XCTAssertEqual(spotInfo?.identifier, "64141")
-        XCTAssertEqual(spotInfo?.name, "Bariloche")
-        XCTAssertEqual(spotInfo?.countryName, "Argentina")
-        XCTAssertEqual(spotInfo?.countryIdentifier, 32)
-        XCTAssertEqual(spotInfo?.location?.coordinate.latitude, -41.1281)
-        XCTAssertEqual(spotInfo?.location?.coordinate.longitude, -71.348)
-        XCTAssertEqual(spotInfo?.location?.altitude, 770)
-        XCTAssertEqual(spotInfo?.timezone?.identifier, "America/Argentina/Mendoza")
-        XCTAssertEqual(spotInfo?.timezone?.abbreviation(), "GMT-3")
-        XCTAssertEqual(spotInfo?.gmtHourOffset, -3)
-        XCTAssertEqual(spotInfo?.elapse?.starting, "09:09")
-        XCTAssertEqual(spotInfo?.elapse?.ending, "18:19")
-        XCTAssertEqual(spotInfo?.currentModels, [100,3,45,59])
-        XCTAssertEqual(spotInfo?.currentTides, "0")
+        checkSpotInfo(spotInfo: spotInfo)
     }
     
     func testModels() {
@@ -142,5 +131,36 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(model?.updateTime, "+4 hours +45 minutes")
         XCTAssertEqual(model?.showVars.first, "WINDSPD")
     }
+    
+    func testSpotForecast() {
+        let spotForecast = SpotForecast(map: spotForecastDict)
+        checkSpotInfo(spotInfo: spotForecast)
+        XCTAssertEqual(spotForecast?.numberOfForecasts, 1)
+        XCTAssertEqual(spotForecast?.model, "3")
+        let forecast = spotForecast?.forecast
+        XCTAssertNotNil(forecast)
+        XCTAssertEqual(forecast?.initializationStamp, 1686160800)
+        XCTAssertEqual(forecast?.initializationDate, DateTime("2023-06-07 18:00:00", gmtHourOffset: 0)?.asDate)
+        XCTAssertEqual(forecast?.modelName, "GFS 13 km")
+    }
+}
 
+private extension ModelTests {
+    func checkSpotInfo(spotInfo: SpotInfo?) {
+        XCTAssertNotNil(spotInfo)
+        XCTAssertEqual(spotInfo?.identifier, "64141")
+        XCTAssertEqual(spotInfo?.name, "Bariloche")
+        XCTAssertEqual(spotInfo?.countryName, "Argentina")
+        XCTAssertEqual(spotInfo?.countryIdentifier, 32)
+        XCTAssertEqual(spotInfo?.location?.coordinate.latitude, -41.1281)
+        XCTAssertEqual(spotInfo?.location?.coordinate.longitude, -71.348)
+        XCTAssertEqual(spotInfo?.location?.altitude, 770)
+        XCTAssertEqual(spotInfo?.timezone?.identifier, "America/Argentina/Mendoza")
+        XCTAssertEqual(spotInfo?.timezone?.abbreviation(), "GMT-3")
+        XCTAssertEqual(spotInfo?.gmtHourOffset, -3)
+        XCTAssertEqual(spotInfo?.elapse?.starting, "09:09")
+        XCTAssertEqual(spotInfo?.elapse?.ending, "18:19")
+        XCTAssertEqual(spotInfo?.currentModels, [100,3,45,59])
+        XCTAssertEqual(spotInfo?.currentTides, "0")
+    }
 }
