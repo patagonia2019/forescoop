@@ -58,7 +58,7 @@ public class Spot: Object, Mappable {
 }
 
 public extension Spot {
-    var id: String? {
+    var identifier: String? {
         id_spot
     }
     

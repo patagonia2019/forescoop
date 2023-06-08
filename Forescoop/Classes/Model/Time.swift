@@ -8,25 +8,18 @@
 
 import Foundation
 
-public class Time: Object, Mappable {
+public class Time {
     
     var hour: Int = 0
     var minutes: Int = 0
     var seconds: Int = 0
-
-    required public convenience init?(map: [String: Any]?) {
-        self.init("00:00:00")
-        mapping(map: map)
-    }
+    var gmtHourOffset: Float = 0
     
-    public func mapping(map: [String:Any]?) {
-    }
-    
-    required public init?(_ str: String?) {
-        super.init()
+    required public init?(_ str: String?, gmtHourOffset: Float) {
         hour = 0
         minutes = 0
         seconds = 0
+        self.gmtHourOffset = gmtHourOffset
         
         if let str = str {
             let words = str.components(separatedBy: ":")
@@ -51,8 +44,34 @@ public class Time: Object, Mappable {
     }
 }
 
-extension Time {
-    public func asDate() -> Date? {
-        Date.init(timeInterval: Double(hour) + Double(minutes * 60) + Double(seconds * 60 * 60), since: Date.init())
+public extension Time {
+    
+    var timeZone: TimeZone {
+        TimeZone(secondsFromGMT: Int(gmtHourOffset)*60*60)!
     }
+    var timeZoneCalendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return calendar
+    }
+    
+    var asDate: Date? {
+        timeZoneCalendar.date(bySettingHour: hour, minute: minutes, second: seconds, of: Date())
+    }
+    
+    var dateFormater: DateFormatter {
+        let df = DateFormatter()
+        df.timeZone = timeZone
+        df.dateFormat = "HH:mm"
+        return df
+    }
+    
+    var asISO8601String: String? {
+        asDate?.ISO8601Format()
+    }
+
+    var asString: String? {
+        dateFormater.string(from: asDate!)
+    }
+
 }

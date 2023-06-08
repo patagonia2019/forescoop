@@ -53,7 +53,7 @@ private extension InterfaceController {
     
     func updateForecast() {
         Task { [weak self] in
-            guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+            guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
             let spotForecast = try? await forecastService?.forecast(bySpotId: spotId)
             self?.showForecastView(spotForecast: spotForecast)
         }

@@ -8,35 +8,27 @@
 
 import Foundation
 
-public class Elapse: Object, Mappable {
+public class Elapse {
         
     var start: Time?
     var end: Time?
     
-    required public init?(elapseStart: String? = nil, elapseEnd: String? = nil) {
-        super.init()
-        guard let elapseStart = elapseStart,
-            let elapseEnd = elapseEnd else { return nil }
-        start = Time(elapseStart)
-        end = Time(elapseEnd)
+    required public init?(_ starting: String? = nil, _ ending: String? = nil, _ gmtHourOffset: Float) {
+        guard let starting = starting,
+            let ending = ending else { return nil }
+        start = Time(starting, gmtHourOffset: gmtHourOffset)
+        end = Time(ending, gmtHourOffset: gmtHourOffset)
     }
     
-    required convenience public init?(map: [String:Any]?) {
-        self.init()
-    }
-
-    public func mapping(map: [String:Any]?) {
-    }
-
     public var description : String {
-        ["\(type(of:self))", start?.description, end?.description].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", starting, ending].compactMap {$0}.joined(separator: ", ")
     }
 }
 
 extension Elapse {
     public func containsTime(date: NSDate) -> Bool {
-        guard let dstart = start?.asDate(),
-            let dend = end?.asDate()
+        guard let dstart = start?.asDate,
+            let dend = end?.asDate
             else {
                 return false
         }
@@ -50,10 +42,10 @@ extension Elapse {
     }
     
     public var starting: String? {
-        start?.description
+        start?.asString
     }
 
     public var ending: String? {
-        end?.description
+        end?.asString
     }
 }

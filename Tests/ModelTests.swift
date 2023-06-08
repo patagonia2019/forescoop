@@ -1,4 +1,5 @@
 import XCTest
+import CoreLocation
 import Forescoop
 
 class ModelTests: XCTestCase {
@@ -9,6 +10,7 @@ class ModelTests: XCTestCase {
     var anonymousUserDict: [String: Any]?
     var geoRegionsDict: [String: Any]?
     var regionsDict: [String: Any]?
+    var spotInfoDict: [String: Any]?
 
     override func setUp() {
         super.setUp()
@@ -23,6 +25,8 @@ class ModelTests: XCTestCase {
         XCTAssertNotNil(geoRegionsDict)
         regionsDict = definition?.json(jsonFile: "Regions")
         XCTAssertNotNil(regionsDict)
+        spotInfoDict = definition?.json(jsonFile: "SpotInfo")
+        XCTAssertNotNil(spotInfoDict)
     }
     
     override func tearDown() {
@@ -44,7 +48,7 @@ class ModelTests: XCTestCase {
         let spot = spotResult?.firstSpot
         XCTAssertEqual(spot?.name, "Bariloche")
         XCTAssertEqual(spot?.userIdentifier, "169")
-        XCTAssertEqual(spot?.id, "64141")
+        XCTAssertEqual(spot?.identifier, "64141")
         XCTAssertEqual(spot?.countryName, "Argentina")
         XCTAssertNil(spot?.nickName)
     }
@@ -99,5 +103,24 @@ class ModelTests: XCTestCase {
         XCTAssertNotNil(regions)
         XCTAssertEqual(regionsDict?.count, regions?.sorted.count)
         XCTAssertEqual(regions?.sorted.first?.oficialName, "Acre")
+    }
+
+    func testSpotInfo() {
+        let spotInfo = SpotInfo(map: spotInfoDict)
+        XCTAssertNotNil(spotInfo)
+        XCTAssertEqual(spotInfo?.identifier, "64141")
+        XCTAssertEqual(spotInfo?.name, "Bariloche")
+        XCTAssertEqual(spotInfo?.countryName, "Argentina")
+        XCTAssertEqual(spotInfo?.countryIdentifier, 32)
+        XCTAssertEqual(spotInfo?.location?.coordinate.latitude, -41.1281)
+        XCTAssertEqual(spotInfo?.location?.coordinate.longitude, -71.348)
+        XCTAssertEqual(spotInfo?.location?.altitude, 770)
+        XCTAssertEqual(spotInfo?.timezone?.identifier, "America/Argentina/Mendoza")
+        XCTAssertEqual(spotInfo?.timezone?.abbreviation(), "GMT-3")
+        XCTAssertEqual(spotInfo?.gmtHourOffset, -3)
+        XCTAssertEqual(spotInfo?.elapse?.starting, "09:09")
+        XCTAssertEqual(spotInfo?.elapse?.ending, "18:19")
+        XCTAssertEqual(spotInfo?.currentModels, [100,3,45,59])
+        XCTAssertEqual(spotInfo?.currentTides, "0")
     }
 }

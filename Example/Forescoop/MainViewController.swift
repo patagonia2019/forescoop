@@ -81,7 +81,7 @@ private extension MainViewController {
 
     func updateForecast() {
         Task { [weak self] in
-            guard let spotId = try? await self?.forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+            guard let spotId = try? await self?.forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
             let spotForecast = try? await self?.forecastService?.forecast(bySpotId: spotId, model: nil)
             self?.showForecastView(spotForecast: spotForecast)
         }
@@ -165,7 +165,7 @@ private extension MainViewController {
     }
     
     func updateAWForecast() async throws -> SpotForecast? {
-        guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
+        guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
         let spotForecast = try? await forecastService?.forecast(bySpotId: spotId, model: nil)
         return spotForecast
     }

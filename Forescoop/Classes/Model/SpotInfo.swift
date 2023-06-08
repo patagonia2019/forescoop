@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 /*
  *  SpotInfo
@@ -87,17 +88,16 @@ import Foundation
 
 public class SpotInfo: Spot {
 
-    var countryId: Int = 0
+    var id_country: Int = 0
     var latitude: Double = 0
     var longitude: Double = 0
     var altitude: Int = 0
-    var timezone: String? = nil
-    var gmtHourOffset: Int = 0
+    var gmt_hour_offset: Int = 0
     var sunrise: String? = nil
     var sunset: String? = nil
-    var elapse : Elapse?
     var models = [Int]()
     var tides: String? = nil
+    var tz: String?
 
     required convenience init?(map: [String: Any]?) {
         self.init()
@@ -108,16 +108,17 @@ public class SpotInfo: Spot {
         guard let map = map else { return }
 
         super.mapping(map: map)
+        id_country = map["id_country"] as? Int ?? 0
         latitude = map["lat"] as? Double ?? 0.0
         longitude = map["lon"] as? Double ?? 0.0
         altitude = map["alt"] as? Int ?? 0
-        timezone = map["tz"] as? String ?? nil
-        gmtHourOffset = map["gmt_hour_offset"] as? Int ?? 0
+        tz = map["tz"] as? String ?? nil
+        gmt_hour_offset = map["gmt_hour_offset"] as? Int ?? 0
         sunrise = map["sunrise"] as? String ?? nil
         sunset = map["sunset"] as? String ?? nil
         models = map["models"] as? [Int] ?? []
-        tides = map["tides"] as? String ?? nil
-        elapse = Elapse.init(elapseStart: sunrise, elapseEnd: sunset)
+        tides = map["tides"] as? String
+        tz = map["tz"] as? String
     }
  
     override public var description : String {
@@ -125,12 +126,12 @@ public class SpotInfo: Spot {
             super.description,
             "\nSpotInfo\n",
             [
-                "country # \(countryId)",
+                "id_country # \(id_country)",
                 "latitude \(latitude)",
                 "longitude \(longitude)",
                 "altitude # \(altitude)",
-                timezone,
-                "gmtHourOffset: \(gmtHourOffset)",
+                tz,
+                "gmtHourOffset: \(gmt_hour_offset)",
                 sunrise,
                 sunset,
                 elapse?.description,
@@ -144,8 +145,36 @@ public class SpotInfo: Spot {
     }
 }
 
-extension SpotInfo {
-    public func elapseContainsTime(date : NSDate) -> Bool {
-        return elapse?.containsTime(date: date) ?? false
+public extension SpotInfo {
+    func elapseContainsTime(date: NSDate) -> Bool {
+        elapse?.containsTime(date: date) == true
+    }
+    
+    var countryIdentifier: Int {
+        id_country
+    }
+    
+    var location: CLLocation? {
+        CLLocation(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), altitude: CLLocationDistance(altitude), horizontalAccuracy: 0, verticalAccuracy: 0, course: CLLocationDirection.greatestFiniteMagnitude, speed: 0, timestamp: Date())
+    }
+    
+    var elapse: Elapse? {
+        Elapse(sunrise, sunset, Float(gmtHourOffset))
+    }
+    
+    var timezone: TimeZone? {
+        tz != nil ? TimeZone(identifier: tz!) : nil
+    }
+    
+    var gmtHourOffset: Int {
+        gmt_hour_offset
+    }
+
+    var currentModels: [Int] {
+        models
+    }
+
+    var currentTides: String? {
+        tides
     }
 }
