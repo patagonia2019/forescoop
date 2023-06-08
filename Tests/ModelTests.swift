@@ -4,13 +4,14 @@ import Forescoop
 
 class ModelTests: XCTestCase {
     
-    var definition: Definition?
-    var countriesDict: [String: Any]?
-    var spotResultDict: [String: Any]?
-    var anonymousUserDict: [String: Any]?
-    var geoRegionsDict: [String: Any]?
-    var regionsDict: [String: Any]?
-    var spotInfoDict: [String: Any]?
+    private var definition: Definition?
+    private var countriesDict: [String: Any]?
+    private var spotResultDict: [String: Any]?
+    private var anonymousUserDict: [String: Any]?
+    private var geoRegionsDict: [String: Any]?
+    private var regionsDict: [String: Any]?
+    private var spotInfoDict: [String: Any]?
+    private var modelsDict: [String: Any]?
 
     override func setUp() {
         super.setUp()
@@ -27,6 +28,8 @@ class ModelTests: XCTestCase {
         XCTAssertNotNil(regionsDict)
         spotInfoDict = definition?.json(jsonFile: "SpotInfo")
         XCTAssertNotNil(spotInfoDict)
+        modelsDict = definition?.json(jsonFile: "Models")
+        XCTAssertNotNil(modelsDict)
     }
     
     override func tearDown() {
@@ -123,4 +126,21 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(spotInfo?.currentModels, [100,3,45,59])
         XCTAssertEqual(spotInfo?.currentTides, "0")
     }
+    
+    func testModels() {
+        let models = Models(map: modelsDict)?.sorted
+        XCTAssertNotNil(models)
+        XCTAssertEqual(modelsDict?.count, models?.count)
+        let model = models?.first
+        XCTAssertEqual(model?.identifier, 3)
+        XCTAssertEqual(model?.oficinalName, "GFS 13 km")
+        XCTAssertEqual(model?.shortName, "gfs")
+        XCTAssertEqual(model?.hrStart, 0)
+        XCTAssertEqual(model?.hrEnd, 378)
+        XCTAssertEqual(model?.hrStep, 1)
+        XCTAssertEqual(model?.periodNumber, 6)
+        XCTAssertEqual(model?.updateTime, "+4 hours +45 minutes")
+        XCTAssertEqual(model?.showVars.first, "WINDSPD")
+    }
+
 }

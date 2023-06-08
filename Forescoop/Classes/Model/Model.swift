@@ -44,18 +44,17 @@ import Foundation
  */
 
 public class Model: Object, Mappable {
-    var id_model : Int = 0
+    var id_model: Int = 0
     var model_name: String? = nil
     var model: String? = nil
     var hr_start: Int = 0
-    var hr_end : Int = 0
-    var hr_step : Int = 0
-    var period : Int = 0
-    var resolution : Int = 0
+    var hr_end: Int = 0
+    var hr_step: Int = 0
+    var period: Int = 0
+    var resolution: Int = 0
     var update_time: String?
     var show_vars = [String]()
 
-    
     required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
@@ -88,5 +87,35 @@ public class Model: Object, Mappable {
         ]
             .compactMap{$0}
             .joined(separator: ", ")
+    }
+}
+
+public extension Model {
+    var identifier: Int {
+        id_model
+    }
+    var oficinalName: String? {
+        model_name
+    }
+    var shortName: String? {
+        model
+    }
+    var hrStart: Int {
+        hr_start
+    }
+    var hrEnd: Int {
+        hr_end
+    }
+    var hrStep: Int {
+        hr_step
+    }
+    var periodNumber: Int {
+        period
+    }
+    var updateTime: String? {
+        update_time
+    }
+    var showVars: [String] {
+        show_vars
     }
 }

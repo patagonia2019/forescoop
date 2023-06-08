@@ -21,7 +21,7 @@ public class Elapse {
     }
     
     public var description : String {
-        ["\(type(of:self))", starting, ending].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", starting, ending].compactMap {$0}.joined(separator: " ")
     }
 }
 

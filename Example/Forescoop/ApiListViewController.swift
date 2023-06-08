@@ -294,9 +294,9 @@ extension ApiListViewController: UITableViewDelegate {
             let block : ((UIAlertAction) -> Void)? = { (action) in
                 
                 self.forecastService?.spots(withCountryId: alert.textFields![0].text,
-                                             regionId: alert.textFields![1].text,
-                                             failure: failureBlock,
-                                             success: { [weak self]
+                                            regionId: alert.textFields![1].text,
+                                            failure: failureBlock,
+                                            success: { [weak self]
                     (spotResult) in
                     guard let self = self else { return }
                     self.tableView.isHidden = false
