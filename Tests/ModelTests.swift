@@ -13,6 +13,7 @@ class ModelTests: XCTestCase {
     private var spotInfoDict: [String: Any]?
     private var modelsDict: [String: Any]?
     private var spotForecastDict: [String: Any]?
+    private var wSpotForecastDict: [String: Any]?
 
     override func setUp() {
         super.setUp()
@@ -33,6 +34,8 @@ class ModelTests: XCTestCase {
         XCTAssertNotNil(modelsDict)
         spotForecastDict = definition?.json(jsonFile: "SpotForecast")
         XCTAssertNotNil(spotForecastDict)
+        wSpotForecastDict = definition?.json(jsonFile: "WSpotForecast")
+        XCTAssertNotNil(wSpotForecastDict)
     }
     
     override func tearDown() {
@@ -164,6 +167,70 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(forecast?.freezingLevelHeightInMeters(hh: "10"), 2590.0)
         XCTAssertEqual(forecast?.precipitation(hh: "165"), 0)
         XCTAssertEqual(forecast?.precipitation1(hh: "10"), 0.8)
+    }
+    func testWSpotForecast() {
+        let wspotForecast = WSpotForecast(map: wSpotForecastDict)
+        XCTAssertNotNil(wspotForecast)
+        XCTAssertEqual(wspotForecast?.identifier, "64141")
+        XCTAssertEqual(wspotForecast?.userIdentifier, "169")
+        XCTAssertEqual(wspotForecast?.nickName, "other user's custom spot")
+        XCTAssertEqual(wspotForecast?.spotname, "Argentina - Bariloche")
+        XCTAssertEqual(wspotForecast?.location?.coordinate.latitude, -41.1281)
+        XCTAssertEqual(wspotForecast?.location?.coordinate.longitude, -71.348)
+        XCTAssertEqual(wspotForecast?.location?.altitude, 770)
+        XCTAssertEqual(wspotForecast?.modelId, 3)
+        XCTAssertEqual(wspotForecast?.elapse?.starting, "09:09")
+        XCTAssertEqual(wspotForecast?.elapse?.ending, "18:19")
+        XCTAssertEqual(wspotForecast?.timezoneUtc, "UTC-3")
+        XCTAssertEqual(wspotForecast?.timezoneId, "America/Argentina/Mendoza")
+        XCTAssertEqual(wspotForecast?.timezone?.identifier, "GMT-0300")
+        XCTAssertEqual(wspotForecast?.timezone?.abbreviation(), "GMT-3")
+        XCTAssertEqual(wspotForecast?.gmtHourOffset, -3)
+        XCTAssertEqual(wspotForecast?.numberOfTides, 0)
+        let forecast = wspotForecast?.forecast
+        XCTAssertNotNil(forecast)
+        XCTAssertEqual(forecast?.numberOfHours, 127)
+        XCTAssertEqual(forecast?.day(hour: 10), "09")
+        XCTAssertEqual(forecast?.weekday(hour: 10), "Friday")
+        XCTAssertEqual(forecast?.temperature(hour: 21), -2.9)
+        XCTAssertEqual(forecast?.temperatureReal(hour: 21), -0.5)
+        XCTAssertEqual(forecast?.relativeHumidity(hour: 10), 89)
+        XCTAssertNil(forecast?.smern(hour: 10))
+        XCTAssertNil(forecast?.smer(hour: 10))
+        XCTAssertEqual(forecast?.windSpeed(hour: 10), 8.1)
+        XCTAssertEqual(forecast?.windSpeedKnots(hour: 10), 8.1)
+        XCTAssertEqual(forecast?.windSpeedKmh(hour: 10), 15.001201)
+        XCTAssertEqual(forecast?.windSpeedMph(hour: 10), 9.321318)
+        XCTAssertEqual(forecast?.windSpeedMps(hour: 10), 4.1669965)
+        XCTAssertEqual(forecast?.windSpeedBft(hour: 10), 3)
+        XCTAssertEqual(forecast?.windSpeedBftEffect(hour: 10), "Gentle Breeze")
+        XCTAssertEqual(forecast?.windSpeedBftEffectOnSea(hour: 10), "Large wavelets. Crests begin to break. Foam of glassy appearance. Perhaps scattered white horses.")
+        XCTAssertEqual(forecast?.windSpeedBftEffectOnLand(hour: 10), "Leaves and smaller twigs in constant motion.")
+        XCTAssertEqual(forecast?.windDirection(hour: 10), 278)
+        XCTAssertEqual(forecast?.windDirectionName(hour: 10), "WNW")
+        XCTAssertEqual(forecast?.windGust(hour: 10), 14.0)
+        XCTAssertEqual(forecast?.pcpt(hour: 10), 1)
+        XCTAssertEqual(forecast?.seaLevelPressure(hour: 10), 1015)
+        XCTAssertEqual(forecast?.freezingLevel(hour: 10), 654)
+        
+        // marine values
+        XCTAssertEqual(forecast?.peakWavePeriod(hour: 10), 8.1)
+        XCTAssertEqual(forecast?.waveHeight(hour: 122), 1.58)
+        XCTAssertEqual(forecast?.meanWavePeriod(hour: 116), 6.9)
+        XCTAssertEqual(forecast?.meanWaveDirection(hour: 116), 3.0)
+        XCTAssertEqual(forecast?.swellHeight(hour: 10), 0.76)
+        XCTAssertEqual(forecast?.swellPeriod(hour: 10), 8.0)
+        XCTAssertEqual(forecast?.swellDirection(hour: 10), 320.0)
+        XCTAssertEqual(forecast?.swellHeight2(hour: 10), 0.43)
+        XCTAssertEqual(forecast?.swellPeriod2(hour: 10), 9.7)
+        XCTAssertEqual(forecast?.swellDirection2(hour: 10), 276.0)
+        XCTAssertEqual(forecast?.peakWaveDirection(hour: 10), 312.0)
+        XCTAssertEqual(forecast?.significantWaveHeight(hour: 10), 0.88)
+        XCTAssertEqual(forecast?.cloudCoverTotal(hour: 22), 7)
+        XCTAssertEqual(forecast?.cloudCoverHigh(hour: 4), 0)
+        XCTAssertEqual(forecast?.cloudCoverMid(hour: 3), 100)
+        XCTAssertEqual(forecast?.cloudCoverLow(hour: 5), 100)
+
     }
 }
 

@@ -42,34 +42,34 @@ public class WForecast: Object, Mappable {
     
     // TODO: Maybe refactor this... -> var info = [String: Any]()
     
-    var TMP         = [Float]() // TMP: temperature
-    var TCDC        = [Int]() // TCDC: Cloud cover (%) Total
-    var HCDC        = [Int]() // HCDC: Cloud cover (%) High
-    var MCDC        = [Int]() // MCDC: Cloud cover (%) Mid
-    var LCDC        = [Int]() // LCDC: Cloud cover (%) Low
+    var TMP         = [Double]() // TMP: temperature
+    var TCDC        = [String]() // TCDC: Cloud cover (%) Total
+    var HCDC        = [String]() // HCDC: Cloud cover (%) High
+    var MCDC        = [String]() // MCDC: Cloud cover (%) Mid
+    var LCDC        = [String]() // LCDC: Cloud cover (%) Low
     var RH          = [Int]() // RH: Relative humidity: relative humidity in percent
-    var GUST        = [Float]() // GUST: Wind gusts (knots)
+    var GUST        = [Double]() // GUST: Wind gusts (knots)
     var SLP         = [Int]() // SLP: sea level pressure
     var FLHGT       = [Int]() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
     var APCP        = [Int]() //  APCP: Precip. (mm/3h)
-    var WINDSPD     = [Float]() //  WINDSPD: Wind speed (knots)
+    var WINDSPD     = [Double]() //  WINDSPD: Wind speed (knots)
     var windDirection = [WindDirection]()
     var SMERN       = [Int]()
     var SMER        = [Int]()
-    var TMPE        = [Float]() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    var TMPE        = [Double]() // TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
     var PCPT        = [Int]()
-    var HTSGW       = [Float]() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
-    var WVHGT       = [Float]() // WVHG: Wave height
-    var WVPER       = [Float]() // WVPER: Mean wave period [s]
-    var WVDIR       = [Float]() // WVDIR: Mean wave direction [°]
-    var SWELL1      = [Float]() // SWELL1: Swell height (m)
-    var SWPER1      = [Float]() // SWPER1: Swell period
-    var SWDIR1      = [Float]() // SWDIR1: Swell direction
-    var SWELL2      = [Float]() // SWELL2: Swell height (m)
-    var SWPER2      = [Float]() // SWPER2: Swell period
-    var SWDIR2      = [Float]() // SWDIR2: Swell direction
-    var PERPW       = [Float]() // PERPW: Peak wave period
-    var DIRPW       = [Float]() // DIRPW: Peak wave direction [°]
+    var HTSGW       = [Double]() // HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
+    var WVHGT       = [Double]() // WVHG: Wave height
+    var WVPER       = [Double]() // WVPER: Mean wave period [s]
+    var WVDIR       = [Double]() // WVDIR: Mean wave direction [°]
+    var SWELL1      = [Double]() // SWELL1: Swell height (m)
+    var SWPER1      = [Double]() // SWPER1: Swell period
+    var SWDIR1      = [Double]() // SWDIR1: Swell direction
+    var SWELL2      = [Double]() // SWELL2: Swell height (m)
+    var SWPER2      = [Double]() // SWPER2: Swell period
+    var SWDIR2      = [Double]() // SWDIR2: Swell direction
+    var PERPW       = [Double]() // PERPW: Peak wave period
+    var DIRPW       = [Double]() // DIRPW: Peak wave direction [°]
     var hr_weekday  = [Int]()
     var hr_h        = [String]()
     var hr_d        = [String]()
@@ -83,11 +83,11 @@ public class WForecast: Object, Mappable {
     var initstr: String? = nil
     var model_name: String? = nil
     var model_longname: String? = nil
-    var id_model: String? = nil
+    var id_model: Int = 0
     var update_last: String? = nil
     var update_next: String? = nil
     var initstamp = 0  // initstamp
-    
+        
     required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
@@ -96,34 +96,34 @@ public class WForecast: Object, Mappable {
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
         
-        TMP = map["TMP"] as? [Float] ?? []
-        TCDC = map["TCDC"] as? [Int] ?? []
-        HCDC = map["HCDC"] as? [Int] ?? []
-        MCDC = map["MCDC"] as? [Int] ?? []
-        LCDC = map["LCDC"] as? [Int] ?? []
+        TMP = map["TMP"] as? [Double] ?? []
+        TCDC = map["TCDC"].debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
+        HCDC = map["HCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
+        MCDC = map["MCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
+        LCDC = map["LCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
         RH = map["RH"] as? [Int] ?? []
-        GUST = map["GUST"] as? [Float] ?? []
+        GUST = map["GUST"] as? [Double] ?? []
         SLP = map["SLP"] as? [Int] ?? []
         FLHGT = map["FLHGT"] as? [Int] ?? []
         APCP = map["APCP"] as? [Int] ?? []
-        WINDSPD = map["WINDSPD"] as? [Float] ?? []
+        WINDSPD = map["WINDSPD"] as? [Double] ?? []
         windDirection = (map["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)} ?? []
         SMERN = map["SMERN"] as? [Int] ?? []
         SMER = map["SMER"] as? [Int] ?? []
-        TMPE = map["TMPE"] as? [Float] ?? []
+        TMPE = map["TMPE"] as? [Double] ?? []
         PCPT = map["PCPT"] as? [Int] ?? []
-        HTSGW = map["HTSGW"] as? [Float] ?? []
-        WVHGT = map["WVHGT"] as? [Float] ?? []
-        WVPER = map["WVPER"] as? [Float] ?? []
-        WVDIR = map["WVDIR"] as? [Float] ?? []
-        SWELL1 = map["SWELL1"] as? [Float] ?? []
-        SWPER1 = map["SWPER1"] as? [Float] ?? []
-        SWDIR1 = map["SWDIR1"] as? [Float] ?? []
-        SWELL2 = map["SWELL2"] as? [Float] ?? []
-        SWPER2 = map["SWPER2"] as? [Float] ?? []
-        SWDIR2 = map["SWDIR2"] as? [Float] ?? []
-        PERPW = map["PERPW"] as? [Float] ?? []
-        DIRPW = map["DIRPW"] as? [Float] ?? []
+        HTSGW = map["HTSGW"] as? [Double] ?? []
+        WVHGT = map["WVHGT"] as? [Double] ?? []
+        WVPER = map["WVPER"] as? [Double] ?? []
+        WVDIR = map["WVDIR"] as? [Double] ?? []
+        SWELL1 = map["SWELL1"] as? [Double] ?? []
+        SWPER1 = map["SWPER1"] as? [Double] ?? []
+        SWDIR1 = map["SWDIR1"] as? [Double] ?? []
+        SWELL2 = map["SWELL2"] as? [Double] ?? []
+        SWPER2 = map["SWPER2"] as? [Double] ?? []
+        SWDIR2 = map["SWDIR2"] as? [Double] ?? []
+        PERPW = map["PERPW"] as? [Double] ?? []
+        DIRPW = map["DIRPW"] as? [Double] ?? []
         hr_weekday = map["hr_weekday"] as? [Int] ?? []
         hr_h = map["hr_h"] as? [String] ?? []
         hr_d = map["hr_d"] as? [String] ?? []
@@ -137,7 +137,7 @@ public class WForecast: Object, Mappable {
         initstr = map["initstr"] as? String
         model_name = map["model_name"] as? String
         model_longname = map["model_longname"] as? String
-        id_model = map["id_model"] as? String
+        id_model = map["id_model"] as? Int ?? 0
         update_last = map["update_last"] as? String
         update_next = map["update_next"] as? String
         initstamp = map["initstamp"] as? Int ?? 0
@@ -179,17 +179,17 @@ public class WForecast: Object, Mappable {
             "hr_h: \(hr_h)",
             "hr_d: \(hr_d)",
             "hours: \(hours)",
-            "img_param: \(img_param), ",
-            "img_var_map: \(img_var_map).",
-            "initDate: \(initDate ?? ""), ",
-            "init_d: \(init_d ?? ""), ",
-            "init_dm: \(init_dm ?? ""), ",
-            "init_h: \(init_h ?? ""), ",
+            "img_param: \(img_param)",
+            "img_var_map: \(img_var_map)",
+            "initDate: \(initDate ?? "")",
+            "init_d: \(init_d ?? "")",
+            "init_dm: \(init_dm ?? "")",
+            "init_h: \(init_h ?? "")",
             "initstr: \(initstr ?? "")",
-            "modelName: \(model_name ?? ""), ",
-            "model_longname: \(model_longname ?? ""), ",
-            "id_model: \(id_model ?? "")",
-            "update_last: \(update_last ?? ""), ",
+            "modelName: \(model_name ?? "")",
+            "model_longname: \(model_longname ?? "")",
+            "id_model: \(id_model)",
+            "update_last: \(update_last ?? "")",
             "update_next: \(update_next ?? "")",
         ]
             .compactMap {$0}
@@ -235,20 +235,23 @@ public extension WForecast {
         return nil
     }
     
-    func temperature(hour: Int) -> Float? {
+    /// TMP: temperature
+    func temperature(hour: Int) -> Double? {
         if TMP.count > 0 && hour < TMP.count {
             return TMP[hour]
         }
         return nil
     }
     
-    func temperatureReal(hour: Int) -> Float? {
+    /// TMPE: temperature in 2 meters above ground with correction to real altitude of the spot.
+    func temperatureReal(hour: Int) -> Double? {
         if TMPE.count > 0 && hour < TMPE.count {
             return TMPE[hour]
         }
         return nil
     }
     
+    /// RH: Relative humidity: relative humidity in percent
     func relativeHumidity(hour: Int) -> Int? {
         if RH.count > 0 && hour < RH.count {
             return RH[hour]
@@ -272,7 +275,7 @@ public extension WForecast {
     
     func windSpeed(hour: Int) -> Float? {
         if WINDSPD.count > 0 && hour < WINDSPD.count {
-            return WINDSPD[hour]
+            return Float(WINDSPD[hour])
         }
         return nil
     }
@@ -319,90 +322,106 @@ public extension WForecast {
         return windDirection[hour].name
     }
     
-    func windGust(hour: Int) -> Float? {
+    func windGust(hour: Int) -> Double? {
         if GUST.count > 0 && hour < GUST.count {
             return GUST[hour]
         }
         return nil
     }
     
-    func perpw(hour: Int) -> Float? {
+    var isMarineAvailable: Bool {
+        !PERPW.isEmpty
+    }
+    
+    /// PERPW: Peak wave period
+    func peakWavePeriod(hour: Int) -> Double? {
         if PERPW.count > 0 && hour < PERPW.count {
             return PERPW[hour]
         }
         return nil
     }
     
-    func wvhgt(hour: Int) -> Float? {
+    /// WVHG: Wave height
+    func waveHeight(hour: Int) -> Double? {
         if WVHGT.count > 0 && hour < WVHGT.count {
             return WVHGT[hour]
         }
         return nil
     }
     
-    func wvper(hour: Int) -> Float? {
+    /// WVPER: Mean wave period [s]
+    func meanWavePeriod(hour: Int) -> Double? {
         if WVPER.count > 0 && hour < WVPER.count {
             return WVPER[hour]
         }
         return nil
     }
 
-    func wvdir(hour: Int) -> Float? {
+    /// WVDIR: Mean wave direction
+    func meanWaveDirection(hour: Int) -> Double? {
         if WVDIR.count > 0 && hour < WVDIR.count {
             return WVDIR[hour]
         }
         return nil
     }
     
-    func swell1(hour: Int) -> Float? {
+    /// SWELL1: Swell height (m)
+    func swellHeight(hour: Int) -> Double? {
         if SWELL1.count > 0 && hour < SWELL1.count {
             return SWELL1[hour]
         }
         return nil
     }
     
-    func swper1(hour: Int) -> Float? {
+    /// SWPER1: Swell period
+    func swellPeriod(hour: Int) -> Double? {
         if SWPER1.count > 0 && hour < SWPER1.count {
             return SWPER1[hour]
         }
         return nil
     }
     
-    func swdir1(hour: Int) -> Float? {
+    /// SWDIR1: Swell direction
+    func swellDirection(hour: Int) -> Double? {
         if SWDIR1.count > 0 && hour < SWDIR1.count {
             return SWDIR1[hour]
         }
         return nil
     }
 
-    func swell2(hour: Int) -> Float? {
+    /// SWELL2: Swell height (m)
+    func swellHeight2(hour: Int) -> Double? {
         if SWELL2.count > 0 && hour < SWELL2.count {
             return SWELL2[hour]
         }
         return nil
     }
-    
-    func swper2(hour: Int) -> Float? {
+
+    /// SWPER2: Swell period
+    func swellPeriod2(hour: Int) -> Double? {
         if SWPER2.count > 0 && hour < SWPER2.count {
             return SWPER2[hour]
         }
         return nil
     }
     
-    func swdir2(hour: Int) -> Float? {
+    func swellDirection2(hour: Int) -> Double? {
         if SWDIR2.count > 0 && hour < SWDIR2.count {
             return SWDIR2[hour]
         }
         return nil
     }
     
-    func dirpw(hour: Int) -> Float? {
+    /// DIRPW: Peak wave direction [°]
+    func peakWaveDirection(hour: Int) -> Double? {
         if DIRPW.count > 0 && hour < DIRPW.count {
             return DIRPW[hour]
         }
         return nil
     }
-    func htsgw(hour: Int) -> Float? {
+    
+    /// HTSGW: Significant Wave Height (Significant Height of Combined Wind Waves and Swell)
+    func significantWaveHeight(hour: Int) -> Double? {
         if HTSGW.count > 0 && hour < HTSGW.count {
             return HTSGW[hour]
         }
@@ -411,28 +430,28 @@ public extension WForecast {
     
     func cloudCoverTotal(hour: Int) -> Int? {
         if TCDC.count > 0 && hour < TCDC.count {
-            return TCDC[hour]
+            return Int(TCDC[hour])
         }
         return nil
     }
     
     func cloudCoverHigh(hour: Int) -> Int? {
         if HCDC.count > 0 && hour < HCDC.count {
-            return HCDC[hour]
+            return Int(HCDC[hour])
         }
         return nil
     }
     
     func cloudCoverMid(hour: Int) -> Int? {
         if MCDC.count > 0 && hour < MCDC.count {
-            return MCDC[hour]
+            return Int(MCDC[hour])
         }
         return nil
     }
     
     func cloudCoverLow(hour: Int) -> Int? {
         if LCDC.count > 0 && hour < LCDC.count {
-            return LCDC[hour]
+            return Int(LCDC[hour])
         }
         return nil
     }

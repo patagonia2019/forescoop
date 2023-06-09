@@ -77,7 +77,7 @@ public class Forecast: Object, Mappable {
             .filter {$0.key != "model_name" && $0.key != "initstamp" && $0.key != "initdate"}
     }
     
-    public var description : String {
+    public var description: String {
         [
             "\(type(of:self))",
             initStamp.toString,

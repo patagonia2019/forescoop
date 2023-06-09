@@ -8,10 +8,12 @@
 
 import Foundation
 
-public struct Knots {
+public class Knots {
     
     private var knots: Float = 1
-    private var definition: Definition?
+    private lazy var definition: Definition = {
+        Definition()
+    }()
 
     public init(value: Float?) {
         knots = value ?? 1
@@ -21,40 +23,40 @@ public struct Knots {
 public extension Knots {
     
     private var beaufortArray: Array<[String: Any?]>? {
-        definition?.beaufortArray
+        self.definition.beaufortArray
     }
     
-    private var conversionDict: [String: Float?]? {
-        definition?.conversionDict
+    private var conversionDict: [String: Double?]? {
+        self.definition.conversionDict
     }
 
     var kmh: Float? {
         // 1 knot = 1.852 km/h
         guard let conversion = conversionDict,
-            let kmh = conversion["kmh"] as? Float else {
+            let kmh = conversion["kmh"] as? Double else {
                 return nil
         }
-        return knots * kmh
+        return knots * Float(kmh)
     }
     
     var mph: Float? {
         // 1 knot = 1.15078 mph
         //        return knots * 1.15078
         guard let conversion = conversionDict,
-            let mph = conversion["mph"] as? Float else {
+            let mph = conversion["mph"] as? Double else {
                 return nil
         }
-        return knots * mph
+        return knots * Float(mph)
     }
     
     var mps: Float? {
         // 1 knot = 0.514444 mps
         //        return knots * 0.514444
         guard let conversion = conversionDict,
-            let mps = conversion["mps"] as? Float else {
+            let mps = conversion["mps"] as? Double else {
                 return nil
         }
-        return knots * mps
+        return knots * Float(mps)
     }
 
     /*

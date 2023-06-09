@@ -18,11 +18,11 @@ public class Definition {
 
     public init() {}
 
-    public var conversionDict: [String: Float?]? {
+    public var conversionDict: [String: Double?]? {
         guard let info = info else {
             return nil
         }
-        return info["conversion"] as? [String: Float?]
+        return info["conversion"] as? [String: Double?]
     }
     
     public var beaufortArray: Array<[String: Any?]>? {

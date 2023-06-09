@@ -7,9 +7,10 @@
 //
 
 import Foundation
+import CoreLocation
 
 /*
- *  SpotForecast
+ *  WSpotForecast
  *
  *  Discussion:
  *    Represents a model information of the stot or location when the forecast is obtained.
@@ -19,7 +20,6 @@ import Foundation
  * {
  *     "id_spot": 546356,
  *     "id_user": 2,
- *     "spotname": "Windguru Station",
  *     "spot": "Argentina - Agrotécnico 4 - San Pedro, Guasayan - Sgo del Estero, MeteoStar",
  *     "lat": -27.9567,
  *     "lon": -65.1579,
@@ -49,12 +49,11 @@ public class WSpotForecast: Object, Mappable {
     var id_spot = 0
     var id_user = 0
     var nickname: String? = nil
-    var spotname: String? = nil
     var spot: String? = nil
     var lat: Double = 0.0
     var lon: Double = 0.0
     var alt = 0
-    var id_model: String? = nil
+    var id_model: Int = 0
     var model: String? = nil
     var model_alt = 0
     var levels = 0
@@ -83,12 +82,11 @@ public class WSpotForecast: Object, Mappable {
         id_spot = map["id_spot"] as? Int ?? 0
         id_user = map["id_user"] as? Int ?? 0
         nickname = map["nickname"] as? String
-        spotname = map["spotname"] as? String
         spot = map["spot"] as? String
         lat = map["lat"] as? Double ?? 0.0
         lon = map["lon"] as? Double ?? 0.0
         alt = map["alt"] as? Int ?? 0
-        id_model = map["id_model"] as? String
+        id_model = map["id_model"] as? Int ?? 0
         model = map["model"] as? String
         model_alt = map["model_alt"] as? Int ?? 0
         levels = map["levels"] as? Int ?? 0
@@ -114,10 +112,9 @@ public class WSpotForecast: Object, Mappable {
             "id_spot : \(id_spot)",
             "id_user : \(id_user)",
             nickname,
-            spotname,
             spot,
             "lat/lon/alt: \(lat)/\(lon)/\(alt)",
-            id_model,
+            id_model.toString,
             model,
             "\(model_alt)",
             "\(levels)",
@@ -140,6 +137,18 @@ public class WSpotForecast: Object, Mappable {
 
 public extension WSpotForecast {
     
+    var identifier: String {
+        id_spot.toString
+    }
+    
+    var userIdentifier: String {
+        id_user.toString
+    }
+
+    var nickName: String? {
+        nickname
+    }
+    
     var elapse: Elapse? {
         Elapse(sunrise, sunset, utc_offset)
     }
@@ -148,8 +157,16 @@ public extension WSpotForecast {
         wgs_arr?.first?.station
     }
     
-    var spotName: String {
-        locationName ?? spot ?? spotname ?? nickname ?? tzid ?? "Spot id: \(id_spot)"
+    var spotname: String? {
+        spot
+    }
+    
+    var location: CLLocation? {
+        CLLocation(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon), altitude: CLLocationDistance(alt), horizontalAccuracy: 0, verticalAccuracy: 0, course: CLLocationDirection.greatestFiniteMagnitude, speed: 0, timestamp: Date())
+    }
+    
+    var modelId: Int {
+        id_model
     }
     
     var forecast: WForecast? {
@@ -159,16 +176,7 @@ public extension WSpotForecast {
     var spotId: Int {
         id_spot
     }
-    
-    var timezone: String? {
-        if let tz = tz,
-            let tzuttc = tzutc,
-            let tzid = tzid {
-            return "\(tz), \(tzuttc), \(tzid), \(utc_offset)"
-        }
-        return nil
-    }
-    
+        
     var coordinates: String {
         "\(lat), \(lon)\n\(alt) meters"
     }
@@ -185,11 +193,24 @@ public extension WSpotForecast {
         sunset
     }
     
-    var modelInfo: String? {
-        if let id_model = id_model,
-            let model = model {
-            return "\(id_model): \(model), alt: \(model_alt)"
-        }
-        return nil
+    var timezoneUtc: String? {
+        tzutc?.components(separatedBy: CharacterSet(charactersIn:"()")).joined()
     }
+    
+    var timezone: TimeZone? {
+        timezoneUtc != nil ? TimeZone(identifier: timezoneUtc!) : nil
+    }
+    
+    var gmtHourOffset: Int {
+        utc_offset
+    }
+    
+    var timezoneId: String? {
+        tzid
+    }
+    
+    var numberOfTides: Int {
+        tides
+    }
+
 }
