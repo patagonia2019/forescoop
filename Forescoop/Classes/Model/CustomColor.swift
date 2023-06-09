@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 public struct CustomColor {
     
@@ -23,7 +25,17 @@ public struct CustomColor {
 }
 
 public extension CustomColor {
+    #if os(iOS)
     var color: UIColor {
         UIColor(red: CGFloat(red/255), green: CGFloat(green/255), blue: CGFloat(blue/255), alpha: CGFloat(alpha))
     }
+    #elseif os(macOS)
+    var color: NSColor {
+        NSColor(red: CGFloat(red/255), green: CGFloat(green/255), blue: CGFloat(blue/255), alpha: CGFloat(alpha))
+    }
+    #else
+    var color: UIColor {
+        UIColor(red: CGFloat(red/255), green: CGFloat(green/255), blue: CGFloat(blue/255), alpha: CGFloat(alpha))
+    }
+    #endif
 }

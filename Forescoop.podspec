@@ -30,7 +30,7 @@ Use this framework in Swift to get windGURU service for forecasting weather. For
 
   s.ios.deployment_target = '15.0'
   s.osx.deployment_target = '12.0'
-  s.tvos.deployment_target = '12.0'
+  s.tvos.deployment_target = '15.0'
   s.watchos.deployment_target = '8.0'
 
   s.source_files = 'Forescoop/Classes/**/*.swift'
