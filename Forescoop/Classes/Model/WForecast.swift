@@ -259,16 +259,18 @@ public extension WForecast {
         return nil
     }
     
-    func smern(hour: Int) -> Int? {
-        if SMERN.count > 0 && hour < SMERN.count {
-            return SMERN[hour]
+    /// SMERN: specific moisture extraction rate
+    func specificMoistureExtractionRate(hour: Int) -> Int? {
+        if SMER.count > 0 && hour < SMER.count {
+            return SMER[hour]
         }
         return nil
     }
     
-    func smer(hour: Int) -> Int? {
-        if SMER.count > 0 && hour < SMERN.count {
-            return SMER[hour]
+    /// SMERN: specific moisture extraction rate N.
+    func specificMoistureExtractionRateN(hour: Int) -> Int? {
+        if SMERN.count > 0 && hour < SMERN.count {
+            return SMERN[hour]
         }
         return nil
     }
