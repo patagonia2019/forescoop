@@ -8,6 +8,7 @@ class ModelTests: XCTestCase {
     private var countriesDict: [String: Any]?
     private var spotResultDict: [String: Any]?
     private var anonymousUserDict: [String: Any]?
+    private var userDict: [String: Any]?
     private var geoRegionsDict: [String: Any]?
     private var regionsDict: [String: Any]?
     private var spotInfoDict: [String: Any]?
@@ -22,8 +23,10 @@ class ModelTests: XCTestCase {
         XCTAssertNotNil(countriesDict)
         spotResultDict = definition?.json(jsonFile: "SpotResult")
         XCTAssertNotNil(spotResultDict)
-        anonymousUserDict = definition?.json(jsonFile: "User")
+        anonymousUserDict = definition?.json(jsonFile: "AnonymousUser")
         XCTAssertNotNil(anonymousUserDict)
+        userDict = definition?.json(jsonFile: "User")
+        XCTAssertNotNil(userDict)
         geoRegionsDict = definition?.json(jsonFile: "GeoRegions")
         XCTAssertNotNil(geoRegionsDict)
         regionsDict = definition?.json(jsonFile: "Regions")
@@ -67,6 +70,34 @@ class ModelTests: XCTestCase {
         let spot = spotResult?.find(nickname: "EAPCM")
         XCTAssertNotNil(spot)
         XCTAssertEqual(spot?.name, "Argentina,  Bariloche, playa sin viento L. Moreno este")
+    }
+    
+    func testUser() {
+        let user = User(map: userDict)
+        XCTAssertNotNil(user)
+        XCTAssertTrue(user?.isAnonymous == false)
+        XCTAssertEqual(user?.name, "southfox")
+        XCTAssertEqual(user?.countryIdentifier, 0)
+        XCTAssertEqual(user?.windUnits, "kmh")
+        XCTAssertEqual(user?.temperatureUnits, "c")
+        XCTAssertEqual(user?.waveUnits, "m")
+        XCTAssertTrue(user?.isPro == false)
+        XCTAssertTrue(user?.noAdvertisement == false)
+        XCTAssertEqual(user?.viewHoursFrom, 5)
+        XCTAssertEqual(user?.viewHoursTo, 22)
+        XCTAssertEqual(user?.temperatureLimit, 0)
+        XCTAssertEqual(user?.windRatingLimits, [10.997305, 14.986523, 18.97574])
+        let windColor = user?.windColor
+        XCTAssertNotNil(windColor)
+        XCTAssertEqual(user?.temperatureColor.count, 9)
+        XCTAssertEqual(user?.cloudColor.count, 2)
+        XCTAssertNotNil(user?.precipitationColor)
+        XCTAssertNotNil(user?.precip1Color)
+        XCTAssertNotNil(user?.pressureColor)
+        XCTAssertNotNil(user?.rhColor)
+        XCTAssertNotNil(user?.wpowerColor)
+        XCTAssertNotNil(user?.tideColor)
+        XCTAssertNotNil(user?.initialColor)
     }
     
     func testAnonymousUser() {
