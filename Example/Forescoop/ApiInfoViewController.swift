@@ -3,7 +3,7 @@
 //  Forescoop
 //
 //  Created by javierfuchs on 7/13/17.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Copyright © 2023 CocoaPods. All rights reserved.
 //
 
 import Foundation

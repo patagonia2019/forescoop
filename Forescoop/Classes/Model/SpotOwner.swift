@@ -3,7 +3,7 @@
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation

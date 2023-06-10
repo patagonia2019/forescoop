@@ -3,7 +3,7 @@
 //  Forescoop
 //
 //  Created by javierfuchs on 7/12/17.
-//  Copyright © 2017 Mobile Patagonia. All rights reserved.
+//  Copyright © 2023 Mobile Patagonia. All rights reserved.
 //
 
 import Foundation
