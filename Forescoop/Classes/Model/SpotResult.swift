@@ -33,7 +33,6 @@ import Foundation
  * }
  */
 
-
 public class SpotResult: Object, Mappable {
     //
     // count: number of results obtained

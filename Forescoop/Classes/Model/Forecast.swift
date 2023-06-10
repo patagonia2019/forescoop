@@ -100,12 +100,12 @@ public extension Forecast {
     }
     
     /// WINDDIR: Wind direction
-    func windDirection(hh: String?) -> Float? {
+    func windDirection(hh: String?) -> Double? {
         weathers?[TypeOfWeather.WINDDIR.rawValue]?.value(hh: hh)
     }
     
     /// WINDSPD:  Wind speed (knots)
-    func windSpeed(hh: String?) -> Float? {
+    func windSpeed(hh: String?) -> Double? {
         weathers?[TypeOfWeather.WINDSPD.rawValue]?.value(hh: hh)
     }
     

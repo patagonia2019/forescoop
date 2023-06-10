@@ -15,16 +15,12 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
 
     // MARK - Async / Wait
     public func searchSpots(byLocation location: String) async throws -> SpotResult? {
-        DispatchQueue.main.sync {
-            return SpotResult.init(map: definition.json(jsonFile: "SpotResult"))
-        }
+        SpotResult(map: definition.json(jsonFile: "SpotResult"))
     }
     
     public func forecast(bySpotId spotId: String,
                          model modelId: String? = nil) async throws -> SpotForecast? {
-        DispatchQueue.main.sync {
-            return SpotForecast.init(map: definition.json(jsonFile: "SpotForecast"))
-        }
+        SpotForecast(map: definition.json(jsonFile: "SpotForecast"))
     }
 
     // MARK - Closures

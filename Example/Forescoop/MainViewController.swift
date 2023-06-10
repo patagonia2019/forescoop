@@ -12,7 +12,6 @@ import Forescoop
 class MainViewController: UIViewController {
     
     @IBOutlet weak var toolbarView: UIView!
-    @IBOutlet weak var horizontalSlider: UISlider!
     @IBOutlet weak var hourLabel: UILabel!
     
     @IBOutlet weak var topView: UIView!
@@ -33,19 +32,11 @@ class MainViewController: UIViewController {
     var forecastService: ForecastWindguruProtocol? = ForecastWindguruService()
     
     var user: User?
-    
-    init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?, forecastService: ForecastWindguruProtocol? = nil) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.forecastService = forecastService
-    }
+    var isUpdated: Bool = false
     
     required convenience init?(coder: NSCoder, forecastService: ForecastWindguruProtocol? = nil) {
         self.init(coder: coder)
         self.forecastService = forecastService
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
     }
     
     override func viewDidLoad() {
@@ -80,11 +71,27 @@ private extension MainViewController {
     }
 
     func updateForecast() {
-        Task { [weak self] in
-            guard let spotId = try? await self?.forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
-            let spotForecast = try? await self?.forecastService?.forecast(bySpotId: spotId, model: nil)
-            self?.showForecastView(spotForecast: spotForecast)
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            showForecastView(spotForecast: requestForecastTest())
+            isUpdated = true
+        } else {
+            Task { [weak self] in
+                await self?.showForecastView(spotForecast: try self?.requestForecast())
+                self?.isUpdated = true
+            }
         }
+    }
+    
+    func requestForecastTest() -> SpotForecast? {
+        guard SpotResult(map: Definition().json(jsonFile: "SpotResult")) != nil else { return nil }
+
+        return SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))
+    }
+
+    func requestForecast() async throws -> SpotForecast? {
+        guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
+        let spotForecast = try? await forecastService?.forecast(bySpotId: spotId, model: nil)
+        return spotForecast
     }
         
     func hideWeatherInfo() {
@@ -162,11 +169,5 @@ private extension MainViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
-    }
-    
-    func updateAWForecast() async throws -> SpotForecast? {
-        guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
-        let spotForecast = try? await forecastService?.forecast(bySpotId: spotId, model: nil)
-        return spotForecast
     }
 }

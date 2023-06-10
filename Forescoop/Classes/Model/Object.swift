@@ -8,7 +8,6 @@
 
 import Foundation
 
-public class Object {}
 public protocol BaseMappable {
     /// This function is where all variable mappings should occur. It is executed by Mapper during the mapping (serialization and deserialization) process.
     mutating func mapping(map: [String:Any]?)
@@ -26,6 +25,8 @@ public final class Mapper<N: BaseMappable> {
     }
 }
 
+public class Object {}
+
 extension Dictionary {
     func JSON() -> Dictionary {
         return self
@@ -35,32 +36,6 @@ extension Dictionary {
 public protocol Mappable: BaseMappable {
     /// This function can be used to validate JSON prior to mapping. Return nil to cancel mapping at this point
     init?(map: [String:Any]?)
-}
-
-open class DateTransform {
-    public typealias Object = Date
-    public typealias JSON = Double
-    
-    public init() {}
-    
-    open func transformFromJSON(_ value: Any?) -> Date? {
-        if let timeInt = value as? Double {
-            return Date(timeIntervalSince1970: TimeInterval(timeInt))
-        }
-        
-        if let timeStr = value as? String {
-            return Date(timeIntervalSince1970: TimeInterval(atof(timeStr)))
-        }
-        
-        return nil
-    }
-    
-    open func transformToJSON(_ value: Date?) -> Double? {
-        if let date = value {
-            return Double(date.timeIntervalSince1970)
-        }
-        return nil
-    }
 }
 
 public extension Array {

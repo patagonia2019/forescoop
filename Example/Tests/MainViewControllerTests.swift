@@ -12,29 +12,32 @@ import Forescoop
 
 final class MainViewControllerTests: XCTestCase {
 
-    private var vc: MainViewController?
-    override func setUpWithError() throws {
+    private var vc: MainViewController? {
         let sb = UIStoryboard(name: "Main", bundle: nil)
-        vc = sb.instantiateViewController(identifier: "MainViewController") { coder in
+        let vc = sb.instantiateViewController(identifier: "MainViewController") { coder in
             let forecastService = ForecastWindguruMockup()
             return MainViewController(coder: coder, forecastService: forecastService)
-        }
+        } as? MainViewController
         vc?.loadViewIfNeeded()
+        return vc
+    }
+    
+    override func setUpWithError() throws {
     }
 
     override func tearDownWithError() throws {
-        vc = nil
     }
-
-    // Test init
-    // Test viewDidLoad
-    // - default / initial values
-    // - on success / on failure?
-    
-    func testInitVC() throws {
+        
+    func testForecastInfo() {
         XCTAssertNotNil(vc)
         XCTAssertTrue(vc?.isViewLoaded == true)
         XCTAssertEqual(vc?.loginButton.title(for: .normal), "Login")
-        XCTAssertTrue(vc?.hourLabel.text?.isEmpty == false)
+        XCTAssertEqual(vc?.weatherLabel.text, "☀️🌥")
+        XCTAssertEqual(vc?.windDirectionLabel.text, "WNW")
+        XCTAssertEqual(vc?.temperatureLabel.text, "5.7°C")
+        XCTAssertEqual(vc?.locationLabel.text, "Bariloche")
+        XCTAssertEqual(vc?.windSpeedLabel.text, "10.1 knots")
+        XCTAssertEqual(vc?.hourLabel.text, "09 hs")
+        XCTAssertTrue(vc?.isUpdated == true)
     }
 }
