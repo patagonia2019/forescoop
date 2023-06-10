@@ -1,0 +1,1 @@
+{"3":{"id_model":3,"model_name":"GFS 13 km","model":"gfs","hr_start":0,"hr_end":378,"hr_step":1,"period":6,"resolution":13,"update_time":"+4 hours +45 minutes","show_vars":["WINDSPD","GUST","MWINDSPD","SMER","TMP","TMPE","WCHILL","FLHGT","CDC","TCDC","APCP1s","SLP","RH","RATING"]}}

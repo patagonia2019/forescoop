@@ -3,7 +3,7 @@
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -32,7 +32,7 @@ public class SpotOwner: Spot {
 
     var id_user: String? = nil
 
-    required public convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
@@ -45,8 +45,13 @@ public class SpotOwner: Spot {
     }
 
     override public var description: String {
-        [super.description, "\(type(of:self)): ", id_user].compactMap{$0}.joined(separator: "\n")
+        [super.description, "\(type(of:self))", id_user].compactMap{$0}.joined(separator: ", ")
     }
-    
+}
+
+public extension SpotOwner {
+    var userIdentifier: String? {
+        id_user
+    }
 }
 

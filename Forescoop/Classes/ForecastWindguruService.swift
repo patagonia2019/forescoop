@@ -1,9 +1,9 @@
 //
 //  ForecastWindguruService.swift
-//  Xoshem-watch
+//  Forescoop
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -17,14 +17,12 @@ import Foundation
  *    in the world using http://windguru.cz json rest api.
  */
 
+public class ForecastWindguruService: ForecastWindguruProtocol {
 
-public class ForecastWindguruService {
-
-    public typealias FailureType = (_ error: WGError?) -> Void
-
+    required public init() {}
+    
     public struct Definition {
         static let defaultModel = "3"
-        
         
         struct service {
             // https://www.windguru.cz/int/jsonapi.php?client=wgapp
@@ -41,8 +39,8 @@ public class ForecastWindguruService {
                 static let key = "app_version"
                 static let value = "1.1.10"
             }
-            static func baseUrl() -> String {
-                return "\(service.scheme)://\(service.server)/\(service.uri)?\(service.client.key)=\(service.client.value)"
+            static var baseUrl: String {
+                "\(service.scheme)://\(service.server)/\(service.uri)?\(service.client.key)=\(service.client.value)"
             }
 
             
@@ -229,7 +227,7 @@ public class ForecastWindguruService {
             }
             
             static func url(api: api, tokens:[String: String?]) -> String {
-                var strUrl = baseUrl()
+                var strUrl = baseUrl
                 strUrl += "&q=\(api.query)"
                 for (k,v) in tokens {
                     if let parameters = api.parameters,
@@ -243,76 +241,4 @@ public class ForecastWindguruService {
             }
         }
     }
-    
-    public static let instance = ForecastWindguruService()
-    
-    /*
-     * Private parts
-     */
-    
-    private struct Constants {
-        static let plist = "ForecastWindguruService"
-        static let frameworkBundle = "Forescoop"
-        static let bundleResource = "Forescoop"
-    }
-    
-    private func bundleFromFramework() -> Bundle? {
-        var fwkBundle : Bundle? = nil
-        for bundle in Bundle.allFrameworks {
-            if let bundleIdentifier = bundle.bundleIdentifier,
-                bundleIdentifier.hasSuffix(Constants.frameworkBundle) == true {
-                fwkBundle = bundle
-                break
-            }
-        }
-        if let fwkBundle = fwkBundle,
-            let innerBundlePath = fwkBundle.path(forResource: Constants.bundleResource, ofType: "bundle")
-        {
-            return Bundle.init(path: innerBundlePath)
-        }
-        return Bundle.init(identifier: "org.cocoapods.\(Constants.bundleResource)")
-    }
-    
-    
-    private func fwkBundle() -> Bundle? {
-        guard let bundle = bundleFromFramework() else {
-            assert(false, "Check if \(Constants.frameworkBundle) is framework available in bundle:\(Constants.bundleResource)")
-            return nil
-        }
-        return bundle
-    }
-    
-    private lazy var info : [String : AnyObject]? = {
-        guard let bundle = self.fwkBundle(),
-            let path = bundle.path(forResource: Constants.plist, ofType: "plist"),
-            let dict = NSDictionary.init(contentsOfFile: path) as? [String: AnyObject] else {
-                return nil
-        }
-        return dict
-    }()
-    
-    public func conversionDict() -> [String: Float?]? {
-        guard let info = info else {
-            return nil
-        }
-        return info["conversion"] as? [String: Float?]
-    }
-    
-    public func beaufortArray() -> Array<[String: Any?]>? {
-        guard let info = info,
-            let bft = info["bft"] as? Array<[String: Any?]> else {
-                return nil
-        }
-        return bft
-    }
-    
-    public func definitionArray() -> Array<[String: Any?]>? {
-        guard let info = info,
-            let definition = info["definition"] as? Array<[String: Any?]> else {
-                return nil
-        }
-        return definition
-    }
-
-  
 }

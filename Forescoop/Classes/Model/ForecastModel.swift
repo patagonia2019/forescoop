@@ -1,9 +1,9 @@
 //
 //  ForecastModel.swift
-//  Xoshem-watch
+//  Forescoop
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -38,12 +38,29 @@ public class ForecastModel: Object, Mappable {
     
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
-
+        
         model = map["model"] as? String
         info = Forecast.init(map: map["info"] as? [String:Any])
+        info?.gmtHourOffset = map["gmt_hour_offset"] as? Int ?? 0
+    }
+    
+    public var description: String {
+        [
+            "\(type(of:self))",
+            model?.description,
+            info?.description
+        ]
+            .compactMap{$0}
+            .joined(separator: "\n")
+    }
+}
+
+public extension ForecastModel {
+    var modelIdentifier: String? {
+        model
     }
 
-    public var description: String {
-        ["\(type(of:self)): ", model?.description, info?.description].compactMap{$0}.joined(separator: "\n")
+    var forecast: Forecast? {
+        info
     }
 }

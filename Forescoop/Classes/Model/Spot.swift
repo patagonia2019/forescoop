@@ -3,7 +3,7 @@
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -25,9 +25,10 @@ import Foundation
 
 public class Spot: Object, Mappable {
 
-    var id_spot: String? = nil
-    var spotname: String? = nil
-    var country: String? = nil
+    var id_spot: String?
+    var spotname: String?
+    var country: String?
+    var nickname: String?
 
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -37,22 +38,39 @@ public class Spot: Object, Mappable {
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
 
-        id_spot = map["id_spot"] as? String ?? nil
-        spotname = map["spotname"] as? String ?? nil
-        country = map["country"] as? String ?? nil
+        id_spot = map["id_spot"] as? String
+        spotname = map["spotname"] as? String
+        country = map["country"] as? String
+        nickname = map["nickname"] as? String
     }
-
+    
     public var description : String {
-        ["\(type(of:self)): ", id_spot, spotname, country].compactMap {$0}.joined(separator: ", ")
+        [
+            "Spot",
+            id_spot,
+            spotname,
+            country,
+            nickname
+        ]
+            .compactMap {$0}
+            .joined(separator: ", ")
     }
 }
 
 public extension Spot {
-    var id: String? {
+    var identifier: String? {
         id_spot
     }
     
     var name: String? {
         spotname
+    }
+    
+    var countryName: String? {
+        country
+    }
+    
+    var nickName: String? {
+        nickname
     }
 }

@@ -1,6 +1,6 @@
 //
 //  Region.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/16/17.
 //
@@ -30,14 +30,20 @@ public class Region: Object, Mappable {
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
 
-        id = map["id"] as? String ?? nil
-        name = map["name"] as? String  ?? nil
+        id = map["id"] as? String
+        name = map["name"] as? String
     }
 
     public var description : String {
-        ["\(type(of:self)): ", id, name].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", id, name].compactMap {$0}.joined(separator: ", ")
     }
     
+}
+
+public extension Region {
+    var oficinalName: String? {
+        name
+    }
 }
 
 

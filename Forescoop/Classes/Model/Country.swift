@@ -1,6 +1,6 @@
 //
 //  Country.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/16/17.
 //
@@ -33,7 +33,17 @@ public class Country: Object, Mappable {
         name = map["name"] as? String
     }
     
-    public var description : String {
-        ["\(type(of:self)): ", id, name].compactMap {$0}.joined(separator: ", ")
+    public var description: String {
+        ["\(type(of:self))", id, name].compactMap {$0}.joined(separator: ", ")
+    }
+}
+
+public extension Country {
+    var identifier: String? {
+        id
+    }
+
+    var oficialName: String? {
+        name
     }
 }

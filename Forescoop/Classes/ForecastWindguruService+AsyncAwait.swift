@@ -1,18 +1,18 @@
 //
 //  ForecastWindguruService+AsyncAwait.swift
-//  Pods
+//  Forescoop
 //
 //  Created by fox on 01/06/2023.
 //
 
 import Foundation
 
-extension ForecastWindguruService {
+public extension ForecastWindguruService {
     // searchSpots = api(query: routine.search_spots,
     //               errorCode: err.search_spots.rawValue,
     //              parameters: [parameter.search,
     //                           parameter.opt])
-    public func searchSpots(byLocation location: String) async throws -> SpotResult? {
+    func searchSpots(byLocation location: String) async throws -> SpotResult? {
 
         let escapedLocation = location.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         let tokens = [Definition.service.api.parameter.search : escapedLocation]
@@ -31,15 +31,14 @@ extension ForecastWindguruService {
             throw CustomError.invalidParsing
         }
     }
-    
-    
+
     // forecast = api(query: routine.forecast,
     //            errorCode: err.forecast.rawValue,
     //           parameters: [parameter.id_spot,
     //                        parameter.id_model,
     //                        parameter.no_wave])
 
-    public func forecast(bySpotId spotId: String,
+    func forecast(bySpotId spotId: String,
                          model modelId: String? = nil) async throws -> SpotForecast? {
         let tokens = [Definition.service.api.parameter.id_model : modelId ?? Definition.defaultModel,
                       Definition.service.api.parameter.id_spot : spotId]
@@ -58,5 +57,4 @@ extension ForecastWindguruService {
             throw CustomError.invalidParsing
         }
     }
-
 }

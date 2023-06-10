@@ -3,7 +3,7 @@
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -50,7 +50,7 @@ public class SetResult: Object, Mappable {
     }
 
     public var description : String {
-        "\(type(of:self)): " + sets.compactMap{$0.description}.joined(separator: "\n")
+        "\(type(of:self)) " + sets.compactMap{$0.description}.joined(separator: "\n")
     }
 
 }

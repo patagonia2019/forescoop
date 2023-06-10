@@ -3,7 +3,7 @@
 //  Forescoop Extension
 //
 //  Created by javierfuchs on 10/17/17.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Copyright © 2023 CocoaPods. All rights reserved.
 //
 
 import WatchKit
@@ -27,6 +27,7 @@ class InterfaceController: WKInterfaceController {
 
     var spotForecast: SpotForecast!
     var sliderHeight: Float!
+    var forecastService: ForecastWindguruService? = nil
 
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
@@ -52,8 +53,8 @@ private extension InterfaceController {
     
     func updateForecast() {
         Task { [weak self] in
-            guard let spotId = try? await ForecastWindguruService.instance.searchSpots(byLocation: "Bariloche")?.firstSpot?.id else { throw CustomError.cannotFindSpotId }
-            let spotForecast = try? await ForecastWindguruService.instance.forecast(bySpotId: spotId)
+            guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
+            let spotForecast = try? await forecastService?.forecast(bySpotId: spotId)
             self?.showForecastView(spotForecast: spotForecast)
         }
     }

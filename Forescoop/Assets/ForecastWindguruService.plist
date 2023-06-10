@@ -419,8 +419,6 @@
 		<key>SMER</key>
 		<dict>
 			<key>title</key>
-			<string></string>
-			<key>title - 2</key>
 			<string>specific moisture extraction rate ?</string>
 			<key>short</key>
 			<string></string>
@@ -432,8 +430,6 @@
 		<key>SMERN</key>
 		<dict>
 			<key>title</key>
-			<string></string>
-			<key>title - 2</key>
 			<string>specific moisture extraction rate n.?</string>
 			<key>short</key>
 			<string></string>

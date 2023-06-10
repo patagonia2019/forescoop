@@ -1,6 +1,6 @@
 //
 //  Models.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/13/17.
 //
@@ -21,7 +21,7 @@ public class Models: Object, Mappable {
     
     typealias ListModel    = Array<Model>
 
-    var models = ListModel()
+    var content = ListModel()
 
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -31,16 +31,16 @@ public class Models: Object, Mappable {
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
 
-        for json in map.JSON() {
-            if  let jsonValue = json.value as? [String: Any],
-                let model = Mapper<Model>().map(JSON: jsonValue) {
-                models.append(model)
-            }
-        }
+        content = map.JSON().compactMap{$0.value as? [String: Any]}.compactMap {Mapper<Model>().map(JSON:$0)}
     }
     
     public var description : String {
-        "\(type(of:self)): " + models.compactMap{$0.description}.joined(separator: "\n")
+        "\(type(of:self))\n" + content.compactMap{$0.description}.joined(separator: "\n")
     }
-    
+}
+
+public extension Models {
+    var sorted: [Model] {
+        content.sorted(by: {$0.oficinalName ?? "" < $1.oficinalName ?? ""})
+    }
 }

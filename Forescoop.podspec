@@ -28,13 +28,13 @@ Use this framework in Swift to get windGURU service for forecasting weather. For
   s.source = { :git => 'https://github.com/patagonia2019/forescoop.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '15.0'
   s.osx.deployment_target = '12.0'
-  s.tvos.deployment_target = '12.0'
-  s.watchos.deployment_target = '6.0'
+  s.tvos.deployment_target = '15.0'
+  s.watchos.deployment_target = '8.0'
 
   s.source_files = 'Forescoop/Classes/**/*.swift'
-  s.resources = 'Forescoop/Assets/**/*.{lproj,xcassets,storyboard,plist,strings}'
+  s.resources = ['Forescoop/Assets/**/*.{lproj,xcassets,storyboard,plist,strings,json}', 'Forescoop/Classes/Model/*.json']
   
   s.test_spec 'Tests' do |test_spec|
       test_spec.source_files = 'Tests/*.swift'

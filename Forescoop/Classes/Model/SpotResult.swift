@@ -1,6 +1,6 @@
 //
 //  SpotResult.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/17/17.
 //
@@ -33,7 +33,6 @@ import Foundation
  * }
  */
 
-
 public class SpotResult: Object, Mappable {
     //
     // count: number of results obtained
@@ -58,7 +57,7 @@ public class SpotResult: Object, Mappable {
     }
 
     public var description : String {
-        "\(type(of:self)): " + "\n\(count) spots.\n" + (spots != nil ? spots!.compactMap({"\($0)"}).joined(separator: ", ") : "")
+        "\(type(of:self))" + "\n\(count) spots.\n" + (spots != nil ? spots!.compactMap({"\($0.description)"}).joined(separator: "\n") : "")
     }
     
 }
@@ -78,5 +77,9 @@ public extension SpotResult {
     
     var asSpotName: String {
         lastSpot?.name ?? ""
+    }
+    
+    func find(nickname: String) -> Spot? {
+        spots?.first(where: {$0.nickname == nickname})
     }
 }

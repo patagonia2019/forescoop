@@ -10,7 +10,7 @@ def sharedLib
 end
 
 target 'Forescoop_Example' do
-  platform :ios, '13.0'
+  platform :ios, '15.0'
   sharedLib
 
   target 'Forescoop_Tests' do
@@ -19,13 +19,13 @@ target 'Forescoop_Example' do
 end
 
 target 'Forescoop Extension' do
-  platform :watchos, '6.0'
+  platform :watchos, '8.0'
   sharedLib
 end
 
 
 target 'ForescoopTVOS' do
-  platform :tvos, '12.0'
+  platform :tvos, '15.0'
   sharedLib
 end
 

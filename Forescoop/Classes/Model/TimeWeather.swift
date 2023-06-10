@@ -4,7 +4,7 @@
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -88,10 +88,10 @@ import Foundation
  *
  */
 
-
 public class TimeWeather: Object, Mappable {
     
     var info = [String: Any]()
+    var orderedKeys = [String]()
 
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -101,13 +101,11 @@ public class TimeWeather: Object, Mappable {
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
         info = map.compactMapValues { $0 }
+        orderedKeys = info.keys.sorted {Int($0) ?? 0 < Int($1) ?? 0}
     }
 
     public var description : String {
-        let orderkeys = info.keys.sorted { (a, b) -> Bool in
-            return a < b
-        }
-        return "\(type(of:self)): " + orderkeys.compactMap {"\($0) : \(info[$0] ?? "-")"}.joined(separator: ", ")
+        "\(type(of:self))" + orderedKeys.compactMap {"\($0) : \(info[$0] ?? "-")"}.joined(separator: ", ")
     }
     
     public func value<T>(hh: String?) -> T? {

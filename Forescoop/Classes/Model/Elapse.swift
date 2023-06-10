@@ -1,6 +1,6 @@
 //
 //  Elapse.swift
-//  Pods
+//  Forescoop
 //
 //  Created by Javier Fuchs on 6/6/16.
 //
@@ -8,35 +8,27 @@
 
 import Foundation
 
-public class Elapse: Object, Mappable {
+public class Elapse {
         
-    var start: Time?
-    var end: Time?
+    var start: DateTime?
+    var end: DateTime?
     
-    required public init?(elapseStart: String? = nil, elapseEnd: String? = nil) {
-        super.init()
-        guard let elapseStart = elapseStart,
-            let elapseEnd = elapseEnd else { return nil }
-        start = Time(elapseStart)
-        end = Time(elapseEnd)
+    required public init?(_ starting: String? = nil, _ ending: String? = nil, _ gmtHourOffset: Int) {
+        guard let starting = starting,
+            let ending = ending else { return nil }
+        start = DateTime(starting, gmtHourOffset: gmtHourOffset, format: "HH:mm")
+        end = DateTime(ending, gmtHourOffset: gmtHourOffset, format: "HH:mm")
     }
     
-    required convenience public init?(map: [String:Any]?) {
-        self.init()
-    }
-
-    public func mapping(map: [String:Any]?) {
-    }
-
     public var description : String {
-        ["\(type(of:self)): ", start?.description, end?.description].compactMap {$0}.joined(separator: ", ")
+        ["\(type(of:self))", starting, ending].compactMap {$0}.joined(separator: " ")
     }
 }
 
 extension Elapse {
     public func containsTime(date: NSDate) -> Bool {
-        guard let dstart = start?.asDate(),
-            let dend = end?.asDate()
+        guard let dstart = start?.asDate,
+            let dend = end?.asDate
             else {
                 return false
         }
@@ -50,10 +42,10 @@ extension Elapse {
     }
     
     public var starting: String? {
-        start?.description
+        start?.asString
     }
 
     public var ending: String? {
-        end?.description
+        end?.asString
     }
 }

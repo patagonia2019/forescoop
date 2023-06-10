@@ -3,7 +3,7 @@
 //  Forescoop Extension
 //
 //  Created by javierfuchs on 10/17/17.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Copyright © 2023 CocoaPods. All rights reserved.
 //
 
 import WatchKit

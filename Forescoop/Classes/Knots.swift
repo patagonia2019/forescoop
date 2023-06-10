@@ -1,6 +1,6 @@
 //
 //  Knots.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/24/17.
 //
@@ -8,39 +8,52 @@
 
 import Foundation
 
-public struct Knots {
+public class Knots {
     
-    var knots : Float = 1
+    private var knots: Double = 1.0
+    private lazy var definition: Definition = {
+        Definition()
+    }()
+
+    public init(_ value: Double?) {
+        knots = value ?? 1.0
+    }
+}
+
+public extension Knots {
     
-    public init(value: Float) {
-        knots = value
+    private var beaufortArray: Array<[String: Any?]>? {
+        self.definition.beaufortArray
     }
     
-    
-    public mutating func kmh() -> Float? {
+    private var conversionDict: [String: Double?]? {
+        self.definition.conversionDict
+    }
+
+    var kmh: Double? {
         // 1 knot = 1.852 km/h
-        guard let conversion = ForecastWindguruService.instance.conversionDict(),
-            let kmh = conversion["kmh"] as? Float else {
+        guard let conversion = conversionDict,
+            let kmh = conversion["kmh"] as? Double else {
                 return nil
         }
         return knots * kmh
     }
     
-    public mutating func mph() -> Float? {
+    var mph: Double? {
         // 1 knot = 1.15078 mph
         //        return knots * 1.15078
-        guard let conversion = ForecastWindguruService.instance.conversionDict(),
-            let mph = conversion["mph"] as? Float else {
+        guard let conversion = conversionDict,
+            let mph = conversion["mph"] as? Double else {
                 return nil
         }
         return knots * mph
     }
     
-    public mutating func mps() -> Float? {
+    var mps: Double? {
         // 1 knot = 0.514444 mps
         //        return knots * 0.514444
-        guard let conversion = ForecastWindguruService.instance.conversionDict(),
-            let mps = conversion["mps"] as? Float else {
+        guard let conversion = conversionDict,
+            let mps = conversion["mps"] as? Double else {
                 return nil
         }
         return knots * mps
@@ -51,12 +64,12 @@ public struct Knots {
      */
     
     // Thanks to https://www.windfinder.com/wind/windspeed.htm
-    public mutating func bft() -> Int? {
-        guard let bftArray = ForecastWindguruService.instance.beaufortArray() else {
+    var bft: Int? {
+        guard let bftArray = beaufortArray else {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["beaufort"] as? Int
@@ -65,12 +78,12 @@ public struct Knots {
         return nil
     }
     
-    public mutating func effect() -> String? {
-        guard let bftArray = ForecastWindguruService.instance.beaufortArray() else {
+    var effect: String? {
+        guard let bftArray = beaufortArray else {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["effect"] as? String
@@ -79,12 +92,12 @@ public struct Knots {
         return nil
     }
     
-    public mutating func effectOnSea() -> String? {
-        guard let bftArray = ForecastWindguruService.instance.beaufortArray() else {
+    var effectOnSea: String? {
+        guard let bftArray = beaufortArray else {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["effectOnSea"] as? String
@@ -93,12 +106,12 @@ public struct Knots {
         return nil
     }
     
-    public mutating func effectOnLand() -> String? {
-        guard let bftArray = ForecastWindguruService.instance.beaufortArray() else {
+    var effectOnLand: String? {
+        guard let bftArray = beaufortArray else {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["effectOnLand"] as? String
@@ -106,6 +119,4 @@ public struct Knots {
         }
         return nil
     }
-    
-    
 }

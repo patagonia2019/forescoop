@@ -1,6 +1,6 @@
 //
 //  User.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/11/17.
 //
@@ -95,11 +95,22 @@ import Foundation
  *
  */
 
+enum TypeOfColor: String {
+    case wind
+    case temperature = "temp"
+    case cloud
+    case precipitation = "precip"
+    case precip1
+    case pressure = "press"
+    case rh
+    case wpower
+    case tide
+    case initial = "init"
+}
+
 
 public class User: Object, Mappable {
     
-    typealias ListColor = [Color]
-
     var id_user : Int = 0
     var username: String?
     var id_country : Int = 0
@@ -112,15 +123,7 @@ public class User: Object, Mappable {
     var view_hours_to : Int = 0
     var temp_limit : Int = 0
     var wind_rating_limits = [Float]()
-    var colors_wind = ListColor()
-    var colors_temp = ListColor()
-    var colors_cloud = ListColor()
-    var colors_precip = ListColor()
-    var colors_precip1 = ListColor()
-    var colors_press = ListColor()
-    var colors_rh = ListColor()
-    var colors_htsgw = ListColor()
-    var colors_perpw = ListColor()
+    var customColors: [String: [CustomColor]]?
 
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -129,126 +132,150 @@ public class User: Object, Mappable {
     
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
-
-        var colors = Dictionary<String, [[Float]]>()
-
+                
         id_user = map["id_user"] as? Int ?? 0
-        username = map["username"] as? String ?? nil
+        username = map["username"] as? String
         id_country = map["id_country"] as? Int ?? 0
-        wind_units = map["wind_units"] as? String ?? nil
-        temp_units = map["temp_units"] as? String ?? nil
-        wave_units = map["wave_units"] as? String ?? nil
+        wind_units = map["wind_units"] as? String
+        temp_units = map["temp_units"] as? String
+        wave_units = map["wave_units"] as? String
         pro = map["pro"] as? Int ?? 0
         no_ads = map["no_ads"] as? Int ?? 0
         view_hours_from = map["view_hours_from"] as? Int ?? 0
         view_hours_to = map["view_hours_to"] as? Int ?? 0
         temp_limit = map["temp_limit"] as? Int ?? 0
-        wind_rating_limits = map["wind_rating_limits"] as? [Float] ?? []
-        
-        if let tmpcolors = map["colors"] as? Dictionary<String, [[Float]]> {
-            colors = tmpcolors
-        }
-        for (k,v) in colors {
-            for c in v {
-                if let color = Color.init(a: c[0], r: c[1], g: c[2], b: c[3]) {
-                    switch k {
-                    case "wind": colors_wind.append(color)
-                        break
-                    case "temp": colors_temp.append(color)
-                        break
-                    case "cloud": colors_cloud.append(color)
-                        break
-                    case "precip": colors_precip.append(color)
-                        break
-                    case "precip1": colors_precip1.append(color)
-                        break
-                    case "press": colors_press.append(color)
-                        break
-                    case "rh": colors_rh.append(color)
-                        break
-                    case "htsgw": colors_htsgw.append(color)
-                        break
-                    case "perpw": colors_perpw.append(color)
-                        break
-                    default:
-                        break
-                    }
-                }
+        wind_rating_limits = (map["wind_rating_limits"] as? [Double])?.compactMap({Float($0)}) ?? []
+        customColors = (map["colors"] as? [String: Any])?
+            .compactMapValues { value in
+                (value as? [[Double]])?
+                    .compactMap({CustomColor(info: String($0[0]),
+                                             alpha: Float($0[1]),
+                                             red: Float($0[2]),
+                                             green: Float($0[3]),
+                                             blue: Float($0[4]))})
             }
-        }
     }
     
-    
-    public var description : String {
-        var aux : String = "\(type(of:self)): "
-        aux += "#\(id_user), "
-        
-        if let username = username {
-            aux += "username: \(username), "
-        }
-        aux += "country # \(id_country), "
-        if let wind_units = wind_units {
-            aux += "wind_units \(wind_units), "
-        }
-        if let temp_units = temp_units {
-            aux += "temp_units \(temp_units), "
-        }
-        if let wave_units = wave_units {
-            aux += "wave_units \(wave_units), "
-        }
-        aux += "pro \(pro), "
-        aux += "no_ads \(no_ads), "
-        aux += "view_hours_from \(view_hours_from), "
-        aux += "view_hours_to \(view_hours_to), "
-        aux += "temp_limit \(temp_limit), "
-        aux += "wind_rating_limits \(wind_rating_limits.description)\n"
-
-        aux += "colors_wind: "
-        for c in colors_wind { aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_temp: "
-        for c in colors_temp { aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_cloud: "
-        for c in colors_cloud { aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_precip: "
-        for c in colors_precip { aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_precip1: "
-        for c in colors_precip1 { aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_press: "
-        for c in colors_press { aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_rh: "
-        for c in colors_rh { aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_htsgw: "
-        for c in colors_htsgw{ aux += c.description + "; " }
-        aux += "\n"
-
-        aux += "colors_perpw: ["
-        for c in colors_perpw{ aux += c.description + "; " }
-        aux += "]\n"
-
+    public var description: String {
+        var aux: [String?] = [
+            "\(type(of:self))",
+            "\(self)",
+            "#\(id_user)",
+            username ?? "-",
+            "\(id_country)",
+            wind_units ?? "-",
+            temp_units ?? "-",
+            wave_units ?? "-",
+            pro.toString]
+        aux.append(contentsOf: [
+            no_ads.toString,
+            view_hours_from.toString,
+            view_hours_to.toString,
+            temp_limit.toString,
+            wind_rating_limits.toString
+        ])
+        aux.append(contentsOf: customColors?.compactMap({$0.value.description}) ?? [""])
         return aux
+            .compactMap {$0}
+            .joined(separator: "\n")
     }
 }
 
-public extension User {
-    var name: String {
-        isAnonymous ? "Anonymous" : username ?? ""
+public extension Int {
+    var toString: String {
+        String(format: "%d", self)
     }
-    
+}
+
+public extension Array where Iterator.Element == Float {
+    var toString: String {
+        self.compactMap {String(format: "%f", $0)}.joined(separator: ", ")
+    }
+}
+
+
+public extension User {
+    enum Constant: String {
+        case Anonymous
+    }
+    var name: String {
+        isAnonymous ? Constant.Anonymous.rawValue : username ?? ""
+    }
     var isAnonymous: Bool {
         username?.isEmpty == true
     }
+    var countryIdentifier: Int {
+        id_country
+    }
+    var windUnits: String? {
+        wind_units
+    }
+    var temperatureUnits: String? {
+        temp_units
+    }
+    var waveUnits: String? {
+        wave_units
+    }
+    var isPro: Bool {
+        pro != 0
+    }
+    var noAdvertisement: Bool {
+        no_ads != 0
+    }
+    var viewHoursFrom: Int {
+        view_hours_from
+    }
+    var viewHoursTo: Int {
+        view_hours_to
+    }
+    var temperatureLimit: Int {
+        temp_limit
+    }
+    var windRatingLimits: [Float] {
+        wind_rating_limits
+    }
+    var windColor: [CustomColor] {
+        customColors?[TypeOfColor.wind.rawValue] ?? []
+    }
+    var temperatureColor: [CustomColor] {
+        customColors?[TypeOfColor.temperature.rawValue] ?? []
+    }
+    var cloudColor: [CustomColor] {
+        customColors?[TypeOfColor.cloud.rawValue] ?? []
+    }
+    var precipitationColor: [CustomColor] {
+        customColors?[TypeOfColor.precipitation.rawValue] ?? []
+    }
+    var precip1Color: [CustomColor] {
+        customColors?[TypeOfColor.precip1.rawValue] ?? []
+    }
+    var pressureColor: [CustomColor] {
+        customColors?[TypeOfColor.pressure.rawValue] ?? []
+    }
+    var rhColor: [CustomColor] {
+        customColors?[TypeOfColor.rh.rawValue] ?? []
+    }
+    var wpowerColor: [CustomColor] {
+        customColors?[TypeOfColor.wpower.rawValue] ?? []
+    }
+    var tideColor: [CustomColor] {
+        customColors?[TypeOfColor.tide.rawValue] ?? []
+    }
+    var initialColor: [CustomColor] {
+        customColors?[TypeOfColor.initial.rawValue] ?? []
+    }
+    
+    /*
+     case wind
+     case temperature = "temp"
+     case cloud
+     case precipitation = "precip"
+     case precip1
+     case pressure = "press"
+     case rh
+     case wpower
+     case tide
+     case initial = "init"
+
+     */
 }

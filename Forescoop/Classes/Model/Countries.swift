@@ -1,6 +1,6 @@
 //
 //  Countries.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/16/17.
 //
@@ -31,7 +31,7 @@ import Foundation
 
 public class Countries: Object, Mappable {
     
-    var countries = Array<Country>()
+    var content: [Country]?
 
     required public convenience init(map: [String:Any]?) {
         self.init()
@@ -40,10 +40,21 @@ public class Countries: Object, Mappable {
 
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
-        countries = map.JSON().compactMap({Mapper<Country>().map(JSON: ["id": $0.key, "name": $0.value])})
+        content = map.JSON().compactMap({Mapper<Country>().map(JSON: ["id": $0.key, "name": $0.value])})
     }
     
     public var description : String {
-        "\(type(of:self))\n" + countries.compactMap({$0.description}).joined(separator: "\n") + "\n"
+        [
+            "\(type(of:self))",
+            content?.compactMap({$0.description}).joined(separator: "\n"),
+        ]
+            .compactMap {$0}
+            .joined(separator: "\n")
+    }
+}
+
+public extension Countries {
+    var sorted: [Country] {
+        content?.sorted(by: {$0.name ?? "" < $1.name ?? ""}) ?? []
     }
 }

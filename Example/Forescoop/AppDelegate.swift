@@ -3,7 +3,7 @@
 //  Forescoop
 //
 //  Created by southfox on 07/06/2017.
-//  Copyright (c) 2017 southfox. All rights reserved.
+//  Copyright © 2023 southfox. All rights reserved.
 //
 
 #if os(macOS)

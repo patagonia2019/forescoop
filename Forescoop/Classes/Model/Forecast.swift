@@ -1,9 +1,9 @@
 //
 //  Forecast.swift
-//  Xoshem-watch
+//  Forescoop
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -37,27 +37,31 @@ import Foundation
  *  }
  */
 
+enum TypeOfWeather: String {
+    case TMP // temperature
+    case TCDC //  Cloud cover (%) Total
+    case HCDC //  Cloud cover (%) High
+    case MCDC //  Cloud cover (%) Mid
+    case LCDC //  Cloud cover (%) Low
+    case RH //  Relative humidity: relative humidity in percent
+    case GUST //  Wind gusts (knots)
+    case SLP //  sea level pressure
+    case FLHGT //  Freezing Level height in meters (0 degree isoterm)
+    case APCP //  Precip. (mm/3h)
+    case APCP1
+    case WINDSPD //  Wind speed (knots)
+    case WINDDIR //  Wind direction
+    case WINDIRNAME //  wind direction (name)
+    case TMPE //  temperature in 2 meters above ground with correction to real altitude of the spot.
+}
 
 public class Forecast: Object, Mappable {
     var initStamp: Int = 0
     var weathers: [String: TimeWeather]?
-//    var TMP: TimeWeather? // temperature
-//    var TCDC: TimeWeather? //  Cloud cover (%) Total
-//    var HCDC: TimeWeather? //  Cloud cover (%) High
-//    var MCDC: TimeWeather? //  Cloud cover (%) Mid
-//    var LCDC: TimeWeather? //  Cloud cover (%) Low
-//    var RH: TimeWeather? //  Relative humidity: relative humidity in percent
-//    var GUST: TimeWeather? //  Wind gusts (knots)
-//    var SLP: TimeWeather? //  sea level pressure
-//    var FLHGT: TimeWeather? //  Freezing Level height in meters (0 degree isoterm)
-//    var APCP: TimeWeather? //  Precip. (mm/3h)
-//    var WINDSPD: TimeWeather? //  Wind speed (knots)
-//    var WINDDIR: TimeWeather? //  Wind direction
-//    var WINDIRNAME: TimeWeather? //  wind direction (name)
-//    var TMPE: TimeWeather? //  temperature in 2 meters above ground with correction to real altitude of the spot.
     var initdate: String?
     var model_name: String?
-    
+    public var gmtHourOffset: Int = 0
+
     required public convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
@@ -65,98 +69,115 @@ public class Forecast: Object, Mappable {
     
     public func mapping(map: [String:Any]?) {
         guard let map = map else { return }
-
         initStamp = map["initstamp"] as? Int ?? 0
         initdate = map["initdate"] as? String
-        
         model_name = map["model_name"] as? String
-        weathers = map.compactMapValues { TimeWeather(map: $0 as? [String:Any]) }
+        weathers = map
+            .compactMapValues { TimeWeather(map: $0 as? [String:Any]) }
+            .filter {$0.key != "model_name" && $0.key != "initstamp" && $0.key != "initdate"}
     }
-
-    public var description : String {
-        var aux : String = "\(type(of:self)): \n"
-        aux += "initStamp: \(initStamp)\n"
-        if let TCDC = weathers?["TCDC"] {
-            aux += "Cloud cover Total: \(TCDC.description)\n"
-        }
-        if let HCDC = weathers?["HCDC"]  {
-            aux += "High: \(HCDC.description)\n"
-        }
-        if let MCDC = weathers?["MCDC"]  {
-            aux += "Mid: \(MCDC.description)\n"
-        }
-        if let LCDC = weathers?["LCDC"]  {
-            aux += "Low: \(LCDC.description)\n"
-        }
-        if let RH = weathers?["RH"]  {
-            aux += "Humidity: \(RH.description)\n"
-        }
-        if let SLP = weathers?["SLP"]  {
-            aux += "Sea Level pressure: \(SLP.description)\n"
-        }
-        if let FLHGT = weathers?["FLHGT"]  {
-            aux += "Freezing level: \(FLHGT.description)\n"
-        }
-        if let APCP = weathers?["APCP"]  {
-            aux += "Precipitation: \(APCP.description)\n"
-        }
-        if let GUST = weathers?["GUST"]  {
-            aux += "Wind gust: \(GUST.description)\n"
-        }
-        if let WINDSPD = weathers?["WINDSPD"]  {
-            aux += "Wind speed: \(WINDSPD.description)\n"
-        }
-        if let WINDDIR = weathers?["WINDDIR"]  {
-            aux += "Wind direccion: \(WINDDIR.description)\n"
-        }
-        if let WINDIRNAME = weathers?["WINDIRNAME"]  {
-            aux += "Wind name: \(WINDIRNAME.description)\n"
-        }
-        if let TMP = weathers?["TMP"]  {
-            aux += "Temp: \(TMP.description)\n"
-        }
-        if let TMPE = weathers?["TMPE"]  {
-            aux += "Temp real: \(TMPE.description)\n"
-        }
-        if let initdate = initdate {
-            aux += "initdate: \(initdate), "
-        }
-        if let model_name = model_name {
-            aux += "model_name: \(model_name).\n"
-        }
-        return aux
+    
+    public var description: String {
+        [
+            "\(type(of:self))",
+            initStamp.toString,
+            initdate,
+            model_name,
+            weathers?
+                .compactMap {"\($0.key): {\($0.value.description)}"}
+                .joined(separator: "\n")
+        ]
+            .compactMap { $0 }
+            .joined(separator: "\n")
     }
 }
 
-extension Forecast {
+public extension Forecast {
     
-    public func windDirectionName(hh: String?) -> String? {
-        return weathers?["WINDIRNAME"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["WINDIRNAME"], hh: hh) as? String
+    /// WINDIRNAME: wind direction (name)
+    func windDirectionName(hh: String?) -> String? {
+        weathers?[TypeOfWeather.WINDIRNAME.rawValue]?.value(hh: hh)
     }
     
-    public func windDirection(hh: String?) -> Float? {
-        return weathers?["WINDDIR"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["WINDDIR"], hh: hh) as? Float
+    /// WINDDIR: Wind direction
+    func windDirection(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.WINDDIR.rawValue]?.value(hh: hh)
     }
     
-    public func windSpeed(hh: String?) -> Float? {
-        return weathers?["WINDSPD"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["WINDSPD"], hh: hh) as? Float
+    /// WINDSPD:  Wind speed (knots)
+    func windSpeed(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.WINDSPD.rawValue]?.value(hh: hh)
     }
     
-    public func temperatureReal(hh: String?) -> Float? {
-        return weathers?["TMPE"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["TMPE"], hh: hh) as? Float
-    }
-    
-    public func cloudCoverTotal(hh: String?) -> Int? {
-        return weathers?["TCDC"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["TCDC"], hh: hh) as? Int
+    /// TMP:  temperature
+    func temperature(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.TMP.rawValue]?.value(hh: hh)
     }
 
-    public func precipitation(hh: String?) -> Float? {
-        return weathers?["APCP"]?.value(hh: hh)
-//        return valueForKey(timeWeather: weathers?["APCP"], hh: hh) as? Float
+    /// TMPE:  temperature in 2 meters above ground with correction to real altitude of the spot.
+    func temperatureReal(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.TMPE.rawValue]?.value(hh: hh)
+    }
+    
+    /// TCDC: Cloud cover (%) Total
+    func cloudCoverTotal(hh: String?) -> Int? {
+        weathers?[TypeOfWeather.TCDC.rawValue]?.value(hh: hh)
+    }
+
+    /// HCDC: Cloud cover (%) High
+    func cloudCoverHigh(hh: String?) -> Int? {
+        weathers?[TypeOfWeather.HCDC.rawValue]?.value(hh: hh)
+    }
+
+    /// MCDC: Cloud cover (%) Mid
+    func cloudCoverMid(hh: String?) -> Int? {
+        weathers?[TypeOfWeather.MCDC.rawValue]?.value(hh: hh)
+    }
+
+    /// LCDC: Cloud cover (%) Low
+    func cloudCoverLow(hh: String?) -> Int? {
+        weathers?[TypeOfWeather.LCDC.rawValue]?.value(hh: hh)
+    }
+
+    /// RH: Relative humidity: relative humidity in percent
+    func relativeHumidity(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.RH.rawValue]?.value(hh: hh)
+    }
+    
+    /// GUST:  Wind gusts (knots)
+    func windGusts(hh: String?) -> Double? {
+        Knots(weathers?[TypeOfWeather.GUST.rawValue]?.value(hh: hh)).kmh
+    }
+    
+    /// SLP: sea level pressure
+    func seaLevelPressure(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.SLP.rawValue]?.value(hh: hh)
+    }
+    
+    /// FLHGT: Freezing Level height in meters (0 degree isoterm)
+    func freezingLevelHeightInMeters(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.FLHGT.rawValue]?.value(hh: hh)
+    }
+
+    /// APCP:  Precip. (mm/3h)
+    func precipitation(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.APCP.rawValue]?.value(hh: hh)
+    }
+
+    func precipitation1(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.APCP1.rawValue]?.value(hh: hh)
+    }
+    
+    var initializationStamp: Int {
+        initStamp
+    }
+    var initializationDate: Date? {
+        DateTime(initdate, gmtHourOffset: gmtHourOffset)?.asDate
+    }
+    var modelName: String? {
+        model_name
+    }
+    var numberOfWeathers: Int {
+        weathers?.count ?? 0
     }
 }

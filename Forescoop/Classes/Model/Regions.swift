@@ -1,6 +1,6 @@
 //
 //  Regions.swift
-//  Pods
+//  Forescoop
 //
 //  Created by javierfuchs on 7/16/17.
 //
@@ -32,7 +32,7 @@ import Foundation
 
 public class Regions: Object, Mappable {
 
-    var regions = Array<Region>()
+    var content = Array<Region>()
 
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -45,16 +45,22 @@ public class Regions: Object, Mappable {
         for json in map.JSON() {
             let jsonKV = ["id": json.key, "name": json.value]
             if let region = Mapper<Region>().map(JSON: jsonKV) {
-                regions.append(region)
+                content.append(region)
             }
         }
     }
 
     public var description : String {
-        "\(type(of:self)): " + regions.compactMap{$0.description}.joined(separator: "\n")
+        "\(type(of:self))\n\n" + content.compactMap{$0.description}.joined(separator: "\n")
     }
-    
 }
+
+public extension Regions {
+    var sorted: [Region] {
+        content.sorted(by: {$0.name ?? "" < $1.name ?? ""})
+    }
+}
+
 
 
 

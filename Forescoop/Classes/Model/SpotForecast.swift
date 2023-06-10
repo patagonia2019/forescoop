@@ -3,7 +3,7 @@
 //  Xoshem-watch
 //
 //  Created by Javier Fuchs on 10/7/15.
-//  Copyright © 2015 Fuchs. All rights reserved.
+//  Copyright © 2023 Fuchs. All rights reserved.
 //
 
 import Foundation
@@ -44,7 +44,7 @@ public class SpotForecast: SpotInfo {
 
     var forecasts = Array<ForecastModel>()
 
-    required public convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) {
         self.init()
         mapping(map: map)
     }
@@ -54,7 +54,7 @@ public class SpotForecast: SpotInfo {
 
         super.mapping(map: map)
         guard let forecastDict = map["forecast"] as? [String: Any] else { return }
-        forecasts = forecastDict.compactMap { ForecastModel(map: ["model" : $0.key, "info" : $0.value]) }
+        forecasts = forecastDict.compactMap { ForecastModel(map: ["model" : $0.key, "info" : $0.value, "gmt_hour_offset": gmtHourOffset]) }
         currentModel = forecasts.last?.model
     }
     
@@ -63,7 +63,9 @@ public class SpotForecast: SpotInfo {
             super.description,
             "\(type(of:self)): ",
             currentModel?.description,
-            forecasts.compactMap({$0.description}).joined(separator: "\n")
+            forecasts
+                .compactMap({$0.description})
+                .joined(separator: "\n")
         ]
             .compactMap{$0}
             .joined(separator: "\n")
@@ -72,8 +74,20 @@ public class SpotForecast: SpotInfo {
 
 public extension SpotForecast {
     
+    var numberOfForecasts: Int {
+        forecasts.count
+    }
+    
+    var model: String? {
+        currentModel
+    }
+    
+    var forecastModel: ForecastModel? {
+        forecasts.first(where: {$0.model == currentModel})
+    }
+    
     var forecast: Forecast? {
-        forecasts.first(where: {$0.model == currentModel})?.info
+        forecastModel?.forecast
     }
     
     /// Information comes in UTC, contains the every 3 hours information
@@ -154,23 +168,15 @@ private extension SpotForecast {
     }
     
     var cloudCoverTotal: Int {
-        guard let forecast = forecast,
-              let cloudCoverTotal = forecast.cloudCoverTotal(hh: currentHourString) else {
-            return 0
-        }
-        return cloudCoverTotal
+        forecast?.cloudCoverTotal(hh: currentHourString) ?? 0
     }
     
     var isRaining: Bool {
         precipitation > 0.0
     }
     
-    var precipitation: Float {
-        guard let forecast = forecast,
-              let cloudCoverTotal = forecast.precipitation(hh: currentHourString) else {
-            return 0
-        }
-        return cloudCoverTotal
+    var precipitation: Double {
+        forecast?.precipitation(hh: currentHourString) ?? 0
     }
     
     var currentHourInt: Int {
