@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "70BAA9A41F276B4F004CD577"
-               BuildableName = "Forescoop_Example.app"
-               BlueprintName = "Forescoop_Example"
+               BlueprintIdentifier = "98688A0322D5936400A09AD0"
+               BuildableName = "ForescoopMacOS.app"
+               BlueprintName = "ForescoopMacOS"
                ReferencedContainer = "container:Forescoop.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,16 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "70BAA9BE1F276B6F004CD577"
-               BuildableName = "Forescoop_Tests.xctest"
-               BlueprintName = "Forescoop_Tests"
-               ReferencedContainer = "container:Forescoop.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -54,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "70BAA9A41F276B4F004CD577"
-            BuildableName = "Forescoop_Example.app"
-            BlueprintName = "Forescoop_Example"
+            BlueprintIdentifier = "98688A0322D5936400A09AD0"
+            BuildableName = "ForescoopMacOS.app"
+            BlueprintName = "ForescoopMacOS"
             ReferencedContainer = "container:Forescoop.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -71,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "70BAA9A41F276B4F004CD577"
-            BuildableName = "Forescoop_Example.app"
-            BlueprintName = "Forescoop_Example"
+            BlueprintIdentifier = "98688A0322D5936400A09AD0"
+            BuildableName = "ForescoopMacOS.app"
+            BlueprintName = "ForescoopMacOS"
             ReferencedContainer = "container:Forescoop.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -10,15 +10,21 @@ import Foundation
 public class ForecastWindguruMockup: ForecastWindguruProtocol {
     
     required public init() {}
-    
+
+    let definition = Definition()
+
     // MARK - Async / Wait
     public func searchSpots(byLocation location: String) async throws -> SpotResult? {
-        SpotResult.init(map: nil)
+        DispatchQueue.main.sync {
+            return SpotResult.init(map: definition.json(jsonFile: "SpotResult"))
+        }
     }
     
     public func forecast(bySpotId spotId: String,
                          model modelId: String? = nil) async throws -> SpotForecast? {
-        SpotForecast.init(map: nil)
+        DispatchQueue.main.sync {
+            return SpotForecast.init(map: definition.json(jsonFile: "SpotForecast"))
+        }
     }
 
     // MARK - Closures

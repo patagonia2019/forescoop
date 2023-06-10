@@ -275,43 +275,43 @@ public extension WForecast {
         return nil
     }
     
-    func windSpeed(hour: Int) -> Float? {
+    func windSpeed(hour: Int) -> Double? {
         if WINDSPD.count > 0 && hour < WINDSPD.count {
-            return Float(WINDSPD[hour])
+            return WINDSPD[hour]
         }
         return nil
     }
     
-    func windSpeedKnots(hour: Int) -> Float? {
+    func windSpeedKnots(hour: Int) -> Double? {
         windSpeed(hour:hour)
     }
     
-    func windSpeedKmh(hour: Int) -> Float? {
-        Knots(value: windSpeed(hour:hour)).kmh
+    func windSpeedKmh(hour: Int) -> Double? {
+        Knots(windSpeed(hour:hour)).kmh
     }
     
-    func windSpeedMph(hour: Int) -> Float? {
-        Knots(value: windSpeed(hour:hour)).mph
+    func windSpeedMph(hour: Int) -> Double? {
+        Knots(windSpeed(hour:hour)).mph
     }
     
-    func windSpeedMps(hour: Int) -> Float? {
-        Knots(value: windSpeed(hour:hour)).mps
+    func windSpeedMps(hour: Int) -> Double? {
+        Knots(windSpeed(hour:hour)).mps
     }
     
     func windSpeedBft(hour: Int) -> Int? {
-        Knots(value: windSpeed(hour:hour)).bft
+        Knots(windSpeed(hour:hour)).bft
     }
     
     func windSpeedBftEffect(hour: Int) -> String? {
-        Knots(value: windSpeed(hour: hour)).effect
+        Knots(windSpeed(hour: hour)).effect
     }
     
     func windSpeedBftEffectOnSea(hour: Int) -> String? {
-        Knots(value: windSpeed(hour: hour)).effectOnSea
+        Knots(windSpeed(hour: hour)).effectOnSea
     }
     
     func windSpeedBftEffectOnLand(hour: Int) -> String? {
-        Knots(value: windSpeed(hour: hour)).effectOnLand
+        Knots(windSpeed(hour: hour)).effectOnLand
     }
         
     func windDirection(hour: Int) -> Int? {

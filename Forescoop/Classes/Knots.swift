@@ -10,13 +10,13 @@ import Foundation
 
 public class Knots {
     
-    private var knots: Float = 1
+    private var knots: Double = 1.0
     private lazy var definition: Definition = {
         Definition()
     }()
 
-    public init(value: Float?) {
-        knots = value ?? 1
+    public init(_ value: Double?) {
+        knots = value ?? 1.0
     }
 }
 
@@ -30,33 +30,33 @@ public extension Knots {
         self.definition.conversionDict
     }
 
-    var kmh: Float? {
+    var kmh: Double? {
         // 1 knot = 1.852 km/h
         guard let conversion = conversionDict,
             let kmh = conversion["kmh"] as? Double else {
                 return nil
         }
-        return knots * Float(kmh)
+        return knots * kmh
     }
     
-    var mph: Float? {
+    var mph: Double? {
         // 1 knot = 1.15078 mph
         //        return knots * 1.15078
         guard let conversion = conversionDict,
             let mph = conversion["mph"] as? Double else {
                 return nil
         }
-        return knots * Float(mph)
+        return knots * mph
     }
     
-    var mps: Float? {
+    var mps: Double? {
         // 1 knot = 0.514444 mps
         //        return knots * 0.514444
         guard let conversion = conversionDict,
             let mps = conversion["mps"] as? Double else {
                 return nil
         }
-        return knots * Float(mps)
+        return knots * mps
     }
 
     /*
@@ -69,7 +69,7 @@ public extension Knots {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["beaufort"] as? Int
@@ -83,7 +83,7 @@ public extension Knots {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["effect"] as? String
@@ -97,7 +97,7 @@ public extension Knots {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["effectOnSea"] as? String
@@ -111,7 +111,7 @@ public extension Knots {
             return nil
         }
         for bftInfo in bftArray {
-            if let knotsLimit = bftInfo["knotsLimit"] as? Float,
+            if let knotsLimit = bftInfo["knotsLimit"] as? Double,
                 knots < knotsLimit
             {
                 return bftInfo["effectOnLand"] as? String

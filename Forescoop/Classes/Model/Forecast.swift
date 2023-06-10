@@ -146,7 +146,7 @@ public extension Forecast {
     
     /// GUST:  Wind gusts (knots)
     func windGusts(hh: String?) -> Double? {
-        weathers?[TypeOfWeather.GUST.rawValue]?.value(hh: hh)
+        Knots(weathers?[TypeOfWeather.GUST.rawValue]?.value(hh: hh)).kmh
     }
     
     /// SLP: sea level pressure

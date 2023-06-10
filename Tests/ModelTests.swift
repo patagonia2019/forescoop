@@ -168,6 +168,8 @@ class ModelTests: XCTestCase {
     
     func testSpotForecast() {
         let spotForecast = SpotForecast(map: spotForecastDict)
+        XCTAssertEqual(spotForecast?.asCurrentWindDirectionName, "WNW")
+
         checkSpotInfo(spotInfo: spotForecast)
         XCTAssertEqual(spotForecast?.numberOfForecasts, 1)
         XCTAssertEqual(spotForecast?.model, "3")
@@ -182,7 +184,6 @@ class ModelTests: XCTestCase {
 
         /// Testing weather data
         XCTAssertEqual(forecast?.numberOfWeathers, 15)
-
         XCTAssertEqual(forecast?.windDirectionName(hh: "10"), "NW")
         XCTAssertEqual(forecast?.windDirection(hh: "10"), 304)
         XCTAssertEqual(forecast?.windSpeed(hh: "10"), 11.5)
@@ -193,7 +194,7 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(forecast?.cloudCoverMid(hh: "10"), 5)
         XCTAssertEqual(forecast?.cloudCoverLow(hh: "10"), 100)
         XCTAssertEqual(forecast?.relativeHumidity(hh: "10"), 95.0)
-        XCTAssertEqual(forecast?.windGusts(hh: "10"), 43.4)
+        XCTAssertEqual(forecast?.windGusts(hh: "10"), 80.3768)
         XCTAssertEqual(forecast?.seaLevelPressure(hh: "10"), 1002.0)
         XCTAssertEqual(forecast?.freezingLevelHeightInMeters(hh: "10"), 2590.0)
         XCTAssertEqual(forecast?.precipitation(hh: "165"), 0)
@@ -230,9 +231,9 @@ class ModelTests: XCTestCase {
         XCTAssertNil(forecast?.specificMoistureExtractionRate(hour: 10))
         XCTAssertEqual(forecast?.windSpeed(hour: 10), 8.1)
         XCTAssertEqual(forecast?.windSpeedKnots(hour: 10), 8.1)
-        XCTAssertEqual(forecast?.windSpeedKmh(hour: 10), 15.001201)
+        XCTAssertEqual(forecast?.windSpeedKmh(hour: 10), 15.0012)
         XCTAssertEqual(forecast?.windSpeedMph(hour: 10), 9.321318)
-        XCTAssertEqual(forecast?.windSpeedMps(hour: 10), 4.1669965)
+        XCTAssertEqual(forecast?.windSpeedMps(hour: 10), 4.1669963999999995)
         XCTAssertEqual(forecast?.windSpeedBft(hour: 10), 3)
         XCTAssertEqual(forecast?.windSpeedBftEffect(hour: 10), "Gentle Breeze")
         XCTAssertEqual(forecast?.windSpeedBftEffectOnSea(hour: 10), "Large wavelets. Crests begin to break. Foam of glassy appearance. Perhaps scattered white horses.")
