@@ -56,10 +56,15 @@ public class SpotResult: Object, Mappable {
         spots = (map["spots"] as? [[String:Any]])?.compactMap({SpotOwner(map: $0)})
     }
 
-    public var description : String {
-        "\(type(of:self))" + "\n\(count) spots.\n" + (spots != nil ? spots!.compactMap({"\($0.description)"}).joined(separator: "\n") : "")
+    public var description: String {
+        [
+            "\(type(of:self))",
+            "\n\(count) spots.\n",
+            spots?.compactMap({"\($0.description)"}).joined(separator: ", ")
+        ]
+            .compactMap {$0}
+            .joined(separator: ", ")
     }
-    
 }
 
 public extension SpotResult {
