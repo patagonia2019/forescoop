@@ -42,7 +42,7 @@ public class SpotForecast: SpotInfo {
     
     var currentModel: String? = nil
 
-    var forecasts = Array<ForecastModel>()
+    var forecasts = [ForecastModel]()
 
     required convenience init?(map: [String: Any]?) {
         self.init()
@@ -155,7 +155,7 @@ public extension SpotForecast {
 private extension SpotForecast {
     
     var isNight: Bool {
-        elapseContainsTime(date: NSDate())
+        elapseContainsTime(date: Date())
     }
     
     var isSunny: Bool {
@@ -179,13 +179,23 @@ private extension SpotForecast {
         forecast?.precipitation(hh: currentHourString) ?? 0
     }
     
-    var currentHourInt: Int {
-        let date = NSDate()
-        let calendar = NSCalendar.current
-        let hour = calendar.component(.hour, from: date as Date)
-        
-        // TODO: Timezone
+    var mockupCurrentHourInt: Int {
+        12
+    }
+
+    var realCurrentHourInt: Int {
+        let date = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
         return hour
+    }
+
+    var currentHourInt: Int {
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            return mockupCurrentHourInt
+        } else {
+            return realCurrentHourInt
+        }
     }
     
     var currentHour: Int {
