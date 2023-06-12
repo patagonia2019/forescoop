@@ -127,11 +127,6 @@ private extension MainViewController {
             textfield.isSecureTextEntry = true
         }
         
-//        let failureBlock : ForecastWindguruService.FailureType = {
-//            [weak self] (error) in
-//            self?.showError(title: "Error on login", error: error)
-//        }
-        
         let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
             Task {
                 

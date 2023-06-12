@@ -168,7 +168,7 @@ class ModelTests: XCTestCase {
     
     func testSpotForecast() {
         let spotForecast = SpotForecast(map: spotForecastDict)
-        XCTAssertEqual(spotForecast?.asCurrentWindDirectionName, "NNW")
+        XCTAssertEqual(spotForecast?.asCurrentWindDirectionName, "W")
         checkSpotInfo(spotInfo: spotForecast)
         XCTAssertEqual(spotForecast?.numberOfForecasts, 1)
         XCTAssertEqual(spotForecast?.model, "3")

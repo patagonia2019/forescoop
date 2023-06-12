@@ -181,7 +181,6 @@ public extension ForecastWindguruService {
     //               parameters: [parameter.lat, parameter.lon])
     func models(bylat lat: String?,
                 lon: String?) async throws -> String? {
-//        [""]
         try await request(tokens: [Definition.service.api.parameter.lat: lat,
                                    Definition.service.api.parameter.lon: lon],
                           api: .modelsLatLon)
