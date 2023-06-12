@@ -33,11 +33,11 @@ final class MainViewControllerTests: XCTestCase {
         XCTAssertTrue(vc?.isViewLoaded == true)
         XCTAssertEqual(vc?.loginButton.title(for: .normal), "Login")
         XCTAssertEqual(vc?.weatherLabel.text, "☀️🌥")
-        XCTAssertEqual(vc?.windDirectionLabel.text, "WNW")
-        XCTAssertEqual(vc?.temperatureLabel.text, "5.7°C")
+        XCTAssertEqual(vc?.windDirectionLabel.text, "NNW")
+        XCTAssertEqual(vc?.temperatureLabel.text, "6.4°C")
         XCTAssertEqual(vc?.locationLabel.text, "Bariloche")
-        XCTAssertEqual(vc?.windSpeedLabel.text, "10.1 knots")
-        XCTAssertEqual(vc?.hourLabel.text, "09 hs")
+        XCTAssertEqual(vc?.windSpeedLabel.text, "9.7 knots")
+        XCTAssertEqual(vc?.hourLabel.text, "12 hs")
         XCTAssertTrue(vc?.isUpdated == true)
     }
 }

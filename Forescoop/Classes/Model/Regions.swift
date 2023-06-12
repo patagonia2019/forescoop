@@ -40,7 +40,9 @@ public class Regions: Object, Mappable {
     }
     
     public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+        guard let map = map else {
+            return
+        }
 
         for json in map.JSON() {
             let jsonKV = ["id": json.key, "name": json.value]

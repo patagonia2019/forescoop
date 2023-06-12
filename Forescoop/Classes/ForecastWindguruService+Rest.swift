@@ -6,44 +6,17 @@
 //
 //
 
+/*
 import Foundation
 
 public extension ForecastWindguruService {
-
-    // user = api(query: routine.user,
-    //        errorCode: err.user.rawValue,
-    //       parameters: [parameter.username,
-    //                   parameter.password]) // not user/pass (anonymous)
-    
-    func login(withUsername username: String?,
-               password: String?,
-               failure: @escaping FailureType,
-               success: @escaping (_ user: User?) -> Void) {
-        
-        var tokens : [String: String?] = [:]
-        if let username = username,
-           let password = password {
-            tokens = [Definition.service.api.parameter.username : username,
-                      Definition.service.api.parameter.password : password]
-        }
-        let api = Definition.service.api.user
-        let url = Definition.service.url(api: api, tokens: tokens)
-        Communication.request(url) {
-            [weak self]
-            (object) in
-            self?.mapAndResponse(object,
-                                 url: url, api: api,
-                                 context: "\(#file):\(#line):\(#column):\(#function)",
-                                 failure: failure, success: success)
-        }
-    }
     
     // forecast = api(query: routine.forecast,
     //            errorCode: err.forecast.rawValue,
     //           parameters: [parameter.id_spot,
     //                        parameter.id_model,
     //                        parameter.no_wave])
-    
+    /
     func forecast(bySpotId spotId: String,
                   model modelId: String? = nil,
                   failure: @escaping FailureType,
@@ -292,30 +265,6 @@ public extension ForecastWindguruService {
         }
         let api = Definition.service.api.remove_f_spot
         let url = Definition.service.url(api: api, tokens: tokens)
-        Communication.request(url) {
-            [weak self]
-            (response) in
-            self?.mapAndResponse(response,
-                                 url: url, api: api,
-                                 context: "\(#file):\(#line):\(#column):\(#function)",
-                                 failure: failure, success: success)
-        }
-    }
-    
-    
-    // searchSpots = api(query: routine.search_spots,
-    //               errorCode: err.search_spots.rawValue,
-    //              parameters: [parameter.search,
-    //                           parameter.opt])
-    func searchSpots(byLocation location: String,
-                     failure: @escaping FailureType,
-                     success: @escaping (_ spotResult: SpotResult?) -> Void) {
-        
-        let escapedLocation = location.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
-        let tokens = [Definition.service.api.parameter.search : escapedLocation]
-        let api = Definition.service.api.searchSpots
-        let url = Definition.service.url(api: api, tokens: tokens)
-        
         Communication.request(url) {
             [weak self]
             (response) in
@@ -581,3 +530,4 @@ private extension ForecastWindguruService {
         }
     }
 }
+*/
