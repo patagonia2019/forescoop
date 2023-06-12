@@ -72,20 +72,24 @@ private extension MainViewController {
 
     func updateForecast() {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
-            showForecastView(spotForecast: requestForecastTest())
+            showForecastView(spotForecast: try? requestForecastTest())
             isUpdated = true
         } else {
             Task { [weak self] in
-                await self?.showForecastView(spotForecast: try self?.requestForecast())
-                self?.isUpdated = true
+                do {
+                    await self?.showForecastView(spotForecast: try self?.requestForecast())
+                    self?.isUpdated = true
+                } catch {
+                    self?.showError(title: "Error", error: error)
+                }
             }
         }
     }
     
-    func requestForecastTest() -> SpotForecast? {
-        guard SpotResult(map: Definition().json(jsonFile: "SpotResult")) != nil else { return nil }
+    func requestForecastTest() throws -> SpotForecast? {
+        guard try SpotResult(map: Definition().json(jsonFile: "SpotResult")) != nil else { return nil }
 
-        return SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))
+        return try SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))
     }
 
     func requestForecast() async throws -> SpotForecast? {
@@ -159,8 +163,8 @@ private extension MainViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func showError(title: String, error: WGError?) {
-        let message = error?.title() ?? ""
+    func showError(title: String, error: Error) {
+        let message = error.localizedDescription
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)

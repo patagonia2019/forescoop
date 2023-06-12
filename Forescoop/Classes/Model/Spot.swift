@@ -30,14 +30,16 @@ public class Spot: Object, Mappable {
     var country: String?
     var nickname: String?
 
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
-
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
+        guard map.keys.contains("id_spot"), map.keys.contains("spotname"), map.keys.contains("country") else {
+            throw CustomError.notMappeable
+        }
         id_spot = map["id_spot"] as? String
         spotname = map["spotname"] as? String
         country = map["country"] as? String

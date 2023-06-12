@@ -62,19 +62,19 @@ public class Forecast: Object, Mappable {
     var model_name: String?
     public var gmtHourOffset: Int = 0
 
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
         initStamp = map["initstamp"] as? Int ?? 0
         initdate = map["initdate"] as? String
         model_name = map["model_name"] as? String
-        weathers = map
-            .compactMapValues { TimeWeather(map: $0 as? [String:Any]) }
+        weathers = try map
             .filter {$0.key != "model_name" && $0.key != "initstamp" && $0.key != "initdate"}
+            .compactMapValues { try TimeWeather(map: $0 as? [String:Any]) }
     }
     
     public var description: String {

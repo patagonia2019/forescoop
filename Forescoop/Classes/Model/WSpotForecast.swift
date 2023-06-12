@@ -71,13 +71,13 @@ public class WSpotForecast: Object, Mappable {
     var wgs_arr: [WindguruStation]?
     var wgs_wind_avg: Float = 0.0
   
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
         
         id_spot = map["id_spot"] as? Int ?? 0
         id_user = map["id_user"] as? Int ?? 0
@@ -99,11 +99,11 @@ public class WSpotForecast: Object, Mappable {
         tzid = map["tzid"] as? String
         tides = map["tides"] as? Int ?? 0
         md5chk = map["md5chk"] as? String
-        wgs_arr = (map["wgs_arr"] as? [[String: Any]])?
-            .compactMap { WindguruStation.init(map: $0)}
+        wgs_arr = try (map["wgs_arr"] as? [[String: Any]])?
+            .compactMap { try WindguruStation.init(map: $0)}
         wgs_wind_avg = map["wgs_wind_avg"] as? Float ?? 0.0
-        fcst = (map["fcst"] as? [String: Any])?
-            .compactMap({WForecast.init(map: $0.value as? [String: Any])})
+        fcst = try (map["fcst"] as? [String: Any])?
+            .compactMap({try WForecast.init(map: $0.value as? [String: Any])})
     }
     
     public var description : String {

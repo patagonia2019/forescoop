@@ -44,17 +44,17 @@ public class SpotForecast: SpotInfo {
 
     var forecasts = [ForecastModel]()
 
-    required convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
 
-    public override func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public override func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
-        super.mapping(map: map)
+        try super.mapping(map: map)
         guard let forecastDict = map["forecast"] as? [String: Any] else { return }
-        forecasts = forecastDict.compactMap { ForecastModel(map: ["model" : $0.key, "info" : $0.value, "gmt_hour_offset": gmtHourOffset]) }
+        forecasts = try forecastDict.compactMap { try ForecastModel(map: ["model" : $0.key, "info" : $0.value, "gmt_hour_offset": gmtHourOffset]) }
         currentModel = forecasts.last?.model
     }
     

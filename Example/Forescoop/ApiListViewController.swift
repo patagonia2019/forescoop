@@ -57,9 +57,8 @@ class ApiListViewController: UIViewController {
         user?.isAnonymous == true ? anonymBasedServices : anonymBasedServices + userBasedServices
     }()
     
-    func showAlert(title: String, error: WGError?) {
-        let message = error?.title() ?? ""
-        showAlert(title: title, message: message)
+    func showAlert(title: String, error: Error) {
+        showAlert(title: title, message: (error as? CustomError)?.description ?? error.localizedDescription) 
     }
     
     func showAlert(title: String, message: String) {
@@ -103,7 +102,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.addSetSpots(withSetId: text, username: user.name, password: password)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "Cannot add set id")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -134,7 +133,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.addFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password)?.description
                         self.showAlert(title: "\(service) success", message: self.info ?? "n/a")
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "Cannot add spot id")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -164,7 +163,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.removeFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password)?.description
                         self.showAlert(title: "\(service) success", message: self.info ?? "n/a")
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "Cannot remove spot id")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -211,7 +210,7 @@ extension ApiListViewController: UITableViewDelegate {
                                                                              model: modelId)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No forecast result")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -243,7 +242,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.spotInfo(bySpotId: spotId)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No spot info")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -276,7 +275,7 @@ extension ApiListViewController: UITableViewDelegate {
                                                                           regionId: alert.textFields![1].text)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No spots")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -309,7 +308,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.searchSpots(byLocation: location)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No spots")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -325,7 +324,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self.info = try await self.forecastService?.customSpots(withUsername: user?.name, password: password)?.description
                     self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                 } catch {
-                    self.showAlert(title: "Error on \(service)", message: "No custom spots")
+                    self.showAlert(title: "Error on \(service)", error: error)
                 }
             }
             break
@@ -336,7 +335,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self.info = try await self.forecastService?.favoriteSpots(withUsername: user?.name, password: password)?.description
                     self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                 } catch {
-                    self.showAlert(title: "Error on \(service)", message: "No favorites spots")
+                    self.showAlert(title: "Error on \(service)", error: error)
                 }
             }
             break
@@ -347,7 +346,7 @@ extension ApiListViewController: UITableViewDelegate {
                     self.info = try await self.forecastService?.setSpots(withUsername: user?.name, password: password)?.description
                     self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                 } catch {
-                    self.showAlert(title: "Error on \(service)", message: "No sets")
+                    self.showAlert(title: "Error on \(service)", error: error)
                 }
             }
             break
@@ -373,7 +372,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.modelInfo(onlyModelId: modelId)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No model/s")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -414,7 +413,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.models(bylat: latText, lon: lonText)
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No model/s")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -458,7 +457,7 @@ extension ApiListViewController: UITableViewDelegate {
                                                                               password: self.password)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No forecast results")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -492,7 +491,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.countries(byRegionId: alert.textFields![0].text)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No countries results")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }
@@ -516,7 +515,7 @@ extension ApiListViewController: UITableViewDelegate {
                         self.info = try await self.forecastService?.regions(byCountryId: alert.textFields![0].text)?.description
                         self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
                     } catch {
-                        self.showAlert(title: "Error on \(service)", message: "No regions results")
+                        self.showAlert(title: "Error on \(service)", error: error)
                     }
                 }
             }

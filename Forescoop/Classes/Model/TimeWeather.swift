@@ -93,13 +93,13 @@ public class TimeWeather: Object, Mappable {
     var info = [String: Any]()
     var orderedKeys = [String]()
 
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
         info = map.compactMapValues { $0 }
         orderedKeys = info.keys.sorted {Int($0) ?? 0 < Int($1) ?? 0}
     }

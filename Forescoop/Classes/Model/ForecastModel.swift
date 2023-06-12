@@ -31,16 +31,16 @@ public class ForecastModel: Object, Mappable {
         info = infoForecast
     }
 
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
         
         model = map["model"] as? String
-        info = Forecast.init(map: map["info"] as? [String:Any])
+        info = try Forecast.init(map: map["info"] as? [String:Any])
         info?.gmtHourOffset = map["gmt_hour_offset"] as? Int ?? 0
     }
     

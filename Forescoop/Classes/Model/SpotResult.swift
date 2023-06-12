@@ -44,16 +44,16 @@ public class SpotResult: Object, Mappable {
     //
     var spots: [SpotOwner]?
  
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         count = map["count"] as? Int ?? 0
-        spots = (map["spots"] as? [[String:Any]])?.compactMap({SpotOwner(map: $0)})
+        spots = try (map["spots"] as? [[String:Any]])?.compactMap({try SpotOwner(map: $0)})
     }
 
     public var description: String {

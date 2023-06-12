@@ -99,15 +99,15 @@ public class SpotInfo: Spot {
     var tides: String? = nil
     var tz: String?
 
-    required convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public override func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
-        super.mapping(map: map)
+        try super.mapping(map: map)
         id_country = map["id_country"] as? Int ?? 0
         latitude = map["lat"] as? Double ?? 0.0
         longitude = map["lon"] as? Double ?? 0.0

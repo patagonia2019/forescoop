@@ -37,13 +37,13 @@ public class WindguruStation: Object, Mappable {
     var id_type: String? = nil
     var wind_avg: Int = 0
 
-    required convenience public init?(map: [String: Any]?) {
+    required convenience public init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         id = map["id"] as? String
         station = map["station"] as? String

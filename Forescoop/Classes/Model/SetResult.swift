@@ -31,19 +31,19 @@ public class SetResult: Object, Mappable {
 
     var sets = Array<SetInfo>()
     
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         count = map["count"] as? Int ?? 0
         guard let dict = map["sets"] as? [String:Any] else { return }
         for (k,v) in dict {
             let tmpDictionary = ["id": k, "name": v]
-            if let setInfo = Mapper<SetInfo>().map(JSON: tmpDictionary) {
+            if let setInfo = try Mapper<SetInfo>().map(JSON: tmpDictionary) {
                 sets.append(setInfo)
             }
         }
