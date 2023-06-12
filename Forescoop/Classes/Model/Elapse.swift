@@ -26,7 +26,7 @@ public class Elapse {
 }
 
 extension Elapse {
-    public func containsTime(date: NSDate) -> Bool {
+    public func containsTime(date: Date) -> Bool {
         guard let dstart = start?.asDate,
             let dend = end?.asDate
             else {

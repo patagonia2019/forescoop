@@ -32,7 +32,7 @@ import Foundation
 
 public class Regions: Object, Mappable {
 
-    var content = Array<Region>()
+    var content: [Region]?
 
     required public convenience init?(map: [String: Any]?) {
         self.init()
@@ -40,26 +40,23 @@ public class Regions: Object, Mappable {
     }
     
     public func mapping(map: [String:Any]?) {
-        guard let map = map else {
-            return
-        }
-
-        for json in map.JSON() {
-            let jsonKV = ["id": json.key, "name": json.value]
-            if let region = Mapper<Region>().map(JSON: jsonKV) {
-                content.append(region)
-            }
-        }
+        guard let map = map else { return }
+        content = map.JSON().compactMap { Mapper<Region>().map(JSON:["id": $0.key, "name": $0.value]) }
     }
 
     public var description : String {
-        "\(type(of:self))\n\n" + content.compactMap{$0.description}.joined(separator: "\n")
+        [
+            "\(type(of:self))\n\n",
+            content?.compactMap{$0.description}.joined(separator: "\n")
+        ]
+            .compactMap {$0}
+            .joined(separator: "\n")
     }
 }
 
 public extension Regions {
-    var sorted: [Region] {
-        content.sorted(by: {$0.name ?? "" < $1.name ?? ""})
+    var sorted: [Region]? {
+        content?.sorted(by: {$0.name ?? "" < $1.name ?? ""})
     }
 }
 

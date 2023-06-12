@@ -146,7 +146,7 @@ public class SpotInfo: Spot {
 }
 
 public extension SpotInfo {
-    func elapseContainsTime(date: NSDate) -> Bool {
+    func elapseContainsTime(date: Date) -> Bool {
         elapse?.containsTime(date: date) == true
     }
     
