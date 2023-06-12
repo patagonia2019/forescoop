@@ -18,7 +18,6 @@ import Foundation
  */
 
 public class ForecastWindguruService: ForecastWindguruProtocol {
-
     required public init() {}
     
     public struct Definition {

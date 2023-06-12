@@ -15,7 +15,7 @@ class ApiListViewController: UIViewController {
     var user: User?
     var password: String?
     var service: String?
-    var info = String()
+    var info: String?
     var forecastService: ForecastWindguruProtocol? = nil// = ForecastWindguruService()
 
     let anonymBasedServices = ["user",
@@ -27,8 +27,7 @@ class ApiListViewController: UIViewController {
                                "search_spots",
                                "model_info",
                                "models_latlon",
-                               "forecast",
-                               "wforecast"]
+                               "forecast"]
     
     let userBasedServices = ["add_f_spot",
                              "remove_f_spot",
@@ -36,12 +35,12 @@ class ApiListViewController: UIViewController {
                              "c_spots",
                              "set_spots",
                              "sets",
+                             "wforecast"
                              // "wforecast_latlon"
                             ]
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.isHidden = false
         tableView.reloadData()
     }
     
@@ -49,7 +48,7 @@ class ApiListViewController: UIViewController {
         if let vc = segue.destination as? ApiInfoViewController {
             if let service = service {
                 vc.title = service
-                vc.info = info
+                vc.info = info ?? "n/a"
             }
         }
     }
@@ -65,9 +64,7 @@ class ApiListViewController: UIViewController {
     
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { [weak self] (action) in
-            self?.tableView.isHidden = false
-        }))
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel))
         self.present(alert, animated: true, completion: nil)
     }
 
@@ -78,13 +75,6 @@ extension ApiListViewController: UITableViewDelegate {
         service = services[indexPath.item]
         
         guard let service = service else { return }
-
-        tableView.isHidden = true
-
-        let failureBlock : ForecastWindguruService.FailureType = {
-            [weak self] (error) in
-            self?.showAlert(title: "Error", error: error)
-        }
 
         var action : UIAlertAction? = nil
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
@@ -108,19 +98,14 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Set Id]")
                     return
                 }
-                self.forecastService?.addSetSpots(withSetId: text, username: user.name, password: password,
-                                                             failure: failureBlock,
-                                                             success: { [weak self]
-                    (spots) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let spots = spots else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.addSetSpots(withSetId: text, username: user.name, password: password)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "Cannot add set id")
-                        return
                     }
-                    self.info = spots.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "Add", style: .default, handler: block)
             alert.title = "Add Set id"
@@ -144,17 +129,14 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
                 }
-                self.forecastService?.addFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password,
-                                                             failure: failureBlock,
-                                                             success: { [weak self] (result) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let result = result else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.addFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password)?.description
+                        self.showAlert(title: "\(service) success", message: self.info ?? "n/a")
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "Cannot add spot id")
-                        return
                     }
-                    self.showAlert(title: "\(service) success", message: result.description)
-                })
+                }
             }
             action = UIAlertAction.init(title: "Add", style: .default, handler: block)
             alert.title = "Add Favorite"
@@ -166,6 +148,7 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "spot id"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "64141"
             }
             let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
                 guard let self = self else { return }
@@ -176,17 +159,14 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
                 }
-                self.forecastService?.removeFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password,
-                                                                    failure: failureBlock,
-                                                                    success: { [weak self] (result) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let result = result else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.removeFavoriteSpot(withSpotId: text, username: self.user?.name, password: self.password)?.description
+                        self.showAlert(title: "\(service) success", message: self.info ?? "n/a")
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "Cannot remove spot id")
-                        return
                     }
-                    self.showAlert(title: "\(service) success", message: result.description)
-                })
+                }
             }
             
             action = UIAlertAction.init(title: "Remove", style: .default, handler: block)
@@ -200,12 +180,14 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "spot id"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "64141"
             }
             
             alert.addTextField { (textfield) in
                 textfield.placeholder = "model"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "3"
             }
 
             let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
@@ -223,19 +205,15 @@ extension ApiListViewController: UITableViewDelegate {
                     modelId = nil
                 }
 
-                self.forecastService?.forecast(bySpotId: spotId,
-                                               model: modelId,
-                                               failure: failureBlock,
-                                               success: { [weak self] (spotForecast) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let spotForecast = spotForecast else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.forecast(bySpotId: spotId,
+                                                                             model: modelId)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "No forecast result")
-                        return
                     }
-                    self.info = spotForecast.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "Forecast", style: .default, handler: block)
             alert.title = "Enter spot id"
@@ -248,6 +226,7 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "spot id"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "64141"
             }
             
             let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
@@ -259,18 +238,14 @@ extension ApiListViewController: UITableViewDelegate {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Spot Id]")
                     return
                 }
-                self.forecastService?.spotInfo(bySpotId: spotId,
-                                               failure: failureBlock,
-                                               success: { [weak self] (spotInfo) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let spotInfo = spotInfo else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.spotInfo(bySpotId: spotId)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "No spot info")
-                        return
                     }
-                    self.info = spotInfo.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "Get Spot Info", style: .default, handler: block)
             alert.title = "Enter spot id"
@@ -283,30 +258,27 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "country id# (optional)"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "76"
             }
             
             alert.addTextField { (textfield) in
                 textfield.placeholder = "region id# (optional)"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "209"
             }
             
-            let block : ((UIAlertAction) -> Void)? = { (action) in
-                
-                self.forecastService?.spots(withCountryId: alert.textFields![0].text,
-                                            regionId: alert.textFields![1].text,
-                                            failure: failureBlock,
-                                            success: { [weak self]
-                    (spotResult) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let spotResult = spotResult else {
+            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
+                guard let self = self else { return }
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.spots(withCountryId: alert.textFields![0].text,
+                                                                          regionId: alert.textFields![1].text)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "No spots")
-                        return
                     }
-                    self.info = spotResult.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "Get Spots", style: .default, handler: block)
             alert.title = "Enter country/region"
@@ -320,28 +292,26 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "Location"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "Bariloche"
             }
 
-            let block : ((UIAlertAction) -> Void)? = { (action) in
-                
+            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
+                guard let self = self else { return }
+
                 guard let location = alert.textFields![0].text,
                     location.count > 0
                 else {
                     self.showAlert(title: "\(service)", message: "Missing mandatory field: [Location]")
                     return
                 }
-                self.forecastService?.searchSpots(byLocation: location,
-                                                             failure: failureBlock,
-                                                             success: { [weak self] (spotResult) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let spotResult = spotResult else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.searchSpots(byLocation: location)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "No spots")
-                        return
                     }
-                    self.info = spotResult.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "Search Spots", style: .default, handler: block)
             alert.title = "Enter location"
@@ -350,51 +320,36 @@ extension ApiListViewController: UITableViewDelegate {
 
             
         case "c_spots":
-            forecastService?.customSpots(withUsername: user?.name, password: password,
-                                                         failure: failureBlock,
-                                                         success: { [weak self] (spots) in
-                guard let self = self else { return }
-
-                self.tableView.isHidden = false
-                guard let spots = spots else {
+            Task {
+                do {
+                    self.info = try await self.forecastService?.customSpots(withUsername: user?.name, password: password)?.description
+                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                } catch {
                     self.showAlert(title: "Error on \(service)", message: "No custom spots")
-                    return
                 }
-                self.info = spots.description
-                self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            })
+            }
             break
 
         case "f_spots":
-            forecastService?.favoriteSpots(withUsername: user?.name, password: password,
-                                                           failure: failureBlock,
-                                                           success: { [weak self] (spots) in
-                guard let self = self else { return }
-
-                self.tableView.isHidden = false
-                guard let spots = spots else {
+            Task {
+                do {
+                    self.info = try await self.forecastService?.favoriteSpots(withUsername: user?.name, password: password)?.description
+                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                } catch {
                     self.showAlert(title: "Error on \(service)", message: "No favorites spots")
-                    return
                 }
-                self.info = spots.description
-                self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            })
+            }
             break
 
         case "sets":
-            forecastService?.setSpots(withUsername: user?.name, password: password,
-                                                      failure: failureBlock,
-                                                      success: { [weak self] (sets) in
-                guard let self = self else { return }
-
-                self.tableView.isHidden = false
-                guard let sets = sets else {
+            Task {
+                do {
+                    self.info = try await self.forecastService?.setSpots(withUsername: user?.name, password: password)?.description
+                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                } catch {
                     self.showAlert(title: "Error on \(service)", message: "No sets")
-                    return
                 }
-                self.info = sets.description
-                self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            })
+            }
             break
 
         case "model_info":
@@ -403,27 +358,24 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "model id # (optional)"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "3"
             }
             
             let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-
+                guard let self = self else { return }
                 var modelId = alert.textFields![0].text
                 if modelId?.count == 0 {
                     modelId = nil
                 }
 
-                self?.forecastService?.modelInfo(onlyModelId: modelId,
-                                                 failure: failureBlock,
-                                                 success: { [weak self] (model) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let model = model else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.modelInfo(onlyModelId: modelId)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "No model/s")
-                        return
                     }
-                    self.info = model.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "get model/s", style: .default, handler: block)
             alert.title = "Enter model id"
@@ -436,15 +388,18 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "latitude"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "-41"
             }
             alert.addTextField { (textfield) in
                 textfield.placeholder = "longitude"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "-71"
             }
             
-            let block : ((UIAlertAction) -> Void)? = { (action) in
+            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
 
+                guard let self = self else { return }
                 guard let latText = alert.textFields![0].text,
                     let lonText = alert.textFields![0].text,
                     latText.count > 0,
@@ -454,17 +409,14 @@ extension ApiListViewController: UITableViewDelegate {
                     return
                 }
 
-                self.forecastService?.models(bylat: latText, lon: lonText,
-                                             failure: failureBlock,
-                                             success: { [weak self] (models) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let models = models else {
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.models(bylat: latText, lon: lonText)
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "No model/s")
-                        return
                     }
-                    self.showAlert(title: "\(service) success", message: models.description)
-                })
+                }
             }
             action = UIAlertAction.init(title: "query lat/lon", style: .default, handler: block)
             alert.title = "Enter latitude/longitude"
@@ -477,14 +429,16 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "spot id #"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "64141"
             }
             alert.addTextField { (textfield) in
                 textfield.placeholder = "model id #"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "3"
             }
-            let block : ((UIAlertAction) -> Void)? = { (action) in
-                
+            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
+                guard let self = self else { return }
                 guard let spotId = alert.textFields![0].text,
                     spotId.count > 0
                 else {
@@ -495,67 +449,52 @@ extension ApiListViewController: UITableViewDelegate {
                 if modelId?.isEmpty == true {
                     modelId = nil
                 }
-                self.forecastService?.wforecast(bySpotId: spotId,
-                                                model: modelId,
-                                                username: self.user?.name,
-                                                password: self.password,
-                                                failure: failureBlock,
-                                                success: { [weak self] (spotForecast) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let spotForecast = spotForecast else {
+                
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.wforecast(bySpotId: spotId,
+                                                                              model: modelId,
+                                                                              username: self.user?.name,
+                                                                              password: self.password)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
                         self.showAlert(title: "Error on \(service)", message: "No forecast results")
-                        return
                     }
-                    self.info = spotForecast.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
 
             action = UIAlertAction.init(title: "Forecast", style: .default, handler: block)
             alert.title = "Enter spot id"
-            alert.message = "Please enter a spot id (i.e. 64141)"
-            
+            alert.message = "Please enter a spot id (i.e. 64141) and model id (i.e. 3)"
             break
-
 
         case "geo_regions":
-            forecastService?.geoRegions(withFailure: failureBlock,
-                success: { [weak self] (georegions) in
-                guard let self = self else { return }
-
-                self.tableView.isHidden = false
-                guard let georegions = georegions else {
-                    self.showAlert(title: "Error on \(service)", message: "No georegions")
-                    return
+            Task {
+                do {
+                    self.info = try await self.forecastService?.geoRegions()?.description
+                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                } catch {
+                    self.showAlert(title: "Error on \(service)", message: "No georegions results")
                 }
-                self.info = georegions.description
-                self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-            })
+            }
             break
-            
-
             
         case "countries":
             alert.addTextField { (textfield) in
                 textfield.placeholder = "region id (optional)"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "5"
             }
             let block : ((UIAlertAction) -> Void)? = { (action) in
-
-                self.forecastService?.countries(byRegionId: alert.textFields![0].text,
-                                                failure: failureBlock,
-                                                success: { [weak self] (countries) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let countries = countries else {
-                        self.showAlert(title: "Error on \(service)", message: "No countries")
-                        return
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.countries(byRegionId: alert.textFields![0].text)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
+                        self.showAlert(title: "Error on \(service)", message: "No countries results")
                     }
-                    self.info = countries.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "get country/s", style: .default, handler: block)
             alert.title = "Enter region id"
@@ -568,22 +507,18 @@ extension ApiListViewController: UITableViewDelegate {
                 textfield.placeholder = "country id (optional)"
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
+                textfield.text = "76"
             }
 
             let block : ((UIAlertAction) -> Void)? = { (action) in
-
-                self.forecastService?.regions(byCountryId: alert.textFields![0].text,
-                                              failure: failureBlock,
-                                              success: { [weak self] (regions) in
-                    guard let self = self else { return }
-                    self.tableView.isHidden = false
-                    guard let regions = regions else {
-                        self.showAlert(title: "Error on \(service)", message: "No regions")
-                        return
+                Task {
+                    do {
+                        self.info = try await self.forecastService?.regions(byCountryId: alert.textFields![0].text)?.description
+                        self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
+                    } catch {
+                        self.showAlert(title: "Error on \(service)", message: "No regions results")
                     }
-                    self.info = regions.description
-                    self.performSegue(withIdentifier: "ApiInfoViewController", sender: self)
-                })
+                }
             }
             action = UIAlertAction.init(title: "get region/s", style: .default, handler: block)
             alert.title = "Enter country id"
@@ -605,9 +540,7 @@ extension ApiListViewController: UITableViewDelegate {
         
         if let action = action {
             alert.addAction(action)
-            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak self] (action) in
-                self?.tableView.isHidden = false
-            })
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
             alert.addAction(cancel)
             self.present(alert, animated: true, completion: nil)
         }

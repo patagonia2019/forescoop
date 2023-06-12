@@ -8,89 +8,81 @@
 import Foundation
 
 public class ForecastWindguruMockup: ForecastWindguruProtocol {
-    
+
     required public init() {}
 
     let definition = Definition()
-
-    // MARK - Async / Wait
-    public func searchSpots(byLocation location: String) async throws -> SpotResult? {
-        SpotResult(map: definition.json(jsonFile: "SpotResult"))
-    }
     
     public func forecast(bySpotId spotId: String,
                          model modelId: String? = nil) async throws -> SpotForecast? {
         SpotForecast(map: definition.json(jsonFile: "SpotForecast"))
     }
 
-    // MARK - Closures
-    
-    public func forecast(bySpotId spotId: String, model modelId: String?, failure: @escaping FailureType, success: @escaping (SpotForecast?) -> Void) {
-        success(SpotForecast.init(map: nil))
+    public func wforecast(bySpotId spotId: String,
+                          model modelId: String? = nil,
+                          username: String? = nil,
+                          password: String?) async throws -> WSpotForecast? {
+        WSpotForecast(map: definition.json(jsonFile: "WSpotForecast"))
     }
     
-    public func wforecast(bySpotId spotId: String, model modelId: String? = nil, username: String? = nil, password: String?, failure: @escaping FailureType, success: @escaping (WSpotForecast?) -> Void) {
-        success(WSpotForecast.init(map: nil))
+    public func spotInfo(bySpotId spotId: String) async throws -> SpotInfo? {
+        SpotInfo(map: definition.json(jsonFile: "SpotInfo"))
     }
     
-    public func spotInfo(bySpotId spotId: String, failure: @escaping FailureType, success: @escaping (SpotInfo?) -> Void) {
-        success(SpotInfo())
+    public func customSpots(withUsername username: String?, password: String?) async throws -> SpotResult? {
+        SpotResult(map: definition.json(jsonFile: "SpotResult"))
     }
     
-    public func customSpots(withUsername username: String?, password: String?, failure: @escaping FailureType, success: @escaping (SpotResult?) -> Void) {
-        success(SpotResult())
+    public func favoriteSpots(withUsername username: String?, password: String?) async throws -> SpotResult? {
+        SpotResult(map: definition.json(jsonFile: "SpotResult"))
     }
     
-    public func favoriteSpots(withUsername username: String?, password: String?, failure: @escaping FailureType, success: @escaping (SpotResult?) -> Void) {
-        success(SpotResult())
+    public func setSpots(withUsername username: String?, password: String?) async throws -> SetResult? {
+        SetResult(map: definition.json(jsonFile: "SetResult"))
     }
     
-    public func setSpots(withUsername username: String?, password: String?, failure: @escaping FailureType, success: @escaping (SetResult?) -> Void) {
-        success(SetResult())
+    public func addSetSpots(withSetId setId: String?, username: String?, password: String?) async throws -> SpotResult? {
+        SpotResult(map: definition.json(jsonFile: "SpotResult"))
     }
     
-    public func addSetSpots(withSetId setId: String?, username: String?, password: String?, failure: @escaping FailureType, success: @escaping (SpotResult?) -> Void) {
-        success(SpotResult())
+    public func addFavoriteSpot(withSpotId spotId: String?, username: String?, password: String?) async throws -> WGSuccess? {
+        WGSuccess(map: definition.json(jsonFile: "WGSuccess"))
     }
     
-    public func addFavoriteSpot(withSpotId spotId: String?, username: String?, password: String?, failure: @escaping FailureType, success: @escaping (WGSuccess?) -> Void) {
-        success(WGSuccess(map: nil))
+    public func removeFavoriteSpot(withSpotId spotId: String?, username: String?, password: String?) async throws -> WGSuccess? {
+        WGSuccess(map: definition.json(jsonFile: "WGSuccess"))
     }
     
-    public func removeFavoriteSpot(withSpotId spotId: String?, username: String?, password: String?, failure: @escaping FailureType, success: @escaping (WGSuccess?) -> Void) {
-        success(WGSuccess(map: nil))
+    public func searchSpots(byLocation location: String) async throws -> SpotResult? {
+        SpotResult(map: definition.json(jsonFile: "SpotResult"))
     }
     
-    public func searchSpots(byLocation location: String, failure: @escaping FailureType, success: @escaping (SpotResult?) -> Void) {
-        success(SpotResult())
+    public func spots(withCountryId countryId: String?, regionId: String?) async throws -> SpotResult? {
+        SpotResult(map: definition.json(jsonFile: "SpotResult"))
     }
     
-    public func spots(withCountryId countryId: String?, regionId: String?, failure: @escaping FailureType, success: @escaping (SpotResult?) -> Void) {
-        success(SpotResult())
+    public func modelInfo(onlyModelId modelId: String?) async throws -> Models? {
+        Models(map: definition.json(jsonFile: "Models"))
     }
     
-    public func modelInfo(onlyModelId modelId: String?, failure: @escaping FailureType, success: @escaping (Models?) -> Void) {
-        success(Models())
+    public func models(bylat lat: String?, lon: String?) async throws -> String? {
+        "[3]"
     }
     
-    public func models(bylat lat: String?, lon: String?, failure: @escaping FailureType, success: @escaping ([String]?) -> Void) {
-        success([String()])
+    public func geoRegions() async throws -> GeoRegions? {
+        GeoRegions(map: definition.json(jsonFile: "GeoRegions"))
     }
     
-    public func geoRegions(withFailure failure: @escaping FailureType, success: @escaping (GeoRegions?) -> Void) {
-        success(GeoRegions())
+    public func countries(byRegionId regionId: String?) async throws -> Countries? {
+        Countries(map: definition.json(jsonFile: "Countries"))
     }
     
-    public func countries(byRegionId regionId: String?, failure: @escaping FailureType, success: @escaping (Countries?) -> Void) {
-        success(Countries())
+    public func regions(byCountryId countryId: String?) async throws -> Regions? {
+        Regions(map: definition.json(jsonFile: "Regions"))
     }
     
-    public func regions(byCountryId countryId: String?, failure: @escaping FailureType, success: @escaping (Regions?) -> Void) {
-        success(Regions())
-    }
-    
-    public func login(withUsername username: String?, password: String?, failure: @escaping FailureType, success: @escaping (User?) -> Void) {
-        success(User())
+    public func login(withUsername username: String?, password: String?) async throws -> User? {
+        User(map: definition.json(jsonFile: "User"))
     }
 }
 

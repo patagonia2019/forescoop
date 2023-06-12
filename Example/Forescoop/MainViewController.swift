@@ -127,21 +127,16 @@ private extension MainViewController {
             textfield.isSecureTextEntry = true
         }
         
-        let failureBlock : ForecastWindguruService.FailureType = {
-            [weak self] (error) in
-            self?.showError(title: "Error on login", error: error)
-        }
-        
         let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-            let username = alert.textFields?[0] ?? nil
-            let password = alert.textFields?[1] ?? nil
-            self?.forecastService?.login(withUsername: username?.text,
-                                         password: password?.text,
-                                         failure: failureBlock,
-                                         success: { [weak self] (user) in
-                self?.user = user
+            Task {
+                
+                let username = alert.textFields?[0] ?? nil
+                let password = alert.textFields?[1] ?? nil
+                self?.user = try await self?.forecastService?.login(withUsername: username?.text,
+                                                                    password: password?.text)
+                
                 var name = User.Constant.Anonymous.rawValue
-                if let user = user {
+                if let user = self?.user {
                     name = user.name
                     self?.passwordTextField = password
                 }
@@ -152,7 +147,7 @@ private extension MainViewController {
                 self?.present(alert, animated: true, completion:nil)
                 
                 self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
-            })
+            }
         }
         
         let login = UIAlertAction.init(title: "Login", style: .default, handler: block)
