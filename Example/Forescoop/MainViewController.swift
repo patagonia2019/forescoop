@@ -136,21 +136,25 @@ private extension MainViewController {
                 
                 let username = alert.textFields?[0] ?? nil
                 let password = alert.textFields?[1] ?? nil
-                self?.user = try await self?.forecastService?.login(withUsername: username?.text,
-                                                                    password: password?.text)
-                
-                var name = User.Constant.Anonymous.rawValue
-                if let user = self?.user {
-                    name = user.name
-                    self?.passwordTextField = password
+                do {
+                    self?.user = try await self?.forecastService?.login(withUsername: username?.text,
+                                                                        password: password?.text)
+                    var name = User.Constant.Anonymous.rawValue
+                    if let user = self?.user {
+                        name = user.name
+                        self?.passwordTextField = password
+                    }
+                    let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(name)", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                        self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
+                    }))
+                    self?.present(alert, animated: true, completion:nil)
+                    
+                    self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
+                } catch {
+                    self?.showError(title: "Cannot login", error: error)
                 }
-                let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(name)", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
-                    self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
-                }))
-                self?.present(alert, animated: true, completion:nil)
                 
-                self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
             }
         }
         

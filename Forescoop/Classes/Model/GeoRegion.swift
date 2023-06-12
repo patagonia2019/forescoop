@@ -27,11 +27,11 @@ public class GeoRegion: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String:Any]?) throws {
+        try super.mapping(map: map)
 
-        id = map["id"] as? String
-        name = map["name"] as? String
+        id = map?["id"] as? String
+        name = map?["name"] as? String
     }
 
     public var description : String {

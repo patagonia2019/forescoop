@@ -130,22 +130,22 @@ public class User: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String:Any]?) throws {
+        try super.mapping(map: map)
                 
-        id_user = map["id_user"] as? Int ?? 0
-        username = map["username"] as? String
-        id_country = map["id_country"] as? Int ?? 0
-        wind_units = map["wind_units"] as? String
-        temp_units = map["temp_units"] as? String
-        wave_units = map["wave_units"] as? String
-        pro = map["pro"] as? Int ?? 0
-        no_ads = map["no_ads"] as? Int ?? 0
-        view_hours_from = map["view_hours_from"] as? Int ?? 0
-        view_hours_to = map["view_hours_to"] as? Int ?? 0
-        temp_limit = map["temp_limit"] as? Int ?? 0
-        wind_rating_limits = (map["wind_rating_limits"] as? [Double])?.compactMap({Float($0)}) ?? []
-        customColors = (map["colors"] as? [String: Any])?
+        id_user = map?["id_user"] as? Int ?? 0
+        username = map?["username"] as? String
+        id_country = map?["id_country"] as? Int ?? 0
+        wind_units = map?["wind_units"] as? String
+        temp_units = map?["temp_units"] as? String
+        wave_units = map?["wave_units"] as? String
+        pro = map?["pro"] as? Int ?? 0
+        no_ads = map?["no_ads"] as? Int ?? 0
+        view_hours_from = map?["view_hours_from"] as? Int ?? 0
+        view_hours_to = map?["view_hours_to"] as? Int ?? 0
+        temp_limit = map?["temp_limit"] as? Int ?? 0
+        wind_rating_limits = (map?["wind_rating_limits"] as? [Double])?.compactMap({Float($0)}) ?? []
+        customColors = (map?["colors"] as? [String: Any])?
             .compactMapValues { value in
                 (value as? [[Double]])?
                     .compactMap({CustomColor(info: String($0[0]),

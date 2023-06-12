@@ -27,10 +27,10 @@ public class Country: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-        id = map["id"] as? String
-        name = map["name"] as? String
+    public override func mapping(map: [String:Any]?) throws {
+        try super.mapping(map: map)
+        id = map?["id"] as? String
+        name = map?["name"] as? String
     }
     
     public var description: String {

@@ -36,12 +36,12 @@ public class ForecastModel: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String:Any]?) throws {
+        try super.mapping(map: map)
         
-        model = map["model"] as? String
-        info = try Forecast.init(map: map["info"] as? [String:Any])
-        info?.gmtHourOffset = map["gmt_hour_offset"] as? Int ?? 0
+        model = map?["model"] as? String
+        info = try Forecast.init(map: map?["info"] as? [String:Any])
+        info?.gmtHourOffset = map?["gmt_hour_offset"] as? Int ?? 0
     }
     
     public var description: String {

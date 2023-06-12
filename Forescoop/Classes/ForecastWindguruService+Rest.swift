@@ -233,17 +233,9 @@ private extension ForecastWindguruService {
                               api: ForecastWindguruService.Definition.service.api) async throws -> T? {
         let url = Definition.service.url(api: api, tokens: tokens)
         let (data, _) = try await URLSession.shared.data(from: URL.init(string: url)!)
-        if let json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any] {
-            print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
-            do {
-                return try T.init(map: json)
-            } catch {
-                let error = try WGError(map: json)
-                throw CustomError.unexpected(code: error?.code, message: error?.localizedDescription)
-            }
-        } else {
-            print("FAILURE url = \(url)")
-            throw CustomError.invalidParsing
-        }
+        let json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any]
+        let object = try T.init(map: json)
+        print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
+        return object
     }
 }

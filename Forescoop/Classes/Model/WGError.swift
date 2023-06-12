@@ -38,11 +38,9 @@ public class WGError: Mappable {
     }
     
     public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-
-        returnString = map["return"] as? String
-        error_id = map["error_id"] as? Int
-        error_message = map["error_message"] as? String
+        returnString = map?["return"] as? String
+        error_id = map?["error_id"] as? Int
+        error_message = map?["error_message"] as? String
     }
     
     public var description: String {
