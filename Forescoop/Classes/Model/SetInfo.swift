@@ -22,13 +22,13 @@ public class SetInfo: Object, Mappable {
     var id: String? = nil
     var name: String? = nil
 
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         id = map["id"] as? String
         name = map["name"] as? String
@@ -37,7 +37,4 @@ public class SetInfo: Object, Mappable {
     public var description : String {
         ["\(type(of:self))", id, name].compactMap {$0}.joined(separator: ", ")
     }
-    
 }
-
-

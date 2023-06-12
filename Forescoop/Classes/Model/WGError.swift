@@ -21,45 +21,12 @@ import Foundation
  */
 
 public class WGError: Mappable {
-    var returnString: String?
-    var error_id: Int?
-    var error_message: String?
-    var nserror: NSError?
-
-    public init(code: Int, desc: String, reason: String? = nil, suggestion: String? = nil,
-                underError error: NSError? = nil, wgdata : Data? = nil)
-    {
-        var dict = [String: AnyObject]()
-        if let reason = reason {
-            dict[NSLocalizedFailureReasonErrorKey] = reason as AnyObject?
-        }
-        if let suggestion = suggestion {
-            dict[NSLocalizedRecoverySuggestionErrorKey] = suggestion as AnyObject?
-        }
-        if let error = error {
-            dict[NSUnderlyingErrorKey] = error
-        }
-        
-        var descValue = desc
-        if let wgdata = wgdata,
-            let jsonString = String(data: wgdata, encoding: .utf8)
-        {
-            descValue += " Response IS " + jsonString
-        }
-        else {
-            descValue += " Response EMPTY"
-        }
-        dict[NSLocalizedDescriptionKey] = descValue as AnyObject?
-        
-        var id = "Forescoop"
-        if let bundleId = Bundle.main.bundleIdentifier {
-            id = bundleId
-        }
-        nserror = NSError(domain: id, code:code, userInfo: dict)
-    }
+    private var returnString: String?
+    private var error_id: Int?
+    private var error_message: String?
     
-    required public init?(map: [String: Any]?){
-        mapping(map: map)
+    required public init?(map: [String: Any]?) throws {
+        try mapping(map: map)
     }
     
     public static func isMappable(map: [String:Any]) -> Bool {
@@ -70,82 +37,38 @@ public class WGError: Mappable {
         return ret
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         returnString = map["return"] as? String
         error_id = map["error_id"] as? Int
         error_message = map["error_message"] as? String
     }
     
-    
-    public var description : String {
+    public var description: String {
         [
             "\(type(of:self))",
             returnString,
             error_id?.description,
-            error_message,
-            nserror?.description
+            error_message
         ]
             .compactMap {$0}
             .joined(separator: ", ")
     }
 }
 
-extension WGError : Error {
-    
-    public func title() -> String {
-        if let e = nserror {
-            return e.localizedDescription
-        }
-        if let error_message = error_message {
-            return error_message
-        }
-        return "No Title"
+public extension WGError {
+    var code: Int {
+        error_id ?? -1
+    }
+
+    var localizedDescription: String {
+        error_message ?? "Unknown error"
     }
     
-    public func reason() -> String {
-        if let e = nserror,
-            let reason = e.localizedFailureReason {
-            return reason
-        }
-        return "No Reason"
+    var message: String {
+        error_message ?? "Unknown error"
     }
-    
-    public func asDictionary() -> [String : AnyObject]? {
-        if let error = nserror {
-            return ["code": error.code as AnyObject,
-                    NSLocalizedDescriptionKey: error.localizedDescription as AnyObject,
-                    NSLocalizedFailureReasonErrorKey: (error.localizedFailureReason ?? "") as AnyObject,
-                    NSLocalizedRecoverySuggestionErrorKey: (error.localizedRecoverySuggestion ?? "") as AnyObject,
-                    NSUnderlyingErrorKey: "\(error.userInfo)" as AnyObject]
-        }
-        return nil
-    }
-        
-    public var debugDescription : String {
-        var aux : String = "\(type(of:self)): "
-        aux += "["
-        if let _error = nserror {
-            aux += "\(_error.code);"
-            aux += "\(_error.localizedDescription);"
-            if let _failureReason = _error.localizedFailureReason {
-                aux += "\(_failureReason);"
-            } else { aux += "();" }
-            if let _recoverySuggestion = _error.localizedRecoverySuggestion {
-                aux += "\(_recoverySuggestion);"
-            } else { aux += "();" }
-            aux += "\(_error.userInfo.description);"
-        }
-        aux += "]"
-        return aux
-    }
-    
-    
-    public func fatal() {
-        fatalError("fatal:\(self.debugDescription)")
-    }
-    
 }
 
 public enum CustomError: Error {
@@ -154,20 +77,33 @@ public enum CustomError: Error {
     // Throw when an issue with the parsing
     case invalidParsing
 
+    case cannotInit
+
+    case notMappeable
+
     // Throw in all other cases
     case unexpected(code: Int?, message: String?)
 }
 
 extension CustomError: CustomStringConvertible {
+    
+    public var localizedDescription: String {
+        description
+    }
+    
     public var description: String {
         switch self {
         case .cannotFindSpotId:
             return "The spot id is not right."
         case .invalidParsing:
             return "The pasing is not valid."
+        case .cannotInit:
+            return "Cannot init"
+        case .notMappeable:
+            return "Cannot map"
         case .unexpected(let code, let message):
             if let code = code, let message = message {
-                return "[\(code): \(message)]."
+                return "\(code): \(message)."
             } else {
                 return "An unexpected error occurred"
             }

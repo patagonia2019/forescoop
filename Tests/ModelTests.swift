@@ -46,15 +46,25 @@ class ModelTests: XCTestCase {
     }
     
     func testCountries() {
-        let countries = Countries(map: countriesDict)
+        let countries: Countries?
+        do {
+            countries = try Countries(map: countriesDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(countries)
-        XCTAssertEqual(countriesDict?.count, countries.sorted.count)
-        XCTAssertEqual(countries.sorted.first?.oficialName, "Argentina")
-        XCTAssertEqual(countries.sorted.first?.identifier, "32")
+        XCTAssertEqual(countriesDict?.count, countries?.sorted.count)
+        XCTAssertEqual(countries?.sorted.first?.oficialName, "Argentina")
+        XCTAssertEqual(countries?.sorted.first?.identifier, "32")
     }
     
     func testSpotResult() {
-        let spotResult = SpotResult(map: spotResultDict)
+        let spotResult: SpotResult?
+        do {
+            spotResult = try SpotResult(map: spotResultDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(spotResult)
         XCTAssertEqual(spotResult?.numberOfSpots, 20)
         let spot = spotResult?.firstSpot
@@ -66,14 +76,24 @@ class ModelTests: XCTestCase {
     }
     
     func testSpotNickname() {
-        let spotResult = SpotResult(map: spotResultDict)
+        let spotResult: SpotResult?
+        do {
+            spotResult = try SpotResult(map: spotResultDict)
+        } catch {
+            return XCTFail()
+        }
         let spot = spotResult?.find(nickname: "EAPCM")
         XCTAssertNotNil(spot)
         XCTAssertEqual(spot?.name, "Argentina,  Bariloche, playa sin viento L. Moreno este")
     }
     
     func testUser() {
-        let user = User(map: userDict)
+        let user: User?
+        do {
+            user = try User(map: userDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(user)
         XCTAssertTrue(user?.isAnonymous == false)
         XCTAssertEqual(user?.name, "southfox")
@@ -101,7 +121,12 @@ class ModelTests: XCTestCase {
     }
     
     func testAnonymousUser() {
-        let user = User(map: anonymousUserDict)
+        let user: User?
+        do {
+            user = try User(map: anonymousUserDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(user)
         XCTAssertTrue(user?.isAnonymous == true)
         XCTAssertEqual(user?.name, "Anonymous")
@@ -132,26 +157,46 @@ class ModelTests: XCTestCase {
     }
     
     func testGeoRegions() {
-        let geoRegions = GeoRegions(map: geoRegionsDict)
+        let geoRegions: GeoRegions?
+        do {
+            geoRegions = try GeoRegions(map: geoRegionsDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(geoRegions)
         XCTAssertEqual(geoRegionsDict?.count, geoRegions?.sorted.count)
         XCTAssertEqual(geoRegions?.sorted.first?.oficialName, "Africa")
     }
 
     func testRegions() {
-        let regions = GeoRegions(map: regionsDict)
+        let regions: Regions?
+        do {
+            regions = try Regions(map: regionsDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(regions)
-        XCTAssertEqual(regionsDict?.count, regions?.sorted.count)
-        XCTAssertEqual(regions?.sorted.first?.oficialName, "Acre")
+        XCTAssertEqual(regionsDict?.count, regions?.sorted?.count)
+        XCTAssertEqual(regions?.sorted?.first?.oficialName, "Acre")
     }
 
     func testSpotInfo() {
-        let spotInfo = SpotInfo(map: spotInfoDict)
+        let spotInfo: SpotInfo?
+        do {
+            spotInfo = try SpotInfo(map: spotInfoDict)
+        } catch {
+            return XCTFail()
+        }
         checkSpotInfo(spotInfo: spotInfo)
     }
     
     func testModels() {
-        let models = Models(map: modelsDict)?.sorted
+        let models: [Model]?
+        do {
+            models = try Models(map: modelsDict)?.sorted
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(models)
         XCTAssertEqual(modelsDict?.count, models?.count)
         let model = models?.first
@@ -167,7 +212,12 @@ class ModelTests: XCTestCase {
     }
     
     func testSpotForecast() {
-        let spotForecast = SpotForecast(map: spotForecastDict)
+        let spotForecast: SpotForecast?
+        do {
+            spotForecast = try SpotForecast(map: spotForecastDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertEqual(spotForecast?.asCurrentWindDirectionName, "NNW")
         checkSpotInfo(spotInfo: spotForecast)
         XCTAssertEqual(spotForecast?.numberOfForecasts, 1)
@@ -200,7 +250,12 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(forecast?.precipitation1(hh: "10"), 0.8)
     }
     func testWSpotForecast() {
-        let wspotForecast = WSpotForecast(map: wSpotForecastDict)
+        let wspotForecast: WSpotForecast?
+        do {
+            wspotForecast = try WSpotForecast(map: wSpotForecastDict)
+        } catch {
+            return XCTFail()
+        }
         XCTAssertNotNil(wspotForecast)
         XCTAssertEqual(wspotForecast?.identifier, "64141")
         XCTAssertEqual(wspotForecast?.userIdentifier, "169")

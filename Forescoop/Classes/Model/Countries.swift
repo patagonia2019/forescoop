@@ -33,14 +33,14 @@ public class Countries: Object, Mappable {
     
     var content: [Country]?
 
-    required public convenience init(map: [String:Any]?) {
+    required public convenience init(map: [String:Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
 
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
-        content = map.JSON().compactMap({Mapper<Country>().map(JSON: ["id": $0.key, "name": $0.value])})
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
+        content = try map.JSON().compactMap({try Mapper<Country>().map(JSON: ["id": $0.key, "name": $0.value])})
     }
     
     public var description : String {

@@ -55,13 +55,13 @@ public class Model: Object, Mappable {
     var update_time: String?
     var show_vars = [String]()
 
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         id_model = map["id_model"] as? Int ?? 0
         model_name = map["model_name"] as? String ?? nil

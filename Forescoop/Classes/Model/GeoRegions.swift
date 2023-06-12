@@ -33,16 +33,16 @@ public class GeoRegions: Object, Mappable {
     
     var content = ListGeoRegion()
     
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         for json in map.JSON() {
-            if let georegion = Mapper<GeoRegion>().map(JSON: ["id": json.key, "name": json.value]) {
+            if let georegion = try Mapper<GeoRegion>().map(JSON: ["id": json.key, "name": json.value]) {
                 content.append(georegion)
             }
         }

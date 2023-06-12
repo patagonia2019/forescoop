@@ -32,15 +32,15 @@ public class SpotOwner: Spot {
 
     var id_user: String? = nil
 
-    required convenience init?(map: [String: Any]?) {
+    required convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public override func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
-        super.mapping(map: map)
+        try super.mapping(map: map)
         id_user = map["id_user"] as? String
     }
 

@@ -24,12 +24,12 @@ public class WGSuccess: Mappable {
     var returnString: String?
     var message: String?
     
-    required public init?(map: [String: Any]?) {
-        mapping(map: map)
+    required public init?(map: [String: Any]?) throws {
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
 
         returnString = map["return"] as? String
         message = map["message"] as? String

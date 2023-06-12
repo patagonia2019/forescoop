@@ -88,13 +88,13 @@ public class WForecast: Object, Mappable {
     var update_next: String? = nil
     var initstamp = 0  // initstamp
         
-    required public convenience init?(map: [String: Any]?) {
+    required public convenience init?(map: [String: Any]?) throws {
         self.init()
-        mapping(map: map)
+        try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) {
-        guard let map = map else { return }
+    public func mapping(map: [String:Any]?) throws {
+        guard let map = map else { throw CustomError.notMappeable }
         
         TMP = map["TMP"] as? [Double] ?? []
         TCDC = map["TCDC"].debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
