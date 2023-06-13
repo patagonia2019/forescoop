@@ -36,7 +36,7 @@ public class SetResult: Object, Mappable {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         count = map?["count"] as? Int ?? 0
         sets = try (map?["sets"] as? [String: Any])?.compactMap {try SetInfo(map: ["id": $0.key, "name": $0.value])}

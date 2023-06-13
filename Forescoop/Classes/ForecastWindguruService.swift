@@ -21,7 +21,6 @@ public class ForecastWindguruService: ForecastWindguruProtocol {
     required public init() {}
     
     public struct Http {
-        static let defaultModel = "3"
         
         struct Service {
             // https://www.windguru.cz/int/jsonapi.php?client=wgapp

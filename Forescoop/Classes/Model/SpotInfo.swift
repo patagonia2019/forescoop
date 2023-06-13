@@ -104,7 +104,7 @@ public class SpotInfo: Spot {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         id_country = map?["id_country"] as? Int ?? 0
         latitude = map?["lat"] as? Double ?? 0.0

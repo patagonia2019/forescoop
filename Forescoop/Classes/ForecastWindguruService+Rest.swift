@@ -39,7 +39,7 @@ public extension ForecastWindguruService {
     
     func forecast(bySpotId spotId: String,
                   model modelId: String? = nil) async throws -> SpotForecast? {
-        try await request(tokens: [.id_model: modelId ?? Http.defaultModel,
+        try await request(tokens: [.id_model: modelId ?? Model.defaultModel,
                                    .id_spot: spotId],
                           api: .forecast)
     }
@@ -57,7 +57,7 @@ public extension ForecastWindguruService {
                    username: String? = nil,
                    password: String? = nil) async throws -> WSpotForecast? {
 
-        return try await request(tokens: [.id_model: modelId ?? Http.defaultModel,
+        return try await request(tokens: [.id_model: modelId ?? Model.defaultModel,
                                           .id_spot: spotId,
                                           .username: username,
                                           .password: password],
@@ -68,7 +68,7 @@ public extension ForecastWindguruService {
     //            errorCode: err.spot.rawValue,
     //           parameters: [parameter.id_spot])
     func spotInfo(bySpotId spotId: String) async throws -> SpotInfo? {
-        try await request(tokens: [.id_spot : spotId],
+        try await request(tokens: [.id_spot: spotId],
                           api: .spotInfo)
     }
     
@@ -233,7 +233,7 @@ private extension ForecastWindguruService {
                               api: Http.Service.Api) async throws -> T? {
         let url = Http.Service.url(api: api, tokens: tokens)
         let (data, _) = try await URLSession.shared.data(from: URL.init(string: url)!)
-        let json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any]
+        let json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String: Any]
         let object = try T.init(map: json)
         print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
         return object

@@ -98,7 +98,7 @@ public class TimeWeather: Object, Mappable {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         
         guard let info = map?.compactMapValues({$0}) else {

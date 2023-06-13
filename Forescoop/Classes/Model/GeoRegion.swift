@@ -27,7 +27,7 @@ public class GeoRegion: Object, Mappable {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
 
         id = map?["id"] as? String

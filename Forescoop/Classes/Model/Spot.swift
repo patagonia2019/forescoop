@@ -35,7 +35,7 @@ public class Spot: Object, Mappable {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         guard map?.keys.contains("id_spot") == true,
                 map?.keys.contains("spotname") == true,

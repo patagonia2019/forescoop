@@ -32,12 +32,12 @@ public class GeoRegions: Object, Mappable {
     typealias ListGeoRegion = Array<GeoRegion>
     var content: ListGeoRegion?
     
-    required public init?(map: [String:Any]?) throws {
+    required public init?(map: [String: Any]?) throws {
         super.init()
         try mapping(map: map)
     }
         
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         content = try map?.compactMap { try GeoRegion(map: ["id": $0.key, "name": $0.value]) }
     }

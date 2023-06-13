@@ -76,7 +76,7 @@ public class WSpotForecast: Object, Mappable {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         
         id_spot = map?["id_spot"] as? Int ?? 0

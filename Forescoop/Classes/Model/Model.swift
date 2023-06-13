@@ -44,6 +44,8 @@ import Foundation
  */
 
 public class Model: Object, Mappable {
+    static let defaultModel = "3"
+
     var id_model: Int = 0
     var model_name: String? = nil
     var model: String? = nil
@@ -60,7 +62,7 @@ public class Model: Object, Mappable {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
 
         id_model = map?["id_model"] as? Int ?? 0

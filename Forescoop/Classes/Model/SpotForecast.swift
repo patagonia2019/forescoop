@@ -49,7 +49,7 @@ public class SpotForecast: SpotInfo {
         try mapping(map: map)
     }
 
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         guard let forecastDict = map?["forecast"] as? [String: Any] else { return }
         forecasts = try forecastDict.compactMap { try ForecastModel(map: ["model" : $0.key, "info" : $0.value, "gmt_hour_offset": gmtHourOffset]) }

@@ -28,7 +28,7 @@ public class Models: Object, Mappable {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
 
         content = try map?.compactMap { try Model(map: $0.value as? [String: Any]) }

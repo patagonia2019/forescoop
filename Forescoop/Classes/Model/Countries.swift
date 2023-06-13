@@ -33,12 +33,12 @@ public class Countries: Object, Mappable {
     
     var content: [Country]?
 
-    required public convenience init(map: [String:Any]?) throws {
+    required public convenience init(map: [String: Any]?) throws {
         self.init()
         try mapping(map: map)
     }
 
-    public override func mapping(map: [String:Any]?) throws {
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
         content = try map?.compactMap { try Country(map: ["id": $0.key, "name": $0.value]) }
     }
