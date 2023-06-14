@@ -33,6 +33,7 @@
 		987A6DCA22D595D200662010 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A6DC922D595D200662010 /* ViewController.swift */; };
 		987A6DCD22D595D200662010 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCB22D595D200662010 /* Main.storyboard */; };
 		987A6DCF22D595D400662010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCE22D595D400662010 /* Assets.xcassets */; };
+		9888ABB22A3A81C900FC9147 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */; };
 		9890080F2A2ED3E7009A978F /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */; };
 		98D1B5732A3A212000A85FBF /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
 		98D31F812A251AE200916A59 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -151,6 +152,7 @@
 		987A6DCC22D595D200662010 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		987A6DCE22D595D400662010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		987A6DD022D595D400662010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
 		9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		98D1B5722A3A212000A85FBF /* ApiController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiController.swift; sourceTree = "<group>"; };
 		9BEE45CBF8F8B0326949C9EE /* Pods-Forescoop_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop_Example.release.xcconfig"; path = "Target Support Files/Pods-Forescoop_Example/Pods-Forescoop_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
+				9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */,
 				98D1B5722A3A212000A85FBF /* ApiController.swift */,
 				70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -824,6 +827,7 @@
 				70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */,
 				70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */,
 				98D1B5732A3A212000A85FBF /* ApiController.swift in Sources */,
+				9888ABB22A3A81C900FC9147 /* AlertViewModel.swift in Sources */,
 				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
 				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
