@@ -43,19 +43,16 @@ extension ApiListViewController: UITableViewDelegate {
         case UserBasedServices.set_spots.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "set id")],
-                                               title: "Add Set",
                                                actionBlock: { self.apiController?.addSetSpots(id: alert.textFields![0].text) }))
             
         case UserBasedServices.add_f_spot.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "spot id")],
-                                               title: "Add Favorite",
                                                actionBlock: { self.apiController?.addFavoriteSpot(id: alert.textFields![0].text) }))
             
         case UserBasedServices.remove_f_spot.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "spot id")],
-                                               title: "Remove Favorite",
                                                actionBlock: { self.apiController?.removeFavoriteSpot(id: alert.textFields![0].text) }))
             
         case UserBasedServices.c_spots.rawValue:
@@ -69,9 +66,8 @@ extension ApiListViewController: UITableViewDelegate {
 
         case UserBasedServices.wforecast.rawValue:
             action = change(alert: alert,
-                            alertConfig: .init(textFields: [.init(placeholder: "spot id #", text: "64141"),
-                                                            .init(placeholder: "model id #", text: Model.defaultModel)],
-                                               title: "Enter spot id",
+                            alertConfig: .init(textFields: [.init(placeholder: "spot id", text: "64141"),
+                                                            .init(placeholder: "model id", text: Model.defaultModel)],
                                                actionBlock: { self.apiController?.wforecast(spotId: alert.textFields![0].text,
                                                                                             modelId: alert.textFields![1].text) }))
 
@@ -79,27 +75,23 @@ extension ApiListViewController: UITableViewDelegate {
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "spot id", text: "64141"),
                                                             .init(placeholder: "model", text: Model.defaultModel)],
-                                               title: "Forecast",
                                                actionBlock: { self.apiController?.forecastSpot(id: alert.textFields![0].text, model: alert.textFields![1].text) }))
 
         case AnonymousBaseServices.spot.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "spot id", text: "64141")],
-                                               title: "Enter spot id",
                                                actionBlock: { self.apiController?.spotInfo(spotId: alert.textFields![0].text) }))
 
         case AnonymousBaseServices.spots.rawValue:
             action = change(alert: alert,
-                            alertConfig: .init(textFields: [.init(placeholder: "country id# (optional)", text: "76"),
-                                                            .init(placeholder: "region id# (optional)", text: "209")],
-                                               title: "Enter country/region",
+                            alertConfig: .init(textFields: [.init(placeholder: "country id (optional)", text: "76"),
+                                                            .init(placeholder: "region id (optional)", text: "209")],
                                                actionBlock: { self.apiController?.spots(countryId: alert.textFields![0].text,
                                                                                         regionId: alert.textFields![1].text) }))
             
         case AnonymousBaseServices.search_spots.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "Location", text: "Bariloche")],
-                                               title: "Enter location",
                                                actionBlock: { self.apiController?.searchSpots(location: alert.textFields![0].text) }))
 
         case AnonymousBaseServices.geo_regions.rawValue:
@@ -108,13 +100,11 @@ extension ApiListViewController: UITableViewDelegate {
         case AnonymousBaseServices.countries.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "region id (optional)", text: "5")],
-                                               title: "Enter region id",
                                                actionBlock: { self.apiController?.countries(regionId: alert.textFields![0].text) }))
             
         case AnonymousBaseServices.regions.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "country id (optional)", text: "76")],
-                                               title: "Enter country id",
                                                actionBlock: { self.apiController?.regions(countryId: alert.textFields![0].text) }))
             
         case AnonymousBaseServices.user.rawValue:
@@ -124,15 +114,13 @@ extension ApiListViewController: UITableViewDelegate {
             
         case AnonymousBaseServices.model_info.rawValue:
             action = change(alert: alert,
-                            alertConfig: .init(textFields: [.init(placeholder: "model id # (optional)", text: Model.defaultModel)],
-                                               title: "Enter model id",
+                            alertConfig: .init(textFields: [.init(placeholder: "model id (optional)", text: Model.defaultModel)],
                                                actionBlock: { self.apiController?.modelInfo(id: alert.textFields![0].text) }))
 
         case AnonymousBaseServices.models_latlon.rawValue:
             action = change(alert: alert,
                             alertConfig: .init(textFields: [.init(placeholder: "latitude", text: "-41"),
                                                             .init(placeholder: "longitude", text: "-71")],
-                                               title: "Enter latitude/longitude",
                                                actionBlock: { self.apiController?.models(lat: alert.textFields![0].text,
                                                                                          lon: alert.textFields![1].text) }))
 
@@ -186,7 +174,6 @@ private extension ApiListViewController {
     }
     struct AlertConfig {
         var textFields: [AlertTextField]
-        var title: String
         var actionBlock: ()->()
     }
     
