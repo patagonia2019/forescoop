@@ -41,9 +41,8 @@ enum UserBasedServices: String, CaseIterable {
     case set_spots
     case sets
     case wforecast
-    case wforecast_latlon
     static var allCases: [UserBasedServices] {
-        return [.add_f_spot, .remove_f_spot, .f_spots, .c_spots, .set_spots, .sets, .wforecast, .wforecast_latlon]
+        return [.add_f_spot, .remove_f_spot, .f_spots, .c_spots, .set_spots, .sets, .wforecast]
     }
     static var allStrings: [String] {
         return allCases.map { $0.rawValue }
@@ -53,11 +52,13 @@ enum UserBasedServices: String, CaseIterable {
 class ApiController {
     private (set) var user: User?
     private (set) var password: String?
+    private (set) var forecastService: ForecastWindguruProtocol?
+    private (set) var delegate: ApiControllerDelegate?
+    
     var service: String {
-        services[currentServicerOrdinal]
+        services[currentServiceOrdinal]
     }
-    var currentServicerOrdinal: Int = 0
-    private (set) var forecastService: ForecastWindguruProtocol? = nil
+    var currentServiceOrdinal: Int = 0
     
     lazy var services: [String] = {
         isUserAnonymous == false ? AnonymousBaseServices.allStrings + UserBasedServices.allStrings : AnonymousBaseServices.allStrings
@@ -73,7 +74,6 @@ class ApiController {
         }
     }
     
-    var delegate: ApiControllerDelegate?
     
     init(user: User? = nil, password: String? = nil, forecastService: ForecastWindguruProtocol? = nil, delegate: ApiControllerDelegate? = nil) {
         self.user = user

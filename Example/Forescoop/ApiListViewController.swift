@@ -15,11 +15,6 @@ class ApiListViewController: UIViewController {
     var apiController: ApiController? = nil
     var info: String?
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        apiController?.delegate = self
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
@@ -39,7 +34,7 @@ extension ApiListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        apiController?.currentServicerOrdinal = indexPath.item
+        apiController?.currentServiceOrdinal = indexPath.item
         var action : UIAlertAction? = nil
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         
