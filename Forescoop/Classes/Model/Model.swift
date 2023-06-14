@@ -44,6 +44,8 @@ import Foundation
  */
 
 public class Model: Object, Mappable {
+    public static let defaultModel = "3"
+
     var id_model: Int = 0
     var model_name: String? = nil
     var model: String? = nil
@@ -60,19 +62,19 @@ public class Model: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
 
-        id_model = map["id_model"] as? Int ?? 0
-        model_name = map["model_name"] as? String ?? nil
-        model = map["model"] as? String ?? nil
-        hr_start = map["hr_start"] as? Int ?? 0
-        hr_end = map["hr_end"] as? Int ?? 0
-        hr_step = map["hr_step"] as? Int ?? 0
-        period = map["period"] as? Int ?? 0
-        resolution = map["resolution"] as? Int ?? 0
-        update_time = map["update_time"] as? String ?? nil
-        show_vars = map["show_vars"] as? [String] ?? []
+        id_model = map?["id_model"] as? Int ?? 0
+        model_name = map?["model_name"] as? String ?? nil
+        model = map?["model"] as? String ?? nil
+        hr_start = map?["hr_start"] as? Int ?? 0
+        hr_end = map?["hr_end"] as? Int ?? 0
+        hr_step = map?["hr_step"] as? Int ?? 0
+        period = map?["period"] as? Int ?? 0
+        resolution = map?["resolution"] as? Int ?? 0
+        update_time = map?["update_time"] as? String ?? nil
+        show_vars = map?["show_vars"] as? [String] ?? []
     }
 
     public var description : String {

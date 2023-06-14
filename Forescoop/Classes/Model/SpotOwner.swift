@@ -37,11 +37,9 @@ public class SpotOwner: Spot {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
-        id_user = map["id_user"] as? String
+        id_user = map?["id_user"] as? String
     }
 
     override public var description: String {

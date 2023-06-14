@@ -16,8 +16,8 @@ public extension ForecastWindguruService {
     
     func login(withUsername username: String?,
                password: String?) async throws -> User? {
-        try await request(tokens: [Definition.service.api.parameter.username: username,
-                                   Definition.service.api.parameter.password: password],
+        try await request(tokens: [.username: username,
+                                   .password: password],
                           api: .user)
     }
     
@@ -26,7 +26,7 @@ public extension ForecastWindguruService {
     //              parameters: [parameter.search,
     //                           parameter.opt])
     func searchSpots(byLocation location: String) async throws -> SpotResult? {
-        try await request(tokens: [Definition.service.api.parameter.search:
+        try await request(tokens: [.search:
                                     location.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)],
                           api: .searchSpots)
     }
@@ -39,8 +39,8 @@ public extension ForecastWindguruService {
     
     func forecast(bySpotId spotId: String,
                   model modelId: String? = nil) async throws -> SpotForecast? {
-        try await request(tokens: [Definition.service.api.parameter.id_model: modelId ?? Definition.defaultModel,
-                                   Definition.service.api.parameter.id_spot: spotId],
+        try await request(tokens: [.id_model: modelId ?? Model.defaultModel,
+                                   .id_spot: spotId],
                           api: .forecast)
     }
 
@@ -57,10 +57,10 @@ public extension ForecastWindguruService {
                    username: String? = nil,
                    password: String? = nil) async throws -> WSpotForecast? {
 
-        return try await request(tokens: [Definition.service.api.parameter.id_model: modelId ?? Definition.defaultModel,
-                                          Definition.service.api.parameter.id_spot: spotId,
-                                          Definition.service.api.parameter.username: username,
-                                          Definition.service.api.parameter.password: password],
+        return try await request(tokens: [.id_model: modelId ?? Model.defaultModel,
+                                          .id_spot: spotId,
+                                          .username: username,
+                                          .password: password],
                                  api: .wforecast)
     }
     
@@ -68,7 +68,7 @@ public extension ForecastWindguruService {
     //            errorCode: err.spot.rawValue,
     //           parameters: [parameter.id_spot])
     func spotInfo(bySpotId spotId: String) async throws -> SpotInfo? {
-        try await request(tokens: [Definition.service.api.parameter.id_spot : spotId],
+        try await request(tokens: [.id_spot: spotId],
                           api: .spotInfo)
     }
     
@@ -79,8 +79,8 @@ public extension ForecastWindguruService {
     //                           parameter.opt])  // opt=simple (optional)
     func customSpots(withUsername username: String?,
                      password: String?) async throws -> SpotResult? {
-        try await request(tokens: [Definition.service.api.parameter.username: username,
-                                   Definition.service.api.parameter.password: password],
+        try await request(tokens: [.username: username,
+                                   .password: password],
                           api: .customSpots)
     }
     
@@ -93,8 +93,8 @@ public extension ForecastWindguruService {
     //                             parameter.opt]) // opt=simple (optional)
     func favoriteSpots(withUsername username: String?,
                        password: String?) async throws -> SpotResult? {
-        try await request(tokens: [Definition.service.api.parameter.username: username,
-                                   Definition.service.api.parameter.password: password],
+        try await request(tokens: [.username: username,
+                                   .password: password],
                           api: .favoriteSpots)
     }
     
@@ -105,8 +105,8 @@ public extension ForecastWindguruService {
     //
     func setSpots(withUsername username: String?,
                   password: String?) async throws -> SetResult? {
-        try await request(tokens: [Definition.service.api.parameter.username: username,
-                                   Definition.service.api.parameter.password: password],
+        try await request(tokens: [.username: username,
+                                   .password: password],
                           api: .setSpots)
     }
     
@@ -119,9 +119,9 @@ public extension ForecastWindguruService {
     func addSetSpots(withSetId setId: String?,
                      username: String?,
                      password: String?) async throws -> SpotResult? {
-        try await request(tokens: [Definition.service.api.parameter.id_set: setId,
-                                   Definition.service.api.parameter.username: username,
-                                   Definition.service.api.parameter.password: password],
+        try await request(tokens: [.id_set: setId,
+                                   .username: username,
+                                   .password: password],
                           api: .addSetSpots)
     }
 
@@ -133,9 +133,9 @@ public extension ForecastWindguruService {
     func addFavoriteSpot(withSpotId spotId: String?,
                          username: String?,
                          password: String?) async throws -> WGSuccess? {
-        try await request(tokens: [Definition.service.api.parameter.id_spot: spotId,
-                                   Definition.service.api.parameter.username: username,
-                                   Definition.service.api.parameter.password: password],
+        try await request(tokens: [.id_spot: spotId,
+                                   .username: username,
+                                   .password: password],
                           api: .addFavoriteSpot)
     }
     
@@ -147,9 +147,9 @@ public extension ForecastWindguruService {
     func removeFavoriteSpot(withSpotId spotId: String?,
                             username: String?,
                             password: String?) async throws -> WGSuccess? {
-        try await request(tokens: [Definition.service.api.parameter.id_spot: spotId,
-                                   Definition.service.api.parameter.username: username,
-                                   Definition.service.api.parameter.password: password],
+        try await request(tokens: [.id_spot: spotId,
+                                   .username: username,
+                                   .password: password],
                           api: .remove_f_spot)
     }
     
@@ -161,9 +161,9 @@ public extension ForecastWindguruService {
     //                     parameter.opt])             // opt=simple (optional)
     func spots(withCountryId countryId: String?,
                regionId: String?) async throws -> SpotResult? {
-        try await request(tokens: [Definition.service.api.parameter.with_spots: "1",
-                                   Definition.service.api.parameter.id_country: countryId,
-                                   Definition.service.api.parameter.id_region: regionId],
+        try await request(tokens: [.with_spots: "1",
+                                   .id_country: countryId,
+                                   .id_region: regionId],
                           api: .spots)
     }
     
@@ -171,7 +171,7 @@ public extension ForecastWindguruService {
     //             errorCode: err.model_info.rawValue,
     //            parameters: [parameter.id_model])    // id_model (optional)
     func modelInfo(onlyModelId modelId: String?) async throws -> Models? {
-        try await request(tokens: [Definition.service.api.parameter.id_model: modelId],
+        try await request(tokens: [.id_model: modelId],
                           api: .modelInfo)
     }
     
@@ -181,8 +181,8 @@ public extension ForecastWindguruService {
     //               parameters: [parameter.lat, parameter.lon])
     func models(bylat lat: String?,
                 lon: String?) async throws -> String? {
-        try await request(tokens: [Definition.service.api.parameter.lat: lat,
-                                   Definition.service.api.parameter.lon: lon],
+        try await request(tokens: [.lat: lat,
+                                   .lon: lon],
                           api: .modelsLatLon)
     }
     
@@ -199,7 +199,7 @@ public extension ForecastWindguruService {
     //                         parameter.id_georegion])     // "id_georegion" (optional)
 
     func countries(byRegionId regionId: String?) async throws -> Countries? {
-        try await request(tokens: [Definition.service.api.parameter.id_georegion: regionId],
+        try await request(tokens: [.id_georegion: regionId],
                           api: .countries)
     }
     
@@ -209,16 +209,16 @@ public extension ForecastWindguruService {
     //                       parameter.id_country])    // "id_country" (optional)
     
     func regions(byCountryId countryId: String?) async throws -> Regions? {
-        try await request(tokens: [Definition.service.api.parameter.id_country: countryId],
+        try await request(tokens: [.id_country: countryId],
                           api: .regions)
     }
 }
 
 private extension ForecastWindguruService {
     
-    func request(tokens: [String: String?],
-                 api: ForecastWindguruService.Definition.service.api) async throws -> String? {
-        let url = Definition.service.url(api: api, tokens: tokens)
+    func request(tokens: [Http.Service.Api.Parameter: String?],
+                 api: Http.Service.Api) async throws -> String? {
+        let url = Http.Service.url(api: api, tokens: tokens)
         let (data, _) = try await URLSession.shared.data(from: URL.init(string: url)!)
         if let string = String.init(data: data, encoding: .utf8) {
             print("SUCCESS url = \(url) - response.result.value \(string)")
@@ -229,21 +229,13 @@ private extension ForecastWindguruService {
         }
     }
 
-    func request<T: Mappable>(tokens: [String: String?],
-                              api: ForecastWindguruService.Definition.service.api) async throws -> T? {
-        let url = Definition.service.url(api: api, tokens: tokens)
+    func request<T: Mappable>(tokens: [Http.Service.Api.Parameter: String?],
+                              api: Http.Service.Api) async throws -> T? {
+        let url = Http.Service.url(api: api, tokens: tokens)
         let (data, _) = try await URLSession.shared.data(from: URL.init(string: url)!)
-        if let json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String : Any] {
-            print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
-            do {
-                return try T.init(map: json)
-            } catch {
-                let error = try WGError(map: json)
-                throw CustomError.unexpected(code: error?.code, message: error?.localizedDescription)
-            }
-        } else {
-            print("FAILURE url = \(url)")
-            throw CustomError.invalidParsing
-        }
+        let json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String: Any]
+        let object = try T.init(map: json)
+        print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
+        return object
     }
 }

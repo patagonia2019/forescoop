@@ -93,54 +93,62 @@ public class WForecast: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
         
-        TMP = map["TMP"] as? [Double] ?? []
-        TCDC = map["TCDC"].debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
-        HCDC = map["HCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
-        MCDC = map["MCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
-        LCDC = map["LCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined().components(separatedBy: ",")
-        RH = map["RH"] as? [Int] ?? []
-        GUST = map["GUST"] as? [Double] ?? []
-        SLP = map["SLP"] as? [Int] ?? []
-        FLHGT = map["FLHGT"] as? [Int] ?? []
-        APCP = map["APCP"] as? [Int] ?? []
-        WINDSPD = map["WINDSPD"] as? [Double] ?? []
-        windDirection = (map["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)} ?? []
-        SMERN = map["SMERN"] as? [Int] ?? []
-        SMER = map["SMER"] as? [Int] ?? []
-        TMPE = map["TMPE"] as? [Double] ?? []
-        PCPT = map["PCPT"] as? [Int] ?? []
-        HTSGW = map["HTSGW"] as? [Double] ?? []
-        WVHGT = map["WVHGT"] as? [Double] ?? []
-        WVPER = map["WVPER"] as? [Double] ?? []
-        WVDIR = map["WVDIR"] as? [Double] ?? []
-        SWELL1 = map["SWELL1"] as? [Double] ?? []
-        SWPER1 = map["SWPER1"] as? [Double] ?? []
-        SWDIR1 = map["SWDIR1"] as? [Double] ?? []
-        SWELL2 = map["SWELL2"] as? [Double] ?? []
-        SWPER2 = map["SWPER2"] as? [Double] ?? []
-        SWDIR2 = map["SWDIR2"] as? [Double] ?? []
-        PERPW = map["PERPW"] as? [Double] ?? []
-        DIRPW = map["DIRPW"] as? [Double] ?? []
-        hr_weekday = map["hr_weekday"] as? [Int] ?? []
-        hr_h = map["hr_h"] as? [String] ?? []
-        hr_d = map["hr_d"] as? [String] ?? []
-        hours = map["hours"] as? [Int] ?? []
-        img_param = map["img_param"] as? [String] ?? []
-        img_var_map = map["img_var_map"] as? [String] ?? []
-        initDate = map["initdate"] as? String
-        init_d = map["init_d"] as? String
-        init_dm = map["init_dm"] as? String
-        init_h = map["init_h"] as? String
-        initstr = map["initstr"] as? String
-        model_name = map["model_name"] as? String
-        model_longname = map["model_longname"] as? String
-        id_model = map["id_model"] as? Int ?? 0
-        update_last = map["update_last"] as? String
-        update_next = map["update_next"] as? String
-        initstamp = map["initstamp"] as? Int ?? 0
+        TMP = map?["TMP"] as? [Double] ?? []
+        if let tcdc = map?["TCDC"].debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
+            TCDC = tcdc.components(separatedBy: ",")
+        }
+        if let hcdc = map?["HCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
+            HCDC = hcdc.components(separatedBy: ",")
+        }
+        if let mcdc = map?["MCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
+            MCDC = mcdc.components(separatedBy: ",")
+        }
+        if let lcdc = map?["LCDC"].debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
+            LCDC = lcdc.components(separatedBy: ",")
+        }
+        RH = map?["RH"] as? [Int] ?? []
+        GUST = map?["GUST"] as? [Double] ?? []
+        SLP = map?["SLP"] as? [Int] ?? []
+        FLHGT = map?["FLHGT"] as? [Int] ?? []
+        APCP = map?["APCP"] as? [Int] ?? []
+        WINDSPD = map?["WINDSPD"] as? [Double] ?? []
+        windDirection = (map?["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)} ?? []
+        SMERN = map?["SMERN"] as? [Int] ?? []
+        SMER = map?["SMER"] as? [Int] ?? []
+        TMPE = map?["TMPE"] as? [Double] ?? []
+        PCPT = map?["PCPT"] as? [Int] ?? []
+        HTSGW = map?["HTSGW"] as? [Double] ?? []
+        WVHGT = map?["WVHGT"] as? [Double] ?? []
+        WVPER = map?["WVPER"] as? [Double] ?? []
+        WVDIR = map?["WVDIR"] as? [Double] ?? []
+        SWELL1 = map?["SWELL1"] as? [Double] ?? []
+        SWPER1 = map?["SWPER1"] as? [Double] ?? []
+        SWDIR1 = map?["SWDIR1"] as? [Double] ?? []
+        SWELL2 = map?["SWELL2"] as? [Double] ?? []
+        SWPER2 = map?["SWPER2"] as? [Double] ?? []
+        SWDIR2 = map?["SWDIR2"] as? [Double] ?? []
+        PERPW = map?["PERPW"] as? [Double] ?? []
+        DIRPW = map?["DIRPW"] as? [Double] ?? []
+        hr_weekday = map?["hr_weekday"] as? [Int] ?? []
+        hr_h = map?["hr_h"] as? [String] ?? []
+        hr_d = map?["hr_d"] as? [String] ?? []
+        hours = map?["hours"] as? [Int] ?? []
+        img_param = map?["img_param"] as? [String] ?? []
+        img_var_map = map?["img_var_map"] as? [String] ?? []
+        initDate = map?["initdate"] as? String
+        init_d = map?["init_d"] as? String
+        init_dm = map?["init_dm"] as? String
+        init_h = map?["init_h"] as? String
+        initstr = map?["initstr"] as? String
+        model_name = map?["model_name"] as? String
+        model_longname = map?["model_longname"] as? String
+        id_model = map?["id_model"] as? Int ?? 0
+        update_last = map?["update_last"] as? String
+        update_next = map?["update_next"] as? String
+        initstamp = map?["initstamp"] as? Int ?? 0
     }
     
     public var description : String {

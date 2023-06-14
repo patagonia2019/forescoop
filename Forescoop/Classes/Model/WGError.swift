@@ -29,7 +29,7 @@ public class WGError: Mappable {
         try mapping(map: map)
     }
     
-    public static func isMappable(map: [String:Any]) -> Bool {
+    public static func isMappable(map: [String: Any]) -> Bool {
         var ret : Bool = true
         for key in ["return", "error_id", "error_message"] {
             ret = ret && map.keys.contains(key)
@@ -37,12 +37,10 @@ public class WGError: Mappable {
         return ret
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-
-        returnString = map["return"] as? String
-        error_id = map["error_id"] as? Int
-        error_message = map["error_message"] as? String
+    public func mapping(map: [String: Any]?) throws {
+        returnString = map?["return"] as? String
+        error_id = map?["error_id"] as? Int
+        error_message = map?["error_message"] as? String
     }
     
     public var description: String {

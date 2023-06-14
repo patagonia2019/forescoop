@@ -104,21 +104,19 @@ public class SpotInfo: Spot {
         try mapping(map: map)
     }
     
-    public override func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-
+    public override func mapping(map: [String: Any]?) throws {
         try super.mapping(map: map)
-        id_country = map["id_country"] as? Int ?? 0
-        latitude = map["lat"] as? Double ?? 0.0
-        longitude = map["lon"] as? Double ?? 0.0
-        altitude = map["alt"] as? Int ?? 0
-        tz = map["tz"] as? String ?? nil
-        gmt_hour_offset = map["gmt_hour_offset"] as? Int ?? 0
-        sunrise = map["sunrise"] as? String ?? nil
-        sunset = map["sunset"] as? String ?? nil
-        models = map["models"] as? [Int] ?? []
-        tides = map["tides"] as? String
-        tz = map["tz"] as? String
+        id_country = map?["id_country"] as? Int ?? 0
+        latitude = map?["lat"] as? Double ?? 0.0
+        longitude = map?["lon"] as? Double ?? 0.0
+        altitude = map?["alt"] as? Int ?? 0
+        tz = map?["tz"] as? String ?? nil
+        gmt_hour_offset = map?["gmt_hour_offset"] as? Int ?? 0
+        sunrise = map?["sunrise"] as? String ?? nil
+        sunset = map?["sunset"] as? String ?? nil
+        models = map?["models"] as? [Int] ?? []
+        tides = map?["tides"] as? String
+        tz = map?["tz"] as? String
     }
  
     override public var description : String {

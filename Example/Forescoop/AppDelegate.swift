@@ -6,6 +6,8 @@
 //  Copyright © 2023 southfox. All rights reserved.
 //
 
+import Forescoop
+
 #if os(macOS)
 import Cocoa
 
@@ -36,11 +38,21 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
+    private var vc: MainViewController? {
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let vc = sb.instantiateViewController(identifier: "MainViewController") { coder in
+            let forecastService = ForecastWindguruService()
+            return MainViewController(coder: coder, forecastService: forecastService)
+        } as? MainViewController
+        vc?.loadViewIfNeeded()
+        return vc
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = UINavigationController(rootViewController: vc!)
         return true
     }
 

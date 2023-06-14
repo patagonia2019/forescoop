@@ -39,9 +39,9 @@ public class Regions: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-        content = try map.JSON().compactMap { try Mapper<Region>().map(JSON:["id": $0.key, "name": $0.value]) }
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
+        content = try map?.compactMap { try Region(map: ["id": $0.key, "name": $0.value]) }
     }
 
     public var description : String {

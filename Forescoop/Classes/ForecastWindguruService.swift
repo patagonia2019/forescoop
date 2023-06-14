@@ -20,37 +20,36 @@ import Foundation
 public class ForecastWindguruService: ForecastWindguruProtocol {
     required public init() {}
     
-    public struct Definition {
-        static let defaultModel = "3"
+    public struct Http {
         
-        struct service {
+        struct Service {
             // https://www.windguru.cz/int/jsonapi.php?client=wgapp
             // scheme://server
             static let scheme = "https"
             static let server = "www.windguru.cz"
             static let uri = "int/jsonapi.php"
-            struct client {
+            struct Client {
                 static let key = "client"
                 static let value = "wgapp"
             }
             // Not mandatory
-            struct version {
+            struct Version {
                 static let key = "app_version"
                 static let value = "1.1.10"
             }
             static var baseUrl: String {
-                "\(service.scheme)://\(service.server)/\(service.uri)?\(service.client.key)=\(service.client.value)"
+                "\(scheme)://\(server)/\(uri)?\(Client.key)=\(Client.value)"
             }
 
             
             // https://www.windguru.cz/int/jsonapi.php?client=wgapp&app_version=1.1.10
             // {"return":"error","error_id":5,"error_message":"Missing query [q]"}
             
-            struct api {
+            struct Api {
 
-                let query : String
+                let query: Routine
                 let errorCode: Int
-                let parameters : [String]?
+                let parameters: [Parameter]?
                 
                 public enum err: Int {
                     case add_f_spot = 101
@@ -73,164 +72,159 @@ public class ForecastWindguruService: ForecastWindguruProtocol {
                     case wforecast_latlon
                 }
 
-                struct routine {
-                    static let c_spots = "c_spots"
-                    static let set_spots = "set_spots"
-                    static let sets = "sets"
-                    
-                    static let user = "user"
-                    
-                    static let f_spots = "f_spots"
-                    static let add_f_spot = "add_f_spot"
-                    static let remove_f_spot = "remove_f_spot"
-                    
-                    static let forecast = "forecast"
-                    static let model_info = "model_info"
-                    static let models_latlon = "models_latlon"
-                    
-                    static let geo_regions = "geo_regions"
-                    static let countries = "countries"
-                    static let regions = "regions"
-                    static let spots = "spots"
-                    static let spot = "spot"
-                    static let search_spots = "search_spots"
-                    
-                    static let wforecast = "wforecast"
-                    static let wforecast_latlon = "wforecast_latlon"
+                public enum Routine: String {
+                    case c_spots = "c_spots"
+                    case set_spots = "set_spots"
+                    case sets = "sets"
+                    case user = "user"
+                    case f_spots = "f_spots"
+                    case add_f_spot = "add_f_spot"
+                    case remove_f_spot = "remove_f_spot"
+                    case forecast = "forecast"
+                    case model_info = "model_info"
+                    case models_latlon = "models_latlon"
+                    case geo_regions = "geo_regions"
+                    case countries = "countries"
+                    case regions = "regions"
+                    case spots = "spots"
+                    case spot = "spot"
+                    case search_spots = "search_spots"
+                    case wforecast = "wforecast"
+                    case wforecast_latlon = "wforecast_latlon"
                 }
 
-                struct parameter {
-                    static let id_country = "id_country"
-                    static let id_georegion = "id_georegion"
-                    static let id_model = "id_model"
-                    static let id_region = "id_region"
-                    static let id_set = "id_set"
-                    static let id_spot = "id_spot"
-                    static let lat = "lat"
-                    static let lon = "lon"
-                    static let no_wave = "no_wave"      // no_wave = 1 (optional)
-                    static let opt = "opt"              // opt=simple (optional)
-                    static let q = "q"
-                    static let password = "password"
-                    static let search = "search"
-                    static let username = "username"
-                    static let with_spots = "with_spots"
+                enum Parameter: String {
+                    case id_country = "id_country"
+                    case id_georegion = "id_georegion"
+                    case id_model = "id_model"
+                    case id_region = "id_region"
+                    case id_set = "id_set"
+                    case id_spot = "id_spot"
+                    case lat = "lat"
+                    case lon = "lon"
+                    case no_wave = "no_wave"      // no_wave = 1 (optional)
+                    case opt = "opt"              // opt=simple (optional)
+                    case q = "q"
+                    case password = "password"
+                    case search = "search"
+                    case username = "username"
+                    case with_spots = "with_spots"
                 }
 
                 
                 /* Definition.parameter.xid */
 
-                static let user = api(query: routine.user,
+                static let user = Api(query: Routine.user,
                                        errorCode: err.user.rawValue,
-                                       parameters: [parameter.username,
-                                                    parameter.password]) // not user/pass (anonymous)
+                                       parameters: [.username,
+                                                    .password]) // not user/pass (anonymous)
                 
-                static let searchSpots = api(query: routine.search_spots,
+                static let searchSpots = Api(query: .search_spots,
                                              errorCode: err.search_spots.rawValue,
-                                             parameters: [parameter.search,
-                                                          parameter.opt])
+                                             parameters: [.search,
+                                                          .opt])
                 
-                static let favoriteSpots = api(query: routine.f_spots,
+                static let favoriteSpots = Api(query: .f_spots,
                                                errorCode: err.f_spots.rawValue,
-                                               parameters: [parameter.username,
-                                                            parameter.password,
-                                                            parameter.opt]) // opt=simple (optional)
+                                               parameters: [.username,
+                                                            .password,
+                                                            .opt]) // opt=simple (optional)
                 
-                static let addFavoriteSpot = api(query: routine.add_f_spot,
+                static let addFavoriteSpot = Api(query: .add_f_spot,
                                                  errorCode: err.add_f_spot.rawValue,
-                                                 parameters: [parameter.username,
-                                                              parameter.password,
-                                                              parameter.id_spot])
+                                                 parameters: [.username,
+                                                              .password,
+                                                              .id_spot])
                 
-                static let remove_f_spot = api(query: routine.remove_f_spot,
+                static let remove_f_spot = Api(query: .remove_f_spot,
                                                errorCode: err.remove_f_spot.rawValue,
-                                               parameters: [parameter.username,
-                                                            parameter.password,
-                                                            parameter.id_spot])
+                                               parameters: [.username,
+                                                            .password,
+                                                            .id_spot])
                 
-                static let setSpots = api(query: routine.sets,
+                static let setSpots = Api(query: .sets,
                                           errorCode: err.sets.rawValue,
-                                          parameters: [parameter.username,
-                                                       parameter.password])
+                                          parameters: [.username,
+                                                       .password])
                 
-                static let addSetSpots = api(query: routine.set_spots,
+                static let addSetSpots = Api(query: .set_spots,
                                              errorCode: err.set_spots.rawValue,
-                                             parameters: [parameter.username,
-                                                          parameter.password,
-                                                          parameter.id_set,
-                                                          parameter.opt])
+                                             parameters: [.username,
+                                                          .password,
+                                                          .id_set,
+                                                          .opt])
                 
-                static let customSpots = api(query: routine.c_spots,
+                static let customSpots = Api(query: .c_spots,
                                              errorCode: err.c_spots.rawValue,
-                                             parameters: [parameter.username,
-                                                          parameter.password,
-                                                          parameter.opt])
+                                             parameters: [.username,
+                                                          .password,
+                                                          .opt])
 
-                static let spotInfo = api(query: routine.spot,
+                static let spotInfo = Api(query: .spot,
                                           errorCode: err.spot.rawValue,
-                                          parameters: [parameter.id_spot])
+                                          parameters: [.id_spot])
                 
-                static let modelInfo = api(query: routine.model_info,
+                static let modelInfo = Api(query: .model_info,
                                            errorCode: err.model_info.rawValue,
-                                           parameters: [parameter.id_model])    // id_model (optional)
+                                           parameters: [.id_model])    // id_model (optional)
                 
-                static let modelsLatLon = api(query: routine.models_latlon,
+                static let modelsLatLon = Api(query: .models_latlon,
                                               errorCode: err.models_latlon.rawValue,
-                                              parameters: [parameter.lat, parameter.lon])
+                                              parameters: [.lat, Parameter.lon])
                 
-                static let geoRegions = api(query: routine.geo_regions,
+                static let geoRegions = Api(query: .geo_regions,
                                             errorCode: err.geo_regions.rawValue,
                                             parameters: nil)
                 
-                static let countries = api(query: routine.countries,
+                static let countries = Api(query: .countries,
                                            errorCode: err.countries.rawValue,
-                                           parameters: [parameter.with_spots,   // with_spots = 1 (optional)
-                                            parameter.id_georegion])            // "id_georegion" (optional)
+                                           parameters: [.with_spots,   // with_spots = 1 (optional)
+                                            Parameter.id_georegion])            // "id_georegion" (optional)
 
-                static let regions = api(query: routine.regions,
+                static let regions = Api(query: .regions,
                                          errorCode: err.regions.rawValue,
-                                         parameters: [parameter.with_spots,     // with_spots = 1 (optional)
-                                                      parameter.id_country])    // "id_country" (optional)
+                                         parameters: [.with_spots,     // with_spots = 1 (optional)
+                                                      .id_country])    // "id_country" (optional)
 
-                static let spots = api(query: routine.spots,
+                static let spots = Api(query: .spots,
                                        errorCode: err.spots.rawValue,
-                                       parameters: [parameter.with_spots,       // with_spots = 1 (optional)
-                                                    parameter.id_country,       // "id_country" (optional)
-                                                    parameter.id_region,        // "id_region" (optional)
-                                        parameter.opt])                         // opt=simple (optional)
+                                       parameters: [.with_spots,       // with_spots = 1 (optional)
+                                                    .id_country,       // "id_country" (optional)
+                                                    .id_region,        // "id_region" (optional)
+                                        Parameter.opt])                         // opt=simple (optional)
                 
-                static let forecast = api(query: routine.forecast,
+                static let forecast = Api(query: .forecast,
                                           errorCode: err.forecast.rawValue,
-                                          parameters: [parameter.id_spot,
-                                                       parameter.id_model,
-                                                       parameter.no_wave])
+                                          parameters: [.id_spot,
+                                                       .id_model,
+                                                       .no_wave])
 
-                static let wforecast = api(query: routine.wforecast,
+                static let wforecast = Api(query: .wforecast,
                                            errorCode: err.wforecast.rawValue,
-                                           parameters: [parameter.username,     // pro users
-                                                        parameter.password,     // pro users
-                                                        parameter.id_spot,
-                                                        parameter.id_model,
-                                                        parameter.no_wave])
+                                           parameters: [.username,     // pro users
+                                                        .password,     // pro users
+                                                        .id_spot,
+                                                        .id_model,
+                                                        .no_wave])
                 
-                static let wforecastLatlon = api(query: routine.wforecast_latlon,
+                static let wforecastLatlon = Api(query: .wforecast_latlon,
                                                  errorCode: err.wforecast_latlon.rawValue,
-                                                 parameters: [parameter.username,   // pro users
-                                                              parameter.password,   // pro users
-                                                              parameter.id_model,
-                                                              parameter.lat,
-                                                              parameter.lon,
-                                                              parameter.no_wave])
+                                                 parameters: [.username,   // pro users
+                                                              .password,   // pro users
+                                                              .id_model,
+                                                              .lat,
+                                                              .lon,
+                                                              .no_wave])
                 
 
             }
             
-            static func url(api: api, tokens:[String: String?]) -> String {
+            static func url(api: Api, tokens:[Http.Service.Api.Parameter: String?]) -> String {
                 var strUrl = baseUrl
                 strUrl += "&q=\(api.query)"
                 for (k,v) in tokens {
                     if let parameters = api.parameters,
-                        parameters.contains(k) {
+                       parameters.contains(k) {
                         if let v = v {
                             strUrl += "&\(k)=\(v)"
                         }

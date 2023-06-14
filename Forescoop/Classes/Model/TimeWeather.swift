@@ -98,10 +98,15 @@ public class TimeWeather: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-        info = map.compactMapValues { $0 }
-        orderedKeys = info.keys.sorted {Int($0) ?? 0 < Int($1) ?? 0}
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
+        
+        guard let info = map?.compactMapValues({$0}) else {
+            throw CustomError.notMappeable
+        }
+        let orderedKeys = info.keys.sorted {Int($0) ?? 0 < Int($1) ?? 0}
+        self.info = info
+        self.orderedKeys = orderedKeys
     }
 
     public var description : String {

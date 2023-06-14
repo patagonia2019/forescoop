@@ -35,15 +35,17 @@ public class Spot: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-        guard map.keys.contains("id_spot"), map.keys.contains("spotname"), map.keys.contains("country") else {
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
+        guard map?.keys.contains("id_spot") == true,
+                map?.keys.contains("spotname") == true,
+                map?.keys.contains("country") == true else {
             throw CustomError.notMappeable
         }
-        id_spot = map["id_spot"] as? String
-        spotname = map["spotname"] as? String
-        country = map["country"] as? String
-        nickname = map["nickname"] as? String
+        id_spot = map?["id_spot"] as? String
+        spotname = map?["spotname"] as? String
+        country = map?["country"] as? String
+        nickname = map?["nickname"] as? String
     }
     
     public var description : String {

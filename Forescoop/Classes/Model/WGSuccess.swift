@@ -19,20 +19,21 @@ import Foundation
  * }
  */
 
-public class WGSuccess: Mappable {
+public class WGSuccess: Object, Mappable {
 
     var returnString: String?
     var message: String?
     
-    required public init?(map: [String: Any]?) throws {
+    required public convenience init?(map: [String: Any]?) throws {
+        self.init()
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
 
-        returnString = map["return"] as? String
-        message = map["message"] as? String
+        returnString = map?["return"] as? String
+        message = map?["message"] as? String
     }
     
     public var description : String {

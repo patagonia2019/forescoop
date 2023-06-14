@@ -42,14 +42,14 @@ public class WindguruStation: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
 
-        id = map["id"] as? String
-        station = map["station"] as? String
-        distance = map["distance"] as? Int ?? 0
-        id_type = map["id_type"] as? String
-        wind_avg = map["wind_avg"] as? Int ?? 0
+        id = map?["id"] as? String
+        station = map?["station"] as? String
+        distance = map?["distance"] as? Int ?? 0
+        id_type = map?["id_type"] as? String
+        wind_avg = map?["wind_avg"] as? Int ?? 0
     }
     
     public var description : String {

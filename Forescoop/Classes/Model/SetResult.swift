@@ -29,28 +29,27 @@ public class SetResult: Object, Mappable {
     var count: Int = 0
     // spots: is a dictionary forecast id/ forecast name
 
-    var sets = Array<SetInfo>()
+    var sets: [SetInfo]?
     
     required public convenience init?(map: [String: Any]?) throws {
         self.init()
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
-
-        count = map["count"] as? Int ?? 0
-        guard let dict = map["sets"] as? [String:Any] else { return }
-        for (k,v) in dict {
-            let tmpDictionary = ["id": k, "name": v]
-            if let setInfo = try Mapper<SetInfo>().map(JSON: tmpDictionary) {
-                sets.append(setInfo)
-            }
-        }
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
+        count = map?["count"] as? Int ?? 0
+        sets = try (map?["sets"] as? [String: Any])?.compactMap {try SetInfo(map: ["id": $0.key, "name": $0.value])}
     }
 
     public var description : String {
-        "\(type(of:self)) " + sets.compactMap{$0.description}.joined(separator: "\n")
+        [
+            "\(type(of:self)) ",
+            sets?.compactMap{$0.description}
+                .joined(separator: "\n")
+        ]
+            .compactMap {$0}
+            .joined(separator: "\n")
     }
 
 }

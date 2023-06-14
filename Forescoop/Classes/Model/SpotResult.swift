@@ -49,11 +49,11 @@ public class SpotResult: Object, Mappable {
         try mapping(map: map)
     }
     
-    public func mapping(map: [String:Any]?) throws {
-        guard let map = map else { throw CustomError.notMappeable }
+    public override func mapping(map: [String: Any]?) throws {
+        try super.mapping(map: map)
 
-        count = map["count"] as? Int ?? 0
-        spots = try (map["spots"] as? [[String:Any]])?.compactMap({try SpotOwner(map: $0)})
+        count = map?["count"] as? Int ?? 0
+        spots = try (map?["spots"] as? [[String: Any]])?.compactMap({try SpotOwner(map: $0)})
     }
 
     public var description: String {
