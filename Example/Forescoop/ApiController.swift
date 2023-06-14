@@ -25,8 +25,9 @@ enum AnonymousBaseServices: String, CaseIterable {
     case model_info
     case models_latlon
     case forecast
+    case anonymous
     static var allCases: [AnonymousBaseServices] {
-        return [.user, .geo_regions, .countries, .regions, .spot, spots, .search_spots, .model_info, .models_latlon, .forecast]
+        return [.user, .geo_regions, .countries, .regions, .spot, spots, .search_spots, .model_info, .models_latlon, .forecast, .anonymous]
     }
     static var allStrings: [String] {
         return allCases.map { $0.rawValue }
