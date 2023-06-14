@@ -14,11 +14,64 @@ protocol ApiControllerDelegate {
     func showError(service: String?, error: Error?)
 }
 
+enum AnonymousBaseServices: String, CaseIterable {
+    case user
+    case geo_regions
+    case countries
+    case regions
+    case spot
+    case spots
+    case search_spots
+    case model_info
+    case models_latlon
+    case forecast
+    static var allCases: [AnonymousBaseServices] {
+        return [.user, .geo_regions, .countries, .regions, .spot, spots, .search_spots, .model_info, .models_latlon, .forecast]
+    }
+    static var allStrings: [String] {
+        return allCases.map { $0.rawValue }
+    }
+}
+
+enum UserBasedServices: String, CaseIterable {
+    case add_f_spot
+    case remove_f_spot
+    case f_spots
+    case c_spots
+    case set_spots
+    case sets
+    case wforecast
+    case wforecast_latlon
+    static var allCases: [UserBasedServices] {
+        return [.add_f_spot, .remove_f_spot, .f_spots, .c_spots, .set_spots, .sets, .wforecast, .wforecast_latlon]
+    }
+    static var allStrings: [String] {
+        return allCases.map { $0.rawValue }
+    }
+}
+
 class ApiController {
     private (set) var user: User?
     private (set) var password: String?
-    var service: String? = nil
+    var service: String {
+        services[currentServicerOrdinal]
+    }
+    var currentServicerOrdinal: Int = 0
     private (set) var forecastService: ForecastWindguruProtocol? = nil
+    
+    lazy var services: [String] = {
+        isUserAnonymous == false ? AnonymousBaseServices.allStrings + UserBasedServices.allStrings : AnonymousBaseServices.allStrings
+    }()
+
+    var numberOfServices: Int {
+        services.count
+    }
+    
+    subscript(index: Int) -> String {
+        get {
+            return services[index]
+        }
+    }
     
     var delegate: ApiControllerDelegate?
     

@@ -15,27 +15,6 @@ class ApiListViewController: UIViewController {
     var apiController: ApiController? = nil
     var info: String?
 
-    let anonymBasedServices = ["user",
-                               "geo_regions",
-                               "countries",
-                               "regions",
-                               "spot",
-                               "spots",
-                               "search_spots",
-                               "model_info",
-                               "models_latlon",
-                               "forecast"]
-    
-    let userBasedServices = ["add_f_spot",
-                             "remove_f_spot",
-                             "f_spots",
-                             "c_spots",
-                             "set_spots",
-                             "sets",
-                             "wforecast"
-                             // "wforecast_latlon"
-                            ]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         apiController?.delegate = self
@@ -54,260 +33,139 @@ class ApiListViewController: UIViewController {
             }
         }
     }
-
-    lazy var services: [String] = {
-        apiController?.isUserAnonymous == false ? anonymBasedServices + userBasedServices : anonymBasedServices
-    }()
-    
 }
 
 extension ApiListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        apiController?.service = services[indexPath.item]
+        apiController?.currentServicerOrdinal = indexPath.item
         var action : UIAlertAction? = nil
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         
         switch apiController?.service {
             
-        case "set_spots":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "set id"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-            }
-            action = UIAlertAction.init(title: "Add", style: .default) { [weak self] _ in
-                self?.apiController?.addSetSpots(id: alert.textFields![0].text)
-            }
-            alert.title = "Add Set id"
-            alert.message = "Please enter a set id (i.e. 229823)"
-            break
+        case UserBasedServices.set_spots.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "set id")],
+                                               title: "Add Set",
+                                               message: "Please enter a set id (i.e. 229823)",
+                                               actionTitle: "Add",
+                                               actionBlock: { self.apiController?.addSetSpots(id: alert.textFields![0].text) }))
             
-        case "add_f_spot":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "spot id"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-            }
-            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.addFavoriteSpot(id: alert.textFields![0].text)
-            }
-            action = UIAlertAction.init(title: "Add", style: .default, handler: block)
-            alert.title = "Add Favorite"
-            alert.message = "Please enter a spot id (i.e. 64141)"
-            break
-
-        case "remove_f_spot":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "spot id"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "64141"
-            }
-            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.removeFavoriteSpot(id: alert.textFields![0].text)
-            }
+        case UserBasedServices.add_f_spot.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "spot id")],
+                                               title: "Add Favorite",
+                                               message: "Please enter a spot id (i.e. 64141)",
+                                               actionTitle: "Add",
+                                               actionBlock: { self.apiController?.addFavoriteSpot(id: alert.textFields![0].text) }))
             
-            action = UIAlertAction.init(title: "Remove", style: .default, handler: block)
-            alert.title = "Remove Favorite"
-            alert.message = "Please enter a spot id (i.e. 64141)"
-            break
-
-        case "forecast":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "spot id"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "64141"
-            }
+        case UserBasedServices.remove_f_spot.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "spot id")],
+                                               title: "Remove Favorite",
+                                               message: "Please enter a spot id (i.e. 64141)",
+                                               actionTitle: "Remove",
+                                               actionBlock: { self.apiController?.removeFavoriteSpot(id: alert.textFields![0].text) }))
             
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "model"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "3"
-            }
-
-            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.forecastSpot(id: alert.textFields![0].text, model: alert.textFields![1].text)
-            }
-            action = UIAlertAction.init(title: "Forecast", style: .default, handler: block)
-            alert.title = "Enter spot id"
-            alert.message = "Please enter a spot id (i.e. 64141), model id (i.e 3)"
-            break
-
-        case "spot":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "spot id"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "64141"
-            }
-            
-            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.spotInfo(spotId: alert.textFields![0].text)
-            }
-            action = UIAlertAction.init(title: "Get Spot Info", style: .default, handler: block)
-            alert.title = "Enter spot id"
-            alert.message = "Please enter a spot id (i.e. 64141)"
-            break
-
-        case "spots":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "country id# (optional)"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "76"
-            }
-            
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "region id# (optional)"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "209"
-            }
-            
-            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.spots(countryId: alert.textFields![0].text,
-                                           regionId: alert.textFields![1].text)
-            }
-            action = UIAlertAction.init(title: "Get Spots", style: .default, handler: block)
-            alert.title = "Enter country/region"
-            alert.message = "Please enter info to search (i.e. country = 76, region = 209)"
-            break
-            
-        case "search_spots":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "Location"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "Bariloche"
-            }
-
-            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.searchSpots(location: alert.textFields![0].text)
-            }
-            action = UIAlertAction.init(title: "Search Spots", style: .default, handler: block)
-            alert.title = "Enter location"
-            alert.message = "Please enter a spot to search (i.e. Bariloche)"
-            break
-
-            
-        case "c_spots":
+        case UserBasedServices.c_spots.rawValue:
             apiController?.customSpots()
-            break
 
-        case "f_spots":
+        case UserBasedServices.f_spots.rawValue:
             apiController?.favoriteSpots()
-            break
 
-        case "sets":
+        case UserBasedServices.sets.rawValue:
             apiController?.setSpots()
-            break
 
-        case "model_info":
+        case UserBasedServices.wforecast.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "spot id #", text: "64141"),
+                                                            .init(placeholder: "model id #", text: "3")],
+                                               title: "Enter spot id",
+                                               message: "Please enter a spot id (i.e. 64141) and model id (i.e. 3)",
+                                               actionTitle: "Forecast",
+                                               actionBlock: { self.apiController?.wforecast(spotId: alert.textFields![0].text,
+                                                                                            modelId: alert.textFields![1].text) }))
+
+        case AnonymousBaseServices.forecast.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "spot id", text: "64141"),
+                                                            .init(placeholder: "model", text: "3")],
+                                               title: "Forecast",
+                                               message: "Please enter a spot id (i.e. 64141), model id (i.e 3)",
+                                               actionTitle: "Enter spot id",
+                                               actionBlock: { self.apiController?.forecastSpot(id: alert.textFields![0].text, model: alert.textFields![1].text) }))
+
+        case AnonymousBaseServices.spot.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "spot id", text: "64141")],
+                                               title: "Enter spot id",
+                                               message: "Please enter a spot id (i.e. 64141)",
+                                               actionTitle: "Get Spot Info",
+                                               actionBlock: { self.apiController?.spotInfo(spotId: alert.textFields![0].text) }))
+
+        case AnonymousBaseServices.spots.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "country id# (optional)", text: "76"),
+                                                            .init(placeholder: "region id# (optional)", text: "209")],
+                                               title: "Enter country/region",
+                                               message: "Please enter info to search (i.e. country = 76, region = 209)",
+                                               actionTitle: "Get Spots",
+                                               actionBlock: { self.apiController?.spots(countryId: alert.textFields![0].text,
+                                                                                        regionId: alert.textFields![1].text) }))
             
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "model id # (optional)"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "3"
-            }
-            
-            let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.modelInfo(id: alert.textFields![0].text)
-            }
-            action = UIAlertAction.init(title: "get model/s", style: .default, handler: block)
-            alert.title = "Enter model id"
-            alert.message = "Please enter a model id (i.e. 3)"
-            break
+        case AnonymousBaseServices.search_spots.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "Location", text: "Bariloche")],
+                                               title: "Enter location",
+                                               message: "Please enter a spot to search (i.e. Bariloche)",
+                                               actionTitle: "Search Spots",
+                                               actionBlock: { self.apiController?.searchSpots(location: alert.textFields![0].text) }))
 
-
-        case "models_latlon":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "latitude"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "-41"
-            }
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "longitude"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "-71"
-            }
-            
-            let block: ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.models(lat: alert.textFields![0].text, lon: alert.textFields![1].text)
-            }
-            action = UIAlertAction.init(title: "query lat/lon", style: .default, handler: block)
-            alert.title = "Enter latitude/longitude"
-            alert.message = "Please enter (i.e. -41 / -71)"
-            break
-
-        case "wforecast":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "spot id #"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "64141"
-            }
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "model id #"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "3"
-            }
-            let block: ((UIAlertAction) -> Void)? = { [weak self] (action) in
-                self?.apiController?.wforecast(spotId: alert.textFields![0].text,
-                                               modelId: alert.textFields![1].text)
-            }
-            action = UIAlertAction.init(title: "Forecast", style: .default, handler: block)
-            alert.title = "Enter spot id"
-            alert.message = "Please enter a spot id (i.e. 64141) and model id (i.e. 3)"
-            break
-
-        case "geo_regions":
+        case AnonymousBaseServices.geo_regions.rawValue:
             apiController?.geoRegions()
-            break
             
-        case "countries":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "region id (optional)"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "5"
-            }
-            let block : ((UIAlertAction) -> Void)? = { [weak self] _ in
-                self?.apiController?.countries(regionId: alert.textFields![0].text)
-            }
-            action = UIAlertAction.init(title: "get country/s", style: .default, handler: block)
-            alert.title = "Enter region id"
-            alert.message = "Please enter a region id (i.e. 5)"
-            break
+        case AnonymousBaseServices.countries.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "region id (optional)", text: "5")],
+                                               title: "Enter region id",
+                                               message: "Please enter a region id (i.e. 5)",
+                                               actionTitle: "get country/s",
+                                               actionBlock: { self.apiController?.countries(regionId: alert.textFields![0].text) }))
             
-        case "regions":
-            alert.addTextField { (textfield) in
-                textfield.placeholder = "country id (optional)"
-                textfield.autocorrectionType = .no
-                textfield.autocapitalizationType = .none
-                textfield.text = "76"
-            }
-
-            let block : ((UIAlertAction) -> Void)? = { [weak self] _ in
-                self?.apiController?.regions(countryId: alert.textFields![0].text)
-            }
-            action = UIAlertAction.init(title: "get region/s", style: .default, handler: block)
-            alert.title = "Enter country id"
-            alert.message = "Please enter a country id (i.e. 76)"
-            break
+        case AnonymousBaseServices.regions.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "country id (optional)", text: "76")],
+                                               title: "Enter country id",
+                                               message: "Please enter a country id (i.e. 76)",
+                                               actionTitle: "get region/s",
+                                               actionBlock: { self.apiController?.regions(countryId: alert.textFields![0].text) }))
             
-        case "user":
+        case AnonymousBaseServices.user.rawValue:
             info = apiController?.userDescription
             performSegue(withIdentifier: "ApiInfoViewController", sender: self)
             break
             
+        case AnonymousBaseServices.model_info.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "model id # (optional)", text: "3")],
+                                               title: "Enter model id",
+                                               message: "Please enter a model id (i.e. 3)",
+                                               actionTitle: "get model/s",
+                                               actionBlock: { self.apiController?.modelInfo(id: alert.textFields![0].text) }))
+
+        case AnonymousBaseServices.models_latlon.rawValue:
+            action = change(alert: alert,
+                            alertConfig: .init(textFields: [.init(placeholder: "latitude", text: "-41"),
+                                                            .init(placeholder: "longitude", text: "-71")],
+                                               title: "Enter latitude/longitude",
+                                               message: "Please enter (i.e. -41 / -71)",
+                                               actionTitle: "query lat/lon",
+                                               actionBlock: { self.apiController?.models(lat: alert.textFields![0].text,
+                                                                                         lon: alert.textFields![1].text) }))
+
+
         default:
             break
         }
@@ -324,12 +182,12 @@ extension ApiListViewController: UITableViewDelegate {
 
 extension ApiListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        services.count
+        apiController?.numberOfServices ?? 0
     }
-    
+        
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CommonCell", for: indexPath)
-        cell.textLabel?.text = services[indexPath.item]
+        cell.textLabel?.text = apiController?.services[indexPath.item]
         return cell
     }
 }
@@ -347,5 +205,36 @@ extension ApiListViewController: ApiControllerDelegate {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel))
         self.present(alert, animated: true, completion: nil)
+    }
+}
+
+private extension ApiListViewController {
+    struct AlertTextField {
+        var placeholder: String
+        var text: String? = nil
+    }
+    struct AlertConfig {
+        var textFields: [AlertTextField]
+        var title: String
+        var message: String
+        var actionTitle: String
+        var actionBlock: ()->()
+    }
+    
+    private func change(alert: UIAlertController, alertConfig: AlertConfig) -> UIAlertAction? {
+        alertConfig.textFields.forEach { tf in
+            alert.addTextField { (textfield) in
+                textfield.placeholder = tf.placeholder
+                textfield.autocorrectionType = .no
+                textfield.autocapitalizationType = .none
+                textfield.text = tf.text
+            }
+        }
+        let action = UIAlertAction.init(title: alertConfig.actionTitle, style: .default) { _ in
+            alertConfig.actionBlock()
+        }
+        alert.title = alertConfig.title
+        alert.message = alertConfig.message
+        return action
     }
 }
