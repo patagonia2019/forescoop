@@ -29,14 +29,14 @@ class MainViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     
     var passwordTextField: UITextField?
-    var forecastService: ForecastWindguruProtocol? = ForecastWindguruService()
     
-    var user: User?
+    var apiController: ApiController? = nil
+    
     var isUpdated: Bool = false
     
     required convenience init?(coder: NSCoder, forecastService: ForecastWindguruProtocol? = nil) {
         self.init(coder: coder)
-        self.forecastService = forecastService
+        self.apiController = ApiController(forecastService: forecastService, delegate: self)
     }
     
     override func viewDidLoad() {
@@ -46,12 +46,9 @@ class MainViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let vc = segue.destination as? ApiListViewController,
-              let user = user else { return }
-        vc.forecastService = forecastService
-        vc.title = "Logged in as:" + user.name
-        vc.user = user
-        vc.password = passwordTextField?.text
+        guard let vc = segue.destination as? ApiListViewController else { return }
+        vc.apiController = ApiController(user: apiController?.user, password: apiController?.password, forecastService: apiController?.forecastService, delegate: vc)
+        vc.title = "Logged in as:" + (vc.apiController?.userName ?? "Unknown")
     }
 }
 
@@ -87,15 +84,14 @@ private extension MainViewController {
     }
     
     func requestForecastTest() throws -> SpotForecast? {
-        guard try SpotResult(map: Definition().json(jsonFile: "SpotResult")) != nil else { return nil }
-
+        guard try SpotResult(map: Definition().json(jsonFile: "SpotResult")) != nil else {
+            return nil
+        }
         return try SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))
     }
 
     func requestForecast() async throws -> SpotForecast? {
-        guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
-        let spotForecast = try? await forecastService?.forecast(bySpotId: spotId, model: nil)
-        return spotForecast
+        try await apiController?.start()
     }
         
     func hideWeatherInfo() {
@@ -105,8 +101,7 @@ private extension MainViewController {
         bottomView.alpha = 0
     }
     
-    func showWeatherInfo()
-    {
+    func showWeatherInfo() {
         UIView.animate(withDuration: kWDAnimationDuration) { [weak self] () -> Void in
             self?.toolbarView.alpha = 1
             self?.topView.alpha = 1
@@ -131,46 +126,43 @@ private extension MainViewController {
             textfield.isSecureTextEntry = true
         }
         
-        let block : ((UIAlertAction) -> Void)? = { [weak self] (action) in
-            Task {
-                
-                let username = alert.textFields?[0] ?? nil
-                let password = alert.textFields?[1] ?? nil
-                do {
-                    self?.user = try await self?.forecastService?.login(withUsername: username?.text,
-                                                                        password: password?.text)
-                    var name = User.Constant.Anonymous.rawValue
-                    if let user = self?.user {
-                        name = user.name
-                        self?.passwordTextField = password
-                    }
-                    let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(name)", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
-                        self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
-                    }))
-                    self?.present(alert, animated: true, completion:nil)
-                    
-                    self?.loginButton.setTitle("Logged in as: \(name)", for: .normal)
-                } catch {
-                    self?.showError(title: "Cannot login", error: error)
-                }
-                
-            }
+        let login = UIAlertAction.init(title: "Login", style: .default) { [weak self] _ in
+            self?.apiController?.login(username: alert.textFields?[0].text,
+                                       pass: alert.textFields?[1].text)
         }
-        
-        let login = UIAlertAction.init(title: "Login", style: .default, handler: block)
         alert.addAction(login)
-        let loginAnon = UIAlertAction.init(title: "Login as Anonymous", style: .default, handler: block)
+        let loginAnon = UIAlertAction.init(title: "Login as Anonymous", style: .default) { [weak self] _ in
+            self?.apiController?.loginAnonymous()
+        }
         alert.addAction(loginAnon)
         let cancel = UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(cancel)
         self.present(alert, animated: true, completion: nil)
     }
     
-    func showError(title: String, error: Error) {
-        let message = error.localizedDescription
+    func showError(title: String, error: Error?) {
+        let message = (error as? CustomError)?.description ?? error?.localizedDescription ?? "n/a"
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
+    }
+}
+
+extension MainViewController: ApiControllerDelegate {
+    func showApiInfo(info: String) {
+        let userName = apiController?.userName ?? "Unknown"
+        let alert = UIAlertController(title: "You are in!", message: "Welcome Windguru user \(userName)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { [weak self] _ in
+            self?.performSegue(withIdentifier: "ApiListViewController", sender: self)
+        }))
+        
+        present(alert, animated: true, completion:nil)
+        
+        loginButton.setTitle("Logged in as: \(userName)", for: .normal)
+    }
+    
+    func showError(service: String?, error: Error?) {
+        let title = "Error on \(service ?? "n/a")"
+        showError(title: title, error: error)
     }
 }
