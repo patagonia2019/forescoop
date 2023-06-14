@@ -44,7 +44,7 @@ import Foundation
  */
 
 public class Model: Object, Mappable {
-    static let defaultModel = "3"
+    public static let defaultModel = "3"
 
     var id_model: Int = 0
     var model_name: String? = nil
