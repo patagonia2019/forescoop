@@ -113,31 +113,14 @@ private extension MainViewController {
     @IBAction func loginButtonAction() {
         loginButton.setTitle("Login", for: .normal)
         
-        let alert = UIAlertController(title: "Enter credentials", message: "Please enter Windguru's username/password", preferredStyle: .alert)
-        alert.addTextField { (textfield) in
-            textfield.placeholder = "username"
-            textfield.autocorrectionType = .no
-            textfield.autocapitalizationType = .none
-        }
-        alert.addTextField { (textfield) in
-            textfield.placeholder = "password"
-            textfield.autocorrectionType = .no
-            textfield.autocapitalizationType = .none
-            textfield.isSecureTextEntry = true
-        }
+        let alertViewModel = AlertViewModel(apiController: apiController)
         
-        let login = UIAlertAction.init(title: "Login", style: .default) { [weak self] _ in
-            self?.apiController?.login(username: alert.textFields?[0].text,
-                                       pass: alert.textFields?[1].text)
+        if let ord = apiController?.services.firstIndex(of: AnonymousBaseServices.user.rawValue) {
+            apiController?.currentServiceOrdinal = ord
         }
-        alert.addAction(login)
-        let loginAnon = UIAlertAction.init(title: "Login as Anonymous", style: .default) { [weak self] _ in
-            self?.apiController?.loginAnonymous()
+        if let alert = alertViewModel.alertController {
+            self.present(alert, animated: true, completion: nil)
         }
-        alert.addAction(loginAnon)
-        let cancel = UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil)
-        alert.addAction(cancel)
-        self.present(alert, animated: true, completion: nil)
     }
     
     func showError(title: String, error: Error?) {

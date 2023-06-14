@@ -15,6 +15,7 @@ struct AlertViewModel {
     private struct AlertTextField {
         var placeholder: String
         var text: String? = nil
+        var isSecure: Bool = false
     }
     
     var apiController: ApiController?
@@ -77,7 +78,6 @@ struct AlertViewModel {
 
         case AnonymousBaseServices.geo_regions.rawValue:
             actionBlock = { self.apiController?.geoRegions() }
-
             
         case AnonymousBaseServices.countries.rawValue:
             textFields = [.init(placeholder: "region id (optional)", text: "5")]
@@ -88,7 +88,12 @@ struct AlertViewModel {
             actionBlock = { self.apiController?.regions(countryId: alert.textFields![0].text) }
             
         case AnonymousBaseServices.user.rawValue:
-            apiController?.delegate?.showApiInfo(info: apiController?.userDescription ?? "")
+            textFields = [.init(placeholder: "username"), .init(placeholder: "password", isSecure: true)]
+            actionBlock = { self.apiController?.login(username: alert.textFields?[0].text,
+                                                      pass: alert.textFields?[1].text) }
+
+        case AnonymousBaseServices.anonymous.rawValue:
+            actionBlock = { self.apiController?.loginAnonymous() }
             
         case AnonymousBaseServices.model_info.rawValue:
             textFields = [.init(placeholder: "model id (optional)", text: Model.defaultModel)]
@@ -119,6 +124,7 @@ struct AlertViewModel {
                 textfield.autocorrectionType = .no
                 textfield.autocapitalizationType = .none
                 textfield.text = tf.text
+                textfield.isSecureTextEntry = tf.isSecure
             }
         }
         let action = UIAlertAction.init(title: "Go", style: .default) { _ in
