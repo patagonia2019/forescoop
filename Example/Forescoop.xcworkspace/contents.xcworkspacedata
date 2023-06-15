@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ForescoopPkg">
+   </FileRef>
+   <FileRef
       location = "group:Forescoop.xcodeproj">
    </FileRef>
    <FileRef

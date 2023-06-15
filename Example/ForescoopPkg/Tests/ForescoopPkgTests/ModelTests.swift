@@ -1,6 +1,6 @@
 import XCTest
+import ForescoopPkg
 import CoreLocation
-import Forescoop
 
 class ModelTests: XCTestCase {
     
