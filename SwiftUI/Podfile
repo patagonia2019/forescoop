@@ -1,0 +1,22 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+use_frameworks!
+
+
+def sharedLib
+  project 'SwiftUIForescoop.xcodeproj'
+  pod 'Forescoop', :path => '../',
+  :testspecs => ['Tests']
+end
+
+target 'SwiftUIForescoop' do
+  platform :ios, '16.0'
+  sharedLib
+
+  target 'SwiftUIForescoopTests' do
+    inherit! :search_paths
+  end
+  target 'SwiftUIForescoopUITests' do
+    inherit! :search_paths
+  end
+end

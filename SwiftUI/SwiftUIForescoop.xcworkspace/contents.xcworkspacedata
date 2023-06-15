@@ -2,12 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Forescoop.xcodeproj">
+      location = "group:SwiftUIForescoop.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Forescoop-iOS.xctestplan">
    </FileRef>
 </Workspace>
