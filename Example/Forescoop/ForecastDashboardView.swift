@@ -517,7 +517,7 @@ struct ForecastDashboardView: View {
                 LabeledContent {
                     Text(freezingLevel(weather?.freezingLevelHeightInMeters(hh: hour)))
                 } label: {
-                    Label("Freezing level", systemImage: "thermometer.low")
+                    Label("Freezing level", systemImage: "ruler")
                 }
             }
             Menu {
