@@ -37,6 +37,7 @@
 - Saved map locations retain both map selections and searched Windguru spots. A searched spot is saved with its resolved Windguru coordinates only when no saved location already represents that coordinate.
 - The iOS example targets are universal. `ForecastDashboardView` keeps its compact phone presentation and uses a two-column layout on regular-width iPad screens; iPad supports all interface orientations.
 - The iPad dashboard adds a bottom location workspace with saved-location map pins and selectable location cards. Search-derived saved locations retain their Windguru spot ID; manually pinned locations keep the existing PRO-coordinate or guest-nearest-spot behavior.
+- `ForecastDashboardView` renders a non-interactive native SwiftUI animated background from the selected slot's `weatherSymbolNames()`, combining weather-aware gradient, sun glow, clouds, wind streaks, and rain or snow particles without adding a third-party dependency.
 
 ### Verification
 

@@ -129,6 +129,13 @@ struct ForecastDashboardView: View {
             .frame(maxWidth: 1_100)
             .padding()
         }
+        .background {
+            AnimatedWeatherBackground(
+                symbolNames: forecast.weatherSymbolNames(hour: selectedHour),
+                precipitationMillimeters: precipitationValue(forecast.forecast, hour: selectedHour)
+            )
+                .ignoresSafeArea()
+        }
     }
 
     private func forecastOverview(for forecast: SpotForecast) -> some View {
