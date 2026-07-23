@@ -258,6 +258,15 @@ class ModelTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(weatherSymbols.count, 2)
         XCTAssertEqual(weatherSymbols.count, Set(weatherSymbols).count)
         XCTAssertTrue(spotForecast?.weatherSymbolNames(hour: "29").contains("snowflake") == true)
+        let blendedForecast: SpotForecast?
+        do {
+            blendedForecast = try SpotForecast.blended([spotForecast!, spotForecast!])
+        } catch {
+            return XCTFail("Expected an equal-weight model blend")
+        }
+        XCTAssertEqual(blendedForecast?.forecast?.modelName, "Forescoop Mix (2 models)")
+        let blendHour = forecast?.availableHours.first
+        XCTAssertEqual(blendedForecast?.forecast?.windSpeed(hh: blendHour), forecast?.windSpeed(hh: blendHour))
         XCTAssertEqual(forecast?.seaLevelPressure(hh: "10"), 1002.0)
         XCTAssertEqual(forecast?.freezingLevelHeightInMeters(hh: "10"), 2590.0)
         XCTAssertEqual(forecast?.precipitation(hh: "165"), 0)

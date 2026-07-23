@@ -31,6 +31,7 @@
 - Precipitation is modelled as an explicit measurement type. The dashboard prefers Windguru's three-hour accumulation (`APCP`) to match its three-hour selector, falling back to the hourly value (`APCP1`) only when needed; people can switch between millimetres and inches.
 - Freezing level is an explicit measurement type, with a dashboard selector for metres and feet.
 - The dashboard resolves a spot's supported forecast models from `spotInfo`, then maps their IDs to readable names via `modelInfo`; selecting one reloads only the current spot with that model.
+- Model selection is multi-select. One checked model loads it directly; multiple checked models create an explicit equal-weight `Forescoop Mix`, including circular averaging for wind direction. Windguru's own `WG` mix is not used because the public forecast endpoint exposes only its metadata, not forecast values.
 
 ### Verification
 

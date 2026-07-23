@@ -24,7 +24,7 @@ struct ForecastDashboardView: View {
     @State private var showsWindDirectionArrow = false
     @State private var showsSpotPicker = false
     @State private var showsModelPicker = false
-    @State private var selectedModelID: String?
+    @State private var selectedModelIDs: [String] = []
 
     init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
@@ -51,10 +51,12 @@ struct ForecastDashboardView: View {
                                 showsModelPicker = true
                             } label: {
                                 Label(forecast.forecast?.modelName ?? "Forecast model", systemImage: "cpu")
-                                    .font(.subheadline)
+                                    .font(.headline)
                                     .foregroundStyle(.secondary)
                             }
                             .buttonStyle(.plain)
+                            .font(.title.bold())
+                            .foregroundColor(.blue)
                         }
                         HStack(spacing: 12) {
                             ForEach(forecast.weatherSymbolNames(hour: selectedHour), id: \.self) { symbol in
@@ -141,17 +143,17 @@ struct ForecastDashboardView: View {
                 ForecastModelPicker(
                     forecastService: forecastService,
                     spotID: selectedSpotID,
-                    selectedModelID: selectedModelID
-                ) { modelID in
+                    selectedModelIDs: Set(selectedModelIDs)
+                ) { modelIDs in
                     showsModelPicker = false
-                    Task { await loadForecast(modelId: modelID) }
+                    Task { await loadForecast(modelIDs: modelIDs) }
                 }
             }
         }
     }
 
     @MainActor
-    private func loadForecast(spotId: String? = nil, modelId: String? = nil) async {
+    private func loadForecast(spotId: String? = nil, modelIDs: [String]? = nil) async {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -159,11 +161,28 @@ struct ForecastDashboardView: View {
         do {
             let requestedSpotID = spotId ?? selectedSpotID
             let isChangingSpot = requestedSpotID != selectedSpotID
-            let requestedModelID = modelId ?? (isChangingSpot ? nil : selectedModelID)
-            forecast = try await forecastService.forecast(bySpotId: requestedSpotID, model: requestedModelID)
-            if let forecast {
+            let requestedModelIDs = modelIDs ?? (isChangingSpot ? [] : selectedModelIDs)
+            var validForecasts: [SpotForecast] = []
+            for modelID in requestedModelIDs {
+                if let loadedForecast = try await forecastService.forecast(bySpotId: requestedSpotID, model: modelID),
+                   loadedForecast.forecast != nil {
+                    validForecasts.append(loadedForecast)
+                }
+            }
+            if requestedModelIDs.isEmpty {
+                forecast = try await forecastService.forecast(bySpotId: requestedSpotID, model: nil)
+            } else if validForecasts.count == 1 {
+                forecast = validForecasts[0]
+            } else if validForecasts.count == requestedModelIDs.count {
+                forecast = try SpotForecast.blended(validForecasts)
+            } else {
+                throw CustomError.notMappeable
+            }
+            if forecast != nil {
                 selectedSpotID = requestedSpotID
-                selectedModelID = forecast.model ?? requestedModelID ?? Model.defaultModel
+                selectedModelIDs = requestedModelIDs.isEmpty
+                    ? [forecast?.model ?? Model.defaultModel]
+                    : requestedModelIDs
             }
             selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
         } catch {

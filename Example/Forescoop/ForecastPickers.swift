@@ -20,13 +20,14 @@ private struct ForecastModelOption: Identifiable {
 struct ForecastModelPicker: View {
     let forecastService: ForecastWindguruProtocol
     let spotID: String
-    let selectedModelID: String?
-    let onModelSelected: (String) -> Void
+    let selectedModelIDs: Set<String>
+    let onModelSelected: ([String]) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var models: [ForecastModelOption] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @State private var selectedIDs: Set<String> = []
 
     var body: some View {
         NavigationStack {
@@ -40,15 +41,12 @@ struct ForecastModelPicker: View {
                 } else {
                     List(models) { model in
                         Button {
-                            onModelSelected(model.identifier)
+                            toggle(model.identifier)
                         } label: {
                             HStack {
+                                Image(systemName: selectedIDs.contains(model.identifier) ? "checkmark.square.fill" : "square")
                                 Text(model.name)
                                 Spacer()
-                                if model.identifier == selectedModelID {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.tint)
-                                }
                             }
                         }
                         .foregroundStyle(.primary)
@@ -60,8 +58,23 @@ struct ForecastModelPicker: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Apply") { onModelSelected(selectedIDs.sorted()) }
+                        .disabled(selectedIDs.isEmpty)
+                }
             }
-            .task { await loadModels() }
+            .task {
+                selectedIDs = selectedModelIDs
+                await loadModels()
+            }
+        }
+    }
+
+    private func toggle(_ identifier: String) {
+        if selectedIDs.contains(identifier) {
+            selectedIDs.remove(identifier)
+        } else {
+            selectedIDs.insert(identifier)
         }
     }
 
@@ -256,7 +269,7 @@ private enum DeviceLocationError: LocalizedError {
     ForecastModelPicker(
         forecastService: ForecastWindguruMockup(),
         spotID: "64141",
-        selectedModelID: "3",
+        selectedModelIDs: [],
         onModelSelected: { _ in }
     )
 }
