@@ -40,6 +40,8 @@
 - `ForecastDashboardView` renders a non-interactive native SwiftUI animated background from the selected slot's `weatherSymbolNames()`, combining weather-aware gradient, sun glow, clouds, wind streaks, and rain or snow particles without adding a third-party dependency.
 - `ForescoopVisionOS` now launches a dedicated `VisionForecastView` with a wide SwiftUI forecast window, large weather symbols, and translucent material metric cards. It intentionally avoids the iPad dashboard layout and reuses the same live forecast service.
 - visionOS now uses a native `App`/`WindowGroup` lifecycle rather than the shared UIKit app delegate. The forecast window provides a bottom ornament for Locations and Refresh; Locations opens a separate spatial window with the saved-location map and list.
+- `ForescoopWatchOnly` is a watchOS 26 SwiftUI target and shared scheme. Its intentionally compact interface shows only location, weather symbols, temperature, wind speed, and forecast hour, using the local Swift package directly without the legacy WatchKit extension. It declares `iOSnowatch` as its WatchKit companion, so its bundle identifier is nested under that app's identifier as required by watchOS installation.
+- The watch dashboard uses a dedicated, persistent spot selector rather than a refresh button. Watch and iPhone app containers are separate, so watch locations are stored locally until an App Group is explicitly introduced.
 
 ### Verification
 

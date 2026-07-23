@@ -60,6 +60,8 @@
 		A00100000000000000000009 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		A0010000000000000000000A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		A0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = A0010000000000000000000C /* Forescoop */; };
+		AA0100000000000000000001 /* WatchOnlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000012 /* WatchOnlyApp.swift */; };
+		AA0100000000000000000002 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = AA0100000000000000000009 /* Forescoop */; };
 		B00100000000000000000001 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		B00100000000000000000002 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
 		B00100000000000000000003 /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
@@ -73,16 +75,16 @@
 		B0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = B0010000000000000000000C /* Forescoop */; };
 		C00100000000000000000001 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
 		C00100000000000000000002 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
-		D00100000000000000000001 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
-		D00100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
-		E00100000000000000000001 /* VisionForecastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00100000000000000000003 /* VisionForecastView.swift */; };
-		F00100000000000000000001 /* VisionForescoopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* VisionForescoopApp.swift */; };
-		F00100000000000000000002 /* VisionLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* VisionLocationsView.swift */; };
 		C0DE00000000000000000011 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000001 /* Forescoop */; };
 		C0DE00000000000000000012 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000002 /* Forescoop */; };
 		C0DE00000000000000000013 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000003 /* Forescoop */; };
 		C0DE00000000000000000014 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000004 /* Forescoop */; };
 		C0DE00000000000000000015 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000005 /* Forescoop */; };
+		D00100000000000000000001 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
+		D00100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
+		E00100000000000000000001 /* VisionForecastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00100000000000000000003 /* VisionForecastView.swift */; };
+		F00100000000000000000001 /* VisionForescoopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* VisionForescoopApp.swift */; };
+		F00100000000000000000002 /* VisionLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* VisionLocationsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -180,6 +182,8 @@
 		9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		98D1B5722A3A212000A85FBF /* ApiController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiController.swift; sourceTree = "<group>"; };
 		A0010000000000000000000D /* iOSnowatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnowatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0100000000000000000011 /* ForescoopWatchOnly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopWatchOnly.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0100000000000000000012 /* WatchOnlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchOnlyApp.swift; sourceTree = "<group>"; };
 		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C00100000000000000000003 /* ForecastDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDashboardView.swift; sourceTree = "<group>"; };
 		D00100000000000000000003 /* AnimatedWeatherBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedWeatherBackground.swift; sourceTree = "<group>"; };
@@ -244,6 +248,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA0100000000000000000004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0100000000000000000002 /* Forescoop in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0010000000000000000000E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -278,6 +290,7 @@
 				70BAA9BC1F276B4F004CD577 /* Forescoop_Example.app */,
 				A0010000000000000000000D /* iOSnowatch.app */,
 				B0010000000000000000000D /* ForescoopVisionOS.app */,
+				AA0100000000000000000011 /* ForescoopWatchOnly.app */,
 				70BAA9CC1F276B6F004CD577 /* Forescoop_Tests.xctest */,
 				7066F6CD1F95ADD400D126C1 /* Forescoop.app */,
 				7066F6D91F95ADD400D126C1 /* Forescoop Extension.appex */,
@@ -298,6 +311,7 @@
 				E00100000000000000000003 /* VisionForecastView.swift */,
 				F00100000000000000000003 /* VisionForescoopApp.swift */,
 				F00100000000000000000004 /* VisionLocationsView.swift */,
+				AA0100000000000000000012 /* WatchOnlyApp.swift */,
 				9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */,
 				9865F8E53011C6B400777207 /* MapLocationPicker.swift */,
 				9865F8DD3011C0A200777207 /* WindguruLoginView.swift */,
@@ -529,6 +543,25 @@
 			productReference = A0010000000000000000000D /* iOSnowatch.app */;
 			productType = "com.apple.product-type.application";
 		};
+		AA0100000000000000000005 /* ForescoopWatchOnly */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0100000000000000000006 /* Build configuration list for PBXNativeTarget "ForescoopWatchOnly" */;
+			buildPhases = (
+				AA0100000000000000000003 /* Sources */,
+				AA0100000000000000000004 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ForescoopWatchOnly;
+			packageProductDependencies = (
+				AA0100000000000000000009 /* Forescoop */,
+			);
+			productName = ForescoopWatchOnly;
+			productReference = AA0100000000000000000011 /* ForescoopWatchOnly.app */;
+			productType = "com.apple.product-type.application";
+		};
 		B0010000000000000000000F /* ForescoopVisionOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */;
@@ -561,7 +594,6 @@
 				TargetAttributes = {
 					7066F6CC1F95ADD400D126C1 = {
 						CreatedOnToolsVersion = 9.0;
-						DevelopmentTeam = DC76Z3W5Y8;
 						ProvisioningStyle = Automatic;
 					};
 					7066F6D81F95ADD400D126C1 = {
@@ -615,6 +647,7 @@
 				70BAA9A41F276B4F004CD577 /* Forescoop_Example */,
 				A0010000000000000000000F /* iOSnowatch */,
 				B0010000000000000000000F /* ForescoopVisionOS */,
+				AA0100000000000000000005 /* ForescoopWatchOnly */,
 				70BAA9BE1F276B6F004CD577 /* Forescoop_Tests */,
 				7066F6CC1F95ADD400D126C1 /* Forescoop */,
 				7066F6D81F95ADD400D126C1 /* Forescoop Extension */,
@@ -776,6 +809,14 @@
 				C00100000000000000000002 /* ForecastDashboardView.swift in Sources */,
 				D00100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */,
 				9865F8E73011C6B400777207 /* MapLocationPicker.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0100000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0100000000000000000001 /* WatchOnlyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1050,7 +1091,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = DC76Z3W5Y8;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Forescoop_Extension;
 				INFOPLIST_FILE = Forescoop/Info.plist;
@@ -1076,6 +1117,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Forescoop_Extension;
 				INFOPLIST_FILE = Forescoop/Info.plist;
@@ -1095,7 +1137,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1105,6 +1146,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1114,7 +1156,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1124,6 +1165,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1319,7 +1361,6 @@
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1329,6 +1370,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1339,7 +1381,6 @@
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1349,6 +1390,39 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AA0100000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
+				INFOPLIST_FILE = "ForescoopWatchOnly-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.iOSnowatch.ForescoopWatchOnly;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		AA0100000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
+				INFOPLIST_FILE = "ForescoopWatchOnly-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.iOSnowatch.ForescoopWatchOnly;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -1356,6 +1430,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1377,6 +1452,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1469,6 +1545,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		AA0100000000000000000006 /* Build configuration list for PBXNativeTarget "ForescoopWatchOnly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0100000000000000000007 /* Debug */,
+				AA0100000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1489,6 +1574,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		A0010000000000000000000C /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		AA0100000000000000000009 /* Forescoop */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
 			productName = Forescoop;
