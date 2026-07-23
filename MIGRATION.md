@@ -32,6 +32,7 @@
 - Freezing level is an explicit measurement type, with a dashboard selector for metres and feet.
 - The dashboard resolves a spot's supported forecast models from `spotInfo`, then maps their IDs to readable names via `modelInfo`; selecting one reloads only the current spot with that model.
 - Model selection is multi-select. One checked model loads it directly; multiple checked models create an explicit equal-weight `Forescoop Mix`, including circular averaging for wind direction. Windguru's own `WG` mix is not used because the public forecast endpoint exposes only its metadata, not forecast values.
+- Windguru PRO login is explicit in the dashboard. The username is stored in `AppStorage`, while the password is verified against Windguru and stored only in Keychain; the service now exposes the authenticated `wforecast_latlon` operation for future map-based coordinate forecasts.
 
 ### Verification
 

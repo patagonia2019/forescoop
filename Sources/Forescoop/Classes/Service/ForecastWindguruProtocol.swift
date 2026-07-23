@@ -13,6 +13,7 @@ public protocol ForecastWindguruProtocol {
     
     func forecast(bySpotId spotId: String, model modelId: String?) async throws -> SpotForecast?
     func wforecast(bySpotId spotId: String, model modelId: String?, username: String?, password: String?) async throws -> WSpotForecast?
+    func wforecast(byLatitude latitude: Double, longitude: Double, model modelId: String?, username: String, password: String) async throws -> WSpotForecast?
     func spotInfo(bySpotId spotId: String) async throws -> SpotInfo?
     func customSpots(withUsername username: String?, password: String?) async throws -> SpotResult?
     func favoriteSpots(withUsername username: String?, password: String?) async throws -> SpotResult?

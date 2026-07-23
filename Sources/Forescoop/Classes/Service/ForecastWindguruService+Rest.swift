@@ -63,6 +63,19 @@ public extension ForecastWindguruService {
                                           .password: password],
                                  api: .wforecast)
     }
+
+    func wforecast(byLatitude latitude: Double,
+                   longitude: Double,
+                   model modelId: String? = nil,
+                   username: String,
+                   password: String) async throws -> WSpotForecast? {
+        try await request(tokens: [.id_model: modelId ?? Model.defaultModel,
+                                   .lat: String(latitude),
+                                   .lon: String(longitude),
+                                   .username: username,
+                                   .password: password],
+                          api: .wforecastLatlon)
+    }
     
     // spotInfo = api(query: routine.spot,
     //            errorCode: err.spot.rawValue,

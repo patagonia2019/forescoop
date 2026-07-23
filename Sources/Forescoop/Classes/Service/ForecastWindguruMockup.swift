@@ -24,6 +24,14 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
                           password: String?) async throws -> WSpotForecast? {
         try WSpotForecast(map: definition.json(jsonFile: "WSpotForecast"))
     }
+
+    public func wforecast(byLatitude latitude: Double,
+                          longitude: Double,
+                          model modelId: String? = nil,
+                          username: String,
+                          password: String) async throws -> WSpotForecast? {
+        try WSpotForecast(map: definition.json(jsonFile: "WSpotForecast"))
+    }
     
     public func spotInfo(bySpotId spotId: String) async throws -> SpotInfo? {
         try SpotInfo(map: definition.json(jsonFile: "SpotInfo"))
@@ -85,4 +93,3 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
         try User(map: definition.json(jsonFile: "User"))
     }
 }
-

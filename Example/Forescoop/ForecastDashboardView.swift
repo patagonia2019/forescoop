@@ -12,6 +12,7 @@ import Forescoop
 struct ForecastDashboardView: View {
     private let forecastService: ForecastWindguruProtocol
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
+    @AppStorage("windguruUsername") private var windguruUsername = ""
     @State private var forecast: SpotForecast?
     @State private var errorMessage: String?
     @State private var isLoading = false
@@ -24,6 +25,7 @@ struct ForecastDashboardView: View {
     @State private var showsWindDirectionArrow = false
     @State private var showsSpotPicker = false
     @State private var showsModelPicker = false
+    @State private var showsLogin = false
     @State private var selectedModelIDs: [String] = []
 
     init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
@@ -125,6 +127,11 @@ struct ForecastDashboardView: View {
             }
             .navigationTitle("Forescoop")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(windguruUsername.isEmpty ? "Login" : windguruUsername, systemImage: "person.crop.circle") {
+                        showsLogin = true
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Refresh", systemImage: "arrow.clockwise") {
                         Task { await loadForecast() }
@@ -147,6 +154,12 @@ struct ForecastDashboardView: View {
                 ) { modelIDs in
                     showsModelPicker = false
                     Task { await loadForecast(modelIDs: modelIDs) }
+                }
+            }
+            .sheet(isPresented: $showsLogin) {
+                WindguruLoginView(forecastService: forecastService, username: windguruUsername) { username in
+                    windguruUsername = username
+                    showsLogin = false
                 }
             }
         }
