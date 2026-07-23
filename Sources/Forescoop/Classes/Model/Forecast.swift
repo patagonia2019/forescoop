@@ -48,7 +48,7 @@ enum TypeOfWeather: String {
     case SLP //  sea level pressure
     case FLHGT //  Freezing Level height in meters (0 degree isoterm)
     case APCP //  Precip. (mm/3h)
-    case APCP1
+    case APCP1 // Precip. (mm/1h)
     case WINDSPD //  Wind speed (knots)
     case WINDDIR //  Wind direction
     case WINDIRNAME //  wind direction (name)
@@ -174,6 +174,7 @@ public extension Forecast {
         weathers?[TypeOfWeather.APCP.rawValue]?.value(hh: hh)
     }
 
+    /// APCP1: Precip. (mm/1h)
     func precipitation1(hh: String?) -> Double? {
         weathers?[TypeOfWeather.APCP1.rawValue]?.value(hh: hh)
     }

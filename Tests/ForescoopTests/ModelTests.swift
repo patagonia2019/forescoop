@@ -280,6 +280,14 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(pressure.value(in: .millibars), 1_013.25)
         XCTAssertEqual(pressure.value(in: .inchesOfMercury), 29.921_255, accuracy: 0.000_001)
         XCTAssertEqual(pressure.value(in: .millimetersOfMercury), 760.001, accuracy: 0.001)
+
+        let precipitation = Precipitation(millimeters: 25.4)
+        XCTAssertEqual(precipitation.value(in: .millimeters), 25.4)
+        XCTAssertEqual(precipitation.value(in: .inches), 1)
+
+        let freezingLevel = FreezingLevel(meters: 1_000)
+        XCTAssertEqual(freezingLevel.value(in: .meters), 1_000)
+        XCTAssertEqual(freezingLevel.value(in: .feet), 3_280.839_895, accuracy: 0.000_001)
     }
     func testWSpotForecast() {
         let wspotForecast: WSpotForecast?

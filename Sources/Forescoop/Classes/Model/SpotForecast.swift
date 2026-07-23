@@ -124,10 +124,9 @@ public extension SpotForecast {
 
     /// SF Symbols matching all applicable weather conditions for a forecast hour.
     func weatherSymbolNames(hour: String?) -> [String] {
-        let precipitation = max(
-            forecast?.precipitation(hh: hour) ?? 0,
-            forecast?.precipitation1(hh: hour) ?? 0
-        )
+        let precipitation = forecast?.precipitation(hh: hour)
+            ?? forecast?.precipitation1(hh: hour)
+            ?? 0
         let modelTemperature = forecast?.temperature(hh: hour) ?? forecast?.temperatureReal(hh: hour) ?? 0
         let cloudCover = forecast?.cloudCoverTotal(hh: hour) ?? 0
         let humidity = forecast?.relativeHumidity(hh: hour) ?? 0

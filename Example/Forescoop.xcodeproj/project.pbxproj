@@ -66,6 +66,8 @@
 		B0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = B0010000000000000000000C /* Forescoop */; };
 		C00100000000000000000001 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
 		C00100000000000000000002 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
+		C00100000000000000000004 /* ForecastPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000005 /* ForecastPickers.swift */; };
+		C00100000000000000000006 /* ForecastPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000005 /* ForecastPickers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +143,7 @@
 		A0010000000000000000000D /* iOSnowatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnowatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C00100000000000000000003 /* ForecastDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDashboardView.swift; sourceTree = "<group>"; };
+		C00100000000000000000005 /* ForecastPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastPickers.swift; sourceTree = "<group>"; };
 		70BAA9BD1F276B50004CD577 /* Forescoop_Example-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Forescoop_Example-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/Forescoop_Example-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9CC1F276B6F004CD577 /* Forescoop_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Forescoop_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70BAA9CD1F276B6F004CD577 /* Forescoop_Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Forescoop_Tests-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/Forescoop_Tests-Info.plist"; sourceTree = "<absolute>"; };
@@ -269,6 +272,7 @@
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				C00100000000000000000003 /* ForecastDashboardView.swift */,
+				C00100000000000000000005 /* ForecastPickers.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
 				9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */,
 				98D1B5722A3A212000A85FBF /* ApiController.swift */,
@@ -691,6 +695,7 @@
 				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
 				C00100000000000000000001 /* ForecastDashboardView.swift in Sources */,
+				C00100000000000000000004 /* ForecastPickers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +711,7 @@
 				A00100000000000000000006 /* MainViewController.swift in Sources */,
 				A00100000000000000000007 /* AppDelegate.swift in Sources */,
 				C00100000000000000000002 /* ForecastDashboardView.swift in Sources */,
+				C00100000000000000000006 /* ForecastPickers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

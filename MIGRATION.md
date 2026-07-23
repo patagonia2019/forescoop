@@ -27,6 +27,10 @@
 - Snow detection uses Windguru's hourly precipitation (`APCP1`, falling back to the larger three-hour accumulation) together with the model temperature (`TMP`), so forecast slots with precipitation below freezing include `snowflake` in their symbol row.
 - `ForecastDashboardView` receives its forecast service explicitly. The app's default remains the live Windguru service, while its SwiftUI preview injects `ForecastWindguruMockup` and therefore never makes a network request.
 - Tapping the forecast location opens a SwiftUI spot picker. It supports public Windguru spot search and Simulator/device location; the latter reverse-geocodes the locality and loads the first matching public Windguru spot because exact coordinate forecasts require Windguru PRO credentials.
+- The last successfully loaded Windguru spot ID is stored with `AppStorage`, so refreshes and recreated dashboard views keep the user's selected location.
+- Precipitation is modelled as an explicit measurement type. The dashboard prefers Windguru's three-hour accumulation (`APCP`) to match its three-hour selector, falling back to the hourly value (`APCP1`) only when needed; people can switch between millimetres and inches.
+- Freezing level is an explicit measurement type, with a dashboard selector for metres and feet.
+- The dashboard resolves a spot's supported forecast models from `spotInfo`, then maps their IDs to readable names via `modelInfo`; selecting one reloads only the current spot with that model.
 
 ### Verification
 
