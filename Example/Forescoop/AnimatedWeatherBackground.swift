@@ -11,6 +11,8 @@ import SwiftUI
 struct AnimatedWeatherBackground: View {
     let symbolNames: [String]
     let precipitationMillimeters: Double
+    let windSpeedKnots: Double
+    let windDirectionDegrees: Double?
 
     @State private var isAnimating = false
 
@@ -29,6 +31,13 @@ struct AnimatedWeatherBackground: View {
         }
         return 0
     }
+    // Windguru directions describe where wind comes from. Decorative particles travel downwind.
+    private var windTravelDirectionDegrees: Double { (windDirectionDegrees ?? 270) + 180 }
+    private var windTravelVector: (x: CGFloat, y: CGFloat) {
+        let radians = windTravelDirectionDegrees * .pi / 180
+        return (sin(radians), -cos(radians))
+    }
+    private var windVelocity: Double { min(max(windSpeedKnots, 0), 50) }
 
     var body: some View {
         GeometryReader { proxy in
@@ -66,10 +75,16 @@ struct AnimatedWeatherBackground: View {
                         Capsule()
                             .fill(.white.opacity(0.20))
                             .frame(width: CGFloat(48 + (index % 3) * 30), height: 2)
-                            .offset(
-                                x: windOffset(for: index, width: proxy.size.width),
-                                y: CGFloat(index * 54) - proxy.size.height * 0.18
-                            )
+                            .rotationEffect(.degrees(windTravelDirectionDegrees - 90))
+                            .offset(x: windOffset(for: index, width: proxy.size.width) * windTravelVector.x,
+                                    y: windOffset(for: index, width: proxy.size.height) * windTravelVector.y)
+                    }
+
+                    TimelineView(.animation) { timeline in
+                        let time = timeline.date.timeIntervalSinceReferenceDate
+                        ForEach(0..<12, id: \.self) { index in
+                            windLeaf(index: index, in: proxy.size, time: time)
+                        }
                     }
                 }
 
@@ -125,6 +140,22 @@ struct AnimatedWeatherBackground: View {
         return start + (isAnimating ? width * 0.75 : 0)
     }
 
+    private func windLeaf(index: Int, in size: CGSize, time: TimeInterval) -> some View {
+        let progress = (time * (0.025 + windVelocity * 0.002) + Double(index) * 0.17).truncatingRemainder(dividingBy: 1)
+        let travel = max(size.width, size.height) * 1.35 * (CGFloat(progress) - 0.5)
+        let lane = max(size.width, size.height) * (CGFloat((index * 29) % 100) / 100 - 0.5)
+        let perpendicular = (x: -windTravelVector.y, y: windTravelVector.x)
+        let x = windTravelVector.x * travel + perpendicular.x * lane
+        let y = windTravelVector.y * travel + perpendicular.y * lane
+            + CGFloat(sin(time * 1.8 + Double(index))) * 18
+
+        return Image(systemName: "leaf.fill")
+            .font(.system(size: CGFloat(10 + index % 7)))
+            .foregroundStyle(index.isMultiple(of: 2) ? Color.green.opacity(0.55) : Color.brown.opacity(0.60))
+            .rotationEffect(.degrees(time * Double(40 + index * 7)))
+            .offset(x: x, y: y)
+    }
+
     @ViewBuilder
     private func precipitationParticle(index: Int, in size: CGSize, time: TimeInterval) -> some View {
         let column = CGFloat((index * 37) % 100) / 100
@@ -151,6 +182,11 @@ struct AnimatedWeatherBackground: View {
 }
 
 #Preview("Sunny and windy") {
-    AnimatedWeatherBackground(symbolNames: ["sun.max.fill", "wind"], precipitationMillimeters: 0)
+    AnimatedWeatherBackground(
+        symbolNames: ["sun.max.fill", "wind"],
+        precipitationMillimeters: 0,
+        windSpeedKnots: 22,
+        windDirectionDegrees: 270
+    )
         .frame(height: 400)
 }

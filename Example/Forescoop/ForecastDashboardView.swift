@@ -132,7 +132,9 @@ struct ForecastDashboardView: View {
         .background {
             AnimatedWeatherBackground(
                 symbolNames: forecast.weatherSymbolNames(hour: selectedHour),
-                precipitationMillimeters: precipitationValue(forecast.forecast, hour: selectedHour)
+                precipitationMillimeters: precipitationValue(forecast.forecast, hour: selectedHour),
+                windSpeedKnots: forecast.forecast?.windSpeed(hh: selectedHour ?? forecast.currentForecastHour) ?? 0,
+                windDirectionDegrees: forecast.forecast?.windDirection(hh: selectedHour ?? forecast.currentForecastHour)
             )
                 .ignoresSafeArea()
         }
