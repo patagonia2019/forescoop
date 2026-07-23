@@ -17,7 +17,6 @@ struct WindguruSpotPicker: View {
     let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.editMode) private var editMode
     @State private var query = ""
     @State private var spots: [SpotOwner] = []
     @State private var isLoading = false
@@ -26,6 +25,7 @@ struct WindguruSpotPicker: View {
     @State private var savedLocations = SavedMapLocationStore.load()
     @State private var locationToRename: SavedMapLocation?
     @State private var renamedLocation = ""
+    @State private var editMode: EditMode = .inactive
 
     private var lastSavedCoordinate: CLLocationCoordinate2D? { savedLocations.last?.coordinate }
 
@@ -79,12 +79,15 @@ struct WindguruSpotPicker: View {
                 }
             }
             .navigationTitle("Choose location")
+            .environment(\.editMode, $editMode)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    EditButton()
+                    Button(editMode.isEditing ? "Done" : "Edit") {
+                        editMode = editMode.isEditing ? .inactive : .active
+                    }
                 }
             }
         }
@@ -137,7 +140,7 @@ struct WindguruSpotPicker: View {
             .buttonStyle(.plain)
             .disabled(isLoading)
 
-            if editMode?.wrappedValue.isEditing == true {
+            if editMode.isEditing {
                 Button("Rename \(location.name)", systemImage: "pencil") {
                     beginRenaming(location)
                 }
