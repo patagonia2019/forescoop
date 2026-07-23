@@ -11,6 +11,7 @@ import SwiftUI
 import Forescoop
 
 struct ForecastDashboardView: View {
+    private static let windguruModelInfoURL = URL(string: "https://www.windguru.cz/help.php?sec=models")!
     private let forecastService: ForecastWindguruProtocol
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
     @AppStorage("windguruUsername") private var windguruUsername = ""
@@ -50,14 +51,22 @@ struct ForecastDashboardView: View {
                             .font(.title.bold())
                             .foregroundColor(.blue)
 
-                            Button {
-                                showsModelPicker = true
-                            } label: {
-                                Label(forecast.forecast?.modelName ?? "Forecast model", systemImage: "cpu")
-                                    .font(.headline)
-                                    .foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                Button {
+                                    showsModelPicker = true
+                                } label: {
+                                    Label(forecast.forecast?.modelName ?? "Forecast model", systemImage: "cpu")
+                                        .font(.headline)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .buttonStyle(.plain)
+
+                                Link(destination: Self.windguruModelInfoURL) {
+                                    Image(systemName: "info.circle")
+                                }
+                                .accessibilityLabel("About Windguru forecast models")
+                                .accessibilityHint("Opens Windguru's model explanation")
                             }
-                            .buttonStyle(.plain)
                             .font(.title.bold())
                             .foregroundColor(.blue)
                         }
