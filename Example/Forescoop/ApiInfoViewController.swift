@@ -3,10 +3,11 @@
 //  Forescoop
 //
 //  Created by javierfuchs on 7/13/17.
-//  Copyright © 2023 CocoaPods. All rights reserved.
+//  Copyright © 2023 Forescoop. All rights reserved.
 //
 
 import Foundation
+import UIKit
 import Forescoop
 
 class ApiInfoViewController: UIViewController {
@@ -20,5 +21,3 @@ class ApiInfoViewController: UIViewController {
     }
     
 }
-
-

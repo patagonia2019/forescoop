@@ -10,49 +10,37 @@ import Forescoop
 
 #if os(macOS)
 import Cocoa
+import SwiftUI
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    
-    var started: Bool = false
-    
+    private var window: NSWindow?
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
-    }
-    
-    func applicationWillTerminate(_ aNotification: Notification) {
-    }
-    
-    func applicationWillResignActive(_ notification: Notification) {
-    }
-    
-    func applicationDidBecomeActive(_ notification: Notification) {
+        let window = NSWindow(contentViewController: NSHostingController(rootView: ForecastDashboardView()))
+        window.title = "Forescoop"
+        window.setContentSize(NSSize(width: 1_180, height: 820))
+        window.minSize = NSSize(width: 900, height: 650)
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        self.window = window
     }
 }
 
-#else
+#elseif os(iOS)
 
 import UIKit
+import SwiftUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-    private var vc: MainViewController? {
-        let sb = UIStoryboard(name: "Main", bundle: nil)
-        let vc = sb.instantiateViewController(identifier: "MainViewController") { coder in
-            let forecastService = ForecastWindguruService()
-            return MainViewController(coder: coder, forecastService: forecastService)
-        } as? MainViewController
-        vc?.loadViewIfNeeded()
-        return vc
-    }
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController(rootViewController: vc!)
+        window?.rootViewController = UIHostingController(rootView: ForecastDashboardView())
+        window?.makeKeyAndVisible()
         return true
     }
 
@@ -80,6 +68,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+}
+
+#elseif os(visionOS)
+
+// visionOS uses VisionForescoopApp's SwiftUI lifecycle.
+
+#else
+
+import UIKit
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
 }
 
 #endif

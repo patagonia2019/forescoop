@@ -3,7 +3,7 @@
 //  Forescoop_Example
 //
 //  Created by fox on 14/06/2023.
-//  Copyright © 2023 CocoaPods. All rights reserved.
+//  Copyright © 2023 Forescoop. All rights reserved.
 //
 
 import Foundation

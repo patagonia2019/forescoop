@@ -3,7 +3,7 @@
 //  JFWindguru_Tests
 //
 //  Created by fox on 29/05/2023.
-//  Copyright © 2023 CocoaPods. All rights reserved.
+//  Copyright © 2023 Forescoop. All rights reserved.
 //
 
 import XCTest
