@@ -36,6 +36,7 @@
 - Choose Location includes a map picker. With a saved PRO session it loads Windguru's exact latitude/longitude forecast; guests resolve the tapped coordinate to the nearest public Windguru spot instead.
 - Saved map locations retain both map selections and searched Windguru spots. A searched spot is saved with its resolved Windguru coordinates only when no saved location already represents that coordinate.
 - The iOS example targets are universal. `ForecastDashboardView` keeps its compact phone presentation and uses a two-column layout on regular-width iPad screens; iPad supports all interface orientations.
+- The iPad dashboard adds a bottom location workspace with saved-location map pins and selectable location cards. Search-derived saved locations retain their Windguru spot ID; manually pinned locations keep the existing PRO-coordinate or guest-nearest-spot behavior.
 
 ### Verification
 

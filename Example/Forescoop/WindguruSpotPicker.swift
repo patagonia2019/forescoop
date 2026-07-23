@@ -242,7 +242,7 @@ struct WindguruSpotPicker: View {
                 abs($0.latitude - coordinate.latitude) < 0.0001 && abs($0.longitude - coordinate.longitude) < 0.0001
             }
             if !alreadySaved {
-                savedLocations.append(SavedMapLocation(name: spot.name ?? "Windguru spot", coordinate: coordinate))
+                savedLocations.append(SavedMapLocation(name: spot.name ?? "Windguru spot", coordinate: coordinate, spotID: identifier))
                 saveLocations()
             }
         }
@@ -282,24 +282,26 @@ struct WindguruSpotPicker: View {
     }
 }
 
-private struct SavedMapLocation: Codable, Identifiable {
+struct SavedMapLocation: Codable, Identifiable {
     let id: UUID
     var name: String
     let latitude: Double
     let longitude: Double
+    let spotID: String?
 
-    init(name: String, coordinate: CLLocationCoordinate2D) {
+    init(name: String, coordinate: CLLocationCoordinate2D, spotID: String? = nil) {
         id = UUID()
         self.name = name
         latitude = coordinate.latitude
         longitude = coordinate.longitude
+        self.spotID = spotID
     }
 
     var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }
     var coordinateText: String { "\(latitude.formatted(.number.precision(.fractionLength(4)))), \(longitude.formatted(.number.precision(.fractionLength(4))))" }
 }
 
-private enum SavedMapLocationStore {
+enum SavedMapLocationStore {
     private static let key = "savedMapLocations"
 
     static func load() -> [SavedMapLocation] {

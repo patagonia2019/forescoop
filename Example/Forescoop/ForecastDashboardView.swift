@@ -7,6 +7,7 @@
 //
 
 import CoreLocation
+import MapKit
 import SwiftUI
 import Forescoop
 
@@ -30,6 +31,7 @@ struct ForecastDashboardView: View {
     @State private var showsModelPicker = false
     @State private var showsLogin = false
     @State private var selectedModelIDs: [String] = []
+    @State private var savedMapLocations = SavedMapLocationStore.load()
 
     init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
@@ -62,7 +64,7 @@ struct ForecastDashboardView: View {
                 }
             }
             .task { await loadForecast() }
-            .sheet(isPresented: $showsSpotPicker) {
+            .sheet(isPresented: $showsSpotPicker, onDismiss: refreshSavedMapLocations) {
                 WindguruSpotPicker(
                     forecastService: forecastService,
                     username: windguruUsername,
@@ -112,6 +114,8 @@ struct ForecastDashboardView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
+
+                    iPadLocationWorkspace()
                 } else {
                     VStack(spacing: 24) {
                         forecastOverview(for: forecast)
@@ -215,6 +219,92 @@ struct ForecastDashboardView: View {
             .accessibilityHint("Shows the direction as an arrow")
         }
         .font(.body)
+    }
+
+    private func iPadLocationWorkspace() -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Label("Choose location", systemImage: "mappin.and.ellipse")
+                    .font(.title2.bold())
+                Spacer()
+                Button("Manage locations", systemImage: "slider.horizontal.3") {
+                    showsSpotPicker = true
+                }
+            }
+
+            Map {
+                ForEach(savedMapLocations) { location in
+                    Marker(location.name, coordinate: location.coordinate)
+                }
+            }
+            .frame(height: 280)
+            .clipShape(.rect(cornerRadius: 16))
+
+            if savedMapLocations.isEmpty {
+                ContentUnavailableView("No saved locations", systemImage: "mappin.slash", description: Text("Use Manage locations to search, pick, and save a location."))
+                    .frame(maxWidth: .infinity)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
+                    ForEach(savedMapLocations) { location in
+                        Button {
+                            Task { await loadSavedLocation(location) }
+                        } label: {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(location.name)
+                                    Text(location.coordinateText)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "mappin.and.ellipse")
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(12)
+                            .background(.thinMaterial, in: .rect(cornerRadius: 12))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .padding(.top, 8)
+    }
+
+    private func refreshSavedMapLocations() {
+        savedMapLocations = SavedMapLocationStore.load()
+    }
+
+    @MainActor
+    private func loadSavedLocation(_ location: SavedMapLocation) async {
+        if let spotID = location.spotID {
+            await loadForecast(spotId: spotID)
+            return
+        }
+
+        if !windguruUsername.isEmpty, WindguruCredentialStore.password(for: windguruUsername) != nil {
+            await loadForecast(coordinate: location.coordinate)
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            let clLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+            let placemark = try await CLGeocoder().reverseGeocodeLocation(clLocation).first
+            guard let searchTerm = placemark?.locality ?? placemark?.administrativeArea else {
+                errorMessage = "The selected map location could not be identified."
+                return
+            }
+            guard let spotID = try await forecastService.searchSpots(byLocation: searchTerm)?.allSpots.first?.identifier else {
+                errorMessage = "No Windguru spot was found near the selected map location."
+                return
+            }
+            await loadForecast(spotId: spotID)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     @MainActor
