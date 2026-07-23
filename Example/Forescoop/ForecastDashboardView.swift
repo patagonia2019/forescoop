@@ -32,6 +32,8 @@ struct ForecastDashboardView: View {
     @State private var showsLogin = false
     @State private var selectedModelIDs: [String] = []
     @State private var savedMapLocations = SavedMapLocationStore.load()
+    @State private var iPadMapPosition: MapCameraPosition = .automatic
+    @State private var selectedMapLocationID: SavedMapLocation.ID?
 
     init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
@@ -232,13 +234,20 @@ struct ForecastDashboardView: View {
                 }
             }
 
-            Map {
+            Map(position: $iPadMapPosition, selection: $selectedMapLocationID) {
                 ForEach(savedMapLocations) { location in
                     Marker(location.name, coordinate: location.coordinate)
+                        .tag(location.id)
                 }
             }
             .frame(height: 280)
             .clipShape(.rect(cornerRadius: 16))
+            .onChange(of: selectedMapLocationID) { _, locationID in
+                guard let locationID,
+                      let location = savedMapLocations.first(where: { $0.id == locationID }) else { return }
+                centerMap(on: location.coordinate)
+                Task { await loadSavedLocation(location) }
+            }
 
             if savedMapLocations.isEmpty {
                 ContentUnavailableView("No saved locations", systemImage: "mappin.slash", description: Text("Use Manage locations to search, pick, and save a location."))
@@ -247,7 +256,7 @@ struct ForecastDashboardView: View {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
                     ForEach(savedMapLocations) { location in
                         Button {
-                            Task { await loadSavedLocation(location) }
+                            selectMapLocation(location)
                         } label: {
                             Label {
                                 VStack(alignment: .leading, spacing: 2) {
@@ -273,6 +282,22 @@ struct ForecastDashboardView: View {
 
     private func refreshSavedMapLocations() {
         savedMapLocations = SavedMapLocationStore.load()
+    }
+
+    private func centerMap(on coordinate: CLLocationCoordinate2D) {
+        iPadMapPosition = .region(MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 3, longitudeDelta: 3)
+        ))
+    }
+
+    private func selectMapLocation(_ location: SavedMapLocation) {
+        centerMap(on: location.coordinate)
+        if selectedMapLocationID == location.id {
+            Task { await loadSavedLocation(location) }
+        } else {
+            selectedMapLocationID = location.id
+        }
     }
 
     @MainActor
