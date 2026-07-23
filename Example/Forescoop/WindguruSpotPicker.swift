@@ -22,6 +22,11 @@ struct WindguruSpotPicker: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showsMap = false
+    @State private var savedLocations = SavedMapLocationStore.load()
+    @State private var locationToRename: SavedMapLocation?
+    @State private var renamedLocation = ""
+
+    private var lastSavedCoordinate: CLLocationCoordinate2D? { savedLocations.last?.coordinate }
 
     var body: some View {
         NavigationStack {
@@ -37,6 +42,8 @@ struct WindguruSpotPicker: View {
                 } footer: {
                     Text("Map picks use an exact coordinate forecast for Windguru PRO, or the nearest public spot for guests.")
                 }
+
+                mapLocationsSection
 
                 Section("Search Windguru spots") {
                     HStack {
@@ -57,7 +64,7 @@ struct WindguruSpotPicker: View {
                         ForEach(spots.indices, id: \.self) { index in
                             let spot = spots[index]
                             Button {
-                                onSpotSelected(spot)
+                                Task { await selectSpot(spot) }
                             } label: {
                                 VStack(alignment: .leading) {
                                     Text(spot.name ?? "Unknown spot")
@@ -75,13 +82,59 @@ struct WindguruSpotPicker: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    EditButton()
+                }
             }
         }
         .sheet(isPresented: $showsMap) {
-            MapLocationPicker { coordinate in
+            MapLocationPicker(initialCoordinate: lastSavedCoordinate) { coordinate in
                 showsMap = false
-                Task { await selectMapCoordinate(coordinate) }
+                Task { await saveMapCoordinate(coordinate) }
             }
+        }
+        .alert("Rename location", isPresented: Binding(
+            get: { locationToRename != nil },
+            set: { if !$0 { locationToRename = nil } }
+        )) {
+            TextField("Location name", text: $renamedLocation)
+            Button("Save") { renameLocation() }
+            Button("Cancel", role: .cancel) { locationToRename = nil }
+        }
+    }
+
+    @ViewBuilder
+    private var mapLocationsSection: some View {
+        if !savedLocations.isEmpty {
+            Section("Map locations") {
+                ForEach(savedLocations) { location in
+                    savedLocationRow(location)
+                }
+                .onDelete(perform: delete)
+                .onMove(perform: move)
+            }
+        }
+    }
+
+    private func savedLocationRow(_ location: SavedMapLocation) -> some View {
+        Button {
+            Task { await selectMapCoordinate(location.coordinate) }
+        } label: {
+            Label {
+                VStack(alignment: .leading) {
+                    Text(location.name)
+                    Text(location.coordinateText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            } icon: {
+                Image(systemName: "mappin.and.ellipse")
+            }
+        }
+        .disabled(isLoading)
+        .contextMenu {
+            Button("Rename", systemImage: "pencil") { beginRenaming(location) }
+            Button("Delete", systemImage: "trash", role: .destructive) { delete(location) }
         }
     }
 
@@ -93,6 +146,10 @@ struct WindguruSpotPicker: View {
 
         do {
             let location = try await CurrentLocationProvider().location()
+            if !username.isEmpty, WindguruCredentialStore.password(for: username) != nil {
+                onCoordinateSelected(location.coordinate)
+                return
+            }
             let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
             guard let searchTerm = placemark?.locality ?? placemark?.administrativeArea else {
                 throw DeviceLocationError.noPlacemark
@@ -100,7 +157,7 @@ struct WindguruSpotPicker: View {
             query = searchTerm
             spots = try await forecastService.searchSpots(byLocation: searchTerm)?.allSpots ?? []
             guard let closestSpot = spots.first else { throw DeviceLocationError.noWindguruSpot }
-            onSpotSelected(closestSpot)
+            await selectSpot(closestSpot)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -138,42 +195,103 @@ struct WindguruSpotPicker: View {
             guard let spot = try await forecastService.searchSpots(byLocation: term)?.allSpots.first else {
                 throw DeviceLocationError.noWindguruSpot
             }
-            onSpotSelected(spot)
+            await selectSpot(spot)
         } catch {
             errorMessage = error.localizedDescription
         }
     }
-}
 
-private struct MapLocationPicker: View {
-    let onSelection: (CLLocationCoordinate2D) -> Void
-    @Environment(\.dismiss) private var dismiss
-    @State private var selectedCoordinate: CLLocationCoordinate2D?
-    @State private var position: MapCameraPosition = .automatic
+    @MainActor
+    private func saveMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
+        var name = "Selected map location"
+        do {
+            let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+            let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
+            guard let term = placemark?.locality ?? placemark?.administrativeArea else { return }
+            name = try await forecastService.searchSpots(byLocation: term)?.allSpots.first?.name ?? name
+        } catch {
+            // The coordinate remains usable even if a public spot name cannot be resolved.
+        }
+        savedLocations.append(SavedMapLocation(name: name, coordinate: coordinate))
+        saveLocations()
+    }
 
-    var body: some View {
-        NavigationStack {
-            MapReader { proxy in
-                Map(position: $position) {
-                    if let selectedCoordinate {
-                        Marker("Selected location", coordinate: selectedCoordinate)
-                    }
-                }
-                .onTapGesture { point in
-                    selectedCoordinate = proxy.convert(point, from: .local)
-                }
+    @MainActor
+    private func selectSpot(_ spot: SpotOwner) async {
+        if let identifier = spot.identifier,
+           let spotInfo = try? await forecastService.spotInfo(bySpotId: identifier),
+           let coordinate = spotInfo.location?.coordinate {
+            let alreadySaved = savedLocations.contains {
+                abs($0.latitude - coordinate.latitude) < 0.0001 && abs($0.longitude - coordinate.longitude) < 0.0001
             }
-            .navigationTitle("Pick location")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Use Location") {
-                        if let selectedCoordinate { onSelection(selectedCoordinate) }
-                    }
-                    .disabled(selectedCoordinate == nil)
-                }
+            if !alreadySaved {
+                savedLocations.append(SavedMapLocation(name: spot.name ?? "Windguru spot", coordinate: coordinate))
+                saveLocations()
             }
         }
+        onSpotSelected(spot)
+    }
+
+    private func beginRenaming(_ location: SavedMapLocation) {
+        locationToRename = location
+        renamedLocation = location.name
+    }
+
+    private func renameLocation() {
+        guard let locationToRename,
+              let index = savedLocations.firstIndex(where: { $0.id == locationToRename.id }) else { return }
+        savedLocations[index].name = renamedLocation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? locationToRename.name : renamedLocation
+        self.locationToRename = nil
+        saveLocations()
+    }
+
+    private func delete(_ offsets: IndexSet) {
+        savedLocations.remove(atOffsets: offsets)
+        saveLocations()
+    }
+
+    private func delete(_ location: SavedMapLocation) {
+        savedLocations.removeAll { $0.id == location.id }
+        saveLocations()
+    }
+
+    private func move(from source: IndexSet, to destination: Int) {
+        savedLocations.move(fromOffsets: source, toOffset: destination)
+        saveLocations()
+    }
+
+    private func saveLocations() {
+        SavedMapLocationStore.save(savedLocations)
+    }
+}
+
+private struct SavedMapLocation: Codable, Identifiable {
+    let id: UUID
+    var name: String
+    let latitude: Double
+    let longitude: Double
+
+    init(name: String, coordinate: CLLocationCoordinate2D) {
+        id = UUID()
+        self.name = name
+        latitude = coordinate.latitude
+        longitude = coordinate.longitude
+    }
+
+    var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }
+    var coordinateText: String { "\(latitude.formatted(.number.precision(.fractionLength(4)))), \(longitude.formatted(.number.precision(.fractionLength(4))))" }
+}
+
+private enum SavedMapLocationStore {
+    private static let key = "savedMapLocations"
+
+    static func load() -> [SavedMapLocation] {
+        guard let data = UserDefaults.standard.data(forKey: key) else { return [] }
+        return (try? JSONDecoder().decode([SavedMapLocation].self, from: data)) ?? []
+    }
+
+    static func save(_ locations: [SavedMapLocation]) {
+        UserDefaults.standard.set(try? JSONEncoder().encode(locations), forKey: key)
     }
 }
 
@@ -248,4 +366,8 @@ private enum DeviceLocationError: LocalizedError {
         onSpotSelected: { _ in },
         onCoordinateSelected: { _ in }
     )
+}
+
+#Preview("Map location picker") {
+    MapLocationPicker(onSelection: { _ in })
 }

@@ -33,6 +33,9 @@
 		9865F8E23011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
 		9865F8E33011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
 		9865F8E43011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
+		9865F8E63011C6B400777207 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
+		9865F8E73011C6B400777207 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
+		9865F8E83011C6B400777207 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
 		98688A0B22D5936700A09AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0A22D5936700A09AD0 /* Assets.xcassets */; };
 		98688A0E22D5936700A09AD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0C22D5936700A09AD0 /* Main.storyboard */; };
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -157,6 +160,7 @@
 		9865F8D93011C07F00777207 /* ForecastModelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastModelPicker.swift; sourceTree = "<group>"; };
 		9865F8DD3011C0A200777207 /* WindguruLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindguruLoginView.swift; sourceTree = "<group>"; };
 		9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindguruSpotPicker.swift; sourceTree = "<group>"; };
+		9865F8E53011C6B400777207 /* MapLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLocationPicker.swift; sourceTree = "<group>"; };
 		98688A0422D5936400A09AD0 /* ForescoopMacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopMacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98688A0A22D5936700A09AD0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		98688A0D22D5936700A09AD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -282,6 +286,7 @@
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				C00100000000000000000003 /* ForecastDashboardView.swift */,
 				9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */,
+				9865F8E53011C6B400777207 /* MapLocationPicker.swift */,
 				9865F8DD3011C0A200777207 /* WindguruLoginView.swift */,
 				9865F8D93011C07F00777207 /* ForecastModelPicker.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
@@ -708,6 +713,7 @@
 				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
 				C00100000000000000000001 /* ForecastDashboardView.swift in Sources */,
+				9865F8E63011C6B400777207 /* MapLocationPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,6 +760,7 @@
 				A00100000000000000000006 /* MainViewController.swift in Sources */,
 				A00100000000000000000007 /* AppDelegate.swift in Sources */,
 				C00100000000000000000002 /* ForecastDashboardView.swift in Sources */,
+				9865F8E73011C6B400777207 /* MapLocationPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -765,6 +772,7 @@
 				B00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
 				9865F8DA3011C07F00777207 /* ForecastModelPicker.swift in Sources */,
 				B00100000000000000000003 /* ApiController.swift in Sources */,
+				9865F8E83011C6B400777207 /* MapLocationPicker.swift in Sources */,
 				9865F8E23011C0E200777207 /* WindguruSpotPicker.swift in Sources */,
 				B00100000000000000000004 /* AlertViewModel.swift in Sources */,
 				B00100000000000000000005 /* ApiListViewController.swift in Sources */,

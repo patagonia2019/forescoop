@@ -11,10 +11,17 @@ import SwiftUI
 import Forescoop
 
 struct MapLocationPicker: View {
+    let initialCoordinate: CLLocationCoordinate2D?
     let onSelection: (CLLocationCoordinate2D) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var selectedCoordinate: CLLocationCoordinate2D?
     @State private var position: MapCameraPosition = .automatic
+
+    init(initialCoordinate: CLLocationCoordinate2D? = nil, onSelection: @escaping (CLLocationCoordinate2D) -> Void) {
+        self.initialCoordinate = initialCoordinate
+        self.onSelection = onSelection
+        _selectedCoordinate = State(initialValue: initialCoordinate)
+    }
 
     var body: some View {
         NavigationStack {
@@ -43,5 +50,5 @@ struct MapLocationPicker: View {
 }
 
 #Preview("Map location picker") {
-    MapLocationPicker(onSelection: { _ in })
+    MapLocationPicker(initialCoordinate: CLLocationCoordinate2D(latitude: -41.13, longitude: -71.31), onSelection: { _ in })
 }
