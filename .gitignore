@@ -8,3 +8,5 @@ Gemfile.lock
 Podfile.lock
 DerivedData
 Build
+/.build
+/.swiftpm

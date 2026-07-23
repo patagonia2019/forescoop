@@ -1,0 +1,39 @@
+# Migration log
+
+## Internal library: Forescoop
+
+- The internal Forescoop library is a root-level Swift package with the public product and module name `Forescoop`; consumer apps depend on and import `Forescoop`. Its package container is named `ForescoopPackage` to avoid an Xcode build-graph collision with the existing watch app target named `Forescoop`.
+- Package resources live in `Sources/Forescoop/Resources` and are processed by Swift Package Manager.
+- The package and test targets explicitly use `Sources/Forescoop` and `Tests/ForescoopTests`; example applications and other repository directories are outside the package boundary.
+- All package and application targets now require version 26.0 or later of their respective platforms: iOS, watchOS, macOS, and tvOS.
+- The package manifest uses Swift tools version 6.2, the first PackageDescription version that exposes the platform 26 deployment constants.
+- `Definition` loads those resources through `Bundle.module`; it no longer depends on the legacy framework/resource-bundle layout.
+- Legacy dependency-manager configuration, generated workspace metadata, build phases, and framework references have been removed.
+- The Xcode project links the local `Forescoop` product directly for the iOS app, its tests, watch extension, macOS app, and tvOS app. Signing, entitlements, and deployment targets are unchanged.
+- Legacy demo bundle identifiers have been renamed to the `org.forescoop…` namespace at the user's request.
+- `iOSnowatch` is an iOS-only example target and scheme. It shares the iOS app sources and `Forescoop` package dependency, but deliberately has no watch app dependency or embedding phase.
+- `ForescoopVisionOS` is a visionOS 26.0 target and scheme that reuses the UIKit iOS example sources and the `Forescoop` package, without watch embedding.
+- The iOS forecast dashboard is now `ForecastDashboardView`, a SwiftUI root view. The UIKit login and API navigation screens remain for their later feature-by-feature migration.
+- `SpotResult` accepts both the legacy array and Windguru's current dictionary form of search results, so the SwiftUI dashboard can resolve a live forecast.
+- The dashboard requests the known Bariloche spot ID directly, avoiding unnecessary search-result ordering and schema changes for its fixed location.
+- Forecast-hour keys are displayed as offsets from the current local day: the SwiftUI dashboard labels each selector entry with today's/next day's 24-hour time (`27` is tomorrow at `03 hs`), provides previous/next controls, and derives the selected slot's weather symbol from that same timestamp. Forecast initialization metadata is not used for the displayed calendar date because fallback data can be stale.
+- Windguru's live forecast response includes auxiliary model payloads that are not weather forecasts. `SpotForecast` now ignores those payloads and explicitly prefers model `3`, preventing a mapping failure and the dashboard's fallback to the dated bundled fixture.
+- Wind speed and temperature units are explicit package types. The SwiftUI dashboard exposes their selectors by tapping the displayed value; wind supports knots, m/s, km/h, mph, and Beaufort, while temperature supports Celsius and Fahrenheit.
+- The dashboard's forecast detail section shows gusts, Windguru-style wind-direction arrow, high/mid/low cloud cover, humidity, freezing level, and sea-level pressure for the selected three-hour slot.
+- The primary wind line keeps speed, gusts, direction, and the wind-unit selector together. Tapping direction alternates between its abbreviation and a Windguru-style arrow.
+- Cloud cover is presented as a three-column High/Mid/Low table, with each percentage's gray background becoming denser as coverage increases.
+- Sea-level pressure is an explicit package measurement type with hPa, mbar, inHg, and mmHg conversions. Its dashboard row is a tappable unit selector; freezing level and pressure use SF Symbols.
+- Weather presentation exposes all applicable SF Symbols as an array rather than collapsing compound conditions into one icon. The dashboard renders that array horizontally, always including the slot's wind and sky state alongside rain, freezing/snow, fog, or tornado conditions when present.
+- Snow detection uses Windguru's hourly precipitation (`APCP1`, falling back to the larger three-hour accumulation) together with the model temperature (`TMP`), so forecast slots with precipitation below freezing include `snowflake` in their symbol row.
+- `ForecastDashboardView` receives its forecast service explicitly. The app's default remains the live Windguru service, while its SwiftUI preview injects `ForecastWindguruMockup` and therefore never makes a network request.
+- Tapping the forecast location opens a SwiftUI spot picker. It supports public Windguru spot search and Simulator/device location; the latter reverse-geocodes the locality and loads the first matching public Windguru spot because exact coordinate forecasts require Windguru PRO credentials.
+
+### Verification
+
+- Swift package tests pass with all platform minimums set to 26.
+- The watch-enabled iOS, macOS, and tvOS example schemes build successfully against their 26.0 Simulator/SDK targets.
+- `swift test` builds the package successfully, loads all resource fixtures, and passes all 12 tests.
+- The normal signed `ForescoopMacOS` Xcode build succeeds with the local package resolved by Swift Package Manager; its generated resource bundle is a valid signed bundle.
+- The watch-enabled `Forescoop_Example` scheme builds successfully for an iOS Simulator when the destination is specified without forcing an iOS SDK, allowing Xcode to use the watchOS Simulator SDK for the embedded watch targets.
+- The shared app delegate now has a tvOS-specific branch, allowing the tvOS storyboard to own its initial view controller without referencing the iOS-only `MainViewController`.
+- `swift test` passes with a regression assertion that an hour offset of `27` resolves to tomorrow at 03:00 relative to a supplied current day; the iOS-only `iOSnowatch` scheme builds for an iOS Simulator.

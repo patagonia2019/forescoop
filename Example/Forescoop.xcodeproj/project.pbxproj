@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -24,8 +24,6 @@
 		70BAA9B41F276B4F004CD577 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
 		70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
-		9802C5522A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; };
-		9802C5532A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		98688A0B22D5936700A09AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0A22D5936700A09AD0 /* Assets.xcassets */; };
 		98688A0E22D5936700A09AD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0C22D5936700A09AD0 /* Main.storyboard */; };
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -39,10 +37,35 @@
 		98D31F812A251AE200916A59 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98DC785622D5964700F72DBA /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		A9A0FB86835207541A95EFE3 /* Pods_ForescoopTVOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA8E9011A369B20537D6B51F /* Pods_ForescoopTVOS.framework */; };
-		ACA48C0FF40E8D9D717E2B06 /* Pods_Forescoop_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1C34F395EDC848118D31F2 /* Pods_Forescoop_Example.framework */; };
-		B2CFC4D879032F29ECBC62A7 /* Pods_Forescoop_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C42F2F58BB006D7379ECFE85 /* Pods_Forescoop_Extension.framework */; };
-		FE13F954AA4452DD1C405350 /* Pods_Forescoop_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAC919E97F7B2A629E7A5B3F /* Pods_Forescoop_Tests.framework */; };
+		C0DE00000000000000000011 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000001 /* Forescoop */; };
+		C0DE00000000000000000012 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000002 /* Forescoop */; };
+		C0DE00000000000000000013 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000003 /* Forescoop */; };
+		C0DE00000000000000000014 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000004 /* Forescoop */; };
+		C0DE00000000000000000015 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000005 /* Forescoop */; };
+		A00100000000000000000001 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
+		A00100000000000000000002 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
+		A00100000000000000000003 /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
+		A00100000000000000000004 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */; };
+		A00100000000000000000005 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
+		A00100000000000000000006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
+		A00100000000000000000007 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
+		A00100000000000000000008 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
+		A00100000000000000000009 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		A0010000000000000000000A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
+		A0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = A0010000000000000000000C /* Forescoop */; };
+		B00100000000000000000001 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
+		B00100000000000000000002 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
+		B00100000000000000000003 /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
+		B00100000000000000000004 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */; };
+		B00100000000000000000005 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
+		B00100000000000000000006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
+		B00100000000000000000007 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
+		B00100000000000000000008 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
+		B00100000000000000000009 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		B0010000000000000000000A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
+		B0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = B0010000000000000000000C /* Forescoop */; };
+		C00100000000000000000001 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
+		C00100000000000000000002 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,24 +115,9 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9802C5542A2E48FE00276E5A /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				9802C5532A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		13F56B2E2839B61087B0A45C /* Pods-ForescoopMacOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ForescoopMacOS.release.xcconfig"; path = "Target Support Files/Pods-ForescoopMacOS/Pods-ForescoopMacOS.release.xcconfig"; sourceTree = "<group>"; };
-		1AE009B3EA8409A98D316BBD /* Pods-ForescoopTVOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ForescoopTVOS.release.xcconfig"; path = "Target Support Files/Pods-ForescoopTVOS/Pods-ForescoopTVOS.release.xcconfig"; sourceTree = "<group>"; };
-		4C1C34F395EDC848118D31F2 /* Pods_Forescoop_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Forescoop_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		599BC0A3C8451B7BD8E27315 /* Pods-Forescoop Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop Extension.debug.xcconfig"; path = "Target Support Files/Pods-Forescoop Extension/Pods-Forescoop Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		607FACD71AFB9204008FA782 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -117,7 +125,6 @@
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ForescoopMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7057C8961F11DABC007A7FC2 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		7066F6CD1F95ADD400D126C1 /* Forescoop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Forescoop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7066F6D01F95ADD400D126C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -131,6 +138,9 @@
 		7066F6E61F95ADD400D126C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7066F6E71F95ADD400D126C1 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		70BAA9BC1F276B4F004CD577 /* Forescoop_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Forescoop_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0010000000000000000000D /* iOSnowatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnowatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C00100000000000000000003 /* ForecastDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDashboardView.swift; sourceTree = "<group>"; };
 		70BAA9BD1F276B50004CD577 /* Forescoop_Example-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Forescoop_Example-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/Forescoop_Example-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9CC1F276B6F004CD577 /* Forescoop_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Forescoop_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70BAA9CD1F276B6F004CD577 /* Forescoop_Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Forescoop_Tests-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/Forescoop_Tests-Info.plist"; sourceTree = "<absolute>"; };
@@ -138,10 +148,6 @@
 		70BAA9EF1F276B83004CD577 /* ForescoopWatch Extension-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ForescoopWatch Extension-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/ForescoopWatch Extension-Info.plist"; sourceTree = "<absolute>"; };
 		70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiListViewController.swift; sourceTree = "<group>"; };
 		70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiInfoViewController.swift; sourceTree = "<group>"; };
-		7E1080D4219F911ACAE2EA61 /* Pods-Forescoop_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop_Tests.release.xcconfig"; path = "Target Support Files/Pods-Forescoop_Tests/Pods-Forescoop_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		88CC4239D10EA3B99ED1ADC3 /* Forescoop.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Forescoop.podspec; path = ../Forescoop.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		8E9C3175FF7BF21F7D47F24A /* Pods-ForescoopTVOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ForescoopTVOS.debug.xcconfig"; path = "Target Support Files/Pods-ForescoopTVOS/Pods-ForescoopTVOS.debug.xcconfig"; sourceTree = "<group>"; };
-		917FA449C8A9F880844B10B1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		98688A0422D5936400A09AD0 /* ForescoopMacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopMacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98688A0A22D5936700A09AD0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		98688A0D22D5936700A09AD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -155,15 +161,6 @@
 		9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
 		9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		98D1B5722A3A212000A85FBF /* ApiController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiController.swift; sourceTree = "<group>"; };
-		9BEE45CBF8F8B0326949C9EE /* Pods-Forescoop_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop_Example.release.xcconfig"; path = "Target Support Files/Pods-Forescoop_Example/Pods-Forescoop_Example.release.xcconfig"; sourceTree = "<group>"; };
-		A641F969015F49D4C08D0F7D /* Pods-Forescoop_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop_Tests.debug.xcconfig"; path = "Target Support Files/Pods-Forescoop_Tests/Pods-Forescoop_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		AB7E8D6BE83A94F8F937E0B1 /* Pods-Forescoop Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop Extension.release.xcconfig"; path = "Target Support Files/Pods-Forescoop Extension/Pods-Forescoop Extension.release.xcconfig"; sourceTree = "<group>"; };
-		B863E5977D62669484A5A50D /* Pods-ForescoopMacOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ForescoopMacOS.debug.xcconfig"; path = "Target Support Files/Pods-ForescoopMacOS/Pods-ForescoopMacOS.debug.xcconfig"; sourceTree = "<group>"; };
-		BA8E9011A369B20537D6B51F /* Pods_ForescoopTVOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ForescoopTVOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C42F2F58BB006D7379ECFE85 /* Pods_Forescoop_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Forescoop_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAC919E97F7B2A629E7A5B3F /* Pods_Forescoop_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Forescoop_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E11FCEF0B612B56B1DEF6EF7 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		EF39A586EC124F37073DE67B /* Pods-Forescoop_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Forescoop_Example.debug.xcconfig"; path = "Target Support Files/Pods-Forescoop_Example/Pods-Forescoop_Example.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,7 +175,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B2CFC4D879032F29ECBC62A7 /* Pods_Forescoop_Extension.framework in Frameworks */,
+				C0DE00000000000000000012 /* Forescoop in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +183,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ACA48C0FF40E8D9D717E2B06 /* Pods_Forescoop_Example.framework in Frameworks */,
+				C0DE00000000000000000011 /* Forescoop in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0010000000000000000000E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0010000000000000000000B /* Forescoop in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0010000000000000000000E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0010000000000000000000B /* Forescoop in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,7 +207,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE13F954AA4452DD1C405350 /* Pods_Forescoop_Tests.framework in Frameworks */,
+				C0DE00000000000000000013 /* Forescoop in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,7 +215,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9802C5522A2E48FE00276E5A /* Pods_ForescoopMacOS.framework in Frameworks */,
+				C0DE00000000000000000014 /* Forescoop in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,7 +223,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9A0FB86835207541A95EFE3 /* Pods_ForescoopTVOS.framework in Frameworks */,
+				C0DE00000000000000000015 /* Forescoop in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +233,6 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for Forescoop */,
 				607FACE81AFB9204008FA782 /* Tests */,
 				7066F6CE1F95ADD400D126C1 /* Forescoop */,
@@ -232,8 +244,6 @@
 				70BAA9CD1F276B6F004CD577 /* Forescoop_Tests-Info.plist */,
 				70BAA9DB1F276B79004CD577 /* ForescoopWatch-Info.plist */,
 				70BAA9EF1F276B83004CD577 /* ForescoopWatch Extension-Info.plist */,
-				89FC909EC8A2B9FA31C1DFC2 /* Pods */,
-				7A0D898D720DB3F541A5DC3B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -241,6 +251,8 @@
 			isa = PBXGroup;
 			children = (
 				70BAA9BC1F276B4F004CD577 /* Forescoop_Example.app */,
+				A0010000000000000000000D /* iOSnowatch.app */,
+				B0010000000000000000000D /* ForescoopVisionOS.app */,
 				70BAA9CC1F276B6F004CD577 /* Forescoop_Tests.xctest */,
 				7066F6CD1F95ADD400D126C1 /* Forescoop.app */,
 				7066F6D91F95ADD400D126C1 /* Forescoop Extension.appex */,
@@ -256,6 +268,7 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
+				C00100000000000000000003 /* ForecastDashboardView.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
 				9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */,
 				98D1B5722A3A212000A85FBF /* ApiController.swift */,
@@ -294,16 +307,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
-			isa = PBXGroup;
-			children = (
-				88CC4239D10EA3B99ED1ADC3 /* Forescoop.podspec */,
-				E11FCEF0B612B56B1DEF6EF7 /* README.md */,
-				917FA449C8A9F880844B10B1 /* LICENSE */,
-			);
-			name = "Podspec Metadata";
-			sourceTree = "<group>";
-		};
 		7066F6CE1F95ADD400D126C1 /* Forescoop */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,35 +328,6 @@
 				7066F6E71F95ADD400D126C1 /* PushNotificationPayload.apns */,
 			);
 			path = "Forescoop Extension";
-			sourceTree = "<group>";
-		};
-		7A0D898D720DB3F541A5DC3B /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				C42F2F58BB006D7379ECFE85 /* Pods_Forescoop_Extension.framework */,
-				66A9DD829453489E7611CBF3 /* Pods_ForescoopMacOS.framework */,
-				BA8E9011A369B20537D6B51F /* Pods_ForescoopTVOS.framework */,
-				4C1C34F395EDC848118D31F2 /* Pods_Forescoop_Example.framework */,
-				CAC919E97F7B2A629E7A5B3F /* Pods_Forescoop_Tests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		89FC909EC8A2B9FA31C1DFC2 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				599BC0A3C8451B7BD8E27315 /* Pods-Forescoop Extension.debug.xcconfig */,
-				AB7E8D6BE83A94F8F937E0B1 /* Pods-Forescoop Extension.release.xcconfig */,
-				B863E5977D62669484A5A50D /* Pods-ForescoopMacOS.debug.xcconfig */,
-				13F56B2E2839B61087B0A45C /* Pods-ForescoopMacOS.release.xcconfig */,
-				8E9C3175FF7BF21F7D47F24A /* Pods-ForescoopTVOS.debug.xcconfig */,
-				1AE009B3EA8409A98D316BBD /* Pods-ForescoopTVOS.release.xcconfig */,
-				EF39A586EC124F37073DE67B /* Pods-Forescoop_Example.debug.xcconfig */,
-				9BEE45CBF8F8B0326949C9EE /* Pods-Forescoop_Example.release.xcconfig */,
-				A641F969015F49D4C08D0F7D /* Pods-Forescoop_Tests.debug.xcconfig */,
-				7E1080D4219F911ACAE2EA61 /* Pods-Forescoop_Tests.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		98688A0522D5936400A09AD0 /* ForescoopMacOS */ = {
@@ -403,17 +377,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7066F6EB1F95ADD400D126C1 /* Build configuration list for PBXNativeTarget "Forescoop Extension" */;
 			buildPhases = (
-				A772A2BBE19EACF74BCA383C /* [CP] Check Pods Manifest.lock */,
 				7066F6D51F95ADD400D126C1 /* Sources */,
 				7066F6D61F95ADD400D126C1 /* Frameworks */,
 				7066F6D71F95ADD400D126C1 /* Resources */,
-				0E70E220DC501FD5528C1D5D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "Forescoop Extension";
+			packageProductDependencies = (
+				C0DE00000000000000000002 /* Forescoop */,
+			);
 			productName = "Forescoop Extension";
 			productReference = 7066F6D91F95ADD400D126C1 /* Forescoop Extension.appex */;
 			productType = "com.apple.product-type.watchkit2-extension";
@@ -422,12 +397,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 70BAA9B91F276B4F004CD577 /* Build configuration list for PBXNativeTarget "Forescoop_Example" */;
 			buildPhases = (
-				0A997871191546EF50040D12 /* [CP] Check Pods Manifest.lock */,
 				70BAA9A81F276B4F004CD577 /* Sources */,
 				70BAA9AF1F276B4F004CD577 /* Frameworks */,
 				70BAA9B11F276B4F004CD577 /* Resources */,
 				70BAA9B71F276B4F004CD577 /* Embed Watch Content */,
-				C461734CAEF6067C311CDFCD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -435,15 +408,57 @@
 				7066F6E91F95ADD400D126C1 /* PBXTargetDependency */,
 			);
 			name = Forescoop_Example;
+			packageProductDependencies = (
+				C0DE00000000000000000001 /* Forescoop */,
+			);
 			productName = Forescoop;
 			productReference = 70BAA9BC1F276B4F004CD577 /* Forescoop_Example.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A0010000000000000000000F /* iOSnowatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00100000000000000000010 /* Build configuration list for PBXNativeTarget "iOSnowatch" */;
+			buildPhases = (
+				A00100000000000000000011 /* Sources */,
+				A0010000000000000000000E /* Frameworks */,
+				A00100000000000000000012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iOSnowatch;
+			packageProductDependencies = (
+				A0010000000000000000000C /* Forescoop */,
+			);
+			productName = iOSnowatch;
+			productReference = A0010000000000000000000D /* iOSnowatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B0010000000000000000000F /* ForescoopVisionOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */;
+			buildPhases = (
+				B00100000000000000000011 /* Sources */,
+				B0010000000000000000000E /* Frameworks */,
+				B00100000000000000000012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ForescoopVisionOS;
+			packageProductDependencies = (
+				B0010000000000000000000C /* Forescoop */,
+			);
+			productName = ForescoopVisionOS;
+			productReference = B0010000000000000000000D /* ForescoopVisionOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 		70BAA9BE1F276B6F004CD577 /* Forescoop_Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 70BAA9C91F276B6F004CD577 /* Build configuration list for PBXNativeTarget "Forescoop_Tests" */;
 			buildPhases = (
-				D680428D9E32679317CA6238 /* [CP] Check Pods Manifest.lock */,
 				70BAA9C21F276B6F004CD577 /* Sources */,
 				70BAA9C41F276B6F004CD577 /* Frameworks */,
 				70BAA9C61F276B6F004CD577 /* Resources */,
@@ -454,6 +469,9 @@
 				70BAA9F11F276C5B004CD577 /* PBXTargetDependency */,
 			);
 			name = Forescoop_Tests;
+			packageProductDependencies = (
+				C0DE00000000000000000003 /* Forescoop */,
+			);
 			productName = Tests;
 			productReference = 70BAA9CC1F276B6F004CD577 /* Forescoop_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -462,18 +480,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 98688A1122D5936700A09AD0 /* Build configuration list for PBXNativeTarget "ForescoopMacOS" */;
 			buildPhases = (
-				CF994907497EFEAE4B2EE9E4 /* [CP] Check Pods Manifest.lock */,
 				98688A0022D5936400A09AD0 /* Sources */,
 				98688A0122D5936400A09AD0 /* Frameworks */,
 				98688A0222D5936400A09AD0 /* Resources */,
-				BF54AABF2FE00065E0FFECBC /* [CP] Embed Pods Frameworks */,
-				9802C5542A2E48FE00276E5A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = ForescoopMacOS;
+			packageProductDependencies = (
+				C0DE00000000000000000004 /* Forescoop */,
+			);
 			productName = ForescoopMacOS;
 			productReference = 98688A0422D5936400A09AD0 /* ForescoopMacOS.app */;
 			productType = "com.apple.product-type.application";
@@ -482,17 +500,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 987A6DD122D595D400662010 /* Build configuration list for PBXNativeTarget "ForescoopTVOS" */;
 			buildPhases = (
-				B6EC1DC75EFD877B27847990 /* [CP] Check Pods Manifest.lock */,
 				987A6DC122D595D200662010 /* Sources */,
 				987A6DC222D595D200662010 /* Frameworks */,
 				987A6DC322D595D200662010 /* Resources */,
-				406CB084F07B274CB5D1A5D4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = ForescoopTVOS;
+			packageProductDependencies = (
+				C0DE00000000000000000005 /* Forescoop */,
+			);
 			productName = ForescoopTVOS;
 			productReference = 987A6DC522D595D200662010 /* ForescoopTVOS.app */;
 			productType = "com.apple.product-type.application";
@@ -505,7 +524,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1020;
 				LastUpgradeCheck = 1420;
-				ORGANIZATIONNAME = CocoaPods;
+				ORGANIZATIONNAME = Forescoop;
 				TargetAttributes = {
 					7066F6CC1F95ADD400D126C1 = {
 						CreatedOnToolsVersion = 9.0;
@@ -554,11 +573,16 @@
 				Base,
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
+			packageReferences = (
+				C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */,
+			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				70BAA9A41F276B4F004CD577 /* Forescoop_Example */,
+				A0010000000000000000000F /* iOSnowatch */,
+				B0010000000000000000000F /* ForescoopVisionOS */,
 				70BAA9BE1F276B6F004CD577 /* Forescoop_Tests */,
 				7066F6CC1F95ADD400D126C1 /* Forescoop */,
 				7066F6D81F95ADD400D126C1 /* Forescoop Extension */,
@@ -596,6 +620,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A00100000000000000000012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000008 /* Main.storyboard in Resources */,
+				A00100000000000000000009 /* LaunchScreen.xib in Resources */,
+				A0010000000000000000000A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00100000000000000000012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00100000000000000000008 /* Main.storyboard in Resources */,
+				B00100000000000000000009 /* LaunchScreen.xib in Resources */,
+				B0010000000000000000000A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		70BAA9C61F276B6F004CD577 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -623,191 +667,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		0A997871191546EF50040D12 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Forescoop_Example-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		0E70E220DC501FD5528C1D5D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Forescoop Extension/Pods-Forescoop Extension-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Forescoop-watchOS/Forescoop.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Forescoop.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Forescoop Extension/Pods-Forescoop Extension-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		406CB084F07B274CB5D1A5D4 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ForescoopTVOS/Pods-ForescoopTVOS-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Forescoop-tvOS/Forescoop.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Forescoop.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ForescoopTVOS/Pods-ForescoopTVOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A772A2BBE19EACF74BCA383C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Forescoop Extension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B6EC1DC75EFD877B27847990 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ForescoopTVOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BF54AABF2FE00065E0FFECBC /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ForescoopMacOS/Pods-ForescoopMacOS-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Forescoop-macOS/Forescoop.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Forescoop.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ForescoopMacOS/Pods-ForescoopMacOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C461734CAEF6067C311CDFCD /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Forescoop_Example/Pods-Forescoop_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Forescoop-iOS/Forescoop.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Forescoop.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Forescoop_Example/Pods-Forescoop_Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CF994907497EFEAE4B2EE9E4 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ForescoopMacOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D680428D9E32679317CA6238 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Forescoop_Tests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		7066F6D51F95ADD400D126C1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -831,6 +690,36 @@
 				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
 				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
+				C00100000000000000000001 /* ForecastDashboardView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00100000000000000000011 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000001 /* Common.swift in Sources */,
+				A00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
+				A00100000000000000000003 /* ApiController.swift in Sources */,
+				A00100000000000000000004 /* AlertViewModel.swift in Sources */,
+				A00100000000000000000005 /* ApiListViewController.swift in Sources */,
+				A00100000000000000000006 /* MainViewController.swift in Sources */,
+				A00100000000000000000007 /* AppDelegate.swift in Sources */,
+				C00100000000000000000002 /* ForecastDashboardView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00100000000000000000011 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00100000000000000000001 /* Common.swift in Sources */,
+				B00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
+				B00100000000000000000003 /* ApiController.swift in Sources */,
+				B00100000000000000000004 /* AlertViewModel.swift in Sources */,
+				B00100000000000000000005 /* ApiListViewController.swift in Sources */,
+				B00100000000000000000006 /* MainViewController.swift in Sources */,
+				B00100000000000000000007 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -975,15 +864,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
-				TVOS_DEPLOYMENT_TARGET = 15.0;
-				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 26.0;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -1029,21 +918,21 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.0;
-				TVOS_DEPLOYMENT_TARGET = 15.0;
+				TVOS_DEPLOYMENT_TARGET = 26.0;
 				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
 		7066F6EC1F95ADD400D126C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 599BC0A3C8451B7BD8E27315 /* Pods-Forescoop Extension.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1056,21 +945,24 @@
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Forescoop Extension/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.Forescoop-Example.watchkitapp.watchkitextension";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.Forescoop-Example.watchkitapp.watchkitextension";
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
 		7066F6ED1F95ADD400D126C1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AB7E8D6BE83A94F8F937E0B1 /* Pods-Forescoop Extension.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1082,14 +974,18 @@
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Forescoop Extension/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.Forescoop-Example.watchkitapp.watchkitextension";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.Forescoop-Example.watchkitapp.watchkitextension";
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -1109,14 +1005,14 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Forescoop_Extension;
 				INFOPLIST_FILE = Forescoop/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.Forescoop-Example.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.Forescoop-Example.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -1134,26 +1030,28 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Forescoop_Extension;
 				INFOPLIST_FILE = Forescoop/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.Forescoop-Example.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.Forescoop-Example.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
 		70BAA9BA1F276B4F004CD577 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EF39A586EC124F37073DE67B /* Pods-Forescoop_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.Forescoop-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.Forescoop-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
@@ -1162,25 +1060,105 @@
 		};
 		70BAA9BB1F276B4F004CD577 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9BEE45CBF8F8B0326949C9EE /* Pods-Forescoop_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.Forescoop-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.Forescoop-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
+		A00100000000000000000013 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.iOSnowatch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A00100000000000000000014 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.iOSnowatch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B00100000000000000000013 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.ForescoopVisionOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		B00100000000000000000014 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.ForescoopVisionOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 		70BAA9CA1F276B6F004CD577 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A641F969015F49D4C08D0F7D /* Pods-Forescoop_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1190,9 +1168,13 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "Forescoop_Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
@@ -1202,17 +1184,21 @@
 		};
 		70BAA9CB1F276B6F004CD577 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7E1080D4219F911ACAE2EA61 /* Pods-Forescoop_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "Forescoop_Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 5.0;
@@ -1222,7 +1208,6 @@
 		};
 		98688A1222D5936700A09AD0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B863E5977D62669484A5A50D /* Pods-ForescoopMacOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1243,8 +1228,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ForescoopMacOS/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jfuchs.forescoop-macos.ForescoopMacOS";
@@ -1258,7 +1246,6 @@
 		};
 		98688A1322D5936700A09AD0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 13F56B2E2839B61087B0A45C /* Pods-ForescoopMacOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1277,8 +1264,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ForescoopMacOS/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jfuchs.forescoop-macos.ForescoopMacOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1289,7 +1279,6 @@
 		};
 		987A6DD222D595D400662010 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8E9C3175FF7BF21F7D47F24A /* Pods-ForescoopTVOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1304,7 +1293,10 @@
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ForescoopTVOS/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jfuchs.forescoop-tvos.ForescoopTVOS";
@@ -1313,13 +1305,12 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 15.0;
+				TVOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
 		987A6DD322D595D400662010 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AE009B3EA8409A98D316BBD /* Pods-ForescoopTVOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1333,14 +1324,17 @@
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ForescoopTVOS/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jfuchs.forescoop-tvos.ForescoopTVOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 15.0;
+				TVOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -1383,6 +1377,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A00100000000000000000010 /* Build configuration list for PBXNativeTarget "iOSnowatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00100000000000000000013 /* Debug */,
+				A00100000000000000000014 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B00100000000000000000013 /* Debug */,
+				B00100000000000000000014 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		70BAA9C91F276B6F004CD577 /* Build configuration list for PBXNativeTarget "Forescoop_Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1411,6 +1423,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C0DE00000000000000000001 /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		C0DE00000000000000000002 /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		C0DE00000000000000000003 /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		C0DE00000000000000000004 /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		C0DE00000000000000000005 /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		A0010000000000000000000C /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		B0010000000000000000000C /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 607FACC81AFB9204008FA782 /* Project object */;
 }

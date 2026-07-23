@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import Forescoop
 
 class ApiListViewController: UIViewController {

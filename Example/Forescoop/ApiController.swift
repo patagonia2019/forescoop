@@ -3,7 +3,7 @@
 //  Forescoop_Example
 //
 //  Created by fox on 14/06/2023.
-//  Copyright © 2023 CocoaPods. All rights reserved.
+//  Copyright © 2023 Forescoop. All rights reserved.
 //
 
 import Foundation
@@ -51,10 +51,10 @@ enum UserBasedServices: String, CaseIterable {
 }
 
 class ApiController {
-    private (set) var user: User?
-    private (set) var password: String?
-    private (set) var forecastService: ForecastWindguruProtocol?
-    private (set) var delegate: ApiControllerDelegate?
+    private(set) var user: User?
+    private(set) var password: String?
+    private(set) var forecastService: ForecastWindguruProtocol?
+    private(set) var delegate: ApiControllerDelegate?
     
     var service: String {
         services[currentServiceOrdinal]
@@ -84,9 +84,7 @@ class ApiController {
     }
     
     func start() async throws -> SpotForecast? {
-        guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
-        let spotForecast = try? await forecastService?.forecast(bySpotId: spotId, model: nil)
-        return spotForecast
+        try await forecastService?.forecast(bySpotId: "64141", model: nil)
     }
     
     func addSetSpots(id: String?) {

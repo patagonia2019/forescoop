@@ -1,24 +1,22 @@
 # Forescoop
 
 [![CI Status](http://img.shields.io/travis/southfox/Forescoop.svg?style=flat)](https://travis-ci.org/southfox/Forescoop)
-[![Version](https://img.shields.io/cocoapods/v/Forescoop.svg?style=flat)](http://cocoapods.org/pods/Forescoop)
-[![License](https://img.shields.io/cocoapods/l/Forescoop.svg?style=flat)](http://cocoapods.org/pods/Forescoop)
-[![Platform](https://img.shields.io/cocoapods/p/Forescoop.svg?style=flat)](http://cocoapods.org/pods/Forescoop)
 
 ## Example
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+Open `Example/Forescoop.xcodeproj` in Xcode. It uses the local `Forescoop` Swift package.
 
 ## Requirements
 
 ## Installation
 
-Forescoop is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+Add the package in Xcode using the repository URL, or add it to a package manifest:
 
-```ruby
-pod "Forescoop"
+```swift
+.package(url: "https://github.com/patagonia2019/forescoop.git", from: "0.1.0")
 ```
+
+Then depend on the `Forescoop` product and import `Forescoop`.
 
 ## Author
 

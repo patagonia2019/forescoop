@@ -3,7 +3,7 @@
 //  Forescoop Extension
 //
 //  Created by javierfuchs on 10/17/17.
-//  Copyright © 2023 CocoaPods. All rights reserved.
+//  Copyright © 2023 Forescoop. All rights reserved.
 //
 
 import WatchKit
@@ -53,9 +53,10 @@ private extension InterfaceController {
     
     func updateForecast() {
         Task { [weak self] in
-            guard let spotId = try? await forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
-            let spotForecast = try? await forecastService?.forecast(bySpotId: spotId)
-            self?.showForecastView(spotForecast: spotForecast)
+            guard let self = self else { return }
+            guard let spotId = try? await self.forecastService?.searchSpots(byLocation: "Bariloche")?.firstSpot?.identifier else { throw CustomError.cannotFindSpotId }
+            let spotForecast = try? await self.forecastService?.forecast(bySpotId: spotId)
+            self.showForecastView(spotForecast: spotForecast)
         }
     }
         
@@ -75,3 +76,4 @@ private extension InterfaceController {
         }
     }
 }
+
