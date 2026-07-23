@@ -6,6 +6,7 @@
 //  Copyright © 2026 Mobile Patagonia. All rights reserved.
 //
 
+import CoreLocation
 import SwiftUI
 import Forescoop
 
@@ -140,11 +141,19 @@ struct ForecastDashboardView: View {
             }
             .task { await loadForecast() }
             .sheet(isPresented: $showsSpotPicker) {
-                WindguruSpotPicker(forecastService: forecastService) { spot in
-                    guard let spotId = spot.identifier else { return }
-                    showsSpotPicker = false
-                    Task { await loadForecast(spotId: spotId) }
-                }
+                WindguruSpotPicker(
+                    forecastService: forecastService,
+                    username: windguruUsername,
+                    onSpotSelected: { spot in
+                        guard let spotId = spot.identifier else { return }
+                        showsSpotPicker = false
+                        Task { await loadForecast(spotId: spotId) }
+                    },
+                    onCoordinateSelected: { coordinate in
+                        showsSpotPicker = false
+                        Task { await loadForecast(coordinate: coordinate) }
+                    }
+                )
             }
             .sheet(isPresented: $showsModelPicker) {
                 ForecastModelPicker(
@@ -197,6 +206,32 @@ struct ForecastDashboardView: View {
                     ? [forecast?.model ?? Model.defaultModel]
                     : requestedModelIDs
             }
+            selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func loadForecast(coordinate: CLLocationCoordinate2D) async {
+        guard let password = WindguruCredentialStore.password(for: windguruUsername), !windguruUsername.isEmpty else {
+            errorMessage = "Sign in with Windguru PRO to load an exact map coordinate."
+            return
+        }
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            let coordinateForecast = try await forecastService.wforecast(
+                byLatitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+                model: nil,
+                username: windguruUsername,
+                password: password
+            )
+            guard let coordinateForecast else { throw CustomError.notMappeable }
+            forecast = try SpotForecast.from(coordinateForecast: coordinateForecast)
+            selectedModelIDs = forecast?.model.map { [$0] } ?? []
             selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
         } catch {
             errorMessage = error.localizedDescription

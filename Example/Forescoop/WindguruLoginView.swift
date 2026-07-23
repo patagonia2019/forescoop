@@ -71,7 +71,7 @@ private enum LoginError: LocalizedError {
     var errorDescription: String? { "A Windguru PRO account is required for coordinate forecasts." }
 }
 
-private enum WindguruCredentialStore {
+enum WindguruCredentialStore {
     static func password(for username: String) -> String? {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrService as String: "Forescoop.Windguru",
@@ -98,4 +98,3 @@ private enum WindguruCredentialStore {
         }
     }
 }
-

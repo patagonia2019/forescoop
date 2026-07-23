@@ -561,7 +561,6 @@
 					};
 					98688A0322D5936400A09AD0 = {
 						CreatedOnToolsVersion = 10.2.1;
-						DevelopmentTeam = 27XTSJS68A;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.NetworkExtensions = {
@@ -1206,6 +1205,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = DC76Z3W5Y8;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = 27XTSJS68A;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ForescoopMacOS/Info.plist;
@@ -1288,6 +1288,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1306,6 +1307,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (

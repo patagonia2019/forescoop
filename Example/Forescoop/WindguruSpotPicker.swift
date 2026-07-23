@@ -6,18 +6,22 @@
 //  Copyright © 2026 Forescoop. All rights reserved.
 
 import CoreLocation
+import MapKit
 import SwiftUI
 import Forescoop
 
 struct WindguruSpotPicker: View {
     let forecastService: ForecastWindguruProtocol
+    let username: String
     let onSpotSelected: (SpotOwner) -> Void
+    let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
     @State private var spots: [SpotOwner] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var showsMap = false
 
     var body: some View {
         NavigationStack {
@@ -27,8 +31,11 @@ struct WindguruSpotPicker: View {
                         Task { await searchCurrentLocation() }
                     }
                     .disabled(isLoading)
+                    Button("Pick on Map", systemImage: "map") {
+                        showsMap = true
+                    }
                 } footer: {
-                    Text("Uses the nearest matching public Windguru spot for the Device location.")
+                    Text("Map picks use an exact coordinate forecast for Windguru PRO, or the nearest public spot for guests.")
                 }
 
                 Section("Search Windguru spots") {
@@ -70,6 +77,12 @@ struct WindguruSpotPicker: View {
                 }
             }
         }
+        .sheet(isPresented: $showsMap) {
+            MapLocationPicker { coordinate in
+                showsMap = false
+                Task { await selectMapCoordinate(coordinate) }
+            }
+        }
     }
 
     @MainActor
@@ -106,6 +119,60 @@ struct WindguruSpotPicker: View {
             spots = try await forecastService.searchSpots(byLocation: searchTerm)?.allSpots ?? []
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func selectMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
+        if !username.isEmpty, WindguruCredentialStore.password(for: username) != nil {
+            onCoordinateSelected(coordinate)
+            return
+        }
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+            let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
+            guard let term = placemark?.locality ?? placemark?.administrativeArea else { throw DeviceLocationError.noPlacemark }
+            guard let spot = try await forecastService.searchSpots(byLocation: term)?.allSpots.first else {
+                throw DeviceLocationError.noWindguruSpot
+            }
+            onSpotSelected(spot)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+}
+
+private struct MapLocationPicker: View {
+    let onSelection: (CLLocationCoordinate2D) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedCoordinate: CLLocationCoordinate2D?
+    @State private var position: MapCameraPosition = .automatic
+
+    var body: some View {
+        NavigationStack {
+            MapReader { proxy in
+                Map(position: $position) {
+                    if let selectedCoordinate {
+                        Marker("Selected location", coordinate: selectedCoordinate)
+                    }
+                }
+                .onTapGesture { point in
+                    selectedCoordinate = proxy.convert(point, from: .local)
+                }
+            }
+            .navigationTitle("Pick location")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Use Location") {
+                        if let selectedCoordinate { onSelection(selectedCoordinate) }
+                    }
+                    .disabled(selectedCoordinate == nil)
+                }
+            }
         }
     }
 }
@@ -177,6 +244,8 @@ private enum DeviceLocationError: LocalizedError {
 #Preview("Windguru spot picker") {
     WindguruSpotPicker(
         forecastService: ForecastWindguruMockup(),
-        onSpotSelected: { _ in }
+        username: "",
+        onSpotSelected: { _ in },
+        onCoordinateSelected: { _ in }
     )
 }
