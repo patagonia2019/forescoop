@@ -17,6 +17,7 @@ struct WindguruSpotPicker: View {
     let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.editMode) private var editMode
     @State private var query = ""
     @State private var spots: [SpotOwner] = []
     @State private var isLoading = false
@@ -117,21 +118,34 @@ struct WindguruSpotPicker: View {
     }
 
     private func savedLocationRow(_ location: SavedMapLocation) -> some View {
-        Button {
-            Task { await selectMapCoordinate(location.coordinate) }
-        } label: {
-            Label {
-                VStack(alignment: .leading) {
-                    Text(location.name)
-                    Text(location.coordinateText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+        HStack(spacing: 12) {
+            Button {
+                Task { await selectMapCoordinate(location.coordinate) }
+            } label: {
+                Label {
+                    VStack(alignment: .leading) {
+                        Text(location.name)
+                        Text(location.coordinateText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "mappin.and.ellipse")
                 }
-            } icon: {
-                Image(systemName: "mappin.and.ellipse")
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .buttonStyle(.plain)
+            .disabled(isLoading)
+
+            if editMode?.wrappedValue.isEditing == true {
+                Button("Rename \(location.name)", systemImage: "pencil") {
+                    beginRenaming(location)
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .accessibilityHint("Changes this saved location's name")
             }
         }
-        .disabled(isLoading)
         .contextMenu {
             Button("Rename", systemImage: "pencil") { beginRenaming(location) }
             Button("Delete", systemImage: "trash", role: .destructive) { delete(location) }
