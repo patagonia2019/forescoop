@@ -44,7 +44,7 @@ struct ForecastDashboardView: View {
                             Button {
                                 showsSpotPicker = true
                             } label: {
-                                Text(forecast.asCurrentLocation ?? "Unknown location")
+                                Label(forecast.asCurrentLocation ?? "Unknown location", systemImage: "mappin.and.ellipse")
                             }
                             .buttonStyle(.plain)
                             .font(.title.bold())
@@ -75,7 +75,7 @@ struct ForecastDashboardView: View {
                                 }
                             }
                         } label: {
-                            Text(temperature(for: forecast, hour: selectedHour))
+                            Label(temperature(for: forecast, hour: selectedHour), systemImage: "thermometer.medium")
                                 .font(.system(size: 44, weight: .semibold))
                         }
                         .accessibilityLabel("Temperature")
@@ -253,7 +253,11 @@ struct ForecastDashboardView: View {
             }
             .disabled(selectedIndex == nil || selectedIndex == 0)
 
-            Picker("Forecast hour", selection: $selectedHour) {
+            Image(systemName: "calendar")
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+
+            Picker("Forecast date and hour", selection: $selectedHour) {
                 ForEach(hours, id: \.self) { hour in
                     Text(hourLabel(for: hour, forecast: forecast))
                         .fontWeight(hour == currentHour ? .bold : .regular)
