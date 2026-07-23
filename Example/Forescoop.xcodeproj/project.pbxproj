@@ -24,6 +24,15 @@
 		70BAA9B41F276B4F004CD577 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
 		70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
+		9865F8DA3011C07F00777207 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
+		9865F8DB3011C07F00777207 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
+		9865F8DC3011C07F00777207 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
+		9865F8DE3011C0A200777207 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
+		9865F8DF3011C0A200777207 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
+		9865F8E03011C0A200777207 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
+		9865F8E23011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
+		9865F8E33011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
+		9865F8E43011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
 		98688A0B22D5936700A09AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0A22D5936700A09AD0 /* Assets.xcassets */; };
 		98688A0E22D5936700A09AD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0C22D5936700A09AD0 /* Main.storyboard */; };
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -37,11 +46,6 @@
 		98D31F812A251AE200916A59 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98DC785622D5964700F72DBA /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		C0DE00000000000000000011 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000001 /* Forescoop */; };
-		C0DE00000000000000000012 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000002 /* Forescoop */; };
-		C0DE00000000000000000013 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000003 /* Forescoop */; };
-		C0DE00000000000000000014 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000004 /* Forescoop */; };
-		C0DE00000000000000000015 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000005 /* Forescoop */; };
 		A00100000000000000000001 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		A00100000000000000000002 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
 		A00100000000000000000003 /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
@@ -66,8 +70,11 @@
 		B0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = B0010000000000000000000C /* Forescoop */; };
 		C00100000000000000000001 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
 		C00100000000000000000002 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
-		C00100000000000000000004 /* ForecastPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000005 /* ForecastPickers.swift */; };
-		C00100000000000000000006 /* ForecastPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000005 /* ForecastPickers.swift */; };
+		C0DE00000000000000000011 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000001 /* Forescoop */; };
+		C0DE00000000000000000012 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000002 /* Forescoop */; };
+		C0DE00000000000000000013 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000003 /* Forescoop */; };
+		C0DE00000000000000000014 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000004 /* Forescoop */; };
+		C0DE00000000000000000015 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000005 /* Forescoop */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,10 +147,6 @@
 		7066F6E61F95ADD400D126C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7066F6E71F95ADD400D126C1 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		70BAA9BC1F276B4F004CD577 /* Forescoop_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Forescoop_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A0010000000000000000000D /* iOSnowatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnowatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C00100000000000000000003 /* ForecastDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDashboardView.swift; sourceTree = "<group>"; };
-		C00100000000000000000005 /* ForecastPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastPickers.swift; sourceTree = "<group>"; };
 		70BAA9BD1F276B50004CD577 /* Forescoop_Example-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Forescoop_Example-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/Forescoop_Example-Info.plist"; sourceTree = "<absolute>"; };
 		70BAA9CC1F276B6F004CD577 /* Forescoop_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Forescoop_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70BAA9CD1F276B6F004CD577 /* Forescoop_Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Forescoop_Tests-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/Forescoop_Tests-Info.plist"; sourceTree = "<absolute>"; };
@@ -151,6 +154,9 @@
 		70BAA9EF1F276B83004CD577 /* ForescoopWatch Extension-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ForescoopWatch Extension-Info.plist"; path = "/Users/javierfuchs/Job/southfox/forescoop/Example/ForescoopWatch Extension-Info.plist"; sourceTree = "<absolute>"; };
 		70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiListViewController.swift; sourceTree = "<group>"; };
 		70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiInfoViewController.swift; sourceTree = "<group>"; };
+		9865F8D93011C07F00777207 /* ForecastModelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastModelPicker.swift; sourceTree = "<group>"; };
+		9865F8DD3011C0A200777207 /* WindguruLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindguruLoginView.swift; sourceTree = "<group>"; };
+		9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindguruSpotPicker.swift; sourceTree = "<group>"; };
 		98688A0422D5936400A09AD0 /* ForescoopMacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopMacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98688A0A22D5936700A09AD0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		98688A0D22D5936700A09AD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -164,6 +170,9 @@
 		9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
 		9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		98D1B5722A3A212000A85FBF /* ApiController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiController.swift; sourceTree = "<group>"; };
+		A0010000000000000000000D /* iOSnowatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnowatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C00100000000000000000003 /* ForecastDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDashboardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,22 +199,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A0010000000000000000000E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A0010000000000000000000B /* Forescoop in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B0010000000000000000000E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B0010000000000000000000B /* Forescoop in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		70BAA9C41F276B6F004CD577 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -227,6 +220,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0DE00000000000000000015 /* Forescoop in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0010000000000000000000E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0010000000000000000000B /* Forescoop in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0010000000000000000000E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0010000000000000000000B /* Forescoop in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,7 +281,9 @@
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				C00100000000000000000003 /* ForecastDashboardView.swift */,
-				C00100000000000000000005 /* ForecastPickers.swift */,
+				9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */,
+				9865F8DD3011C0A200777207 /* WindguruLoginView.swift */,
+				9865F8D93011C07F00777207 /* ForecastModelPicker.swift */,
 				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
 				9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */,
 				98D1B5722A3A212000A85FBF /* ApiController.swift */,
@@ -419,46 +430,6 @@
 			productReference = 70BAA9BC1F276B4F004CD577 /* Forescoop_Example.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A0010000000000000000000F /* iOSnowatch */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A00100000000000000000010 /* Build configuration list for PBXNativeTarget "iOSnowatch" */;
-			buildPhases = (
-				A00100000000000000000011 /* Sources */,
-				A0010000000000000000000E /* Frameworks */,
-				A00100000000000000000012 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = iOSnowatch;
-			packageProductDependencies = (
-				A0010000000000000000000C /* Forescoop */,
-			);
-			productName = iOSnowatch;
-			productReference = A0010000000000000000000D /* iOSnowatch.app */;
-			productType = "com.apple.product-type.application";
-		};
-		B0010000000000000000000F /* ForescoopVisionOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */;
-			buildPhases = (
-				B00100000000000000000011 /* Sources */,
-				B0010000000000000000000E /* Frameworks */,
-				B00100000000000000000012 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ForescoopVisionOS;
-			packageProductDependencies = (
-				B0010000000000000000000C /* Forescoop */,
-			);
-			productName = ForescoopVisionOS;
-			productReference = B0010000000000000000000D /* ForescoopVisionOS.app */;
-			productType = "com.apple.product-type.application";
-		};
 		70BAA9BE1F276B6F004CD577 /* Forescoop_Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 70BAA9C91F276B6F004CD577 /* Build configuration list for PBXNativeTarget "Forescoop_Tests" */;
@@ -518,6 +489,46 @@
 			);
 			productName = ForescoopTVOS;
 			productReference = 987A6DC522D595D200662010 /* ForescoopTVOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A0010000000000000000000F /* iOSnowatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00100000000000000000010 /* Build configuration list for PBXNativeTarget "iOSnowatch" */;
+			buildPhases = (
+				A00100000000000000000011 /* Sources */,
+				A0010000000000000000000E /* Frameworks */,
+				A00100000000000000000012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iOSnowatch;
+			packageProductDependencies = (
+				A0010000000000000000000C /* Forescoop */,
+			);
+			productName = iOSnowatch;
+			productReference = A0010000000000000000000D /* iOSnowatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B0010000000000000000000F /* ForescoopVisionOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */;
+			buildPhases = (
+				B00100000000000000000011 /* Sources */,
+				B0010000000000000000000E /* Frameworks */,
+				B00100000000000000000012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ForescoopVisionOS;
+			packageProductDependencies = (
+				B0010000000000000000000C /* Forescoop */,
+			);
+			productName = ForescoopVisionOS;
+			productReference = B0010000000000000000000D /* ForescoopVisionOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -624,26 +635,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A00100000000000000000012 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A00100000000000000000008 /* Main.storyboard in Resources */,
-				A00100000000000000000009 /* LaunchScreen.xib in Resources */,
-				A0010000000000000000000A /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B00100000000000000000012 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B00100000000000000000008 /* Main.storyboard in Resources */,
-				B00100000000000000000009 /* LaunchScreen.xib in Resources */,
-				B0010000000000000000000A /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		70BAA9C61F276B6F004CD577 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -669,6 +660,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A00100000000000000000012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000008 /* Main.storyboard in Resources */,
+				A00100000000000000000009 /* LaunchScreen.xib in Resources */,
+				A0010000000000000000000A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00100000000000000000012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00100000000000000000008 /* Main.storyboard in Resources */,
+				B00100000000000000000009 /* LaunchScreen.xib in Resources */,
+				B0010000000000000000000A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -690,42 +701,14 @@
 				70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */,
 				70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */,
 				98D1B5732A3A212000A85FBF /* ApiController.swift in Sources */,
+				9865F8DF3011C0A200777207 /* WindguruLoginView.swift in Sources */,
+				9865F8E43011C0E200777207 /* WindguruSpotPicker.swift in Sources */,
 				9888ABB22A3A81C900FC9147 /* AlertViewModel.swift in Sources */,
+				9865F8DC3011C07F00777207 /* ForecastModelPicker.swift in Sources */,
 				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
 				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
 				C00100000000000000000001 /* ForecastDashboardView.swift in Sources */,
-				C00100000000000000000004 /* ForecastPickers.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A00100000000000000000011 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A00100000000000000000001 /* Common.swift in Sources */,
-				A00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
-				A00100000000000000000003 /* ApiController.swift in Sources */,
-				A00100000000000000000004 /* AlertViewModel.swift in Sources */,
-				A00100000000000000000005 /* ApiListViewController.swift in Sources */,
-				A00100000000000000000006 /* MainViewController.swift in Sources */,
-				A00100000000000000000007 /* AppDelegate.swift in Sources */,
-				C00100000000000000000002 /* ForecastDashboardView.swift in Sources */,
-				C00100000000000000000006 /* ForecastPickers.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B00100000000000000000011 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B00100000000000000000001 /* Common.swift in Sources */,
-				B00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
-				B00100000000000000000003 /* ApiController.swift in Sources */,
-				B00100000000000000000004 /* AlertViewModel.swift in Sources */,
-				B00100000000000000000005 /* ApiListViewController.swift in Sources */,
-				B00100000000000000000006 /* MainViewController.swift in Sources */,
-				B00100000000000000000007 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,6 +737,41 @@
 				98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */,
 				98DC785622D5964700F72DBA /* Common.swift in Sources */,
 				987A6DCA22D595D200662010 /* ViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00100000000000000000011 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000001 /* Common.swift in Sources */,
+				A00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
+				A00100000000000000000003 /* ApiController.swift in Sources */,
+				9865F8DE3011C0A200777207 /* WindguruLoginView.swift in Sources */,
+				9865F8E33011C0E200777207 /* WindguruSpotPicker.swift in Sources */,
+				A00100000000000000000004 /* AlertViewModel.swift in Sources */,
+				9865F8DB3011C07F00777207 /* ForecastModelPicker.swift in Sources */,
+				A00100000000000000000005 /* ApiListViewController.swift in Sources */,
+				A00100000000000000000006 /* MainViewController.swift in Sources */,
+				A00100000000000000000007 /* AppDelegate.swift in Sources */,
+				C00100000000000000000002 /* ForecastDashboardView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00100000000000000000011 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00100000000000000000001 /* Common.swift in Sources */,
+				B00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
+				9865F8DA3011C07F00777207 /* ForecastModelPicker.swift in Sources */,
+				B00100000000000000000003 /* ApiController.swift in Sources */,
+				9865F8E23011C0E200777207 /* WindguruSpotPicker.swift in Sources */,
+				B00100000000000000000004 /* AlertViewModel.swift in Sources */,
+				B00100000000000000000005 /* ApiListViewController.swift in Sources */,
+				B00100000000000000000006 /* MainViewController.swift in Sources */,
+				9865F8E03011C0A200777207 /* WindguruLoginView.swift in Sources */,
+				B00100000000000000000007 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1082,84 +1100,6 @@
 			};
 			name = Release;
 		};
-		A00100000000000000000013 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.iOSnowatch";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		A00100000000000000000014 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.iOSnowatch";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		B00100000000000000000013 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.ForescoopVisionOS";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = xros;
-				SUPPORTED_PLATFORMS = "xros xrsimulator";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 7;
-				XROS_DEPLOYMENT_TARGET = 26.0;
-			};
-			name = Debug;
-		};
-		B00100000000000000000014 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.forescoop.ForescoopVisionOS";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = xros;
-				SUPPORTED_PLATFORMS = "xros xrsimulator";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 7;
-				XROS_DEPLOYMENT_TARGET = 26.0;
-			};
-			name = Release;
-		};
 		70BAA9CA1F276B6F004CD577 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1344,6 +1284,84 @@
 			};
 			name = Release;
 		};
+		A00100000000000000000013 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.iOSnowatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A00100000000000000000014 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.iOSnowatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B00100000000000000000013 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.ForescoopVisionOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		B00100000000000000000014 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.ForescoopVisionOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1383,24 +1401,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A00100000000000000000010 /* Build configuration list for PBXNativeTarget "iOSnowatch" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A00100000000000000000013 /* Debug */,
-				A00100000000000000000014 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B00100000000000000000013 /* Debug */,
-				B00100000000000000000014 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		70BAA9C91F276B6F004CD577 /* Build configuration list for PBXNativeTarget "Forescoop_Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1428,6 +1428,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A00100000000000000000010 /* Build configuration list for PBXNativeTarget "iOSnowatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00100000000000000000013 /* Debug */,
+				A00100000000000000000014 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B00100000000000000000010 /* Build configuration list for PBXNativeTarget "ForescoopVisionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B00100000000000000000013 /* Debug */,
+				B00100000000000000000014 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -1438,6 +1456,16 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A0010000000000000000000C /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
+		B0010000000000000000000C /* Forescoop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
+			productName = Forescoop;
+		};
 		C0DE00000000000000000001 /* Forescoop */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
@@ -1459,16 +1487,6 @@
 			productName = Forescoop;
 		};
 		C0DE00000000000000000005 /* Forescoop */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
-			productName = Forescoop;
-		};
-		A0010000000000000000000C /* Forescoop */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
-			productName = Forescoop;
-		};
-		B0010000000000000000000C /* Forescoop */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C0DE00000000000000000000 /* XCLocalSwiftPackageReference ".." */;
 			productName = Forescoop;
