@@ -38,6 +38,8 @@
 - The iOS example targets are universal. `ForecastDashboardView` keeps its compact phone presentation and uses a two-column layout on regular-width iPad screens; iPad supports all interface orientations.
 - The iPad dashboard adds a bottom location workspace with saved-location map pins and selectable location cards. Search-derived saved locations retain their Windguru spot ID; manually pinned locations keep the existing PRO-coordinate or guest-nearest-spot behavior.
 - `ForecastDashboardView` renders a non-interactive native SwiftUI animated background from the selected slot's `weatherSymbolNames()`, combining weather-aware gradient, sun glow, clouds, wind streaks, and rain or snow particles without adding a third-party dependency.
+- `ForescoopVisionOS` now launches a dedicated `VisionForecastView` with a wide SwiftUI forecast window, large weather symbols, and translucent material metric cards. It intentionally avoids the iPad dashboard layout and reuses the same live forecast service.
+- visionOS now uses a native `App`/`WindowGroup` lifecycle rather than the shared UIKit app delegate. The forecast window provides a bottom ornament for Locations and Refresh; Locations opens a separate spatial window with the saved-location map and list.
 
 ### Verification
 

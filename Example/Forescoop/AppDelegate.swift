@@ -73,6 +73,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+#elseif os(visionOS)
+
+// visionOS uses VisionForescoopApp's SwiftUI lifecycle.
+
 #else
 
 import UIKit

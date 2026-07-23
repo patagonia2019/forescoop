@@ -163,6 +163,8 @@ struct AnimatedWeatherBackground: View {
         let progress = (time * speed + Double(index) * 0.137).truncatingRemainder(dividingBy: 1)
         let y = size.height * (CGFloat(progress) - 0.55)
         let sway = CGFloat(sin(time * (isSnowy ? 1.4 : 0.7) + Double(index))) * (isSnowy ? 18 : 8)
+        let rainDrift = windTravelVector.x * CGFloat(windVelocity / 50) * 42 * CGFloat(progress)
+        let rainTilt = atan2(Double(rainDrift), 110) * 180 / .pi
 
         if isSnowy {
             Image(systemName: "snowflake")
@@ -176,7 +178,9 @@ struct AnimatedWeatherBackground: View {
                 .font(.system(size: CGFloat(9 + index % 6), weight: .medium))
                 .foregroundStyle(.cyan.opacity(0.55))
                 .shadow(color: .cyan.opacity(0.25), radius: 2)
-                .offset(x: size.width * (column - 0.5) + sway, y: y)
+                .rotationEffect(.degrees(rainTilt))
+                .offset(x: size.width * (column - 0.5) + sway + rainDrift,
+                        y: y + windTravelVector.y * CGFloat(windVelocity / 50) * 8)
         }
     }
 }

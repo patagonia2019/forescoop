@@ -75,6 +75,9 @@
 		C00100000000000000000002 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
 		D00100000000000000000001 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
 		D00100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
+		E00100000000000000000001 /* VisionForecastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00100000000000000000003 /* VisionForecastView.swift */; };
+		F00100000000000000000001 /* VisionForescoopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* VisionForescoopApp.swift */; };
+		F00100000000000000000002 /* VisionLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* VisionLocationsView.swift */; };
 		C0DE00000000000000000011 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000001 /* Forescoop */; };
 		C0DE00000000000000000012 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000002 /* Forescoop */; };
 		C0DE00000000000000000013 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000003 /* Forescoop */; };
@@ -180,6 +183,9 @@
 		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C00100000000000000000003 /* ForecastDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDashboardView.swift; sourceTree = "<group>"; };
 		D00100000000000000000003 /* AnimatedWeatherBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedWeatherBackground.swift; sourceTree = "<group>"; };
+		E00100000000000000000003 /* VisionForecastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionForecastView.swift; sourceTree = "<group>"; };
+		F00100000000000000000003 /* VisionForescoopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionForescoopApp.swift; sourceTree = "<group>"; };
+		F00100000000000000000004 /* VisionLocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionLocationsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -289,6 +295,9 @@
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				C00100000000000000000003 /* ForecastDashboardView.swift */,
 				D00100000000000000000003 /* AnimatedWeatherBackground.swift */,
+				E00100000000000000000003 /* VisionForecastView.swift */,
+				F00100000000000000000003 /* VisionForescoopApp.swift */,
+				F00100000000000000000004 /* VisionLocationsView.swift */,
 				9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */,
 				9865F8E53011C6B400777207 /* MapLocationPicker.swift */,
 				9865F8DD3011C0A200777207 /* WindguruLoginView.swift */,
@@ -785,6 +794,9 @@
 				B00100000000000000000006 /* MainViewController.swift in Sources */,
 				9865F8E03011C0A200777207 /* WindguruLoginView.swift in Sources */,
 				B00100000000000000000007 /* AppDelegate.swift in Sources */,
+				E00100000000000000000001 /* VisionForecastView.swift in Sources */,
+				F00100000000000000000001 /* VisionForescoopApp.swift in Sources */,
+				F00100000000000000000002 /* VisionLocationsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
