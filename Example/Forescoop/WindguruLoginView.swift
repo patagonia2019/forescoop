@@ -25,7 +25,9 @@ struct WindguruLoginView: View {
             Form {
                 Section("Windguru PRO") {
                     TextField("Username", text: $enteredUsername)
+#if !os(macOS)
                         .textInputAutocapitalization(.never)
+#endif
                         .autocorrectionDisabled()
                     SecureField("Password", text: $password)
                 }

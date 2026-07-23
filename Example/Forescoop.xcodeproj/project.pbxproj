@@ -75,6 +75,12 @@
 		B0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = B0010000000000000000000C /* Forescoop */; };
 		C00100000000000000000001 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
 		C00100000000000000000002 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
+		CA0100000000000000000001 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
+		CA0100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
+		CA0100000000000000000003 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
+		CA0100000000000000000004 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
+		CA0100000000000000000005 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
+		CA0100000000000000000006 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
 		C0DE00000000000000000011 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000001 /* Forescoop */; };
 		C0DE00000000000000000012 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000002 /* Forescoop */; };
 		C0DE00000000000000000013 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000003 /* Forescoop */; };
@@ -777,6 +783,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA0100000000000000000001 /* ForecastDashboardView.swift in Sources */,
+				CA0100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */,
+				CA0100000000000000000003 /* ForecastModelPicker.swift in Sources */,
+				CA0100000000000000000004 /* WindguruLoginView.swift in Sources */,
+				CA0100000000000000000005 /* WindguruSpotPicker.swift in Sources */,
+				CA0100000000000000000006 /* MapLocationPicker.swift in Sources */,
 				98688A1522D5938900A09AD0 /* Common.swift in Sources */,
 				98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */,
 			);

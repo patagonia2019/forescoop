@@ -10,23 +10,20 @@ import Forescoop
 
 #if os(macOS)
 import Cocoa
+import SwiftUI
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    
-    var started: Bool = false
-    
+    private var window: NSWindow?
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
-    }
-    
-    func applicationWillTerminate(_ aNotification: Notification) {
-    }
-    
-    func applicationWillResignActive(_ notification: Notification) {
-    }
-    
-    func applicationDidBecomeActive(_ notification: Notification) {
+        let window = NSWindow(contentViewController: NSHostingController(rootView: ForecastDashboardView()))
+        window.title = "Forescoop"
+        window.setContentSize(NSSize(width: 1_180, height: 820))
+        window.minSize = NSSize(width: 900, height: 650)
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        self.window = window
     }
 }
 

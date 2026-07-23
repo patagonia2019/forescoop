@@ -14,7 +14,9 @@ import Forescoop
 struct ForecastDashboardView: View {
     private static let windguruModelInfoURL = URL(string: "https://www.windguru.cz/help.php?sec=models")!
     private let forecastService: ForecastWindguruProtocol
+#if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
     @AppStorage("windguruUsername") private var windguruUsername = ""
     @State private var forecast: SpotForecast?
@@ -39,6 +41,14 @@ struct ForecastDashboardView: View {
         self.forecastService = forecastService
     }
 
+    private var usesWideLayout: Bool {
+#if os(macOS)
+        true
+#else
+        horizontalSizeClass == .regular
+#endif
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -54,11 +64,19 @@ struct ForecastDashboardView: View {
             }
             .navigationTitle("Forescoop")
             .toolbar {
+#if os(macOS)
+                ToolbarItem(placement: .navigation) {
+                    Button(windguruUsername.isEmpty ? "Login" : windguruUsername, systemImage: "person.crop.circle") {
+                        showsLogin = true
+                    }
+                }
+#else
                 ToolbarItem(placement: .topBarLeading) {
                     Button(windguruUsername.isEmpty ? "Login" : windguruUsername, systemImage: "person.crop.circle") {
                         showsLogin = true
                     }
                 }
+#endif
                 ToolbarItem(placement: .primaryAction) {
                     Button("Refresh", systemImage: "arrow.clockwise") {
                         Task { await loadForecast() }
@@ -105,7 +123,7 @@ struct ForecastDashboardView: View {
             VStack(spacing: 28) {
                 hourSelector(for: forecast)
 
-                if horizontalSizeClass == .regular {
+                if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
                         forecastOverview(for: forecast)
                             .frame(maxWidth: .infinity)

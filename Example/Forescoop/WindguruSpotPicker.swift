@@ -25,7 +25,9 @@ struct WindguruSpotPicker: View {
     @State private var savedLocations = SavedMapLocationStore.load()
     @State private var locationToRename: SavedMapLocation?
     @State private var renamedLocation = ""
+#if !os(macOS)
     @State private var editMode: EditMode = .inactive
+#endif
 
     private var lastSavedCoordinate: CLLocationCoordinate2D? { savedLocations.last?.coordinate }
 
@@ -49,7 +51,9 @@ struct WindguruSpotPicker: View {
                 Section("Search Windguru spots") {
                     HStack {
                         TextField("City or spot", text: $query)
+#if !os(macOS)
                             .textInputAutocapitalization(.words)
+#endif
                             .onSubmit { Task { await search() } }
                         Button("Search") { Task { await search() } }
                             .disabled(query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
@@ -79,16 +83,20 @@ struct WindguruSpotPicker: View {
                 }
             }
             .navigationTitle("Choose location")
+#if !os(macOS)
             .environment(\.editMode, $editMode)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+#if !os(macOS)
                 ToolbarItem(placement: .primaryAction) {
                     Button(editMode.isEditing ? "Done" : "Edit") {
                         editMode = editMode.isEditing ? .inactive : .active
                     }
                 }
+#endif
             }
         }
         .sheet(isPresented: $showsMap) {
@@ -140,6 +148,7 @@ struct WindguruSpotPicker: View {
             .buttonStyle(.plain)
             .disabled(isLoading)
 
+#if !os(macOS)
             if editMode.isEditing {
                 Button("Rename \(location.name)", systemImage: "pencil") {
                     beginRenaming(location)
@@ -148,6 +157,7 @@ struct WindguruSpotPicker: View {
                 .buttonStyle(.borderless)
                 .accessibilityHint("Changes this saved location's name")
             }
+#endif
         }
         .contextMenu {
             Button("Rename", systemImage: "pencil") { beginRenaming(location) }
