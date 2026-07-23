@@ -13,6 +13,7 @@ import Forescoop
 struct ForecastDashboardView: View {
     private static let windguruModelInfoURL = URL(string: "https://www.windguru.cz/help.php?sec=models")!
     private let forecastService: ForecastWindguruProtocol
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
     @AppStorage("windguruUsername") private var windguruUsername = ""
     @State private var forecast: SpotForecast?
@@ -38,95 +39,7 @@ struct ForecastDashboardView: View {
         NavigationStack {
             Group {
                 if let forecast {
-                    VStack(spacing: 24) {
-                        hourSelector(for: forecast)
-
-                        VStack(spacing: 4) {
-                            Button {
-                                showsSpotPicker = true
-                            } label: {
-                                Label(forecast.asCurrentLocation ?? "Unknown location", systemImage: "mappin.and.ellipse")
-                            }
-                            .buttonStyle(.plain)
-                            .font(.title.bold())
-                            .foregroundColor(.blue)
-
-                            HStack(spacing: 6) {
-                                Button {
-                                    showsModelPicker = true
-                                } label: {
-                                    Label(forecast.forecast?.modelName ?? "Forecast model", systemImage: "cpu")
-                                        .font(.headline)
-                                        .foregroundStyle(.secondary)
-                                }
-                                .buttonStyle(.plain)
-
-                                Link(destination: Self.windguruModelInfoURL) {
-                                    Image(systemName: "info.circle")
-                                }
-                                .accessibilityLabel("About Windguru forecast models")
-                                .accessibilityHint("Opens Windguru's model explanation")
-                            }
-                            .font(.title.bold())
-                            .foregroundColor(.blue)
-                        }
-                        HStack(spacing: 12) {
-                            ForEach(forecast.weatherSymbolNames(hour: selectedHour), id: \.self) { symbol in
-                                Image(systemName: symbol)
-                            }
-                        }
-                        .font(.system(size: 42))
-                        .symbolRenderingMode(.hierarchical)
-                        Menu {
-                            Picker("Temperature unit", selection: $temperatureUnit) {
-                                ForEach(TemperatureUnit.allCases) { unit in
-                                    Text(unit.label).tag(unit)
-                                }
-                            }
-                        } label: {
-                            Label(temperature(for: forecast, hour: selectedHour), systemImage: "thermometer.medium")
-                                .font(.system(size: 44, weight: .semibold))
-                        }
-                        .accessibilityLabel("Temperature")
-                        HStack(spacing: 8) {
-                            Image(systemName: "wind")
-                            Text("Wind")
-                            Menu {
-                                Picker("Wind speed unit", selection: $windSpeedUnit) {
-                                    ForEach(WindSpeedUnit.allCases) { unit in
-                                        Text(unit.label).tag(unit)
-                                    }
-                                }
-                            } label: {
-                                Text(windSpeed(for: forecast, hour: selectedHour))
-                            }
-                            .accessibilityLabel("Wind speed")
-                            Text("/")
-                                .foregroundStyle(.secondary)
-                            Text("Gusts")
-                            Text(windSpeed(forecast.forecast?.windGustsKnots(hh: selectedHour ?? forecast.currentForecastHour)))
-                            Button {
-                                showsWindDirectionArrow.toggle()
-                            } label: {
-                                if showsWindDirectionArrow,
-                                   let direction = forecast.forecast?.windDirection(hh: selectedHour ?? forecast.currentForecastHour) {
-                                    // Wind directions describe where the wind comes from; this arrow points where it travels.
-                                    Image(systemName: "arrow.down")
-                                        .rotationEffect(.degrees(direction))
-                                } else {
-                                    Text(forecast.forecast?.windDirectionName(hh: selectedHour ?? forecast.currentForecastHour) ?? "—")
-                                }
-                            }
-                            .foregroundColor(.blue)
-                            .buttonStyle(.plain)
-                            .accessibilityLabel("Wind direction")
-                            .accessibilityHint("Shows the direction as an arrow")
-                        }
-                        .font(.body)
-
-                        weatherDetails(for: forecast)
-                    }
-                    .padding()
+                    forecastContent(for: forecast)
                 } else if isLoading {
                     ProgressView("Loading forecast…")
                 } else if let errorMessage {
@@ -181,6 +94,127 @@ struct ForecastDashboardView: View {
                 }
             }
         }
+    }
+
+    private func forecastContent(for forecast: SpotForecast) -> some View {
+        ScrollView {
+            VStack(spacing: 28) {
+                hourSelector(for: forecast)
+
+                if horizontalSizeClass == .regular {
+                    HStack(alignment: .top, spacing: 56) {
+                        forecastOverview(for: forecast)
+                            .frame(maxWidth: .infinity)
+
+                        VStack(alignment: .leading, spacing: 28) {
+                            windDetails(for: forecast)
+                            weatherDetails(for: forecast)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                } else {
+                    VStack(spacing: 24) {
+                        forecastOverview(for: forecast)
+                        windDetails(for: forecast)
+                        weatherDetails(for: forecast)
+                    }
+                }
+            }
+            .frame(maxWidth: 1_100)
+            .padding()
+        }
+    }
+
+    private func forecastOverview(for forecast: SpotForecast) -> some View {
+        VStack(spacing: 16) {
+            VStack(spacing: 4) {
+                Button {
+                    showsSpotPicker = true
+                } label: {
+                    Label(forecast.asCurrentLocation ?? "Unknown location", systemImage: "mappin.and.ellipse")
+                }
+                .buttonStyle(.plain)
+                .font(.title.bold())
+                .foregroundColor(.blue)
+
+                HStack(spacing: 6) {
+                    Button {
+                        showsModelPicker = true
+                    } label: {
+                        Label(forecast.forecast?.modelName ?? "Forecast model", systemImage: "cpu")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+
+                    Link(destination: Self.windguruModelInfoURL) {
+                        Image(systemName: "info.circle")
+                    }
+                    .accessibilityLabel("About Windguru forecast models")
+                    .accessibilityHint("Opens Windguru's model explanation")
+                }
+                .font(.title.bold())
+                .foregroundColor(.blue)
+            }
+
+            HStack(spacing: 12) {
+                ForEach(forecast.weatherSymbolNames(hour: selectedHour), id: \.self) { symbol in
+                    Image(systemName: symbol)
+                }
+            }
+            .font(.system(size: 42))
+            .symbolRenderingMode(.hierarchical)
+
+            Menu {
+                Picker("Temperature unit", selection: $temperatureUnit) {
+                    ForEach(TemperatureUnit.allCases) { unit in
+                        Text(unit.label).tag(unit)
+                    }
+                }
+            } label: {
+                Label(temperature(for: forecast, hour: selectedHour), systemImage: "thermometer.medium")
+                    .font(.system(size: 44, weight: .semibold))
+            }
+            .accessibilityLabel("Temperature")
+        }
+    }
+
+    private func windDetails(for forecast: SpotForecast) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "wind")
+            Text("Wind")
+            Menu {
+                Picker("Wind speed unit", selection: $windSpeedUnit) {
+                    ForEach(WindSpeedUnit.allCases) { unit in
+                        Text(unit.label).tag(unit)
+                    }
+                }
+            } label: {
+                Text(windSpeed(for: forecast, hour: selectedHour))
+            }
+            .accessibilityLabel("Wind speed")
+            Text("/")
+                .foregroundStyle(.secondary)
+            Text("Gusts")
+            Text(windSpeed(forecast.forecast?.windGustsKnots(hh: selectedHour ?? forecast.currentForecastHour)))
+            Button {
+                showsWindDirectionArrow.toggle()
+            } label: {
+                if showsWindDirectionArrow,
+                   let direction = forecast.forecast?.windDirection(hh: selectedHour ?? forecast.currentForecastHour) {
+                    // Wind directions describe where the wind comes from; this arrow points where it travels.
+                    Image(systemName: "arrow.down")
+                        .rotationEffect(.degrees(direction))
+                } else {
+                    Text(forecast.forecast?.windDirectionName(hh: selectedHour ?? forecast.currentForecastHour) ?? "—")
+                }
+            }
+            .foregroundColor(.blue)
+            .buttonStyle(.plain)
+            .accessibilityLabel("Wind direction")
+            .accessibilityHint("Shows the direction as an arrow")
+        }
+        .font(.body)
     }
 
     @MainActor

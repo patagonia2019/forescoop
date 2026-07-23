@@ -35,6 +35,7 @@
 - Windguru PRO login is explicit in the dashboard. The username is stored in `AppStorage`, while the password is verified against Windguru and stored only in Keychain; the service now exposes the authenticated `wforecast_latlon` operation for future map-based coordinate forecasts.
 - Choose Location includes a map picker. With a saved PRO session it loads Windguru's exact latitude/longitude forecast; guests resolve the tapped coordinate to the nearest public Windguru spot instead.
 - Saved map locations retain both map selections and searched Windguru spots. A searched spot is saved with its resolved Windguru coordinates only when no saved location already represents that coordinate.
+- The iOS example targets are universal. `ForecastDashboardView` keeps its compact phone presentation and uses a two-column layout on regular-width iPad screens; iPad supports all interface orientations.
 
 ### Verification
 
