@@ -83,7 +83,9 @@ public extension SpotForecast {
     }
 
     var currentForecastHour: String? {
-        currentHourString
+        availableForecastHours.min {
+            abs((Int($0) ?? .max) - currentHourInt) < abs((Int($1) ?? .max) - currentHourInt)
+        }
     }
 
     /// The local calendar date represented by a forecast hour offset.
@@ -112,9 +114,9 @@ public extension SpotForecast {
         forecastModel?.forecast
     }
     
-    /// Information comes in UTC, contains the every 3 hours information
+    /// The current weather symbol, using the nearest available forecast hour.
     var weatherInfo: String {
-        weatherSymbolName(hour: currentHourString)
+        weatherSymbolName(hour: currentForecastHour)
     }
 
     /// The primary SF Symbol matching the weather data for a particular forecast hour.
@@ -273,21 +275,10 @@ private extension SpotForecast {
     }
     
     var currentHour: Int {
-        var hour: Int = currentHourInt
-        let remainder = hour % 3
-
-        hour -= remainder
-
-        // TODO: here the increment
-        return hour
+        Int(currentForecastHour ?? "") ?? currentHourInt
     }
     
     var currentHourString: String? {
-        var hourString: String
-        let hh: Int = currentHour
-        
-        hourString = String(format: "%d", hh)
-        
-        return hourString
+        currentForecastHour
     }
 }

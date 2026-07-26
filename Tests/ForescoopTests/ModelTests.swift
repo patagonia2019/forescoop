@@ -298,6 +298,15 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(freezingLevel.value(in: .meters), 1_000)
         XCTAssertEqual(freezingLevel.value(in: .feet), 3_280.839_895, accuracy: 0.000_001)
     }
+
+    func testForecastKeepsItsSourceCadence() throws {
+        let forecast = try Forecast(map: [
+            "WINDSPD": ["0": 5.0, "1": 6.0, "2": 7.0, "3": 8.0]
+        ])
+
+        XCTAssertEqual(forecast?.availableHours, ["0", "1", "2", "3"])
+    }
+
     func testWSpotForecast() {
         let wspotForecast: WSpotForecast?
         do {

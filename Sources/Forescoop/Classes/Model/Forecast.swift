@@ -95,8 +95,7 @@ public class Forecast: Object, Mappable {
 public extension Forecast {
 
     var availableHours: [String] {
-        (weathers?[TypeOfWeather.WINDSPD.rawValue]?.orderedKeys ?? [])
-            .filter { (Int($0) ?? -1).isMultiple(of: 3) }
+        weathers?[TypeOfWeather.WINDSPD.rawValue]?.orderedKeys ?? []
     }
     
     /// WINDIRNAME: wind direction (name)

@@ -15,8 +15,10 @@ import SwiftUI
 public struct ForecastDashboardView: View {
     private let forecastService: ForecastWindguruProtocol
     private let forecastLoader: @MainActor (String, String?) async throws -> SpotForecast?
+    private let proSpotForecastLoader: @MainActor (String, String?, String, String) async throws -> SpotForecast?
     private let coordinateForecastLoader: @MainActor (Double, Double, String?, String, String) async throws -> WSpotForecast?
     private let spotSearch: @MainActor (String) async throws -> SpotResult?
+    private let profileLoader: @MainActor (String, String) async throws -> User?
 #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
@@ -28,6 +30,7 @@ public struct ForecastDashboardView: View {
     @State private var selectedHour: String?
     @State private var temperatureUnit: TemperatureUnit = .celsius
     @State private var windSpeedUnit: WindSpeedUnit = .knots
+    @AppStorage("windguruWaveHeightUnit") private var waveHeightUnit: WaveHeightUnit = .meters
     @State private var pressureUnit: PressureUnit = .hectopascals
     @State private var precipitationUnit: PrecipitationUnit = .millimeters
     @State private var freezingLevelUnit: FreezingLevelUnit = .meters
@@ -43,10 +46,22 @@ public struct ForecastDashboardView: View {
     public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
         forecastLoader = { try await forecastService.forecast(bySpotId: $0, model: $1) }
+        proSpotForecastLoader = { spotID, modelID, username, password in
+            guard let proForecast = try await forecastService.wforecast(
+                bySpotId: spotID,
+                model: modelID,
+                username: username,
+                password: password
+            ) else {
+                return nil
+            }
+            return try SpotForecast.from(coordinateForecast: proForecast)
+        }
         coordinateForecastLoader = {
             try await forecastService.wforecast(byLatitude: $0, longitude: $1, model: $2, username: $3, password: $4)
         }
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
+        profileLoader = { try await forecastService.login(withUsername: $0, password: $1) }
     }
 
     private var usesWideLayout: Bool {
@@ -91,7 +106,10 @@ public struct ForecastDashboardView: View {
                     }
                 }
             }
-            .task { await loadForecast() }
+            .task {
+                await loadUserPreferences()
+                await loadForecast()
+            }
             .sheet(isPresented: $showsSpotPicker, onDismiss: refreshSavedMapLocations) {
                 WindguruSpotPicker(
                     forecastService: forecastService,
@@ -118,10 +136,16 @@ public struct ForecastDashboardView: View {
                 }
             }
             .sheet(isPresented: $showsLogin) {
-                WindguruLoginView(forecastService: forecastService, username: windguruUsername) { username in
-                    windguruUsername = username
-                    showsLogin = false
-                }
+                WindguruLoginView(
+                    forecastService: forecastService,
+                    username: windguruUsername,
+                    onLoggedIn: { username in
+                        windguruUsername = username
+                        showsLogin = false
+                        Task { await loadForecast() }
+                    },
+                    onProfileLoaded: applyUserPreferences
+                )
             }
         }
     }
@@ -298,6 +322,29 @@ public struct ForecastDashboardView: View {
     }
 
     @MainActor
+    private func loadUserPreferences() async {
+        guard !windguruUsername.isEmpty,
+              let password = WindguruCredentialStore.password(for: windguruUsername),
+              let user = try? await profileLoader(windguruUsername, password),
+              user.isPro else {
+            return
+        }
+        applyUserPreferences(user)
+    }
+
+    private func applyUserPreferences(_ user: User) {
+        if let unit = WindSpeedUnit(windguruPreference: user.windUnits) {
+            windSpeedUnit = unit
+        }
+        if let unit = TemperatureUnit(windguruPreference: user.temperatureUnits) {
+            temperatureUnit = unit
+        }
+        if let unit = WaveHeightUnit(windguruPreference: user.waveUnits) {
+            waveHeightUnit = unit
+        }
+    }
+
+    @MainActor
     private func loadForecast(spotId: String? = nil, modelIDs: [String]? = nil) async {
         isLoading = true
         errorMessage = nil
@@ -307,15 +354,25 @@ public struct ForecastDashboardView: View {
             let requestedSpotID = spotId ?? selectedSpotID
             let isChangingSpot = requestedSpotID != selectedSpotID
             let requestedModelIDs = modelIDs ?? (isChangingSpot ? [] : selectedModelIDs)
+            let selectedForecastLoader: @MainActor (String?) async throws -> SpotForecast?
+            if let password = WindguruCredentialStore.password(for: windguruUsername), !windguruUsername.isEmpty {
+                selectedForecastLoader = { modelID in
+                    try await proSpotForecastLoader(requestedSpotID, modelID, windguruUsername, password)
+                }
+            } else {
+                selectedForecastLoader = { modelID in
+                    try await forecastLoader(requestedSpotID, modelID)
+                }
+            }
             var validForecasts: [SpotForecast] = []
             for modelID in requestedModelIDs {
-                if let loadedForecast = try await forecastLoader(requestedSpotID, modelID),
+                if let loadedForecast = try await selectedForecastLoader(modelID),
                    loadedForecast.forecast != nil {
                     validForecasts.append(loadedForecast)
                 }
             }
             if requestedModelIDs.isEmpty {
-                forecast = try await forecastLoader(requestedSpotID, nil)
+                forecast = try await selectedForecastLoader(nil)
             } else if validForecasts.count == 1 {
                 forecast = validForecasts[0]
             } else if validForecasts.count == requestedModelIDs.count {

@@ -28,6 +28,19 @@ public enum WindSpeedUnit: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+public extension WindSpeedUnit {
+    init?(windguruPreference: String?) {
+        switch windguruPreference?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "knots", "knot", "kt", "kts": self = .knots
+        case "m/s", "ms", "mps": self = .metersPerSecond
+        case "km/h", "kmh", "kph": self = .kilometersPerHour
+        case "mph": self = .milesPerHour
+        case "bft", "beaufort": self = .beaufort
+        default: return nil
+        }
+    }
+}
+
 public enum TemperatureUnit: String, CaseIterable, Identifiable, Sendable {
     case celsius
     case fahrenheit
@@ -38,6 +51,38 @@ public enum TemperatureUnit: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .celsius: "°C"
         case .fahrenheit: "°F"
+        }
+    }
+}
+
+public extension TemperatureUnit {
+    init?(windguruPreference: String?) {
+        switch windguruPreference?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "c", "°c", "celsius": self = .celsius
+        case "f", "°f", "fahrenheit": self = .fahrenheit
+        default: return nil
+        }
+    }
+}
+
+public enum WaveHeightUnit: String, CaseIterable, Identifiable, Sendable {
+    case meters
+    case feet
+
+    public var id: Self { self }
+
+    public var label: String {
+        switch self {
+        case .meters: "m"
+        case .feet: "ft"
+        }
+    }
+
+    public init?(windguruPreference: String?) {
+        switch windguruPreference?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "m", "meter", "meters", "metre", "metres": self = .meters
+        case "ft", "foot", "feet": self = .feet
+        default: return nil
         }
     }
 }
