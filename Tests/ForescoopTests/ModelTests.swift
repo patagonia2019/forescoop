@@ -283,8 +283,9 @@ class ModelTests: XCTestCase {
         nonOverlappingModels?["3"] = nonOverlappingModel
         nonOverlappingResponse?["forecast"] = nonOverlappingModels
         let nonOverlappingForecast = try? SpotForecast(map: nonOverlappingResponse)
-        let fallbackForecast = try? SpotForecast.blended([spotForecast!, nonOverlappingForecast!])
-        XCTAssertEqual(fallbackForecast?.forecast?.modelName, forecast?.modelName)
+        let expandedBlend = try? SpotForecast.blended([spotForecast!, nonOverlappingForecast!])
+        XCTAssertEqual(expandedBlend?.forecast?.modelName, "Forescoop Mix (2 models)")
+        XCTAssertEqual(expandedBlend?.forecast?.windSpeed(hh: "999"), 4.0)
 
         XCTAssertEqual(forecast?.seaLevelPressure(hh: "10"), 1002.0)
         XCTAssertEqual(forecast?.freezingLevelHeightInMeters(hh: "10"), 2590.0)

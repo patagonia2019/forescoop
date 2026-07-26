@@ -18,19 +18,19 @@ public extension SpotForecast {
         }
 
         let sources = forecasts.compactMap(\.forecast)
-        let commonHours = sources.dropFirst().reduce(Set(sources[0].availableHours)) {
-            $0.intersection(Set($1.availableHours))
-        }
-        // Different models can begin at different run times. Keep a usable
-        // forecast rather than failing the entire dashboard when they have no
-        // overlapping hours to blend.
-        guard !commonHours.isEmpty else { return base }
+        // Models can use different run times and cadences. Use every hour
+        // provided by any selected model; for a particular hour, only the
+        // models that actually publish data for it contribute to the average.
+        // This keeps hourly forecasts visible instead of reducing a mix to the
+        // sparsest model's cadence.
+        let availableHours = Set(sources.flatMap(\.availableHours))
+        guard !availableHours.isEmpty else { return base }
 
         let weatherKeys = Set(sources.flatMap { $0.weathers.map { Array($0.keys) } ?? [] })
         var blendedWeather = [String: [String: Any]]()
         for key in weatherKeys where key != TypeOfWeather.WINDIRNAME.rawValue {
             var valuesByHour = [String: Any]()
-            for hour in commonHours {
+            for hour in availableHours {
                 let values = sources.compactMap { numericValue($0.weathers?[key]?.info[hour]) }
                 guard !values.isEmpty else { continue }
                 let value = key == TypeOfWeather.WINDDIR.rawValue
