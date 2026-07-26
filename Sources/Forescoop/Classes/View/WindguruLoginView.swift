@@ -18,6 +18,7 @@ public struct WindguruLoginView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var enteredUsername = ""
     @State private var password = ""
+    @State private var showsPassword = false
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var loggedInUser: User?
@@ -47,7 +48,28 @@ public struct WindguruLoginView: View {
                                 .textInputAutocapitalization(.never)
 #endif
                                 .autocorrectionDisabled()
-                            SecureField("Password", text: $password)
+                            HStack {
+                                Group {
+                                    if showsPassword {
+                                        TextField("Password", text: $password)
+                                    } else {
+                                        SecureField("Password", text: $password)
+                                    }
+                                }
+#if !os(macOS)
+                                .textInputAutocapitalization(.never)
+#endif
+                                .autocorrectionDisabled()
+
+                                Button {
+                                    showsPassword.toggle()
+                                } label: {
+                                    Image(systemName: showsPassword ? "eye.slash" : "eye")
+                                        .foregroundStyle(.secondary)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel(showsPassword ? "Hide password" : "Show password")
+                            }
                         }
                         if let errorMessage {
                             Section { Text(errorMessage).foregroundStyle(.red) }
