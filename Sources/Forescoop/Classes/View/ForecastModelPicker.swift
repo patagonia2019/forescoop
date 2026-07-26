@@ -16,9 +16,12 @@ private struct ForecastModelOption: Identifiable {
 }
 
 public struct ForecastModelPicker: View {
-    private let modelLoader: @MainActor (String) async throws -> (SpotInfo?, Models?)
+    private let modelLoader: @MainActor (String, Bool) async throws -> (SpotInfo?, Models?, [String])
     let spotID: String
     let selectedModelIDs: Set<String>
+    /// Model IDs verified by the dashboard to return usable forecast hours.
+    let usableModelIDs: Set<String>
+    let isProUser: Bool
     let onModelSelected: ([String]) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -31,15 +34,32 @@ public struct ForecastModelPicker: View {
         forecastService: ForecastWindguruProtocol,
         spotID: String,
         selectedModelIDs: Set<String>,
+        usableModelIDs: Set<String> = [],
+        isProUser: Bool = false,
         onModelSelected: @escaping ([String]) -> Void
     ) {
-        modelLoader = { spotID in
+        modelLoader = { spotID, isProUser in
             let spotInfo = try await forecastService.spotInfo(bySpotId: spotID)
             let modelInfo = try await forecastService.modelInfo(onlyModelId: nil)
-            return (spotInfo, modelInfo)
+            guard isProUser, let coordinate = spotInfo?.location?.coordinate else {
+                return (spotInfo, modelInfo, [])
+            }
+            let discoveredModelIDs: [String]
+            if let response = try? await forecastService.models(
+                bylat: String(coordinate.latitude),
+                lon: String(coordinate.longitude)
+            ), let data = response.data(using: .utf8),
+               let modelIDs = try? JSONSerialization.jsonObject(with: data) as? [Int] {
+                discoveredModelIDs = modelIDs.map(String.init)
+            } else {
+                discoveredModelIDs = []
+            }
+            return (spotInfo, modelInfo, discoveredModelIDs)
         }
         self.spotID = spotID
         self.selectedModelIDs = selectedModelIDs
+        self.usableModelIDs = usableModelIDs
+        self.isProUser = isProUser
         self.onModelSelected = onModelSelected
     }
 
@@ -53,17 +73,21 @@ public struct ForecastModelPicker: View {
                 } else if models.isEmpty {
                     ContentUnavailableView("No forecast models", systemImage: "cpu")
                 } else {
-                    List(models) { model in
-                        Button {
-                            toggle(model.identifier)
-                        } label: {
-                            HStack {
-                                Image(systemName: selectedIDs.contains(model.identifier) ? "checkmark.square.fill" : "square")
-                                Text(model.name)
-                                Spacer()
+                    List {
+                        Section("\(selectedIDs.count) selected of \(models.count) available") {
+                            ForEach(models) { model in
+                                Button {
+                                    toggle(model.identifier)
+                                } label: {
+                                    HStack {
+                                        Image(systemName: selectedIDs.contains(model.identifier) ? "checkmark.square.fill" : "square")
+                                        Text(model.name)
+                                        Spacer()
+                                    }
+                                }
+                                .foregroundStyle(.primary)
                             }
                         }
-                        .foregroundStyle(.primary)
                     }
                 }
             }
@@ -99,8 +123,13 @@ public struct ForecastModelPicker: View {
         defer { isLoading = false }
 
         do {
-            let (spotInfo, modelInfo) = try await modelLoader(spotID)
-            let availableModelIDs = Set(spotInfo?.currentModels.map(String.init) ?? [])
+            let (spotInfo, modelInfo, proModelIDs) = try await modelLoader(spotID, isProUser)
+            let discoveredAndPublicModelIDs = Set(spotInfo?.currentModels.map(String.init) ?? [])
+                .union(isProUser ? Set(proModelIDs) : [])
+            let availableModelIDs = (isProUser && !usableModelIDs.isEmpty
+                ? usableModelIDs
+                : discoveredAndPublicModelIDs)
+                .union(selectedModelIDs)
             let availableModels = modelInfo?.sorted ?? []
             models = availableModels.compactMap { model in
                 let identifier = String(model.identifier)
@@ -118,6 +147,8 @@ public struct ForecastModelPicker: View {
         forecastService: ForecastWindguruMockup(),
         spotID: "64141",
         selectedModelIDs: [],
+        usableModelIDs: [],
+        isProUser: true,
         onModelSelected: { _ in }
     )
 }

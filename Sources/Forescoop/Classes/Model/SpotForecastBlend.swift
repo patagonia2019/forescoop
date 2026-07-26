@@ -21,7 +21,10 @@ public extension SpotForecast {
         let commonHours = sources.dropFirst().reduce(Set(sources[0].availableHours)) {
             $0.intersection(Set($1.availableHours))
         }
-        guard !commonHours.isEmpty else { throw CustomError.notMappeable }
+        // Different models can begin at different run times. Keep a usable
+        // forecast rather than failing the entire dashboard when they have no
+        // overlapping hours to blend.
+        guard !commonHours.isEmpty else { return base }
 
         let weatherKeys = Set(sources.flatMap { $0.weathers.map { Array($0.keys) } ?? [] })
         var blendedWeather = [String: [String: Any]]()

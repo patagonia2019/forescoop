@@ -83,12 +83,9 @@ public enum CustomError: Error {
     case unexpected(code: Int?, message: String?)
 }
 
-extension CustomError: CustomStringConvertible {
-    
-    public var localizedDescription: String {
-        description
-    }
-    
+extension CustomError: LocalizedError, CustomStringConvertible {
+    public var errorDescription: String? { description }
+
     public var description: String {
         switch self {
         case .cannotFindSpotId:

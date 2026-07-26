@@ -19,11 +19,14 @@ public struct ForecastDashboardView: View {
     private let coordinateForecastLoader: @MainActor (Double, Double, String?, String, String) async throws -> WSpotForecast?
     private let spotSearch: @MainActor (String) async throws -> SpotResult?
     private let profileLoader: @MainActor (String, String) async throws -> User?
+    private let spotInfoLoader: @MainActor (String) async throws -> SpotInfo?
+    private let coordinateModelLoader: @MainActor (Double, Double) async throws -> [String]
 #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
     @AppStorage("windguruUsername") private var windguruUsername = ""
+    @AppStorage("forecastDisplayInterval") private var forecastDisplayInterval = ForecastDisplayInterval.hourly.rawValue
     @State private var forecast: SpotForecast?
     @State private var errorMessage: String?
     @State private var isLoading = false
@@ -38,7 +41,9 @@ public struct ForecastDashboardView: View {
     @State private var showsSpotPicker = false
     @State private var showsModelPicker = false
     @State private var showsLogin = false
+    @State private var showsSettings = false
     @State private var selectedModelIDs: [String] = []
+    @State private var usableModelIDs: [String] = []
     @State private var savedMapLocations = SavedMapLocationStore.load()
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
@@ -62,6 +67,11 @@ public struct ForecastDashboardView: View {
         }
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
         profileLoader = { try await forecastService.login(withUsername: $0, password: $1) }
+        spotInfoLoader = { try await forecastService.spotInfo(bySpotId: $0) }
+        coordinateModelLoader = { latitude, longitude in
+            let response = try await forecastService.models(bylat: String(latitude), lon: String(longitude))
+            return Self.modelIDs(from: response)
+        }
     }
 
     private var usesWideLayout: Bool {
@@ -72,6 +82,47 @@ public struct ForecastDashboardView: View {
 #endif
     }
 
+    private var isProUser: Bool {
+        !windguruUsername.isEmpty && WindguruCredentialStore.password(for: windguruUsername) != nil
+    }
+
+    private var accountMenu: some View {
+        Menu {
+            if windguruUsername.isEmpty {
+                Button("Login", systemImage: "person.crop.circle") {
+                    showsLogin = true
+                }
+            } else {
+                Button("Profile", systemImage: "person.crop.circle") {
+                    showsLogin = true
+                }
+            }
+
+            Button("Settings", systemImage: "gearshape") {
+                showsSettings = true
+            }
+
+            if !windguruUsername.isEmpty {
+                Divider()
+                Button("Logout", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+                    logout()
+                }
+            }
+        } label: {
+            Label("Menu", systemImage: "line.3.horizontal")
+                .labelStyle(.iconOnly)
+        }
+        .accessibilityLabel("Menu")
+    }
+
+    private func logout() {
+        WindguruCredentialStore.removePassword(for: windguruUsername)
+        windguruUsername = ""
+        selectedModelIDs = []
+        usableModelIDs = []
+        Task { await loadForecast() }
+    }
+
     public var body: some View {
         NavigationStack {
             Group {
@@ -80,7 +131,7 @@ public struct ForecastDashboardView: View {
                 } else if isLoading {
                     ProgressView("Loading forecast…")
                 } else if let errorMessage {
-                    ContentUnavailableView("Forecast unavailable", systemImage: "exclamationmark.triangle", description: Text(errorMessage))
+                    unavailableForecastContent(errorMessage: errorMessage)
                 } else {
                     ContentUnavailableView("Forecast unavailable", systemImage: "cloud.sun")
                 }
@@ -89,15 +140,11 @@ public struct ForecastDashboardView: View {
             .toolbar {
 #if os(macOS)
                 ToolbarItem(placement: .navigation) {
-                    Button(windguruUsername.isEmpty ? "Login" : windguruUsername, systemImage: "person.crop.circle") {
-                        showsLogin = true
-                    }
+                    accountMenu
                 }
 #else
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(windguruUsername.isEmpty ? "Login" : windguruUsername, systemImage: "person.crop.circle") {
-                        showsLogin = true
-                    }
+                    accountMenu
                 }
 #endif
                 ToolbarItem(placement: .primaryAction) {
@@ -129,7 +176,9 @@ public struct ForecastDashboardView: View {
                 ForecastModelPicker(
                     forecastService: forecastService,
                     spotID: selectedSpotID,
-                    selectedModelIDs: Set(selectedModelIDs)
+                    selectedModelIDs: Set(selectedModelIDs),
+                    usableModelIDs: Set(usableModelIDs),
+                    isProUser: isProUser
                 ) { modelIDs in
                     showsModelPicker = false
                     Task { await loadForecast(modelIDs: modelIDs) }
@@ -147,13 +196,20 @@ public struct ForecastDashboardView: View {
                     onProfileLoaded: applyUserPreferences
                 )
             }
+            .sheet(isPresented: $showsSettings) {
+                ForecastSettingsView()
+            }
         }
     }
 
     private func forecastContent(for forecast: SpotForecast) -> some View {
         ScrollView {
             VStack(spacing: 28) {
-                ForecastHourSelector(forecast: forecast, selectedHour: $selectedHour)
+                ForecastHourSelector(
+                    forecast: forecast,
+                    selectedHour: $selectedHour,
+                    displayInterval: ForecastDisplayInterval(rawValue: forecastDisplayInterval) ?? .hourly
+                )
 
                 if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
@@ -306,7 +362,7 @@ public struct ForecastDashboardView: View {
             }
             await loadForecast(spotId: spotID)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = unavailableForecastMessage(for: error)
         }
     }
 
@@ -353,7 +409,23 @@ public struct ForecastDashboardView: View {
         do {
             let requestedSpotID = spotId ?? selectedSpotID
             let isChangingSpot = requestedSpotID != selectedSpotID
-            let requestedModelIDs = modelIDs ?? (isChangingSpot ? [] : selectedModelIDs)
+            let configuredModelIDs = modelIDs ?? (isChangingSpot ? [] : selectedModelIDs)
+            let requestedModelIDs: [String]
+            if configuredModelIDs.isEmpty {
+                let spotInfo = try await spotInfoLoader(requestedSpotID)
+                let spotModelIDs = spotInfo?.currentModels.map(String.init) ?? []
+                if isProUser, let coordinate = spotInfo?.location?.coordinate {
+                    let coordinateModelIDs = (try? await coordinateModelLoader(
+                        coordinate.latitude,
+                        coordinate.longitude
+                    )) ?? []
+                    requestedModelIDs = orderedUnique(coordinateModelIDs + spotModelIDs)
+                } else {
+                    requestedModelIDs = spotModelIDs
+                }
+            } else {
+                requestedModelIDs = configuredModelIDs
+            }
             let selectedForecastLoader: @MainActor (String?) async throws -> SpotForecast?
             if let password = WindguruCredentialStore.password(for: windguruUsername), !windguruUsername.isEmpty {
                 selectedForecastLoader = { modelID in
@@ -365,30 +437,51 @@ public struct ForecastDashboardView: View {
                 }
             }
             var validForecasts: [SpotForecast] = []
+            var lastModelError: Error?
             for modelID in requestedModelIDs {
-                if let loadedForecast = try await selectedForecastLoader(modelID),
-                   loadedForecast.forecast != nil {
-                    validForecasts.append(loadedForecast)
+                do {
+                    if let loadedForecast = try await selectedForecastLoader(modelID),
+                       !loadedForecast.availableForecastHours.isEmpty {
+                        validForecasts.append(loadedForecast)
+                    }
+                } catch {
+                    // Models can be unavailable for a particular account or location.
+                    lastModelError = error
                 }
             }
-            if requestedModelIDs.isEmpty {
-                forecast = try await selectedForecastLoader(nil)
+            if validForecasts.isEmpty, configuredModelIDs.isEmpty,
+               let loadedForecast = try await selectedForecastLoader(nil),
+               !loadedForecast.availableForecastHours.isEmpty {
+                forecast = loadedForecast
             } else if validForecasts.count == 1 {
                 forecast = validForecasts[0]
-            } else if validForecasts.count == requestedModelIDs.count {
+            } else if validForecasts.count > 1 {
                 forecast = try SpotForecast.blended(validForecasts)
+            } else if configuredModelIDs.isEmpty {
+                guard let loadedForecast = try await selectedForecastLoader(nil),
+                      !loadedForecast.availableForecastHours.isEmpty else {
+                    throw lastModelError ?? CustomError.unexpected(
+                        code: nil,
+                        message: "Windguru returned no usable forecast hours."
+                    )
+                }
+                forecast = loadedForecast
             } else {
-                throw CustomError.notMappeable
+                throw lastModelError ?? CustomError.notMappeable
             }
             if forecast != nil {
                 selectedSpotID = requestedSpotID
-                selectedModelIDs = requestedModelIDs.isEmpty
-                    ? [forecast?.model ?? Model.defaultModel]
-                    : requestedModelIDs
+                if !validForecasts.isEmpty {
+                    usableModelIDs = validForecasts.compactMap(\.model)
+                }
+                selectedModelIDs = validForecasts.compactMap(\.model)
+                if selectedModelIDs.isEmpty {
+                    selectedModelIDs = [forecast?.model ?? Model.defaultModel]
+                }
             }
             selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = unavailableForecastMessage(for: error)
         }
     }
 
@@ -402,20 +495,71 @@ public struct ForecastDashboardView: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            let coordinateForecast = try await coordinateForecastLoader(
-                coordinate.latitude,
-                coordinate.longitude,
-                nil,
-                windguruUsername,
-                password
-            )
-            guard let coordinateForecast else { throw CustomError.notMappeable }
-            forecast = try SpotForecast.from(coordinateForecast: coordinateForecast)
-            selectedModelIDs = forecast?.model.map { [$0] } ?? []
+            let modelIDs = try await coordinateModelLoader(coordinate.latitude, coordinate.longitude)
+            let requestedModelIDs = modelIDs.isEmpty ? [Model.defaultModel] : modelIDs
+            var coordinateForecasts: [SpotForecast] = []
+            var lastModelError: Error?
+            for modelID in requestedModelIDs {
+                do {
+                    guard let coordinateForecast = try await coordinateForecastLoader(
+                        coordinate.latitude,
+                        coordinate.longitude,
+                        modelID,
+                        windguruUsername,
+                        password
+                    ) else {
+                        continue
+                    }
+                    guard let convertedForecast = try SpotForecast.from(coordinateForecast: coordinateForecast) else {
+                        continue
+                    }
+                    coordinateForecasts.append(convertedForecast)
+                } catch {
+                    lastModelError = error
+                }
+            }
+            guard !coordinateForecasts.isEmpty else { throw lastModelError ?? CustomError.notMappeable }
+            forecast = coordinateForecasts.count == 1
+                ? coordinateForecasts[0]
+                : try SpotForecast.blended(coordinateForecasts)
+            selectedModelIDs = coordinateForecasts.compactMap(\.model)
+            usableModelIDs = selectedModelIDs
             selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = unavailableForecastMessage(for: error)
         }
+    }
+
+    private func unavailableForecastContent(errorMessage: String) -> some View {
+#if DEBUG
+        ForecastOfflineView(retry: {
+            Task { await loadForecast() }
+        }, debugError: errorMessage)
+#else
+        ForecastOfflineView {
+            Task { await loadForecast() }
+        }
+#endif
+    }
+
+    private func unavailableForecastMessage(for error: Error) -> String {
+#if DEBUG
+        let nsError = error as NSError
+        var details = [
+            String(reflecting: error),
+            "Domain: \(nsError.domain)",
+            "Code: \(nsError.code)"
+        ]
+        if !error.localizedDescription.isEmpty {
+            details.append("Description: \(error.localizedDescription)")
+        }
+        if !nsError.userInfo.isEmpty {
+            details.append("Details: \(nsError.userInfo)")
+        }
+        return details.joined(separator: "\n")
+#else
+        return ""
+#endif
     }
 
     private func closestHour(to date: Date, in forecast: SpotForecast) -> String? {
@@ -423,6 +567,20 @@ public struct ForecastDashboardView: View {
             abs((forecast.forecastDate(hour: $0)?.timeIntervalSince(date) ?? .greatestFiniteMagnitude))
                 < abs((forecast.forecastDate(hour: $1)?.timeIntervalSince(date) ?? .greatestFiniteMagnitude))
         }
+    }
+
+    private static func modelIDs(from response: String?) -> [String] {
+        guard let response,
+              let data = response.data(using: .utf8),
+              let modelIDs = try? JSONSerialization.jsonObject(with: data) as? [Int] else {
+            return []
+        }
+        return modelIDs.map(String.init)
+    }
+
+    private func orderedUnique(_ modelIDs: [String]) -> [String] {
+        var seen = Set<String>()
+        return modelIDs.filter { seen.insert($0).inserted }
     }
 
 }

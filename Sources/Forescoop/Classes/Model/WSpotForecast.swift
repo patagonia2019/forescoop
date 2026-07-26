@@ -170,7 +170,10 @@ public extension WSpotForecast {
     }
     
     var forecast: WForecast? {
-        fcst?.first(where: {$0.id_model == id_model})
+        // Some wforecast responses contain a string or stale `id_model` at the top
+        // level while `fcst` contains exactly the requested model. The payload is
+        // still usable, so prefer the matching model but fall back to that forecast.
+        fcst?.first(where: { $0.id_model == id_model }) ?? fcst?.first
     }
     
     var spotId: Int {

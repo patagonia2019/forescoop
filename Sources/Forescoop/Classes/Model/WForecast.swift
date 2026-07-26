@@ -8,6 +8,26 @@
 
 import Foundation
 
+private func optionalIntegers(_ value: Any?) -> [Int?] {
+    (value as? [Any])?.map { value in
+        switch value {
+        case let number as NSNumber: number.intValue
+        case let string as String: Int(string)
+        default: nil
+        }
+    } ?? []
+}
+
+private func optionalDoubles(_ value: Any?) -> [Double?] {
+    (value as? [Any])?.map { value in
+        switch value {
+        case let number as NSNumber: number.doubleValue
+        case let string as String: Double(string)
+        default: nil
+        }
+    } ?? []
+}
+
 /*
  *  WForecast
  *
@@ -43,15 +63,16 @@ public class WForecast: Object, Mappable {
     // TODO: Maybe refactor this... -> var info = [String: Any]()
     
     var TMP         = [Double]() // TMP: temperature
-    var TCDC        = [String]() // TCDC: Cloud cover (%) Total
-    var HCDC        = [String]() // HCDC: Cloud cover (%) High
-    var MCDC        = [String]() // MCDC: Cloud cover (%) Mid
-    var LCDC        = [String]() // LCDC: Cloud cover (%) Low
+    var TCDC        = [Int?]() // TCDC: Cloud cover (%) Total
+    var HCDC        = [Int?]() // HCDC: Cloud cover (%) High
+    var MCDC        = [Int?]() // MCDC: Cloud cover (%) Mid
+    var LCDC        = [Int?]() // LCDC: Cloud cover (%) Low
     var RH          = [Int]() // RH: Relative humidity: relative humidity in percent
     var GUST        = [Double]() // GUST: Wind gusts (knots)
     var SLP         = [Int]() // SLP: sea level pressure
     var FLHGT       = [Int]() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
-    var APCP        = [Int]() //  APCP: Precip. (mm/3h)
+    var APCP        = [Double?]() //  APCP: Precip. (mm/3h)
+    var APCP1       = [Double?]() //  APCP: Precip. (mm/1h)
     var WINDSPD     = [Double]() //  WINDSPD: Wind speed (knots)
     var windDirection = [WindDirection]()
     var SMERN       = [Int]()
@@ -97,23 +118,16 @@ public class WForecast: Object, Mappable {
         try super.mapping(map: map)
         
         TMP = map?["TMP"] as? [Double] ?? []
-        if let tcdc = map?["TCDC"].debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
-            TCDC = tcdc.components(separatedBy: ",")
-        }
-        if let hcdc = map?["HCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
-            HCDC = hcdc.components(separatedBy: ",")
-        }
-        if let mcdc = map?["MCDC"] .debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
-            MCDC = mcdc.components(separatedBy: ",")
-        }
-        if let lcdc = map?["LCDC"].debugDescription.components(separatedBy: CharacterSet(charactersIn:"\n)")).joined() {
-            LCDC = lcdc.components(separatedBy: ",")
-        }
+        TCDC = optionalIntegers(map?["TCDC"])
+        HCDC = optionalIntegers(map?["HCDC"])
+        MCDC = optionalIntegers(map?["MCDC"])
+        LCDC = optionalIntegers(map?["LCDC"])
         RH = map?["RH"] as? [Int] ?? []
         GUST = map?["GUST"] as? [Double] ?? []
         SLP = map?["SLP"] as? [Int] ?? []
         FLHGT = map?["FLHGT"] as? [Int] ?? []
-        APCP = map?["APCP"] as? [Int] ?? []
+        APCP = optionalDoubles(map?["APCP"])
+        APCP1 = optionalDoubles(map?["APCP1"])
         WINDSPD = map?["WINDSPD"] as? [Double] ?? []
         windDirection = (map?["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)} ?? []
         SMERN = map?["SMERN"] as? [Int] ?? []
@@ -440,33 +454,33 @@ public extension WForecast {
     
     func cloudCoverTotal(hour: Int) -> Int? {
         if TCDC.count > 0 && hour < TCDC.count {
-            return Int(TCDC[hour])
+            return TCDC[hour]
         }
         return nil
     }
     
     func cloudCoverHigh(hour: Int) -> Int? {
         if HCDC.count > 0 && hour < HCDC.count {
-            return Int(HCDC[hour])
+            return HCDC[hour]
         }
         return nil
     }
     
     func cloudCoverMid(hour: Int) -> Int? {
         if MCDC.count > 0 && hour < MCDC.count {
-            return Int(MCDC[hour])
+            return MCDC[hour]
         }
         return nil
     }
     
     func cloudCoverLow(hour: Int) -> Int? {
         if LCDC.count > 0 && hour < LCDC.count {
-            return Int(LCDC[hour])
+            return LCDC[hour]
         }
         return nil
     }
     
-    func precipitation(hour: Int) -> Int? {
+    func precipitation(hour: Int) -> Double? {
         if APCP.count > 0 && hour < APCP.count {
             return APCP[hour]
         }

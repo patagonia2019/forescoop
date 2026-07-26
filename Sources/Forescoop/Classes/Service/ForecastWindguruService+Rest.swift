@@ -234,10 +234,8 @@ private extension ForecastWindguruService {
         let url = Http.Service.url(api: api, tokens: tokens)
         let (data, _) = try await URLSession.shared.data(from: URL.init(string: url)!)
         if let string = String.init(data: data, encoding: .utf8) {
-            print("SUCCESS url = \(url) - response.result.value \(string)")
             return string
         } else {
-            print("FAILURE url = \(url)")
             throw CustomError.invalidParsing
         }
     }
@@ -248,7 +246,6 @@ private extension ForecastWindguruService {
         let (data, _) = try await URLSession.shared.data(from: URL.init(string: url)!)
         let json = try JSONSerialization.jsonObject(with: data, options:[]) as? [String: Any]
         let object = try T.init(map: json)
-        print("SUCCESS url = \(url) - response.result.value \(String(describing: json))")
         return object
     }
 }

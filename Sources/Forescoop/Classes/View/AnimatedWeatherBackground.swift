@@ -263,7 +263,9 @@ public struct AnimatedWeatherBackground: View {
         let symbolName: String
         switch index % 5 {
         case 3:
-            symbolName = "feather.fill"
+            // `feather.fill` is not present in every SF Symbols catalog.
+            // Keep the foliage particle with the widely available leaf symbol.
+            symbolName = "leaf.fill"
         case 4:
             symbolName = "sparkles"
         default:
@@ -279,7 +281,7 @@ public struct AnimatedWeatherBackground: View {
 
     private func particleColor(for symbolName: String, index: Int) -> Color {
         switch symbolName {
-        case "feather.fill":
+        case "leaf.fill":
             .white.opacity(0.5)
         case "sparkles":
             .cyan.opacity(0.55)

@@ -15,6 +15,11 @@ public extension SpotForecast {
         func values<T>(_ values: [T]) -> [String: Any] {
             Dictionary(uniqueKeysWithValues: zip(hours, values).map { (String($0.0), $0.1) })
         }
+        func values<T>(_ values: [T?]) -> [String: Any] {
+            Dictionary(uniqueKeysWithValues: zip(hours, values).compactMap { hour, value in
+                value.map { (String(hour), $0) }
+            })
+        }
         var model: [String: Any] = [
             "initstamp": forecast.initstamp,
             "initdate": forecast.initDate ?? "",
@@ -28,12 +33,13 @@ public extension SpotForecast {
             "RH": values(forecast.RH),
             "SLP": values(forecast.SLP),
             "FLHGT": values(forecast.FLHGT),
-            "APCP": values(forecast.APCP)
+            "APCP": values(forecast.APCP),
+            "APCP1": values(forecast.APCP1)
         ]
-        model["TCDC"] = values(forecast.TCDC.compactMap(Int.init))
-        model["HCDC"] = values(forecast.HCDC.compactMap(Int.init))
-        model["MCDC"] = values(forecast.MCDC.compactMap(Int.init))
-        model["LCDC"] = values(forecast.LCDC.compactMap(Int.init))
+        model["TCDC"] = values(forecast.TCDC)
+        model["HCDC"] = values(forecast.HCDC)
+        model["MCDC"] = values(forecast.MCDC)
+        model["LCDC"] = values(forecast.LCDC)
         return try SpotForecast(map: [
             "id_spot": spot.identifier,
             "spotname": spot.spotname ?? "Map location",

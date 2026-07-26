@@ -267,6 +267,17 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(blendedForecast?.forecast?.modelName, "Forescoop Mix (2 models)")
         let blendHour = forecast?.availableHours.first
         XCTAssertEqual(blendedForecast?.forecast?.windSpeed(hh: blendHour), forecast?.windSpeed(hh: blendHour))
+
+        var nonOverlappingResponse = spotForecastDict
+        var nonOverlappingModels = nonOverlappingResponse?["forecast"] as? [String: Any]
+        var nonOverlappingModel = nonOverlappingModels?["3"] as? [String: Any]
+        nonOverlappingModel?["WINDSPD"] = ["999": 4.0]
+        nonOverlappingModels?["3"] = nonOverlappingModel
+        nonOverlappingResponse?["forecast"] = nonOverlappingModels
+        let nonOverlappingForecast = try? SpotForecast(map: nonOverlappingResponse)
+        let fallbackForecast = try? SpotForecast.blended([spotForecast!, nonOverlappingForecast!])
+        XCTAssertEqual(fallbackForecast?.forecast?.modelName, forecast?.modelName)
+
         XCTAssertEqual(forecast?.seaLevelPressure(hh: "10"), 1002.0)
         XCTAssertEqual(forecast?.freezingLevelHeightInMeters(hh: "10"), 2590.0)
         XCTAssertEqual(forecast?.precipitation(hh: "165"), 0)
@@ -378,6 +389,27 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(forecast?.cloudCoverMid(hour: 3), 100)
         XCTAssertEqual(forecast?.cloudCoverLow(hour: 5), 100)
 
+    }
+
+    func testProForecastPreservesNullableWeatherValues() throws {
+        let definition = Definition()
+        let proPayload = try XCTUnwrap(definition.json(jsonFile: "wforecast"))
+        let proForecast = try XCTUnwrap(WSpotForecast(map: proPayload))
+        let convertedProForecast = try XCTUnwrap(SpotForecast.from(coordinateForecast: proForecast))
+        let proWeather = try XCTUnwrap(convertedProForecast.forecast)
+        let models = try XCTUnwrap(proPayload["fcst"] as? [String: Any])
+        let model = try XCTUnwrap(models["3"] as? [String: Any])
+        let hours = try XCTUnwrap(model["hours"] as? [Int])
+        let clouds = try XCTUnwrap(model["TCDC"] as? [Any])
+        let precipitation = try XCTUnwrap(model["APCP"] as? [Any])
+        let hourlyPrecipitation = try XCTUnwrap(model["APCP1"] as? [Any])
+
+        let hourIndex = 12
+        let hour = String(hours[hourIndex])
+        XCTAssertEqual(convertedProForecast.availableForecastHours.count, hours.count)
+        XCTAssertEqual(proWeather.cloudCoverTotal(hh: hour), (clouds[hourIndex] as? NSNumber)?.intValue)
+        XCTAssertEqual(proWeather.precipitation(hh: hour), (precipitation[hourIndex] as? NSNumber)?.doubleValue)
+        XCTAssertEqual(proWeather.precipitation1(hh: hour), (hourlyPrecipitation[hourIndex] as? NSNumber)?.doubleValue)
     }
 }
 
