@@ -71,10 +71,10 @@ public struct AnimatedWeatherBackground: View {
 
                 if isCloudy {
                     ForEach(0..<4, id: \.self) { index in
-                        Capsule()
-                            .fill(.white.opacity(0.12))
-                            .frame(width: 190, height: 74)
-                            .blur(radius: 18)
+                        Image(systemName: "cloud.fill")
+                            .font(.system(size: CGFloat(88 + (index % 2) * 36)))
+                            .foregroundStyle(.white.opacity(0.12))
+                            .blur(radius: 8)
                             .offset(
                                 x: cloudOffset(for: index, width: proxy.size.width),
                                 y: CGFloat(index * 92) - proxy.size.height * 0.30
@@ -83,15 +83,6 @@ public struct AnimatedWeatherBackground: View {
                 }
 
                 if isWindy {
-                    ForEach(0..<9, id: \.self) { index in
-                        Capsule()
-                            .fill(.white.opacity(0.20))
-                            .frame(width: CGFloat(48 + (index % 3) * 30), height: 2)
-                            .rotationEffect(.degrees(windTravelDirectionDegrees - 90))
-                            .offset(x: windOffset(for: index, width: proxy.size.width) * windTravelVector.x,
-                                    y: windOffset(for: index, width: proxy.size.height) * windTravelVector.y)
-                    }
-
                     TimelineView(.animation) { timeline in
                         let time = timeline.date.timeIntervalSinceReferenceDate
                         ForEach(0..<12, id: \.self) { index in
@@ -147,11 +138,6 @@ public struct AnimatedWeatherBackground: View {
         return direction * travel + CGFloat(index * 50) - width * 0.25
     }
 
-    private func windOffset(for index: Int, width: CGFloat) -> CGFloat {
-        let start = CGFloat((index * 67) % 240) - width * 0.50
-        return start + (isAnimating ? width * 0.75 : 0)
-    }
-
     private func windLeaf(index: Int, in size: CGSize, time: TimeInterval) -> some View {
         let progress = (time * (0.025 + windVelocity * 0.002) + Double(index) * 0.17).truncatingRemainder(dividingBy: 1)
         let travel = max(size.width, size.height) * 1.35 * (CGFloat(progress) - 0.5)
@@ -161,11 +147,32 @@ public struct AnimatedWeatherBackground: View {
         let y = windTravelVector.y * travel + perpendicular.y * lane
             + CGFloat(sin(time * 1.8 + Double(index))) * 18
 
-        return Image(systemName: "leaf.fill")
+        let symbolName: String
+        switch index % 5 {
+        case 3:
+            symbolName = "feather.fill"
+        case 4:
+            symbolName = "sparkles"
+        default:
+            symbolName = "leaf.fill"
+        }
+
+        return Image(systemName: symbolName)
             .font(.system(size: CGFloat(10 + index % 7)))
-            .foregroundStyle(index.isMultiple(of: 2) ? Color.green.opacity(0.55) : Color.brown.opacity(0.60))
+            .foregroundStyle(particleColor(for: symbolName, index: index))
             .rotationEffect(.degrees(time * Double(40 + index * 7)))
             .offset(x: x, y: y)
+    }
+
+    private func particleColor(for symbolName: String, index: Int) -> Color {
+        switch symbolName {
+        case "feather.fill":
+            .white.opacity(0.5)
+        case "sparkles":
+            .cyan.opacity(0.55)
+        default:
+            index.isMultiple(of: 2) ? .green.opacity(0.55) : .brown.opacity(0.60)
+        }
     }
 
     @ViewBuilder

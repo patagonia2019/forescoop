@@ -104,37 +104,40 @@ public struct ForecastWindDetails: View {
     }
 
     public var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "wind")
-            Text("Wind")
-            Menu {
-                Picker("Wind speed unit", selection: $windSpeedUnit) {
-                    ForEach(WindSpeedUnit.allCases) { unit in
-                        Text(unit.label).tag(unit)
+        LabeledContent {
+            HStack(spacing: 8) {
+                Text("Wind")
+                Menu {
+                    Picker("Wind speed unit", selection: $windSpeedUnit) {
+                        ForEach(WindSpeedUnit.allCases) { unit in
+                            Text(unit.label).tag(unit)
+                        }
+                    }
+                } label: {
+                    Text(windSpeed(weather?.windSpeed(hh: hour)))
+                }
+                .accessibilityLabel("Wind speed")
+                Text("/")
+                    .foregroundStyle(.secondary)
+                Text("Gusts")
+                Text(windSpeed(weather?.windGustsKnots(hh: hour)))
+                Button {
+                    showsDirectionArrow.toggle()
+                } label: {
+                    if showsDirectionArrow, let direction = weather?.windDirection(hh: hour) {
+                        Image(systemName: "arrow.down")
+                            .rotationEffect(.degrees(direction))
+                    } else {
+                        Text(weather?.windDirectionName(hh: hour) ?? "—")
                     }
                 }
-            } label: {
-                Text(windSpeed(weather?.windSpeed(hh: hour)))
+                .foregroundColor(.blue)
+                .buttonStyle(.plain)
+                .accessibilityLabel("Wind direction")
+                .accessibilityHint("Shows the direction as an arrow")
             }
-            .accessibilityLabel("Wind speed")
-            Text("/")
-                .foregroundStyle(.secondary)
-            Text("Gusts")
-            Text(windSpeed(weather?.windGustsKnots(hh: hour)))
-            Button {
-                showsDirectionArrow.toggle()
-            } label: {
-                if showsDirectionArrow, let direction = weather?.windDirection(hh: hour) {
-                    Image(systemName: "arrow.down")
-                        .rotationEffect(.degrees(direction))
-                } else {
-                    Text(weather?.windDirectionName(hh: hour) ?? "—")
-                }
-            }
-            .foregroundColor(.blue)
-            .buttonStyle(.plain)
-            .accessibilityLabel("Wind direction")
-            .accessibilityHint("Shows the direction as an arrow")
+        } label: {
+            Image(systemName: "wind")
         }
         .font(.body)
     }
@@ -222,11 +225,14 @@ public struct ForecastWeatherDetails: View {
     }
 
     private func cloudCover(high: Int?, mid: Int?, low: Int?) -> some View {
-        HStack(alignment: .bottom, spacing: 8) {
+        LabeledContent {
+            HStack(alignment: .bottom, spacing: 8) {
+                cloudColumn("High", value: high)
+                cloudColumn("Mid", value: mid)
+                cloudColumn("Low", value: low)
+            }
+        } label: {
             Label("Cloud", systemImage: "cloud.fill")
-            cloudColumn("High", value: high)
-            cloudColumn("Mid", value: mid)
-            cloudColumn("Low", value: low)
         }
     }
 
@@ -289,8 +295,6 @@ private func format(_ value: Double) -> String {
     value.formatted(.number.precision(.fractionLength(1)))
 }
 
-#Preview("Forecast overview") { ForecastComponentPreview { forecast, hour in ForecastOverview(forecast: forecast, selectedHour: hour, temperatureUnit: .constant(.celsius), onSelectLocation: {}, onSelectModel: {}) } }
-#Preview("Wind details") { ForecastComponentPreview { forecast, hour in ForecastWindDetails(forecast: forecast, selectedHour: hour, windSpeedUnit: .constant(.knots), showsDirectionArrow: .constant(false)) } }
 #Preview("Weather details") { ForecastComponentPreview { forecast, hour in ForecastWeatherDetails(forecast: forecast, selectedHour: hour, precipitationUnit: .constant(.millimeters), freezingLevelUnit: .constant(.meters), pressureUnit: .constant(.hectopascals)) } }
 
 @MainActor
