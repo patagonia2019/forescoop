@@ -203,6 +203,11 @@ public struct ForecastDashboardView: View {
                         showsSpotPicker = false
                         Task { await loadForecast(spotId: spotId) }
                     },
+                    onFavoriteSelected: { spot in
+                        guard let spotID = spot.identifier else { return }
+                        showsSpotPicker = false
+                        Task { await loadForecast(spotId: spotID, persistSelection: false) }
+                    },
                     onCoordinateSelected: { coordinate in
                         showsSpotPicker = false
                         Task { await loadForecast(coordinate: coordinate) }
@@ -450,7 +455,11 @@ public struct ForecastDashboardView: View {
     }
 
     @MainActor
-    private func loadForecast(spotId: String? = nil, modelIDs: [String]? = nil) async {
+    private func loadForecast(
+        spotId: String? = nil,
+        modelIDs: [String]? = nil,
+        persistSelection: Bool = true
+    ) async {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -519,13 +528,15 @@ public struct ForecastDashboardView: View {
                 throw lastModelError ?? CustomError.notMappeable
             }
             if forecast != nil {
-                selectedSpotID = requestedSpotID
-                if !validForecasts.isEmpty {
-                    usableModelIDs = validForecasts.compactMap(\.model)
-                }
-                selectedModelIDs = validForecasts.compactMap(\.model)
-                if selectedModelIDs.isEmpty {
-                    selectedModelIDs = [forecast?.model ?? Model.defaultModel]
+                if persistSelection {
+                    selectedSpotID = requestedSpotID
+                    if !validForecasts.isEmpty {
+                        usableModelIDs = validForecasts.compactMap(\.model)
+                    }
+                    selectedModelIDs = validForecasts.compactMap(\.model)
+                    if selectedModelIDs.isEmpty {
+                        selectedModelIDs = [forecast?.model ?? Model.defaultModel]
+                    }
                 }
             }
             selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }

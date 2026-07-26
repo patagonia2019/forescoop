@@ -13,15 +13,22 @@ import SwiftUI
 public struct WindguruSpotPicker: View {
     private let searchSpots: @MainActor (String) async throws -> SpotResult?
     private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
+    private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
+    private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
     let username: String
     let onSpotSelected: (SpotOwner) -> Void
+    let onFavoriteSelected: (SpotOwner) -> Void
     let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
     @State private var spots: [SpotOwner] = []
+    @State private var favoriteSpots: [SpotOwner] = []
     @State private var isLoading = false
+    @State private var isLoadingFavorites = false
     @State private var errorMessage: String?
+    @State private var favoritesErrorMessage: String?
+    @State private var favoriteIDsBeingRemoved = Set<String>()
     @State private var showsMap = false
     @State private var savedLocations = SavedMapLocationStore.load()
     @State private var locationToRename: SavedMapLocation?
@@ -34,12 +41,18 @@ public struct WindguruSpotPicker: View {
         forecastService: ForecastWindguruProtocol,
         username: String,
         onSpotSelected: @escaping (SpotOwner) -> Void,
+        onFavoriteSelected: @escaping (SpotOwner) -> Void = { _ in },
         onCoordinateSelected: @escaping (CLLocationCoordinate2D) -> Void
     ) {
         searchSpots = { try await forecastService.searchSpots(byLocation: $0) }
         loadSpotInfo = { try await forecastService.spotInfo(bySpotId: $0) }
+        loadFavoriteSpots = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
+        removeFavoriteSpot = { spotID, username, password in
+            try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
+        }
         self.username = username
         self.onSpotSelected = onSpotSelected
+        self.onFavoriteSelected = onFavoriteSelected
         self.onCoordinateSelected = onCoordinateSelected
     }
 
@@ -63,6 +76,8 @@ public struct WindguruSpotPicker: View {
                 }
 
                 mapLocationsSection
+
+                favoritesSection
 
                 Section("Search Windguru spots") {
                     HStack {
@@ -115,6 +130,9 @@ public struct WindguruSpotPicker: View {
 #endif
             }
         }
+        .task {
+            await loadFavorites()
+        }
 #if !os(tvOS)
         .sheet(isPresented: $showsMap) {
             MapLocationPicker(initialCoordinate: lastSavedCoordinate) { coordinate in
@@ -142,6 +160,54 @@ public struct WindguruSpotPicker: View {
                 }
                 .onDelete(perform: delete)
                 .onMove(perform: move)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var favoritesSection: some View {
+        if isLoadingFavorites || !favoriteSpots.isEmpty || favoritesErrorMessage != nil {
+            Section("Favorites") {
+                if isLoadingFavorites {
+                    ProgressView("Loading favorites…")
+                } else if let favoritesErrorMessage {
+                    Text(favoritesErrorMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(favoriteSpots.indices, id: \.self) { index in
+                        let spot = favoriteSpots[index]
+                        favoriteSpotRow(spot)
+                    }
+#if !os(macOS)
+                    .onDelete(perform: removeFavorites)
+#endif
+                }
+            }
+        }
+    }
+
+    private func favoriteSpotRow(_ spot: SpotOwner) -> some View {
+        Button {
+            // Favorites are a temporary lookup: do not add them to map
+            // locations or replace the user's stored spot/model selection.
+            onFavoriteSelected(spot)
+        } label: {
+            Label {
+                VStack(alignment: .leading) {
+                    Text(spot.name ?? "Unknown spot")
+                    Text(spot.countryName ?? "")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            } icon: {
+                Image(systemName: "star.fill")
+            }
+        }
+        .disabled(isLoading || favoriteIDsBeingRemoved.contains(spot.identifier ?? ""))
+        .contextMenu {
+            Button("Remove from Favorites", systemImage: "star.slash", role: .destructive) {
+                Task { await removeFavorite(spot) }
             }
         }
     }
@@ -180,6 +246,47 @@ public struct WindguruSpotPicker: View {
         .contextMenu {
             Button("Rename", systemImage: "pencil") { beginRenaming(location) }
             Button("Delete", systemImage: "trash", role: .destructive) { delete(location) }
+        }
+    }
+
+    @MainActor
+    private func loadFavorites() async {
+        guard !username.isEmpty,
+              let password = WindguruCredentialStore.password(for: username) else {
+            return
+        }
+
+        isLoadingFavorites = true
+        favoritesErrorMessage = nil
+        defer { isLoadingFavorites = false }
+        do {
+            favoriteSpots = try await loadFavoriteSpots(username, password)?.allSpots ?? []
+        } catch {
+            favoritesErrorMessage = "Favorites are unavailable right now."
+        }
+    }
+
+    private func removeFavorites(at offsets: IndexSet) {
+        let spotsToRemove = offsets.map { favoriteSpots[$0] }
+        for spot in spotsToRemove {
+            Task { await removeFavorite(spot) }
+        }
+    }
+
+    @MainActor
+    private func removeFavorite(_ spot: SpotOwner) async {
+        guard let identifier = spot.identifier,
+              !username.isEmpty,
+              let password = WindguruCredentialStore.password(for: username) else {
+            return
+        }
+        favoriteIDsBeingRemoved.insert(identifier)
+        defer { favoriteIDsBeingRemoved.remove(identifier) }
+        do {
+            _ = try await removeFavoriteSpot(identifier, username, password)
+            favoriteSpots.removeAll { $0.identifier == identifier }
+        } catch {
+            favoritesErrorMessage = "Couldn’t remove this favorite."
         }
     }
 
