@@ -42,6 +42,7 @@ public struct ForecastDashboardView: View {
     @State private var showsModelPicker = false
     @State private var showsLogin = false
     @State private var showsSettings = false
+    @State private var opensModelPickerAfterSettings = false
     @State private var selectedModelIDs: [String] = []
     @State private var usableModelIDs: [String] = []
     @State private var savedMapLocations = SavedMapLocationStore.load()
@@ -196,8 +197,18 @@ public struct ForecastDashboardView: View {
                     onProfileLoaded: applyUserPreferences
                 )
             }
-            .sheet(isPresented: $showsSettings) {
-                ForecastSettingsView()
+            .sheet(isPresented: $showsSettings, onDismiss: {
+                guard opensModelPickerAfterSettings else { return }
+                opensModelPickerAfterSettings = false
+                showsModelPicker = true
+            }) {
+                ForecastSettingsView(
+                    modelSelectionTitle: "\(selectedModelIDs.count) selected",
+                    onSelectModels: {
+                        opensModelPickerAfterSettings = true
+                        showsSettings = false
+                    }
+                )
             }
         }
     }
