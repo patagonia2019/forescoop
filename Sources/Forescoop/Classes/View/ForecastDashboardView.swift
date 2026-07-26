@@ -141,6 +141,19 @@ public struct ForecastDashboardView: View {
         Task { await loadForecast() }
     }
 
+    private func startProSession(username: String) {
+        windguruUsername = username
+        // Do not reuse the regular-user model cache. A PRO session can expose
+        // more models for the same spot, so force fresh discovery and loading.
+        selectedModelIDs = []
+        usableModelIDs = []
+        selectedHour = nil
+        forecast = nil
+        errorMessage = nil
+        showsLogin = false
+        Task { await loadForecast(spotId: selectedSpotID, modelIDs: []) }
+    }
+
     public var body: some View {
         NavigationStack {
             Group {
@@ -211,9 +224,7 @@ public struct ForecastDashboardView: View {
                             logout()
                             return
                         }
-                        windguruUsername = username
-                        showsLogin = false
-                        Task { await loadForecast() }
+                        startProSession(username: username)
                     },
                     onProfileLoaded: applyUserPreferences
                 )
