@@ -45,6 +45,10 @@ public struct ForecastDashboardView: View {
     @State private var showsSettings = false
     @State private var selectedModelIDs: [String] = []
     @State private var usableModelIDs: [String] = []
+    @State private var displayedForecastSpotID: String?
+    /// All models validated for each spot, independent of the current selection.
+    @State private var modelIDsBySpot = [String: [String]]()
+    @State private var selectedModelIDsBySpot = [String: [String]]()
     @State private var savedMapLocations = SavedMapLocationStore.load()
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
@@ -125,6 +129,9 @@ public struct ForecastDashboardView: View {
         selectedSpotID = "64141"
         selectedModelIDs = []
         usableModelIDs = []
+        displayedForecastSpotID = nil
+        modelIDsBySpot = [:]
+        selectedModelIDsBySpot = [:]
         selectedHour = nil
         forecast = nil
         errorMessage = nil
@@ -153,6 +160,9 @@ public struct ForecastDashboardView: View {
         // return to the public forecast set.
         selectedModelIDs = []
         usableModelIDs = []
+        displayedForecastSpotID = nil
+        modelIDsBySpot = [:]
+        selectedModelIDsBySpot = [:]
         selectedHour = nil
         forecast = nil
         errorMessage = nil
@@ -215,15 +225,24 @@ public struct ForecastDashboardView: View {
                 )
             }
             .sheet(isPresented: $showsModelPicker) {
+                let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
+                let availableModelIDs = modelIDsBySpot[forecastSpotID] ?? []
+                let selectedForecastModelIDs = selectedModelIDsBySpot[forecastSpotID] ?? availableModelIDs
                 ForecastModelPicker(
                     forecastService: forecastService,
-                    spotID: selectedSpotID,
-                    selectedModelIDs: Set(selectedModelIDs),
-                    usableModelIDs: Set(usableModelIDs),
+                    spotID: forecastSpotID,
+                    selectedModelIDs: Set(selectedForecastModelIDs),
+                    usableModelIDs: Set(availableModelIDs),
                     isProUser: isProUser
                 ) { modelIDs in
                     showsModelPicker = false
-                    Task { await loadForecast(modelIDs: modelIDs) }
+                    Task {
+                        await loadForecast(
+                            spotId: forecastSpotID,
+                            modelIDs: modelIDs,
+                            persistSelection: forecastSpotID == selectedSpotID
+                        )
+                    }
                 }
             }
             .sheet(isPresented: $showsLogin) {
@@ -241,16 +260,7 @@ public struct ForecastDashboardView: View {
                 )
             }
             .sheet(isPresented: $showsSettings) {
-                ForecastSettingsView(
-                    forecastService: forecastService,
-                    spotID: selectedSpotID,
-                    selectedModelIDs: Set(selectedModelIDs),
-                    usableModelIDs: Set(usableModelIDs),
-                    isProUser: isProUser,
-                    onModelsApplied: { modelIDs in
-                        Task { await loadForecast(modelIDs: modelIDs) }
-                    }
-                )
+                ForecastSettingsView()
             }
         }
     }
@@ -467,7 +477,14 @@ public struct ForecastDashboardView: View {
         do {
             let requestedSpotID = spotId ?? selectedSpotID
             let isChangingSpot = requestedSpotID != selectedSpotID
+            if isChangingSpot, persistSelection {
+                // Model availability is scoped to a spot. Never let a prior
+                // spot's cached model list drive the next spot's picker.
+                selectedModelIDs = []
+                usableModelIDs = []
+            }
             let configuredModelIDs = modelIDs ?? (isChangingSpot ? [] : selectedModelIDs)
+            let isDiscoveringSpotModels = configuredModelIDs.isEmpty
             let requestedModelIDs: [String]
             if configuredModelIDs.isEmpty {
                 let spotInfo = try await spotInfoLoader(requestedSpotID)
@@ -528,15 +545,19 @@ public struct ForecastDashboardView: View {
                 throw lastModelError ?? CustomError.notMappeable
             }
             if forecast != nil {
+                let loadedModelIDs = validForecasts.compactMap(\.model)
+                let currentSpotModelIDs = loadedModelIDs.isEmpty
+                    ? [forecast?.model ?? Model.defaultModel]
+                    : loadedModelIDs
+                displayedForecastSpotID = requestedSpotID
+                if isDiscoveringSpotModels || modelIDsBySpot[requestedSpotID] == nil {
+                    modelIDsBySpot[requestedSpotID] = currentSpotModelIDs
+                }
+                selectedModelIDsBySpot[requestedSpotID] = currentSpotModelIDs
                 if persistSelection {
                     selectedSpotID = requestedSpotID
-                    if !validForecasts.isEmpty {
-                        usableModelIDs = validForecasts.compactMap(\.model)
-                    }
-                    selectedModelIDs = validForecasts.compactMap(\.model)
-                    if selectedModelIDs.isEmpty {
-                        selectedModelIDs = [forecast?.model ?? Model.defaultModel]
-                    }
+                    usableModelIDs = currentSpotModelIDs
+                    selectedModelIDs = currentSpotModelIDs
                 }
             }
             selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
