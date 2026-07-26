@@ -1,0 +1,58 @@
+@startuml
+title Forescoop architecture
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam defaultFontName Helvetica
+skinparam packageStyle rectangle
+skinparam ArrowColor #5B6B7A
+skinparam component {
+  BackgroundColor #EDF5FA
+  BorderColor #3D6B8A
+}
+skinparam database {
+  BackgroundColor #FFF6DB
+  BorderColor #A67820
+}
+
+package "Example applications" #F5F8FB {
+  [SwiftUI apps\niOS / iPadOS / macOS / visionOS / watchOS] as apps
+  [Legacy UIKit and tvOS\nlogin, API navigation, storyboard] as legacy
+}
+
+package "Forescoop Swift package" #E9F4EC {
+  interface "ForecastWindguruProtocol" as protocol
+  [ForecastWindguruService\nURLSession REST client] as service
+  [ForecastWindguruMockup\nfixture-backed service] as mock
+  [Forecast domain\nSpotForecast, models, units\nand weather presentation] as domain
+  database "Package resources\nJSON fixtures + service plist" as resources
+}
+
+cloud "Windguru public API" as windguru
+cloud "Windguru PRO\ncoordinate forecast" as pro
+database "AppStorage\nselected and saved locations" as storage
+database "Keychain\nPRO password" as keychain
+
+apps --> protocol
+legacy --> domain
+protocol <|.. service
+protocol <|.. mock
+service --> windguru : public forecasts, spots\nand model metadata
+service --> pro : authenticated lat/lon forecast
+service --> domain : maps responses
+mock --> resources : loads fixtures
+mock --> domain : maps fixtures
+apps --> storage : separate watch container
+apps --> keychain : stores PRO password only
+
+note right of protocol
+Views receive the protocol so previews
+and tests can use the mock service.
+end note
+
+note bottom of storage
+The username is stored in AppStorage;
+the password stays in Keychain.
+end note
+@enduml
