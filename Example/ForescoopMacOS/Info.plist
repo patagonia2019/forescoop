@@ -26,6 +26,8 @@
 	<string>Copyright © 2023 Forescoop. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Forescoop uses your location to load the forecast for where you are.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

@@ -7,7 +7,7 @@
 
 #if !os(watchOS)
 import CoreLocation
-import MapKit
+@preconcurrency import MapKit
 import SwiftUI
 
 public struct WindguruSpotPicker: View {
@@ -195,8 +195,7 @@ public struct WindguruSpotPicker: View {
                 onCoordinateSelected(location.coordinate)
                 return
             }
-            let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
-            guard let searchTerm = placemark?.locality ?? placemark?.administrativeArea else {
+            guard let searchTerm = try await searchTerm(for: location) else {
                 throw DeviceLocationError.noPlacemark
             }
             query = searchTerm
@@ -235,8 +234,7 @@ public struct WindguruSpotPicker: View {
         defer { isLoading = false }
         do {
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-            let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
-            guard let term = placemark?.locality ?? placemark?.administrativeArea else { throw DeviceLocationError.noPlacemark }
+            guard let term = try await searchTerm(for: location) else { throw DeviceLocationError.noPlacemark }
             guard let spot = try await searchSpots(term)?.allSpots.first else {
                 throw DeviceLocationError.noWindguruSpot
             }
@@ -251,8 +249,7 @@ public struct WindguruSpotPicker: View {
         var name = "Selected map location"
         do {
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-            let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
-            guard let term = placemark?.locality ?? placemark?.administrativeArea else { return }
+            guard let term = try await searchTerm(for: location) else { return }
             name = try await searchSpots(term)?.allSpots.first?.name ?? name
         } catch {
             // The coordinate remains usable even if a public spot name cannot be resolved.
@@ -307,6 +304,16 @@ public struct WindguruSpotPicker: View {
 
     private func saveLocations() {
         SavedMapLocationStore.save(savedLocations)
+    }
+
+    private func searchTerm(for location: CLLocation) async throws -> String? {
+        guard let request = MKReverseGeocodingRequest(location: location),
+              let mapItem = try await request.mapItems.first else {
+            return nil
+        }
+        return mapItem.addressRepresentations?.cityName
+            ?? mapItem.address?.shortAddress
+            ?? mapItem.address?.fullAddress
     }
 }
 

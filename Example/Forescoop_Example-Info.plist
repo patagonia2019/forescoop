@@ -28,7 +28,9 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app has attempted to access privacy-sensitive data without a usage description</string>
+	<string>Forescoop uses your location to load the forecast for where you are.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Forescoop uses your location to load the forecast for where you are.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
