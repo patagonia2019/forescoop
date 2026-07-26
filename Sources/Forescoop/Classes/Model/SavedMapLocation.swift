@@ -36,4 +36,9 @@ public enum SavedMapLocationStore {
     public static func save(_ locations: [SavedMapLocation]) {
         UserDefaults.standard.set(try? JSONEncoder().encode(locations), forKey: key)
     }
+
+    /// Removes locations associated with the current Windguru session.
+    public static func removeAll() {
+        UserDefaults.standard.removeObject(forKey: key)
+    }
 }

@@ -118,8 +118,26 @@ public struct ForecastDashboardView: View {
     private func logout() {
         WindguruCredentialStore.removePassword(for: windguruUsername)
         windguruUsername = ""
+        selectedSpotID = "64141"
         selectedModelIDs = []
         usableModelIDs = []
+        selectedHour = nil
+        forecast = nil
+        errorMessage = nil
+        savedMapLocations = []
+        selectedMapLocationID = nil
+        SavedMapLocationStore.removeAll()
+
+        temperatureUnit = .celsius
+        windSpeedUnit = .knots
+        waveHeightUnit = .meters
+        pressureUnit = .hectopascals
+        precipitationUnit = .millimeters
+        freezingLevelUnit = .meters
+
+        showsModelPicker = false
+        showsSettings = false
+        showsLogin = false
         Task { await loadForecast() }
     }
 
@@ -189,6 +207,10 @@ public struct ForecastDashboardView: View {
                     forecastService: forecastService,
                     username: windguruUsername,
                     onLoggedIn: { username in
+                        if username.isEmpty {
+                            logout()
+                            return
+                        }
                         windguruUsername = username
                         showsLogin = false
                         Task { await loadForecast() }
