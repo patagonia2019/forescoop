@@ -26,6 +26,7 @@ public struct ForecastDashboardView: View {
 #endif
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
     @AppStorage("windguruUsername") private var windguruUsername = ""
+    @AppStorage("windguruIsProUser") private var windguruIsProUser = false
     @AppStorage("forecastDisplayInterval") private var forecastDisplayInterval = ForecastDisplayInterval.hourly.rawValue
     @State private var forecast: SpotForecast?
     @State private var errorMessage: String?
@@ -83,7 +84,9 @@ public struct ForecastDashboardView: View {
     }
 
     private var isProUser: Bool {
-        !windguruUsername.isEmpty && WindguruCredentialStore.password(for: windguruUsername) != nil
+        windguruIsProUser
+            && !windguruUsername.isEmpty
+            && WindguruCredentialStore.password(for: windguruUsername) != nil
     }
 
     private var accountMenu: some View {
@@ -118,6 +121,7 @@ public struct ForecastDashboardView: View {
     private func logout() {
         WindguruCredentialStore.removePassword(for: windguruUsername)
         windguruUsername = ""
+        windguruIsProUser = false
         selectedSpotID = "64141"
         selectedModelIDs = []
         usableModelIDs = []
@@ -141,10 +145,12 @@ public struct ForecastDashboardView: View {
         Task { await loadForecast() }
     }
 
-    private func startProSession(username: String) {
+    private func startSession(username: String, isProUser: Bool) {
         windguruUsername = username
-        // Do not reuse the regular-user model cache. A PRO session can expose
-        // more models for the same spot, so force fresh discovery and loading.
+        windguruIsProUser = isProUser
+        // Do not reuse the previous session's model cache. A PRO session can
+        // expose more models for the same spot, while a regular session must
+        // return to the public forecast set.
         selectedModelIDs = []
         usableModelIDs = []
         selectedHour = nil
@@ -219,12 +225,12 @@ public struct ForecastDashboardView: View {
                 WindguruLoginView(
                     forecastService: forecastService,
                     username: windguruUsername,
-                    onLoggedIn: { username in
+                    onLoggedIn: { username, isProUser in
                         if username.isEmpty {
                             logout()
                             return
                         }
-                        startProSession(username: username)
+                        startSession(username: username, isProUser: isProUser)
                     },
                     onProfileLoaded: applyUserPreferences
                 )
@@ -423,10 +429,11 @@ public struct ForecastDashboardView: View {
     private func loadUserPreferences() async {
         guard !windguruUsername.isEmpty,
               let password = WindguruCredentialStore.password(for: windguruUsername),
-              let user = try? await profileLoader(windguruUsername, password),
-              user.isPro else {
+              let user = try? await profileLoader(windguruUsername, password) else {
             return
         }
+        windguruIsProUser = user.isPro
+        guard user.isPro else { return }
         applyUserPreferences(user)
     }
 

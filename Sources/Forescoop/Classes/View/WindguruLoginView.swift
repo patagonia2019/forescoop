@@ -12,7 +12,7 @@ import SwiftUI
 public struct WindguruLoginView: View {
     private let loginHandler: @MainActor (String, String) async throws -> User?
     let username: String
-    let onLoggedIn: (String) -> Void
+    let onLoggedIn: (String, Bool) -> Void
     let onProfileLoaded: (User) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -26,7 +26,7 @@ public struct WindguruLoginView: View {
     public init(
         forecastService: ForecastWindguruProtocol,
         username: String,
-        onLoggedIn: @escaping (String) -> Void,
+        onLoggedIn: @escaping (String, Bool) -> Void,
         onProfileLoaded: @escaping (User) -> Void = { _ in }
     ) {
         loginHandler = { try await forecastService.login(withUsername: $0, password: $1) }
@@ -42,7 +42,7 @@ public struct WindguruLoginView: View {
                     WindguruProfileView(user: loggedInUser)
                 } else {
                     Form {
-                        Section("Windguru PRO") {
+                        Section("Windguru account") {
                             TextField("Username", text: $enteredUsername)
 #if !os(macOS)
                                 .textInputAutocapitalization(.never)
@@ -108,13 +108,13 @@ public struct WindguruLoginView: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            guard let user = try await loginHandler(enteredUsername, password), user.isPro else {
-                throw LoginError.proRequired
+            guard let user = try await loginHandler(enteredUsername, password) else {
+                throw LoginError.loginFailed
             }
             try WindguruCredentialStore.save(password: password, for: enteredUsername)
             loggedInUser = user
             onProfileLoaded(user)
-            onLoggedIn(enteredUsername)
+            onLoggedIn(enteredUsername, user.isPro)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -126,8 +126,8 @@ public struct WindguruLoginView: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            guard let user = try await loginHandler(enteredUsername, password), user.isPro else {
-                throw LoginError.proRequired
+            guard let user = try await loginHandler(enteredUsername, password) else {
+                throw LoginError.loginFailed
             }
             loggedInUser = user
             onProfileLoaded(user)
@@ -140,13 +140,22 @@ public struct WindguruLoginView: View {
         WindguruCredentialStore.removePassword(for: enteredUsername)
         loggedInUser = nil
         password = ""
-        onLoggedIn("")
+        onLoggedIn("", false)
     }
 }
 
 private enum LoginError: LocalizedError {
-    case proRequired
-    var errorDescription: String? { "A Windguru PRO account is required for coordinate forecasts." }
+    case loginFailed
+    case credentialsUnavailable
+
+    var errorDescription: String? {
+        switch self {
+        case .loginFailed:
+            "Windguru could not sign in with those credentials."
+        case .credentialsUnavailable:
+            "The password could not be saved securely on this device."
+        }
+    }
 }
 
 public enum WindguruCredentialStore {
@@ -170,9 +179,9 @@ public enum WindguruCredentialStore {
         if status == errSecItemNotFound {
             var item = query
             item[kSecValueData as String] = Data(password.utf8)
-            guard SecItemAdd(item as CFDictionary, nil) == errSecSuccess else { throw LoginError.proRequired }
+            guard SecItemAdd(item as CFDictionary, nil) == errSecSuccess else { throw LoginError.credentialsUnavailable }
         } else if status != errSecSuccess {
-            throw LoginError.proRequired
+            throw LoginError.credentialsUnavailable
         }
     }
 
