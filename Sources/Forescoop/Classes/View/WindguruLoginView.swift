@@ -5,12 +5,12 @@
 //  Created by Javier on 23/07/2026.
 //  Copyright © 2026 Forescoop. All rights reserved.
 
+#if !os(watchOS)
 import Security
 import SwiftUI
-import Forescoop
 
-struct WindguruLoginView: View {
-    let forecastService: ForecastWindguruProtocol
+public struct WindguruLoginView: View {
+    private let loginHandler: @MainActor (String, String) async throws -> User?
     let username: String
     let onLoggedIn: (String) -> Void
 
@@ -20,7 +20,17 @@ struct WindguruLoginView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
 
-    var body: some View {
+    public init(
+        forecastService: ForecastWindguruProtocol,
+        username: String,
+        onLoggedIn: @escaping (String) -> Void
+    ) {
+        loginHandler = { try await forecastService.login(withUsername: $0, password: $1) }
+        self.username = username
+        self.onLoggedIn = onLoggedIn
+    }
+
+    public var body: some View {
         NavigationStack {
             Form {
                 Section("Windguru PRO") {
@@ -57,7 +67,7 @@ struct WindguruLoginView: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            guard let user = try await forecastService.login(withUsername: enteredUsername, password: password), user.isPro else {
+            guard let user = try await loginHandler(enteredUsername, password), user.isPro else {
                 throw LoginError.proRequired
             }
             try WindguruCredentialStore.save(password: password, for: enteredUsername)
@@ -73,8 +83,8 @@ private enum LoginError: LocalizedError {
     var errorDescription: String? { "A Windguru PRO account is required for coordinate forecasts." }
 }
 
-enum WindguruCredentialStore {
-    static func password(for username: String) -> String? {
+public enum WindguruCredentialStore {
+    public static func password(for username: String) -> String? {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrService as String: "Forescoop.Windguru",
                                     kSecAttrAccount as String: username,
@@ -85,7 +95,7 @@ enum WindguruCredentialStore {
         return String(data: data, encoding: .utf8)
     }
 
-    static func save(password: String, for username: String) throws {
+    public static func save(password: String, for username: String) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrService as String: "Forescoop.Windguru",
                                     kSecAttrAccount as String: username]
@@ -100,3 +110,4 @@ enum WindguruCredentialStore {
         }
     }
 }
+#endif

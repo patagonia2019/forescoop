@@ -8,12 +8,13 @@
 
 #if os(visionOS)
 import SwiftUI
+import Forescoop
 
 @main
 struct VisionForescoopApp: App {
     var body: some Scene {
         WindowGroup {
-            VisionForecastView()
+            VisionForecastWindow()
         }
         .defaultSize(width: 1_100, height: 720)
 
@@ -21,6 +22,16 @@ struct VisionForescoopApp: App {
             VisionLocationsView()
         }
         .defaultSize(width: 900, height: 680)
+    }
+}
+
+private struct VisionForecastWindow: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        VisionForecastView {
+            openWindow(id: "locations")
+        }
     }
 }
 #endif

@@ -5,13 +5,14 @@
 //  Created by Javier on 23/07/2026.
 //  Copyright © 2026 Forescoop. All rights reserved.
 
+#if !os(watchOS)
 import CoreLocation
 import MapKit
 import SwiftUI
-import Forescoop
 
-struct WindguruSpotPicker: View {
-    let forecastService: ForecastWindguruProtocol
+public struct WindguruSpotPicker: View {
+    private let searchSpots: @MainActor (String) async throws -> SpotResult?
+    private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
     let username: String
     let onSpotSelected: (SpotOwner) -> Void
     let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
@@ -29,9 +30,22 @@ struct WindguruSpotPicker: View {
     @State private var editMode: EditMode = .inactive
 #endif
 
+    public init(
+        forecastService: ForecastWindguruProtocol,
+        username: String,
+        onSpotSelected: @escaping (SpotOwner) -> Void,
+        onCoordinateSelected: @escaping (CLLocationCoordinate2D) -> Void
+    ) {
+        searchSpots = { try await forecastService.searchSpots(byLocation: $0) }
+        loadSpotInfo = { try await forecastService.spotInfo(bySpotId: $0) }
+        self.username = username
+        self.onSpotSelected = onSpotSelected
+        self.onCoordinateSelected = onCoordinateSelected
+    }
+
     private var lastSavedCoordinate: CLLocationCoordinate2D? { savedLocations.last?.coordinate }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             List {
                 Section {
@@ -182,7 +196,7 @@ struct WindguruSpotPicker: View {
                 throw DeviceLocationError.noPlacemark
             }
             query = searchTerm
-            spots = try await forecastService.searchSpots(byLocation: searchTerm)?.allSpots ?? []
+            spots = try await searchSpots(searchTerm)?.allSpots ?? []
             guard let closestSpot = spots.first else { throw DeviceLocationError.noWindguruSpot }
             await selectSpot(closestSpot)
         } catch {
@@ -200,7 +214,7 @@ struct WindguruSpotPicker: View {
         defer { isLoading = false }
 
         do {
-            spots = try await forecastService.searchSpots(byLocation: searchTerm)?.allSpots ?? []
+            spots = try await searchSpots(searchTerm)?.allSpots ?? []
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -219,7 +233,7 @@ struct WindguruSpotPicker: View {
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
             let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
             guard let term = placemark?.locality ?? placemark?.administrativeArea else { throw DeviceLocationError.noPlacemark }
-            guard let spot = try await forecastService.searchSpots(byLocation: term)?.allSpots.first else {
+            guard let spot = try await searchSpots(term)?.allSpots.first else {
                 throw DeviceLocationError.noWindguruSpot
             }
             await selectSpot(spot)
@@ -235,7 +249,7 @@ struct WindguruSpotPicker: View {
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
             let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
             guard let term = placemark?.locality ?? placemark?.administrativeArea else { return }
-            name = try await forecastService.searchSpots(byLocation: term)?.allSpots.first?.name ?? name
+            name = try await searchSpots(term)?.allSpots.first?.name ?? name
         } catch {
             // The coordinate remains usable even if a public spot name cannot be resolved.
         }
@@ -246,7 +260,7 @@ struct WindguruSpotPicker: View {
     @MainActor
     private func selectSpot(_ spot: SpotOwner) async {
         if let identifier = spot.identifier,
-           let spotInfo = try? await forecastService.spotInfo(bySpotId: identifier),
+           let spotInfo = try? await loadSpotInfo(identifier),
            let coordinate = spotInfo.location?.coordinate {
             let alreadySaved = savedLocations.contains {
                 abs($0.latitude - coordinate.latitude) < 0.0001 && abs($0.longitude - coordinate.longitude) < 0.0001
@@ -289,38 +303,6 @@ struct WindguruSpotPicker: View {
 
     private func saveLocations() {
         SavedMapLocationStore.save(savedLocations)
-    }
-}
-
-struct SavedMapLocation: Codable, Identifiable {
-    let id: UUID
-    var name: String
-    let latitude: Double
-    let longitude: Double
-    let spotID: String?
-
-    init(name: String, coordinate: CLLocationCoordinate2D, spotID: String? = nil) {
-        id = UUID()
-        self.name = name
-        latitude = coordinate.latitude
-        longitude = coordinate.longitude
-        self.spotID = spotID
-    }
-
-    var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }
-    var coordinateText: String { "\(latitude.formatted(.number.precision(.fractionLength(4)))), \(longitude.formatted(.number.precision(.fractionLength(4))))" }
-}
-
-enum SavedMapLocationStore {
-    private static let key = "savedMapLocations"
-
-    static func load() -> [SavedMapLocation] {
-        guard let data = UserDefaults.standard.data(forKey: key) else { return [] }
-        return (try? JSONDecoder().decode([SavedMapLocation].self, from: data)) ?? []
-    }
-
-    static func save(_ locations: [SavedMapLocation]) {
-        UserDefaults.standard.set(try? JSONEncoder().encode(locations), forKey: key)
     }
 }
 
@@ -400,3 +382,4 @@ private enum DeviceLocationError: LocalizedError {
 #Preview("Map location picker") {
     MapLocationPicker(onSelection: { _ in })
 }
+#endif

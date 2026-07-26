@@ -5,8 +5,8 @@
 //  Created by Javier on 23/07/2026.
 //  Copyright © 2026 Forescoop. All rights reserved.
 
+#if !os(watchOS)
 import SwiftUI
-import Forescoop
 
 private struct ForecastModelOption: Identifiable {
     let identifier: String
@@ -15,8 +15,8 @@ private struct ForecastModelOption: Identifiable {
     var id: String { identifier }
 }
 
-struct ForecastModelPicker: View {
-    let forecastService: ForecastWindguruProtocol
+public struct ForecastModelPicker: View {
+    private let modelLoader: @MainActor (String) async throws -> (SpotInfo?, Models?)
     let spotID: String
     let selectedModelIDs: Set<String>
     let onModelSelected: ([String]) -> Void
@@ -27,7 +27,23 @@ struct ForecastModelPicker: View {
     @State private var errorMessage: String?
     @State private var selectedIDs: Set<String> = []
 
-    var body: some View {
+    public init(
+        forecastService: ForecastWindguruProtocol,
+        spotID: String,
+        selectedModelIDs: Set<String>,
+        onModelSelected: @escaping ([String]) -> Void
+    ) {
+        modelLoader = { spotID in
+            let spotInfo = try await forecastService.spotInfo(bySpotId: spotID)
+            let modelInfo = try await forecastService.modelInfo(onlyModelId: nil)
+            return (spotInfo, modelInfo)
+        }
+        self.spotID = spotID
+        self.selectedModelIDs = selectedModelIDs
+        self.onModelSelected = onModelSelected
+    }
+
+    public var body: some View {
         NavigationStack {
             Group {
                 if isLoading {
@@ -83,8 +99,7 @@ struct ForecastModelPicker: View {
         defer { isLoading = false }
 
         do {
-            let spotInfo = try await forecastService.spotInfo(bySpotId: spotID)
-            let modelInfo = try await forecastService.modelInfo(onlyModelId: nil)
+            let (spotInfo, modelInfo) = try await modelLoader(spotID)
             let availableModelIDs = Set(spotInfo?.currentModels.map(String.init) ?? [])
             let availableModels = modelInfo?.sorted ?? []
             models = availableModels.compactMap { model in
@@ -106,3 +121,4 @@ struct ForecastModelPicker: View {
         onModelSelected: { _ in }
     )
 }
+#endif

@@ -17,25 +17,9 @@
 		7066F6EA1F95ADD400D126C1 /* Forescoop.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 7066F6CD1F95ADD400D126C1 /* Forescoop.app */; };
 		7066F6F21F95AF4900D126C1 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
-		70BAA9B21F276B4F004CD577 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		70BAA9B31F276B4F004CD577 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		70BAA9B41F276B4F004CD577 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
-		70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
-		70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
-		9865F8DA3011C07F00777207 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
-		9865F8DB3011C07F00777207 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
-		9865F8DC3011C07F00777207 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
-		9865F8DE3011C0A200777207 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
-		9865F8DF3011C0A200777207 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
-		9865F8E03011C0A200777207 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
-		9865F8E23011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
-		9865F8E33011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
-		9865F8E43011C0E200777207 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
-		9865F8E63011C6B400777207 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
-		9865F8E73011C6B400777207 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
-		9865F8E83011C6B400777207 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
 		98688A0B22D5936700A09AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0A22D5936700A09AD0 /* Assets.xcassets */; };
 		98688A0E22D5936700A09AD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98688A0C22D5936700A09AD0 /* Main.storyboard */; };
 		98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -43,33 +27,18 @@
 		987A6DCA22D595D200662010 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A6DC922D595D200662010 /* ViewController.swift */; };
 		987A6DCD22D595D200662010 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCB22D595D200662010 /* Main.storyboard */; };
 		987A6DCF22D595D400662010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 987A6DCE22D595D400662010 /* Assets.xcassets */; };
-		9888ABB22A3A81C900FC9147 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */; };
-		9890080F2A2ED3E7009A978F /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */; };
-		98D1B5732A3A212000A85FBF /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
 		98D31F812A251AE200916A59 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		98DC785522D5963C00F72DBA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		98DC785622D5964700F72DBA /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
 		A00100000000000000000001 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		A00100000000000000000002 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
-		A00100000000000000000003 /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
-		A00100000000000000000004 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */; };
-		A00100000000000000000005 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
-		A00100000000000000000006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		A00100000000000000000007 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
-		A00100000000000000000008 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		A00100000000000000000009 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		A0010000000000000000000A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		A0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = A0010000000000000000000C /* Forescoop */; };
 		AA0100000000000000000001 /* WatchOnlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000012 /* WatchOnlyApp.swift */; };
 		AA0100000000000000000002 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = AA0100000000000000000009 /* Forescoop */; };
 		B00100000000000000000001 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7057C8961F11DABC007A7FC2 /* Common.swift */; };
-		B00100000000000000000002 /* ApiInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */; };
-		B00100000000000000000003 /* ApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1B5722A3A212000A85FBF /* ApiController.swift */; };
-		B00100000000000000000004 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */; };
-		B00100000000000000000005 /* ApiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */; };
-		B00100000000000000000006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		B00100000000000000000007 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
-		B00100000000000000000008 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		B00100000000000000000009 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		B0010000000000000000000A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		B0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = B0010000000000000000000C /* Forescoop */; };
@@ -82,15 +51,9 @@
 		C0DE00000000000000000015 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = C0DE00000000000000000005 /* Forescoop */; };
 		CA0100000000000000000001 /* ForecastDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00100000000000000000003 /* ForecastDashboardView.swift */; };
 		CA0100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
-		CA0100000000000000000003 /* ForecastModelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8D93011C07F00777207 /* ForecastModelPicker.swift */; };
-		CA0100000000000000000004 /* WindguruLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8DD3011C0A200777207 /* WindguruLoginView.swift */; };
-		CA0100000000000000000005 /* WindguruSpotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */; };
-		CA0100000000000000000006 /* MapLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9865F8E53011C6B400777207 /* MapLocationPicker.swift */; };
 		D00100000000000000000001 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
 		D00100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100000000000000000003 /* AnimatedWeatherBackground.swift */; };
-		E00100000000000000000001 /* VisionForecastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00100000000000000000003 /* VisionForecastView.swift */; };
 		F00100000000000000000001 /* VisionForescoopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* VisionForescoopApp.swift */; };
-		F00100000000000000000002 /* VisionLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* VisionLocationsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,8 +108,6 @@
 /* Begin PBXFileReference section */
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		607FACD71AFB9204008FA782 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -164,12 +125,6 @@
 		7066F6E71F95ADD400D126C1 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		70BAA9BC1F276B4F004CD577 /* Forescoop_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Forescoop_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70BAA9CC1F276B6F004CD577 /* Forescoop_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Forescoop_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiListViewController.swift; sourceTree = "<group>"; };
-		70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiInfoViewController.swift; sourceTree = "<group>"; };
-		9865F8D93011C07F00777207 /* ForecastModelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastModelPicker.swift; sourceTree = "<group>"; };
-		9865F8DD3011C0A200777207 /* WindguruLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindguruLoginView.swift; sourceTree = "<group>"; };
-		9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindguruSpotPicker.swift; sourceTree = "<group>"; };
-		9865F8E53011C6B400777207 /* MapLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLocationPicker.swift; sourceTree = "<group>"; };
 		98688A0422D5936400A09AD0 /* ForescoopMacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopMacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98688A0A22D5936700A09AD0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		98688A0D22D5936700A09AD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -180,18 +135,13 @@
 		987A6DCC22D595D200662010 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		987A6DCE22D595D400662010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		987A6DD022D595D400662010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
-		9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
-		98D1B5722A3A212000A85FBF /* ApiController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiController.swift; sourceTree = "<group>"; };
 		A0010000000000000000000D /* iOSnowatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnowatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0100000000000000000011 /* ForescoopWatchOnly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopWatchOnly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0100000000000000000012 /* WatchOnlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchOnlyApp.swift; sourceTree = "<group>"; };
 		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C00100000000000000000003 /* ForecastDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDashboardView.swift; sourceTree = "<group>"; };
 		D00100000000000000000003 /* AnimatedWeatherBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedWeatherBackground.swift; sourceTree = "<group>"; };
-		E00100000000000000000003 /* VisionForecastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionForecastView.swift; sourceTree = "<group>"; };
 		F00100000000000000000003 /* VisionForescoopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionForescoopApp.swift; sourceTree = "<group>"; };
-		F00100000000000000000004 /* VisionLocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionLocationsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -303,22 +253,10 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				7057C8961F11DABC007A7FC2 /* Common.swift */,
-				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				C00100000000000000000003 /* ForecastDashboardView.swift */,
 				D00100000000000000000003 /* AnimatedWeatherBackground.swift */,
-				E00100000000000000000003 /* VisionForecastView.swift */,
 				F00100000000000000000003 /* VisionForescoopApp.swift */,
-				F00100000000000000000004 /* VisionLocationsView.swift */,
 				AA0100000000000000000012 /* WatchOnlyApp.swift */,
-				9865F8E13011C0E200777207 /* WindguruSpotPicker.swift */,
-				9865F8E53011C6B400777207 /* MapLocationPicker.swift */,
-				9865F8DD3011C0A200777207 /* WindguruLoginView.swift */,
-				9865F8D93011C07F00777207 /* ForecastModelPicker.swift */,
-				70ED9F4F1F16C45300F8DFB9 /* ApiListViewController.swift */,
-				9888ABB12A3A81C900FC9147 /* AlertViewModel.swift */,
-				98D1B5722A3A212000A85FBF /* ApiController.swift */,
-				70ED9F541F17AC4C00F8DFB9 /* ApiInfoViewController.swift */,
-				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
@@ -338,7 +276,6 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				9890080E2A2ED3E7009A978F /* MainViewControllerTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -677,7 +614,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				70BAA9B21F276B4F004CD577 /* Main.storyboard in Resources */,
 				70BAA9B31F276B4F004CD577 /* LaunchScreen.xib in Resources */,
 				70BAA9B41F276B4F004CD577 /* Images.xcassets in Resources */,
 			);
@@ -712,7 +648,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A00100000000000000000008 /* Main.storyboard in Resources */,
 				A00100000000000000000009 /* LaunchScreen.xib in Resources */,
 				A0010000000000000000000A /* Images.xcassets in Resources */,
 			);
@@ -722,7 +657,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B00100000000000000000008 /* Main.storyboard in Resources */,
 				B00100000000000000000009 /* LaunchScreen.xib in Resources */,
 				B0010000000000000000000A /* Images.xcassets in Resources */,
 			);
@@ -747,18 +681,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				70BAA9AB1F276B4F004CD577 /* Common.swift in Sources */,
-				70EC64DD1F952C91005E2C29 /* ApiInfoViewController.swift in Sources */,
-				98D1B5732A3A212000A85FBF /* ApiController.swift in Sources */,
-				9865F8DF3011C0A200777207 /* WindguruLoginView.swift in Sources */,
-				9865F8E43011C0E200777207 /* WindguruSpotPicker.swift in Sources */,
-				9888ABB22A3A81C900FC9147 /* AlertViewModel.swift in Sources */,
-				9865F8DC3011C07F00777207 /* ForecastModelPicker.swift in Sources */,
-				70EC64DC1F952C8F005E2C29 /* ApiListViewController.swift in Sources */,
-				70BAA9AD1F276B4F004CD577 /* MainViewController.swift in Sources */,
 				70BAA9AE1F276B4F004CD577 /* AppDelegate.swift in Sources */,
 				C00100000000000000000001 /* ForecastDashboardView.swift in Sources */,
 				D00100000000000000000001 /* AnimatedWeatherBackground.swift in Sources */,
-				9865F8E63011C6B400777207 /* MapLocationPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -766,7 +691,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9890080F2A2ED3E7009A978F /* MainViewControllerTests.swift in Sources */,
 				98D31F812A251AE200916A59 /* (null) in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -777,10 +701,6 @@
 			files = (
 				CA0100000000000000000001 /* ForecastDashboardView.swift in Sources */,
 				CA0100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */,
-				CA0100000000000000000003 /* ForecastModelPicker.swift in Sources */,
-				CA0100000000000000000004 /* WindguruLoginView.swift in Sources */,
-				CA0100000000000000000005 /* WindguruSpotPicker.swift in Sources */,
-				CA0100000000000000000006 /* MapLocationPicker.swift in Sources */,
 				98688A1522D5938900A09AD0 /* Common.swift in Sources */,
 				98688A1422D5938500A09AD0 /* AppDelegate.swift in Sources */,
 			);
@@ -801,18 +721,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00100000000000000000001 /* Common.swift in Sources */,
-				A00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
-				A00100000000000000000003 /* ApiController.swift in Sources */,
-				9865F8DE3011C0A200777207 /* WindguruLoginView.swift in Sources */,
-				9865F8E33011C0E200777207 /* WindguruSpotPicker.swift in Sources */,
-				A00100000000000000000004 /* AlertViewModel.swift in Sources */,
-				9865F8DB3011C07F00777207 /* ForecastModelPicker.swift in Sources */,
-				A00100000000000000000005 /* ApiListViewController.swift in Sources */,
-				A00100000000000000000006 /* MainViewController.swift in Sources */,
 				A00100000000000000000007 /* AppDelegate.swift in Sources */,
 				C00100000000000000000002 /* ForecastDashboardView.swift in Sources */,
 				D00100000000000000000002 /* AnimatedWeatherBackground.swift in Sources */,
-				9865F8E73011C6B400777207 /* MapLocationPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,19 +740,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B00100000000000000000001 /* Common.swift in Sources */,
-				B00100000000000000000002 /* ApiInfoViewController.swift in Sources */,
-				9865F8DA3011C07F00777207 /* ForecastModelPicker.swift in Sources */,
-				B00100000000000000000003 /* ApiController.swift in Sources */,
-				9865F8E83011C6B400777207 /* MapLocationPicker.swift in Sources */,
-				9865F8E23011C0E200777207 /* WindguruSpotPicker.swift in Sources */,
-				B00100000000000000000004 /* AlertViewModel.swift in Sources */,
-				B00100000000000000000005 /* ApiListViewController.swift in Sources */,
-				B00100000000000000000006 /* MainViewController.swift in Sources */,
-				9865F8E03011C0A200777207 /* WindguruLoginView.swift in Sources */,
 				B00100000000000000000007 /* AppDelegate.swift in Sources */,
-				E00100000000000000000001 /* VisionForecastView.swift in Sources */,
 				F00100000000000000000001 /* VisionForescoopApp.swift in Sources */,
-				F00100000000000000000002 /* VisionLocationsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -866,14 +766,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		607FACD91AFB9204008FA782 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				607FACDA1AFB9204008FA782 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		607FACDE1AFB9204008FA782 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

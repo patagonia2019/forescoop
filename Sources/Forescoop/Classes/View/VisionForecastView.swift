@@ -2,21 +2,28 @@
 //  VisionForecastView.swift
 //  Forescoop
 //
-//  Created by Javier Fuchs on 07/23/26.
-//  Copyright © 2026 Mobile Patagonia. All rights reserved.
-//
 
 #if os(visionOS)
 import SwiftUI
-import Forescoop
 
-struct VisionForecastView: View {
-    private let forecastService: ForecastWindguruProtocol = ForecastWindguruService()
-    @Environment(\.openWindow) private var openWindow
+@MainActor
+public struct VisionForecastView: View {
+    private let forecastLoader: @MainActor () async throws -> SpotForecast?
+    private let onShowLocations: () -> Void
     @State private var forecast: SpotForecast?
     @State private var errorMessage: String?
 
-    var body: some View {
+    public init(
+        forecastService: ForecastWindguruProtocol = ForecastWindguruService(),
+        onShowLocations: @escaping () -> Void = {}
+    ) {
+        forecastLoader = {
+            try await forecastService.forecast(bySpotId: "64141", model: nil)
+        }
+        self.onShowLocations = onShowLocations
+    }
+
+    public var body: some View {
         ZStack {
             LinearGradient(
                 colors: [.cyan.opacity(0.25), .indigo.opacity(0.18), .clear],
@@ -36,9 +43,7 @@ struct VisionForecastView: View {
         .task { await loadForecast() }
         .ornament(attachmentAnchor: .scene(.bottom), contentAlignment: .center) {
             HStack(spacing: 18) {
-                Button("Locations", systemImage: "map") {
-                    openWindow(id: "locations")
-                }
+                Button("Locations", systemImage: "map", action: onShowLocations)
                 Button("Refresh", systemImage: "arrow.clockwise") {
                     Task { await loadForecast() }
                 }
@@ -63,7 +68,7 @@ struct VisionForecastView: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Text("(hour) hs")
+                Text("\(hour ?? "—") hs")
                     .font(.title2.monospacedDigit())
                     .foregroundStyle(.secondary)
             }
@@ -91,20 +96,14 @@ struct VisionForecastView: View {
         .padding(40)
         .frame(maxWidth: 1_200, alignment: .leading)
         .background(.ultraThinMaterial, in: .rect(cornerRadius: 32))
-        .overlay {
-            RoundedRectangle(cornerRadius: 32)
-                .stroke(.white.opacity(0.18), lineWidth: 1)
-        }
+        .overlay { RoundedRectangle(cornerRadius: 32).stroke(.white.opacity(0.18), lineWidth: 1) }
         .padding(48)
     }
 
     private func visionMetric(_ title: String, value: String, symbol: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label(title, systemImage: symbol)
-                .font(.headline)
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.title2.monospacedDigit())
+            Label(title, systemImage: symbol).font(.headline).foregroundStyle(.secondary)
+            Text(value).font(.title2.monospacedDigit())
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
@@ -114,34 +113,19 @@ struct VisionForecastView: View {
     @MainActor
     private func loadForecast() async {
         do {
-            forecast = try await forecastService.forecast(bySpotId: "64141", model: nil)
+            forecast = try await forecastLoader()
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
-    private func temperature(_ value: Double?) -> String {
-        guard let value else { return "—" }
-        return "\(value.formatted(.number.precision(.fractionLength(0))))°C"
-    }
-
-    private func wind(_ value: Double?) -> String {
-        guard let value else { return "—" }
-        return "\(value.formatted(.number.precision(.fractionLength(0)))) kt"
-    }
-
-    private func percent(_ value: Int?) -> String {
-        guard let value else { return "—" }
-        return "\(value)%"
-    }
-
-    private func pressure(_ value: Double?) -> String {
-        guard let value else { return "—" }
-        return "\(value.formatted(.number.precision(.fractionLength(0)))) hPa"
-    }
+    private func temperature(_ value: Double?) -> String { value.map { "\($0.formatted(.number.precision(.fractionLength(0))))°C" } ?? "—" }
+    private func wind(_ value: Double?) -> String { value.map { "\($0.formatted(.number.precision(.fractionLength(0)))) kt" } ?? "—" }
+    private func percent(_ value: Int?) -> String { value.map { "\($0)%" } ?? "—" }
+    private func pressure(_ value: Double?) -> String { value.map { "\($0.formatted(.number.precision(.fractionLength(0)))) hPa" } ?? "—" }
 }
 
 #Preview(windowStyle: .automatic) {
-    VisionForecastView()
+    VisionForecastView(forecastService: ForecastWindguruMockup())
 }
 #endif

@@ -2,18 +2,17 @@
 //  VisionLocationsView.swift
 //  Forescoop
 //
-//  Created by Javier Fuchs on 07/23/26.
-//  Copyright © 2026 Mobile Patagonia. All rights reserved.
-//
 
 #if os(visionOS)
 import MapKit
 import SwiftUI
 
-struct VisionLocationsView: View {
+public struct VisionLocationsView: View {
     @State private var locations = SavedMapLocationStore.load()
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         NavigationStack {
             HStack(spacing: 24) {
                 Map {
@@ -27,9 +26,7 @@ struct VisionLocationsView: View {
                     Label {
                         VStack(alignment: .leading) {
                             Text(location.name)
-                            Text(location.coordinateText)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            Text(location.coordinateText).font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
                         Image(systemName: "mappin.and.ellipse")
@@ -48,5 +45,9 @@ struct VisionLocationsView: View {
             }
         }
     }
+}
+
+#Preview(windowStyle: .automatic) {
+    VisionLocationsView()
 }
 #endif
