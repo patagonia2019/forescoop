@@ -156,13 +156,22 @@ public struct ForecastDashboardView: View {
             .padding()
         }
         .background {
+            let hour = selectedHour ?? forecast.currentForecastHour
             AnimatedWeatherBackground(
-                symbolNames: forecast.weatherSymbolNames(hour: selectedHour),
-                precipitationMillimeters: forecast.forecast?.precipitation(hh: selectedHour)
-                    ?? forecast.forecast?.precipitation1(hh: selectedHour)
+                symbolNames: forecast.weatherSymbolNames(hour: hour),
+                precipitationMillimeters: forecast.forecast?.precipitation(hh: hour)
+                    ?? forecast.forecast?.precipitation1(hh: hour)
                     ?? 0,
-                windSpeedKnots: forecast.forecast?.windSpeed(hh: selectedHour ?? forecast.currentForecastHour) ?? 0,
-                windDirectionDegrees: forecast.forecast?.windDirection(hh: selectedHour ?? forecast.currentForecastHour)
+                windSpeedKnots: forecast.forecast?.windSpeed(hh: hour) ?? 0,
+                windDirectionDegrees: forecast.forecast?.windDirection(hh: hour),
+                windGustKnots: forecast.forecast?.windGustsKnots(hh: hour) ?? 0,
+                cloudCoverPercent: forecast.forecast?.cloudCoverTotal(hh: hour) ?? 0,
+                temperatureCelsius: forecast.forecast?.temperatureReal(hh: hour)
+                    ?? forecast.forecast?.temperature(hh: hour)
+                    ?? 0,
+                humidityPercent: forecast.forecast?.relativeHumidity(hh: hour) ?? 0,
+                pressureHectopascals: forecast.forecast?.seaLevelPressure(hh: hour),
+                forecastDate: forecast.forecastDate(hour: hour) ?? Date()
             )
                 .ignoresSafeArea()
         }

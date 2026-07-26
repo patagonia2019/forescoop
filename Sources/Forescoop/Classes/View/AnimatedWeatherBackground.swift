@@ -13,19 +13,38 @@ public struct AnimatedWeatherBackground: View {
     let precipitationMillimeters: Double
     let windSpeedKnots: Double
     let windDirectionDegrees: Double?
+    let windGustKnots: Double
+    let cloudCoverPercent: Int
+    let temperatureCelsius: Double
+    let humidityPercent: Int
+    let pressureHectopascals: Double?
+    let forecastDate: Date
 
+    @Environment(\.colorScheme) private var colorScheme
     @State private var isAnimating = false
 
     public init(
         symbolNames: [String],
         precipitationMillimeters: Double,
         windSpeedKnots: Double,
-        windDirectionDegrees: Double?
+        windDirectionDegrees: Double?,
+        windGustKnots: Double = 0,
+        cloudCoverPercent: Int = 0,
+        temperatureCelsius: Double = 0,
+        humidityPercent: Int = 0,
+        pressureHectopascals: Double? = nil,
+        forecastDate: Date = Date()
     ) {
         self.symbolNames = symbolNames
         self.precipitationMillimeters = precipitationMillimeters
         self.windSpeedKnots = windSpeedKnots
         self.windDirectionDegrees = windDirectionDegrees
+        self.windGustKnots = windGustKnots
+        self.cloudCoverPercent = cloudCoverPercent
+        self.temperatureCelsius = temperatureCelsius
+        self.humidityPercent = humidityPercent
+        self.pressureHectopascals = pressureHectopascals
+        self.forecastDate = forecastDate
     }
 
     private var isSunny: Bool { symbolNames.contains { $0.contains("sun") } }
@@ -34,6 +53,12 @@ public struct AnimatedWeatherBackground: View {
     private var isWindy: Bool { symbolNames.contains { $0 == "wind" || $0.contains("tornado") } }
     private var isRainy: Bool { symbolNames.contains { $0.contains("rain") || $0.contains("drizzle") } }
     private var isSnowy: Bool { symbolNames.contains { $0.contains("snow") } }
+    private var isFoggy: Bool { symbolNames.contains { $0.contains("fog") } || (humidityPercent >= 95 && cloudCoverPercent >= 80) }
+    private var isStormy: Bool { isRainy && precipitationMillimeters >= 8 && windGustKnots >= 35 }
+    private var isFreezing: Bool { temperatureCelsius <= 0 }
+    private var isHot: Bool { temperatureCelsius >= 30 }
+    private var usesPressurePulse: Bool { (pressureHectopascals ?? 1_013) < 995 || (pressureHectopascals ?? 1_013) > 1_030 }
+    private var cloudParticleCount: Int { min(max(cloudCoverPercent / 25, 1), 4) }
     private var precipitationParticleCount: Int {
         if isSnowy {
             return min(max(Int((precipitationMillimeters * 14).rounded(.up)) + 4, 5), 48)
@@ -49,36 +74,73 @@ public struct AnimatedWeatherBackground: View {
         let radians = windTravelDirectionDegrees * .pi / 180
         return (sin(radians), -cos(radians))
     }
-    private var windVelocity: Double { min(max(windSpeedKnots, 0), 50) }
+    private var windVelocity: Double { min(max(max(windSpeedKnots, windGustKnots), 0), 50) }
+    private var isTwilight: Bool {
+        let hour = Calendar.current.component(.hour, from: forecastDate)
+        return (5...7).contains(hour) || (18...20).contains(hour)
+    }
 
     public var body: some View {
         GeometryReader { proxy in
             ZStack {
+                Color(colorScheme == .dark ? .black : .white)
+
                 LinearGradient(
                     colors: backgroundColors,
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
 
+                if isTwilight {
+                    LinearGradient(
+                        colors: [.orange.opacity(0.28), .pink.opacity(0.12), .clear],
+                        startPoint: .top,
+                        endPoint: .center
+                    )
+                }
+
                 if isSunny {
                     Circle()
                         .fill(.yellow.opacity(0.30))
                         .frame(width: 220, height: 220)
                         .blur(radius: 30)
+                        .scaleEffect(isAnimating ? 1.08 : 0.92)
                         .offset(x: isAnimating ? proxy.size.width * 0.28 : proxy.size.width * 0.20,
                                 y: isAnimating ? -proxy.size.height * 0.26 : -proxy.size.height * 0.20)
                 }
 
                 if isCloudy {
-                    ForEach(0..<4, id: \.self) { index in
+                    ForEach(0..<cloudParticleCount, id: \.self) { index in
                         Image(systemName: "cloud.fill")
                             .font(.system(size: CGFloat(88 + (index % 2) * 36)))
-                            .foregroundStyle(.white.opacity(0.12))
+                            .foregroundStyle(.white.opacity(0.08 + Double(cloudCoverPercent) / 1_000))
                             .blur(radius: 8)
                             .offset(
                                 x: cloudOffset(for: index, width: proxy.size.width),
                                 y: CGFloat(index * 92) - proxy.size.height * 0.30
                             )
+                    }
+                }
+
+                if isFoggy {
+                    ForEach(0..<3, id: \.self) { index in
+                        Capsule()
+                            .fill(.white.opacity(0.10))
+                            .frame(width: proxy.size.width * 0.82, height: 56)
+                            .blur(radius: 18)
+                            .offset(
+                                x: isAnimating ? proxy.size.width * 0.18 : -proxy.size.width * 0.18,
+                                y: proxy.size.height * (CGFloat(index) * 0.15 - 0.12)
+                            )
+                    }
+                }
+
+                if isNight {
+                    TimelineView(.animation) { timeline in
+                        let time = timeline.date.timeIntervalSinceReferenceDate
+                        ForEach(0..<12, id: \.self) { index in
+                            nightSparkle(index: index, in: proxy.size, time: time)
+                        }
                     }
                 }
 
@@ -107,6 +169,40 @@ public struct AnimatedWeatherBackground: View {
                         }
                     }
                 }
+
+                if isFreezing {
+                    LinearGradient(
+                        colors: [.cyan.opacity(0.10), .clear, .cyan.opacity(0.06)],
+                        startPoint: isAnimating ? .topLeading : .bottomTrailing,
+                        endPoint: isAnimating ? .bottomTrailing : .topLeading
+                    )
+                } else if isHot {
+                    RadialGradient(
+                        colors: [.orange.opacity(0.16), .clear],
+                        center: .topTrailing,
+                        startRadius: 20,
+                        endRadius: max(proxy.size.width, proxy.size.height) * 0.75
+                    )
+                }
+
+                if usesPressurePulse {
+                    ForEach(0..<3, id: \.self) { index in
+                        Circle()
+                            .stroke(.white.opacity(0.10), lineWidth: 1)
+                            .scaleEffect(isAnimating ? CGFloat(1.2 + Double(index) * 0.28) : CGFloat(0.8 + Double(index) * 0.28))
+                            .offset(x: proxy.size.width * 0.32, y: -proxy.size.height * 0.26)
+                    }
+                }
+
+                if isStormy {
+                    TimelineView(.animation) { timeline in
+                        Image(systemName: "bolt.fill")
+                            .font(.system(size: 92, weight: .light))
+                            .foregroundStyle(.white.opacity(lightningOpacity(at: timeline.date)))
+                            .shadow(color: .white.opacity(0.7), radius: 18)
+                            .offset(x: proxy.size.width * 0.20, y: -proxy.size.height * 0.20)
+                    }
+                }
             }
             .scaleEffect(1.10)
             .offset(
@@ -125,17 +221,34 @@ public struct AnimatedWeatherBackground: View {
     }
 
     private var backgroundColors: [Color] {
-        if isNight { return [.indigo.opacity(0.55), .blue.opacity(0.18), .clear] }
-        if isSunny { return [.yellow.opacity(0.25), .cyan.opacity(0.17), .clear] }
-        if isRainy || isSnowy { return [.blue.opacity(0.20), .gray.opacity(0.14), .clear] }
-        if isWindy { return [.teal.opacity(0.20), .blue.opacity(0.12), .clear] }
-        return [.gray.opacity(0.15), .blue.opacity(0.08), .clear]
+        let intensity = colorScheme == .dark ? 1.65 : 1.0
+        if isNight { return [.indigo.opacity(0.55 * intensity), .blue.opacity(0.18 * intensity), .clear] }
+        if isSunny { return [.yellow.opacity(0.25 * intensity), .cyan.opacity(0.17 * intensity), .clear] }
+        if isRainy || isSnowy { return [.blue.opacity(0.20 * intensity), .gray.opacity(0.14 * intensity), .clear] }
+        if isWindy { return [.teal.opacity(0.20 * intensity), .blue.opacity(0.12 * intensity), .clear] }
+        return [.gray.opacity(0.15 * intensity), .blue.opacity(0.08 * intensity), .clear]
     }
 
     private func cloudOffset(for index: Int, width: CGFloat) -> CGFloat {
         let direction: CGFloat = index.isMultiple(of: 2) ? 1 : -1
         let travel = isAnimating ? width * 0.22 : -width * 0.12
         return direction * travel + CGFloat(index * 50) - width * 0.25
+    }
+
+    private func nightSparkle(index: Int, in size: CGSize, time: TimeInterval) -> some View {
+        let x = size.width * (CGFloat((index * 37) % 100) / 100 - 0.5)
+        let y = size.height * (CGFloat((index * 61) % 70) / 100 - 0.45)
+        let pulse = 0.25 + 0.35 * (sin(time * 1.4 + Double(index)) + 1) / 2
+
+        return Image(systemName: "sparkle")
+            .font(.system(size: CGFloat(7 + index % 5)))
+            .foregroundStyle(.white.opacity(pulse))
+            .offset(x: x, y: y)
+    }
+
+    private func lightningOpacity(at date: Date) -> Double {
+        let cycle = date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 5.8)
+        return (0.08...0.18).contains(cycle) || (0.28...0.34).contains(cycle) ? 0.85 : 0
     }
 
     private func windLeaf(index: Int, in size: CGSize, time: TimeInterval) -> some View {
@@ -182,8 +295,12 @@ public struct AnimatedWeatherBackground: View {
         let progress = (time * speed + Double(index) * 0.137).truncatingRemainder(dividingBy: 1)
         let y = size.height * (CGFloat(progress) - 0.55)
         let sway = CGFloat(sin(time * (isSnowy ? 1.4 : 0.7) + Double(index))) * (isSnowy ? 18 : 8)
-        let rainDrift = windTravelVector.x * CGFloat(windVelocity / 50) * 42 * CGFloat(progress)
-        let rainTilt = atan2(Double(rainDrift), 110) * 180 / .pi
+        let windStrength = CGFloat(windVelocity / 50)
+        let windTravel = windStrength * (isSnowy ? 115 : 72) * CGFloat(progress)
+        let windDriftX = windTravelVector.x * windTravel
+        // Gravity remains dominant while the precipitation is carried slightly downwind.
+        let windDriftY = windTravelVector.y * windTravel * 0.35
+        let rainTilt = atan2(Double(windDriftX), 110) * 180 / .pi
 
         if isSnowy {
             Image(systemName: "snowflake")
@@ -191,15 +308,16 @@ public struct AnimatedWeatherBackground: View {
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(.white.opacity(0.55))
                 .rotationEffect(.degrees(time * Double(8 + index % 7)))
-                .offset(x: size.width * (column - 0.5) + sway, y: y)
+                .offset(x: size.width * (column - 0.5) + sway + windDriftX,
+                        y: y + windDriftY)
         } else {
             Image(systemName: "drop.fill")
-                .font(.system(size: CGFloat(9 + index % 6), weight: .medium))
-                .foregroundStyle(.cyan.opacity(0.55))
-                .shadow(color: .cyan.opacity(0.25), radius: 2)
+                .font(.system(size: CGFloat((precipitationMillimeters >= 8 ? 12 : 9) + index % 6), weight: .medium))
+                .foregroundStyle(precipitationMillimeters >= 8 ? .blue.opacity(0.70) : .cyan.opacity(0.55))
+                .shadow(color: .cyan.opacity(0.25), radius: precipitationMillimeters >= 8 ? 3 : 2)
                 .rotationEffect(.degrees(rainTilt))
-                .offset(x: size.width * (column - 0.5) + sway + rainDrift,
-                        y: y + windTravelVector.y * CGFloat(windVelocity / 50) * 8)
+                .offset(x: size.width * (column - 0.5) + sway + windDriftX,
+                        y: y + windDriftY)
         }
     }
 }
