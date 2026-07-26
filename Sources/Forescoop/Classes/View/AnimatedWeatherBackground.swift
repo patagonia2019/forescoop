@@ -1,6 +1,6 @@
 //
 //  AnimatedWeatherBackground.swift
-//  Forescoop
+//  Forescoop package
 //
 //  Created by Javier Fuchs on 07/23/26.
 //  Copyright © 2026 Mobile Patagonia. All rights reserved.
@@ -8,13 +8,25 @@
 
 import SwiftUI
 
-struct AnimatedWeatherBackground: View {
+public struct AnimatedWeatherBackground: View {
     let symbolNames: [String]
     let precipitationMillimeters: Double
     let windSpeedKnots: Double
     let windDirectionDegrees: Double?
 
     @State private var isAnimating = false
+
+    public init(
+        symbolNames: [String],
+        precipitationMillimeters: Double,
+        windSpeedKnots: Double,
+        windDirectionDegrees: Double?
+    ) {
+        self.symbolNames = symbolNames
+        self.precipitationMillimeters = precipitationMillimeters
+        self.windSpeedKnots = windSpeedKnots
+        self.windDirectionDegrees = windDirectionDegrees
+    }
 
     private var isSunny: Bool { symbolNames.contains { $0.contains("sun") } }
     private var isNight: Bool { symbolNames.contains { $0.contains("moon") } }
@@ -39,7 +51,7 @@ struct AnimatedWeatherBackground: View {
     }
     private var windVelocity: Double { min(max(windSpeedKnots, 0), 50) }
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { proxy in
             ZStack {
                 LinearGradient(

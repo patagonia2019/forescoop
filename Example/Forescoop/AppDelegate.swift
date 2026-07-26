@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-#elseif os(iOS)
+#elseif os(iOS) || os(tvOS)
 
 import UIKit
 import SwiftUI

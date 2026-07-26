@@ -1,18 +1,22 @@
 //
 //  ForecastDashboardView.swift
-//  Forescoop
+//  Forescoop package
 //
 //  Created by Javier Fuchs on 07/22/26.
 //  Copyright © 2026 Mobile Patagonia. All rights reserved.
 //
 
+#if !os(watchOS)
 import CoreLocation
-import MapKit
+@preconcurrency import MapKit
 import SwiftUI
-import Forescoop
 
-struct ForecastDashboardView: View {
+@MainActor
+public struct ForecastDashboardView: View {
     private let forecastService: ForecastWindguruProtocol
+    private let forecastLoader: @MainActor (String, String?) async throws -> SpotForecast?
+    private let coordinateForecastLoader: @MainActor (Double, Double, String?, String, String) async throws -> WSpotForecast?
+    private let spotSearch: @MainActor (String) async throws -> SpotResult?
 #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
@@ -36,8 +40,13 @@ struct ForecastDashboardView: View {
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
 
-    init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
+    public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
+        forecastLoader = { try await forecastService.forecast(bySpotId: $0, model: $1) }
+        coordinateForecastLoader = {
+            try await forecastService.wforecast(byLatitude: $0, longitude: $1, model: $2, username: $3, password: $4)
+        }
+        spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
     }
 
     private var usesWideLayout: Bool {
@@ -48,7 +57,7 @@ struct ForecastDashboardView: View {
 #endif
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             Group {
                 if let forecast {
@@ -258,7 +267,7 @@ struct ForecastDashboardView: View {
                 errorMessage = "The selected map location could not be identified."
                 return
             }
-            guard let spotID = try await forecastService.searchSpots(byLocation: searchTerm)?.allSpots.first?.identifier else {
+            guard let spotID = try await spotSearch(searchTerm)?.allSpots.first?.identifier else {
                 errorMessage = "No Windguru spot was found near the selected map location."
                 return
             }
@@ -291,13 +300,13 @@ struct ForecastDashboardView: View {
             let requestedModelIDs = modelIDs ?? (isChangingSpot ? [] : selectedModelIDs)
             var validForecasts: [SpotForecast] = []
             for modelID in requestedModelIDs {
-                if let loadedForecast = try await forecastService.forecast(bySpotId: requestedSpotID, model: modelID),
+                if let loadedForecast = try await forecastLoader(requestedSpotID, modelID),
                    loadedForecast.forecast != nil {
                     validForecasts.append(loadedForecast)
                 }
             }
             if requestedModelIDs.isEmpty {
-                forecast = try await forecastService.forecast(bySpotId: requestedSpotID, model: nil)
+                forecast = try await forecastLoader(requestedSpotID, nil)
             } else if validForecasts.count == 1 {
                 forecast = validForecasts[0]
             } else if validForecasts.count == requestedModelIDs.count {
@@ -327,12 +336,12 @@ struct ForecastDashboardView: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            let coordinateForecast = try await forecastService.wforecast(
-                byLatitude: coordinate.latitude,
-                longitude: coordinate.longitude,
-                model: nil,
-                username: windguruUsername,
-                password: password
+            let coordinateForecast = try await coordinateForecastLoader(
+                coordinate.latitude,
+                coordinate.longitude,
+                nil,
+                windguruUsername,
+                password
             )
             guard let coordinateForecast else { throw CustomError.notMappeable }
             forecast = try SpotForecast.from(coordinateForecast: coordinateForecast)
@@ -355,3 +364,4 @@ struct ForecastDashboardView: View {
 #Preview {
     ForecastDashboardView(forecastService: ForecastWindguruMockup())
 }
+#endif

@@ -5,7 +5,7 @@
 //  Created by Javier on 23/07/2026.
 //  Copyright © 2026 Forescoop. All rights reserved.
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(tvOS)
 import CoreLocation
 import MapKit
 import SwiftUI

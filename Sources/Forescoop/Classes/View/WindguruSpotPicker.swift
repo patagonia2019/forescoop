@@ -53,9 +53,11 @@ public struct WindguruSpotPicker: View {
                         Task { await searchCurrentLocation() }
                     }
                     .disabled(isLoading)
+#if !os(tvOS)
                     Button("Pick on Map", systemImage: "map") {
                         showsMap = true
                     }
+#endif
                 } footer: {
                     Text("Map picks use an exact coordinate forecast for Windguru PRO, or the nearest public spot for guests.")
                 }
@@ -113,12 +115,14 @@ public struct WindguruSpotPicker: View {
 #endif
             }
         }
+#if !os(tvOS)
         .sheet(isPresented: $showsMap) {
             MapLocationPicker(initialCoordinate: lastSavedCoordinate) { coordinate in
                 showsMap = false
                 Task { await saveMapCoordinate(coordinate) }
             }
         }
+#endif
         .alert("Rename location", isPresented: Binding(
             get: { locationToRename != nil },
             set: { if !$0 { locationToRename = nil } }
@@ -379,7 +383,9 @@ private enum DeviceLocationError: LocalizedError {
     )
 }
 
+#if !os(tvOS)
 #Preview("Map location picker") {
     MapLocationPicker(onSelection: { _ in })
 }
+#endif
 #endif
