@@ -11,12 +11,37 @@ import MapKit
 import SwiftUI
 
 public struct MapLocationPicker: View {
+    private enum MapDisplayStyle: String, CaseIterable, Identifiable {
+        case outdoors
+        case satellite
+        case hybrid
+
+        var id: Self { self }
+
+        var label: String {
+            switch self {
+            case .outdoors: "Outdoors"
+            case .satellite: "Satellite"
+            case .hybrid: "Hybrid"
+            }
+        }
+
+        var symbolName: String {
+            switch self {
+            case .outdoors: "mountain.2"
+            case .satellite: "globe.americas.fill"
+            case .hybrid: "map.fill"
+            }
+        }
+    }
+
     let initialCoordinate: CLLocationCoordinate2D?
     let isSelectionEnabled: Bool
     let onSelection: (CLLocationCoordinate2D) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var selectedCoordinate: CLLocationCoordinate2D?
     @State private var position: MapCameraPosition = .automatic
+    @State private var displayStyle: MapDisplayStyle = .outdoors
 
     public init(
         initialCoordinate: CLLocationCoordinate2D? = nil,
@@ -39,11 +64,7 @@ public struct MapLocationPicker: View {
     public var body: some View {
         NavigationStack {
             MapReader { proxy in
-                Map(position: $position) {
-                    if let selectedCoordinate {
-                        Marker("Selected location", coordinate: selectedCoordinate)
-                    }
-                }
+                map
                 .onTapGesture { point in
                     guard isSelectionEnabled else { return }
                     selectedCoordinate = proxy.convert(point, from: .local)
@@ -62,8 +83,55 @@ public struct MapLocationPicker: View {
                     }
                     .disabled(isSelectionEnabled && selectedCoordinate == nil)
                 }
+                ToolbarItem(placement: .secondaryAction) {
+                    Menu {
+                        Picker("Map style", selection: $displayStyle) {
+                            ForEach(MapDisplayStyle.allCases) { style in
+                                Label(style.label, systemImage: style.symbolName).tag(style)
+                            }
+                        }
+                    } label: {
+                        Label("Map style", systemImage: displayStyle.symbolName)
+                    }
+                }
             }
         }
+    }
+
+    @ViewBuilder private var map: some View {
+        switch displayStyle {
+        case .outdoors:
+            mapContent
+                .mapStyle(.standard(
+                    elevation: .realistic,
+                    pointsOfInterest: .including(outdoorPlaces)
+                ))
+        case .satellite:
+            mapContent.mapStyle(.imagery(elevation: .realistic))
+        case .hybrid:
+            mapContent
+                .mapStyle(.hybrid(
+                    elevation: .realistic,
+                    pointsOfInterest: .including(outdoorPlaces)
+                ))
+        }
+    }
+
+    private var mapContent: some View {
+        Map(position: $position) {
+            if let selectedCoordinate {
+                Marker("Selected location", coordinate: selectedCoordinate)
+            }
+        }
+        .mapControls {
+            MapCompass()
+            MapPitchToggle()
+            MapScaleView()
+        }
+    }
+
+    private var outdoorPlaces: [MKPointOfInterestCategory] {
+        [.beach, .campground, .marina, .nationalPark, .park]
     }
 }
 

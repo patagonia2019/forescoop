@@ -13,6 +13,7 @@ public struct ForecastOverview: View {
     @Binding public var temperatureUnit: TemperatureUnit
     private let onSelectLocation: () -> Void
     private let onSelectModel: () -> Void
+    private let onShowMap: () -> Void
     private let modelInfoURL: URL
 
     public init(
@@ -22,7 +23,8 @@ public struct ForecastOverview: View {
         coordinateLocationName: String? = nil,
         modelInfoURL: URL = URL(string: "https://www.windguru.cz/help.php?sec=models")!,
         onSelectLocation: @escaping () -> Void,
-        onSelectModel: @escaping () -> Void
+        onSelectModel: @escaping () -> Void,
+        onShowMap: @escaping () -> Void = {}
     ) {
         self.forecast = forecast
         self.selectedHour = selectedHour
@@ -31,15 +33,24 @@ public struct ForecastOverview: View {
         self.modelInfoURL = modelInfoURL
         self.onSelectLocation = onSelectLocation
         self.onSelectModel = onSelectModel
+        self.onShowMap = onShowMap
     }
 
     public var body: some View {
         VStack(spacing: 16) {
             VStack(spacing: 4) {
-                Button(action: onSelectLocation) {
-                    Label(locationName, systemImage: "mappin.and.ellipse")
+                HStack(spacing: 8) {
+                    Button(action: onSelectLocation) {
+                        Label(locationName, systemImage: "mappin.and.ellipse")
+                    }
+                    .buttonStyle(.plain)
+
+#if !os(tvOS)
+                    Button("Show \(locationName) on map", systemImage: "map", action: onShowMap)
+                        .labelStyle(.iconOnly)
+                        .buttonStyle(.plain)
+#endif
                 }
-                .buttonStyle(.plain)
                 .font(.title.bold())
                 .foregroundColor(.blue)
 

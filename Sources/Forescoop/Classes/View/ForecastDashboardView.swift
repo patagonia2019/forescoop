@@ -44,6 +44,7 @@ public struct ForecastDashboardView: View {
     @State private var showsModelPicker = false
     @State private var showsLogin = false
     @State private var showsFavorites = false
+    @State private var showsForecastMap = false
     @State private var selectedModelIDs: [String] = []
     @State private var usableModelIDs: [String] = []
     @State private var displayedForecastSpotID: String?
@@ -275,6 +276,15 @@ public struct ForecastDashboardView: View {
                     }
                 )
             }
+#if !os(tvOS)
+            .sheet(isPresented: $showsForecastMap) {
+                MapLocationPicker(
+                    initialCoordinate: forecast?.location?.coordinate,
+                    isSelectionEnabled: false,
+                    onSelection: { _ in }
+                )
+            }
+#endif
         }
     }
 
@@ -288,7 +298,7 @@ public struct ForecastDashboardView: View {
 
                 if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
                             .frame(maxWidth: .infinity)
 
                         VStack(alignment: .leading, spacing: 28) {
@@ -301,7 +311,7 @@ public struct ForecastDashboardView: View {
                     iPadLocationWorkspace()
                 } else {
                     VStack(spacing: 24) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
                         ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow)
                         ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
                     }
