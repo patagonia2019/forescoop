@@ -10,6 +10,7 @@ import Security
 import SwiftUI
 
 public struct WindguruLoginView: View {
+    private let forecastService: ForecastWindguruProtocol
     private let loginHandler: @MainActor (String, String) async throws -> User?
     let username: String
     let onLoggedIn: (String, Bool) -> Void
@@ -29,6 +30,7 @@ public struct WindguruLoginView: View {
         onLoggedIn: @escaping (String, Bool) -> Void,
         onProfileLoaded: @escaping (User) -> Void = { _ in }
     ) {
+        self.forecastService = forecastService
         loginHandler = { try await forecastService.login(withUsername: $0, password: $1) }
         self.username = username
         self.onLoggedIn = onLoggedIn
@@ -39,7 +41,13 @@ public struct WindguruLoginView: View {
         NavigationStack {
             Group {
                 if let loggedInUser {
-                    WindguruProfileView(user: loggedInUser)
+                    WindguruProfileView(
+                        user: loggedInUser,
+                        forecastService: forecastService,
+                        username: enteredUsername,
+                        password: password,
+                        onSignOut: signOut
+                    )
                 } else {
                     Form {
                         Section("Windguru account") {
@@ -84,10 +92,6 @@ public struct WindguruLoginView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Login") { Task { await login() } }
                             .disabled(enteredUsername.isEmpty || password.isEmpty || isLoading)
-                    }
-                } else {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button("Sign Out", role: .destructive) { signOut() }
                     }
                 }
             }

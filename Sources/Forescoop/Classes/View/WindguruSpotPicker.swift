@@ -15,6 +15,7 @@ public struct WindguruSpotPicker: View {
     private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
     private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
     private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
+    private let addFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
     let username: String
     let onSpotSelected: (SpotOwner) -> Void
     let onFavoriteSelected: (SpotOwner) -> Void
@@ -29,6 +30,7 @@ public struct WindguruSpotPicker: View {
     @State private var errorMessage: String?
     @State private var favoritesErrorMessage: String?
     @State private var favoriteIDsBeingRemoved = Set<String>()
+    @State private var favoriteIDsBeingAdded = Set<String>()
     @State private var showsMap = false
     @State private var savedLocations = SavedMapLocationStore.load()
     @State private var locationToRename: SavedMapLocation?
@@ -49,6 +51,9 @@ public struct WindguruSpotPicker: View {
         loadFavoriteSpots = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
         removeFavoriteSpot = { spotID, username, password in
             try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
+        }
+        addFavoriteSpot = { spotID, username, password in
+            try await forecastService.addFavoriteSpot(withSpotId: spotID, username: username, password: password)
         }
         self.username = username
         self.onSpotSelected = onSpotSelected
@@ -230,7 +235,7 @@ public struct WindguruSpotPicker: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .buttonStyle(.plain)
-            .disabled(isLoading)
+            .disabled(isLoading || favoriteIDsBeingAdded.contains(location.spotID ?? ""))
 
 #if !os(macOS)
             if editMode.isEditing {
@@ -240,11 +245,26 @@ public struct WindguruSpotPicker: View {
                 .labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
                 .accessibilityHint("Changes this saved location's name")
+
+                if location.spotID != nil {
+                    Button("Move \(location.name) to Favorites", systemImage: "star") {
+                        Task { await moveToFavorites(location) }
+                    }
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.borderless)
+                    .disabled(favoriteIDsBeingAdded.contains(location.spotID ?? ""))
+                    .accessibilityHint("Adds this Windguru spot to Favorites and removes the saved map location")
+                }
             }
 #endif
         }
         .contextMenu {
             Button("Rename", systemImage: "pencil") { beginRenaming(location) }
+            if location.spotID != nil {
+                Button("Move to Favorites", systemImage: "star") {
+                    Task { await moveToFavorites(location) }
+                }
+            }
             Button("Delete", systemImage: "trash", role: .destructive) { delete(location) }
         }
     }
@@ -287,6 +307,25 @@ public struct WindguruSpotPicker: View {
             favoriteSpots.removeAll { $0.identifier == identifier }
         } catch {
             favoritesErrorMessage = "Couldn’t remove this favorite."
+        }
+    }
+
+    @MainActor
+    private func moveToFavorites(_ location: SavedMapLocation) async {
+        guard let spotID = location.spotID,
+              !username.isEmpty,
+              let password = WindguruCredentialStore.password(for: username) else {
+            return
+        }
+        favoriteIDsBeingAdded.insert(spotID)
+        defer { favoriteIDsBeingAdded.remove(spotID) }
+        do {
+            _ = try await addFavoriteSpot(spotID, username, password)
+            savedLocations.removeAll { $0.id == location.id }
+            saveLocations()
+            await loadFavorites()
+        } catch {
+            favoritesErrorMessage = "Couldn’t add this spot to Favorites."
         }
     }
 
