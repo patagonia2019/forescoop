@@ -25,8 +25,8 @@ public struct VisionLocationsView: View {
                 List(locations) { location in
                     Label {
                         VStack(alignment: .leading) {
-                            Text(location.name)
-                            Text(location.coordinateText).font(.caption).foregroundStyle(.secondary)
+                            Text(location.displayName)
+                            Text(location.detailText).font(.caption).foregroundStyle(.secondary)
                         }
                     } icon: {
                         Image(systemName: "mappin.and.ellipse")

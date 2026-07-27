@@ -360,8 +360,8 @@ public struct ForecastDashboardView: View {
                         } label: {
                             Label {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(location.name)
-                                    Text(location.coordinateText)
+                                    Text(location.displayName)
+                                    Text(location.detailText)
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }

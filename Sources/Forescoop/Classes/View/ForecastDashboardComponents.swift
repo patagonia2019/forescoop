@@ -34,7 +34,7 @@ public struct ForecastOverview: View {
         VStack(spacing: 16) {
             VStack(spacing: 4) {
                 Button(action: onSelectLocation) {
-                    Label(forecast.asCurrentLocation ?? "Unknown location", systemImage: "mappin.and.ellipse")
+                    Label(forecast.displayName, systemImage: "mappin.and.ellipse")
                 }
                 .buttonStyle(.plain)
                 .font(.title.bold())

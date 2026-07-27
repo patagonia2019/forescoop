@@ -120,7 +120,7 @@ public struct WindguruSpotPicker: View {
                                 Task { await selectSpot(spot) }
                             } label: {
                                 VStack(alignment: .leading) {
-                                    Text(spot.name ?? "Unknown spot")
+                                    Text(spot.displayName)
                                     Text(spot.countryName ?? "")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
@@ -220,7 +220,7 @@ public struct WindguruSpotPicker: View {
         } label: {
             Label {
                 VStack(alignment: .leading) {
-                    Text(spot.name ?? "Unknown spot")
+                    Text(spot.displayName)
                     Text(spot.countryName ?? "")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -244,8 +244,8 @@ public struct WindguruSpotPicker: View {
             } label: {
                 Label {
                     VStack(alignment: .leading) {
-                        Text(location.name)
-                        Text(location.coordinateText)
+                        Text(location.displayName)
+                        Text(location.detailText)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -266,7 +266,7 @@ public struct WindguruSpotPicker: View {
                 .buttonStyle(.borderless)
                 .accessibilityHint("Changes this saved location's name")
 
-                if location.spotID != nil {
+                if location.spotID != nil, !location.isPrimaryLocation {
                     Button("Move \(location.name) to Favorites", systemImage: "star") {
                         Task { await moveToFavorites(location) }
                     }
@@ -280,12 +280,14 @@ public struct WindguruSpotPicker: View {
         }
         .contextMenu {
             Button("Rename", systemImage: "pencil") { beginRenaming(location) }
-            if location.spotID != nil {
+            if location.spotID != nil, !location.isPrimaryLocation {
                 Button("Move to Favorites", systemImage: "star") {
                     Task { await moveToFavorites(location) }
                 }
             }
-            Button("Delete", systemImage: "trash", role: .destructive) { delete(location) }
+            if !location.isPrimaryLocation {
+                Button("Delete", systemImage: "trash", role: .destructive) { delete(location) }
+            }
         }
     }
 
@@ -332,7 +334,8 @@ public struct WindguruSpotPicker: View {
 
     @MainActor
     private func moveToFavorites(_ location: SavedMapLocation) async {
-        guard let spotID = location.spotID,
+        guard !location.isPrimaryLocation,
+              let spotID = location.spotID,
               !username.isEmpty,
               let password = WindguruCredentialStore.password(for: username) else {
             return
@@ -417,15 +420,16 @@ public struct WindguruSpotPicker: View {
     @MainActor
     private func saveMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
         var name = "Selected map location"
+        var resolvedPlaceDescription: String?
         do {
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+            resolvedPlaceDescription = try await placeDescription(for: location)
             guard let term = try await searchTerm(for: location) else { return }
             name = try await searchSpots(term)?.allSpots.first?.name ?? name
         } catch {
             // The coordinate remains usable even if a public spot name cannot be resolved.
         }
-        savedLocations.append(SavedMapLocation(name: name, coordinate: coordinate))
-        saveLocations()
+        appendSavedLocation(SavedMapLocation(name: name, coordinate: coordinate, placeDescription: resolvedPlaceDescription))
     }
 
     @MainActor
@@ -438,13 +442,12 @@ public struct WindguruSpotPicker: View {
         if let identifier = spot.identifier,
            let spotInfo = try? await loadSpotInfo(identifier),
            let coordinate = spotInfo.location?.coordinate {
-            let alreadySaved = savedLocations.contains {
-                abs($0.latitude - coordinate.latitude) < 0.0001 && abs($0.longitude - coordinate.longitude) < 0.0001
-            }
-            if !alreadySaved {
-                savedLocations.append(SavedMapLocation(name: spot.name ?? "Windguru spot", coordinate: coordinate, spotID: identifier))
-                saveLocations()
-            }
+            appendSavedLocation(SavedMapLocation(
+                name: spot.name ?? "Windguru spot",
+                coordinate: coordinate,
+                spotID: identifier,
+                placeDescription: spot.countryName
+            ))
         }
         onSpotSelected(spot)
     }
@@ -483,11 +486,13 @@ public struct WindguruSpotPicker: View {
     }
 
     private func delete(_ offsets: IndexSet) {
-        savedLocations.remove(atOffsets: offsets)
+        let idsToDelete = Set(offsets.map { savedLocations[$0].id })
+        savedLocations.removeAll { idsToDelete.contains($0.id) && !$0.isPrimaryLocation }
         saveLocations()
     }
 
     private func delete(_ location: SavedMapLocation) {
+        guard !location.isPrimaryLocation else { return }
         savedLocations.removeAll { $0.id == location.id }
         saveLocations()
     }
@@ -499,6 +504,13 @@ public struct WindguruSpotPicker: View {
 
     private func saveLocations() {
         SavedMapLocationStore.save(savedLocations)
+        savedLocations = SavedMapLocationStore.load()
+    }
+
+    private func appendSavedLocation(_ location: SavedMapLocation) {
+        guard !savedLocations.contains(where: { SavedMapLocationStore.isSameLocation($0, location) }) else { return }
+        savedLocations.append(location)
+        saveLocations()
     }
 
     private func searchTerm(for location: CLLocation) async throws -> String? {
@@ -509,6 +521,16 @@ public struct WindguruSpotPicker: View {
         return mapItem.addressRepresentations?.cityName
             ?? mapItem.address?.shortAddress
             ?? mapItem.address?.fullAddress
+    }
+
+    private func placeDescription(for location: CLLocation) async throws -> String? {
+        guard let request = MKReverseGeocodingRequest(location: location),
+              let mapItem = try await request.mapItems.first else {
+            return nil
+        }
+        return mapItem.address?.fullAddress
+            ?? mapItem.address?.shortAddress
+            ?? mapItem.addressRepresentations?.cityName
     }
 }
 

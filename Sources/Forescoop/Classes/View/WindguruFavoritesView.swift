@@ -98,7 +98,7 @@ public struct WindguruFavoritesView: View {
     private func favoriteRow(_ spot: SpotOwner) -> some View {
         Label {
             VStack(alignment: .leading) {
-                Text(spot.name ?? "Unknown spot")
+                Text(spot.displayName)
                 Text(spot.countryName ?? "")
                     .font(.caption)
                     .foregroundStyle(.secondary)
