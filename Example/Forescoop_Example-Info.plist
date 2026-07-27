@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Ventus</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -28,9 +30,9 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Forescoop uses your location to load the forecast for where you are.</string>
+	<string>Ventus uses your location to load the forecast for where you are.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Forescoop uses your location to load the forecast for where you are.</string>
+	<string>Ventus uses your location to load the forecast for where you are.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

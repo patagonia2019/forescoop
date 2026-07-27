@@ -18,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         let window = NSWindow(contentViewController: NSHostingController(rootView: ForecastDashboardView()))
-        window.title = "Forescoop"
+        window.title = "Ventus"
         window.setContentSize(NSSize(width: 1_180, height: 820))
         window.minSize = NSSize(width: 900, height: 650)
         window.center()

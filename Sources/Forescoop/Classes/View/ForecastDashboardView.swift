@@ -183,7 +183,7 @@ public struct ForecastDashboardView: View {
                     ContentUnavailableView("Forecast unavailable", systemImage: "cloud.sun")
                 }
             }
-            .navigationTitle("Forescoop")
+            .navigationTitle("Ventus")
             .toolbar {
 #if os(macOS)
                 ToolbarItem(placement: .navigation) {
