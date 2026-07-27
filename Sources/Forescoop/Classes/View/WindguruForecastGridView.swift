@@ -295,7 +295,7 @@ public struct WindguruForecastGridView: View {
     }
 
     private var showsRowTitles: Bool { !areRowTitlesCollapsed }
-    private var rowLabelWidth: CGFloat { showsRowTitles ? 126 : 46 }
+    private var rowLabelWidth: CGFloat { showsRowTitles ? 134 : 56 }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
     @ViewBuilder private var selectedHourOutline: some View {
