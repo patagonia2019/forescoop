@@ -32,6 +32,7 @@ public struct WindguruForecastGridView: View {
     @State private var areRowTitlesCollapsed = false
     @State private var expandedComparisonRows = Set<String>()
     @State private var isModelComparisonEnabled = false
+    @State private var horizontalGridOffset: CGFloat = 0
 
     public init(
         forecast: SpotForecast,
@@ -72,20 +73,19 @@ public struct WindguruForecastGridView: View {
     }
 
     public var body: some View {
-        ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 8) {
-                modelSelector
-
+        VStack(alignment: .leading, spacing: 8) {
+            ZStack(alignment: .topLeading) {
+                ScrollView(.vertical) {
                 HStack(alignment: .top, spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
-                        labelHeader
+                        Color.clear.frame(width: rowLabelWidth, height: 48)
                         gridRows(in: .labels)
                     }
 
                     ScrollView(.horizontal) {
                         ScrollViewReader { proxy in
                             VStack(alignment: .leading, spacing: 0) {
-                                timeHeader
+                                Color.clear.frame(height: 48)
                                 gridRows(in: .values)
                             }
                             .overlay(alignment: .topLeading) {
@@ -102,15 +102,21 @@ public struct WindguruForecastGridView: View {
                     .onScrollGeometryChange(for: CGFloat.self) { geometry in
                         geometry.contentOffset.x
                     } action: { _, offset in
+                        horizontalGridOffset = offset
                         withAnimation(.easeInOut(duration: 0.15)) {
                             areRowTitlesCollapsed = offset > 8
                         }
                     }
                 }
+                .padding(.bottom)
+                }
+
+                stickyGridHeader
             }
-            .padding(.horizontal, 2)
-            .padding(.bottom)
+
+            modelSelector
         }
+        .padding(.horizontal, 2)
         .navigationTitle(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName))
         .onChange(of: modelForecasts.count) { _, count in
             guard count < 2 else { return }
@@ -208,6 +214,21 @@ public struct WindguruForecastGridView: View {
             .font(.caption.bold())
             .padding(.horizontal, 8)
             .background(gridLabelBackground)
+    }
+
+    private var stickyGridHeader: some View {
+        GeometryReader { geometry in
+            HStack(spacing: 0) {
+                labelHeader
+
+                ZStack(alignment: .leading) {
+                    timeHeader.offset(x: -horizontalGridOffset)
+                }
+                .frame(width: max(0, geometry.size.width - rowLabelWidth), height: 48, alignment: .leading)
+                .clipped()
+            }
+        }
+        .frame(height: 48)
     }
 
     private var timeHeader: some View {
