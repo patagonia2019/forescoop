@@ -147,7 +147,7 @@ public struct ForecastWindDetails: View {
             .accessibilityLabel("Wind speed")
 
             LabeledContent { Text(windSpeed(weather?.windGustsKnots(hh: hour))) } label: {
-                Label("Wind gusts", systemImage: "wind")
+                Label("Wind gusts", systemImage: "wind.circle.fill")
             }
 
             LabeledContent {

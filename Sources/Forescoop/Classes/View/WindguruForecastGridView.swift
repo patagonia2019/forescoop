@@ -130,18 +130,18 @@ public struct WindguruForecastGridView: View {
     }
 
     @ViewBuilder private func gridRows(in column: GridColumn) -> some View {
-        gridRow(label: unitLabel("Wind speed (\(windSpeedUnit.label))", icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windSpeed($0) }, background: windColor, in: column)
-        gridRow(label: unitLabel("Wind gusts (\(windSpeedUnit.label))", icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windGusts($0) }, background: gustColor, in: column)
+        gridRow(label: unitLabel("Wind speed (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windSpeed($0) }, background: windColor, in: column)
+        gridRow(label: unitLabel("Wind gusts (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind.circle.fill", selection: $windSpeedUnit, unitLabel: \.label), values: { windGusts($0) }, background: gustColor, in: column)
         gridRow(label: windDirectionLabel, values: { windDirection($0) }, in: column)
-        gridRow(label: unitLabel("Temperature (\(temperatureUnit.label))", icon: "thermometer.medium", selection: $temperatureUnit, unitLabel: \.label), values: { temperature($0) }, background: temperatureColor, in: column)
-        gridRow(label: unitLabel("Freezing level (\(freezingLevelUnit.label))", icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, in: column)
+        gridRow(label: unitLabel("Temperature (\(temperatureUnit.label))", compactLabel: temperatureUnit.label, icon: "thermometer.medium", selection: $temperatureUnit, unitLabel: \.label), values: { temperature($0) }, background: temperatureColor, in: column)
+        gridRow(label: unitLabel("Freezing level (\(freezingLevelUnit.label))", compactLabel: freezingLevelUnit.label, icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, in: column)
         gridRow(label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, background: cloudColor, in: column)
-        gridRow(label: unitLabel("Precipitation (\(precipitationUnit.label))", icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, background: precipitationColor, in: column)
-        gridRow(label: unitLabel("Sea level pressure (\(pressureUnit.label))", icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, in: column)
+        gridRow(label: unitLabel("Precipitation (\(precipitationUnit.label))", compactLabel: precipitationUnit.label, icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, background: precipitationColor, in: column)
+        gridRow(label: unitLabel("Sea level pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, in: column)
         gridRow(label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, background: humidityColor, in: column)
         if hasWaveData {
             Divider()
-            gridRow(label: unitLabel("Wave (\(waveHeightUnit.label))", icon: "water.waves", selection: $waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, background: waveColor, in: column)
+            gridRow(label: unitLabel("Wave (\(waveHeightUnit.label))", compactLabel: waveHeightUnit.label, icon: "water.waves", selection: $waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, background: waveColor, in: column)
             gridRow(label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, in: column)
             gridRow(label: rowLabel("Wave direction", icon: "location.north.line"), values: { waveDirection($0) }, in: column)
         }
@@ -177,6 +177,7 @@ public struct WindguruForecastGridView: View {
 
     private func unitLabel<Unit>(
         _ title: String,
+        compactLabel: String,
         icon: String,
         selection: Binding<Unit>,
         unitLabel: @escaping (Unit) -> String
@@ -188,7 +189,7 @@ public struct WindguruForecastGridView: View {
                 }
             }
         } label: {
-            rowLabel(title, icon: icon, isInteractive: true)
+            rowLabel(title, compactTitle: compactLabel, icon: icon, isInteractive: true)
         }
         .buttonStyle(.plain)
     }
@@ -197,24 +198,32 @@ public struct WindguruForecastGridView: View {
         Button {
             showsWindDirectionArrow.toggle()
         } label: {
-            rowLabel("Wind direction (\(showsWindDirectionArrow ? "→" : "N"))", icon: "location.north.line", isInteractive: true)
+            rowLabel("Wind direction (\(showsWindDirectionArrow ? "→" : "N"))", compactTitle: showsWindDirectionArrow ? "→" : "N", icon: "location.north.line", isInteractive: true)
         }
         .buttonStyle(.plain)
     }
 
-    private func rowLabel(_ title: String, icon: String, isInteractive: Bool = false) -> some View {
+    private func rowLabel(
+        _ title: String,
+        compactTitle: String? = nil,
+        icon: String,
+        isInteractive: Bool = false
+    ) -> some View {
         Group {
             if showsRowTitles {
                 Label(title, systemImage: icon)
             } else {
-                Image(systemName: icon)
+                HStack(spacing: 3) {
+                    Image(systemName: icon)
+                    if let compactTitle { Text(compactTitle) }
+                }
             }
         }
         .foregroundStyle(isInteractive ? .blue : .primary)
     }
 
     private var showsRowTitles: Bool { !areRowTitlesCollapsed }
-    private var rowLabelWidth: CGFloat { showsRowTitles ? 150 : 44 }
+    private var rowLabelWidth: CGFloat { showsRowTitles ? 150 : 60 }
 
     private func day(for hour: String) -> String {
         guard let date = forecast.forecastDate(hour: hour) else { return "" }
