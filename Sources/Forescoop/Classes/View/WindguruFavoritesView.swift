@@ -13,6 +13,7 @@ public struct WindguruFavoritesView: View {
     private let forecastService: ForecastWindguruProtocol
     private let username: String
     private let password: String
+    private let isProUser: Bool
     private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
     private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
 
@@ -28,11 +29,13 @@ public struct WindguruFavoritesView: View {
     public init(
         forecastService: ForecastWindguruProtocol = ForecastWindguruService(),
         username: String,
-        password: String? = nil
+        password: String? = nil,
+        isProUser: Bool = false
     ) {
         self.forecastService = forecastService
         self.username = username
         self.password = password ?? WindguruCredentialStore.password(for: username) ?? ""
+        self.isProUser = isProUser
         loadFavoriteSpots = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
         removeFavoriteSpot = { spotID, username, password in
             try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
@@ -85,6 +88,7 @@ public struct WindguruFavoritesView: View {
             WindguruSpotPicker(
                 forecastService: forecastService,
                 username: username,
+                isProUser: isProUser,
                 onSpotSelected: { _ in },
                 onCoordinateSelected: { _ in },
                 purpose: .addFavorite,

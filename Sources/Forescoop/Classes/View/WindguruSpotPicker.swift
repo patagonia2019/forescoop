@@ -23,7 +23,9 @@ public struct WindguruSpotPicker: View {
     private let addFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
     private let purpose: Purpose
     let username: String
+    let isProUser: Bool
     let onSpotSelected: (SpotOwner) -> Void
+    let onSpotIDSelected: (String) -> Void
     let onFavoriteSelected: (SpotOwner) -> Void
     let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
     let onFavoriteAdded: () -> Void
@@ -49,7 +51,9 @@ public struct WindguruSpotPicker: View {
     public init(
         forecastService: ForecastWindguruProtocol,
         username: String,
+        isProUser: Bool = false,
         onSpotSelected: @escaping (SpotOwner) -> Void,
+        onSpotIDSelected: @escaping (String) -> Void = { _ in },
         onFavoriteSelected: @escaping (SpotOwner) -> Void = { _ in },
         onCoordinateSelected: @escaping (CLLocationCoordinate2D) -> Void,
         purpose: Purpose = .chooseLocation,
@@ -66,7 +70,9 @@ public struct WindguruSpotPicker: View {
         }
         self.purpose = purpose
         self.username = username
+        self.isProUser = isProUser
         self.onSpotSelected = onSpotSelected
+        self.onSpotIDSelected = onSpotIDSelected
         self.onFavoriteSelected = onFavoriteSelected
         self.onCoordinateSelected = onCoordinateSelected
         self.onFavoriteAdded = onFavoriteAdded
@@ -83,12 +89,16 @@ public struct WindguruSpotPicker: View {
                     }
                     .disabled(isLoading)
 #if !os(tvOS)
+                    if isProUser {
                     Button("Pick on Map", systemImage: "map") {
                         showsMap = true
                     }
+                    }
 #endif
                 } footer: {
-                    Text("Map picks use an exact coordinate forecast for Windguru PRO, or the nearest public spot for guests.")
+                    Text(isProUser
+                        ? "Pick any coordinate worldwide for a Windguru PRO forecast."
+                        : "Use your current location or enter a Windguru spot ID.")
                 }
 
                 if purpose == .chooseLocation {
@@ -102,8 +112,8 @@ public struct WindguruSpotPicker: View {
 #if !os(macOS)
                             .textInputAutocapitalization(.words)
 #endif
-                            .onSubmit { Task { await search() } }
-                        Button("Search") { Task { await search() } }
+                            .onSubmit { Task { await submitSearch() } }
+                        Button("Search") { Task { await submitSearch() } }
                             .disabled(query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
                     }
                 }
@@ -178,9 +188,10 @@ public struct WindguruSpotPicker: View {
 
     @ViewBuilder
     private var mapLocationsSection: some View {
-        if !savedLocations.isEmpty {
+        let locations = isProUser ? savedLocations : savedLocations.filter { $0.spotID != nil }
+        if !locations.isEmpty {
             Section("Map locations") {
-                ForEach(savedLocations) { location in
+                ForEach(locations) { location in
                     savedLocationRow(location)
                 }
                 .onDelete(perform: delete)
@@ -360,7 +371,7 @@ public struct WindguruSpotPicker: View {
 
         do {
             let location = try await CurrentLocationProvider().location()
-            if purpose == .chooseLocation,
+            if purpose == .chooseLocation, isProUser,
                !username.isEmpty,
                WindguruCredentialStore.password(for: username) != nil {
                 onCoordinateSelected(location.coordinate)
@@ -395,8 +406,45 @@ public struct WindguruSpotPicker: View {
     }
 
     @MainActor
+    private func submitSearch() async {
+        await search()
+    }
+
+    @MainActor
+    private func openSpotID() async {
+        let spotID = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !spotID.isEmpty, spotID.allSatisfy(\.isNumber) else { return }
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            guard let info = try await loadSpotInfo(spotID) else { throw DeviceLocationError.noWindguruSpot }
+            if let coordinate = info.location?.coordinate {
+                appendSavedLocation(SavedMapLocation(
+                    name: info.name ?? "Windguru spot",
+                    coordinate: coordinate,
+                    spotID: spotID,
+                    placeDescription: info.countryName
+                ))
+            }
+            if purpose == .addFavorite {
+                guard let spot = try SpotOwner(map: [
+                    "id_spot": spotID,
+                    "spotname": info.name ?? "Windguru spot",
+                    "country": info.countryName ?? ""
+                ]) else { throw DeviceLocationError.noWindguruSpot }
+                await addFavorite(spot)
+            } else {
+                onSpotIDSelected(spotID)
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
     private func selectMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
-        if purpose == .chooseLocation,
+        if purpose == .chooseLocation, isProUser,
            !username.isEmpty,
            WindguruCredentialStore.password(for: username) != nil {
             onCoordinateSelected(coordinate)
@@ -408,7 +456,7 @@ public struct WindguruSpotPicker: View {
         do {
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
             guard let term = try await searchTerm(for: location) else { throw DeviceLocationError.noPlacemark }
-            guard let spot = try await searchSpots(term)?.allSpots.first else {
+            guard let spot = try await spotForMapCoordinate(coordinate, placeName: term) else {
                 throw DeviceLocationError.noWindguruSpot
             }
             await selectSpot(spot)
@@ -421,15 +469,30 @@ public struct WindguruSpotPicker: View {
     private func saveMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
         var name = "Selected map location"
         var resolvedPlaceDescription: String?
+        var spotID: String?
+        var savedCoordinate = coordinate
         do {
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
             resolvedPlaceDescription = try await placeDescription(for: location)
             guard let term = try await searchTerm(for: location) else { return }
-            name = try await searchSpots(term)?.allSpots.first?.name ?? name
+            if let spot = try await spotForMapCoordinate(coordinate, placeName: term) {
+                name = spot.name ?? name
+                spotID = spot.identifier
+                resolvedPlaceDescription = spot.countryName ?? resolvedPlaceDescription
+                if let spotID,
+                   let spotCoordinate = try await loadSpotInfo(spotID)?.location?.coordinate {
+                    savedCoordinate = spotCoordinate
+                }
+            }
         } catch {
-            // The coordinate remains usable even if a public spot name cannot be resolved.
+            // The coordinate remains usable even if a public spot cannot be resolved.
         }
-        appendSavedLocation(SavedMapLocation(name: name, coordinate: coordinate, placeDescription: resolvedPlaceDescription))
+        appendSavedLocation(SavedMapLocation(
+            name: name,
+            coordinate: savedCoordinate,
+            spotID: spotID,
+            placeDescription: resolvedPlaceDescription
+        ))
     }
 
     @MainActor
@@ -513,13 +576,53 @@ public struct WindguruSpotPicker: View {
         saveLocations()
     }
 
+    @MainActor
+    private func spotForMapCoordinate(
+        _ coordinate: CLLocationCoordinate2D,
+        placeName: String
+    ) async throws -> SpotOwner? {
+        // A named place is the most useful Windguru lookup (for example,
+        // "South Brisbane"). Only use coordinates when that lookup has no
+        // results, since the API can return unrelated results for a lat/lon
+        // text query.
+        let placeMatches = (try? await searchSpots(placeName))?.allSpots ?? []
+        let matches: [SpotOwner]
+        if placeMatches.isEmpty {
+            let coordinateQuery = "\(coordinate.latitude),\(coordinate.longitude)"
+            matches = (try? await searchSpots(coordinateQuery))?.allSpots ?? []
+        } else {
+            matches = placeMatches
+        }
+
+        var nearest: (spot: SpotOwner, distance: CLLocationDistance)?
+        for spot in matches.prefix(12) {
+            guard let spotID = spot.identifier,
+                  let spotCoordinate = try? await loadSpotInfo(spotID)?.location?.coordinate else {
+                continue
+            }
+            let distance = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                .distance(from: CLLocation(latitude: spotCoordinate.latitude, longitude: spotCoordinate.longitude))
+            if nearest == nil || distance < nearest!.distance {
+                nearest = (spot, distance)
+            }
+        }
+        return nearest?.spot ?? bestSpot(in: matches, matching: placeName)
+    }
+
+    private func bestSpot(in spots: [SpotOwner], matching searchTerm: String) -> SpotOwner? {
+        let normalizedTerm = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return spots.first(where: {
+            $0.name?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalizedTerm
+        }) ?? spots.first
+    }
+
     private func searchTerm(for location: CLLocation) async throws -> String? {
         guard let request = MKReverseGeocodingRequest(location: location),
               let mapItem = try await request.mapItems.first else {
             return nil
         }
-        return mapItem.addressRepresentations?.cityName
-            ?? mapItem.address?.shortAddress
+        return mapItem.address?.shortAddress
+            ?? mapItem.addressRepresentations?.cityName
             ?? mapItem.address?.fullAddress
     }
 

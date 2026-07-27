@@ -204,10 +204,15 @@ public struct ForecastDashboardView: View {
                 WindguruSpotPicker(
                     forecastService: forecastService,
                     username: windguruUsername,
+                    isProUser: isProUser,
                     onSpotSelected: { spot in
                         guard let spotId = spot.identifier else { return }
                         showsSpotPicker = false
                         Task { await loadForecast(spotId: spotId) }
+                    },
+                    onSpotIDSelected: { spotID in
+                        showsSpotPicker = false
+                        Task { await loadForecast(spotId: spotID) }
                     },
                     onFavoriteSelected: { spot in
                         guard let spotID = spot.identifier else { return }
@@ -258,7 +263,8 @@ public struct ForecastDashboardView: View {
             .sheet(isPresented: $showsFavorites) {
                 WindguruFavoritesView(
                     forecastService: forecastService,
-                    username: windguruUsername
+                    username: windguruUsername,
+                    isProUser: isProUser
                 )
             }
         }
@@ -522,7 +528,9 @@ public struct ForecastDashboardView: View {
                 requestedModelIDs = configuredModelIDs
             }
             let selectedForecastLoader: @MainActor (String?) async throws -> SpotForecast?
-            if let password = WindguruCredentialStore.password(for: windguruUsername), !windguruUsername.isEmpty {
+            if isProUser,
+               let password = WindguruCredentialStore.password(for: windguruUsername),
+               !windguruUsername.isEmpty {
                 selectedForecastLoader = { modelID in
                     try await proSpotForecastLoader(requestedSpotID, modelID, windguruUsername, password)
                 }
