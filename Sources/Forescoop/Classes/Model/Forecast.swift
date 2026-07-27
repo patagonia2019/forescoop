@@ -97,6 +97,28 @@ public extension Forecast {
     var availableHours: [String] {
         weathers?[TypeOfWeather.WINDSPD.rawValue]?.orderedKeys ?? []
     }
+
+    /// Describes the cadence actually returned by Windguru for this model.
+    /// Some models switch to a coarser cadence further into the forecast.
+    var cadenceDescription: String {
+        let offsets = availableHours.compactMap(Int.init).sorted()
+        guard offsets.count > 1 else { return "One forecast time" }
+        let intervals = zip(offsets.dropFirst(), offsets).map { $0 - $1 }
+        // The returned timestamps can omit hours because of account display
+        // preferences or the provider's presentation rules. Follow Windguru's
+        // approach: report only the base cadence, not those omissions.
+        let interval = intervals.reduce(0, greatestCommonDivisor)
+        return interval == 1 ? "Hourly" : "Every \(interval) hours"
+    }
+
+    private func greatestCommonDivisor(_ lhs: Int, _ rhs: Int) -> Int {
+        var a = abs(lhs)
+        var b = abs(rhs)
+        while b != 0 {
+            (a, b) = (b, a % b)
+        }
+        return a
+    }
     
     /// WINDIRNAME: wind direction (name)
     func windDirectionName(hh: String?) -> String? {

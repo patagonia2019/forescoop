@@ -28,7 +28,6 @@ public struct ForecastDashboardView: View {
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
     @AppStorage("windguruUsername") private var windguruUsername = ""
     @AppStorage("windguruIsProUser") private var windguruIsProUser = false
-    @AppStorage("forecastDisplayInterval") private var forecastDisplayInterval = ForecastDisplayInterval.hourly.rawValue
     @State private var forecast: SpotForecast?
     @State private var errorMessage: String?
     @State private var isLoading = false
@@ -43,7 +42,6 @@ public struct ForecastDashboardView: View {
     @State private var showsSpotPicker = false
     @State private var showsModelPicker = false
     @State private var showsLogin = false
-    @State private var showsSettings = false
     @State private var selectedModelIDs: [String] = []
     @State private var usableModelIDs: [String] = []
     @State private var displayedForecastSpotID: String?
@@ -107,10 +105,6 @@ public struct ForecastDashboardView: View {
                 }
             }
 
-            Button("Settings", systemImage: "gearshape") {
-                showsSettings = true
-            }
-
             if !windguruUsername.isEmpty {
                 Divider()
                 Button("Logout", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
@@ -149,7 +143,6 @@ public struct ForecastDashboardView: View {
         freezingLevelUnit = .meters
 
         showsModelPicker = false
-        showsSettings = false
         showsLogin = false
         Task { await loadForecast() }
     }
@@ -261,9 +254,6 @@ public struct ForecastDashboardView: View {
                     onProfileLoaded: applyUserPreferences
                 )
             }
-            .sheet(isPresented: $showsSettings) {
-                ForecastSettingsView()
-            }
         }
     }
 
@@ -272,8 +262,7 @@ public struct ForecastDashboardView: View {
             VStack(spacing: 28) {
                 ForecastHourSelector(
                     forecast: forecast,
-                    selectedHour: $selectedHour,
-                    displayInterval: ForecastDisplayInterval(rawValue: forecastDisplayInterval) ?? .hourly
+                    selectedHour: $selectedHour
                 )
 
                 if usesWideLayout {

@@ -289,6 +289,26 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(expandedBlend?.forecast?.modelName, "Forescoop Mix (2 models)")
         XCTAssertEqual(expandedBlend?.forecast?.windSpeed(hh: "999"), 4.0)
 
+        var firstHourlyBlock = spotForecastDict
+        var firstHourlyModels = firstHourlyBlock?["forecast"] as? [String: Any]
+        var firstHourlyModel = firstHourlyModels?["3"] as? [String: Any]
+        firstHourlyModel?["WINDSPD"] = ["0": 4.0, "2": 6.0]
+        firstHourlyModels?["3"] = firstHourlyModel
+        firstHourlyBlock?["forecast"] = firstHourlyModels
+
+        var gapFillingBlock = spotForecastDict
+        var gapFillingModels = gapFillingBlock?["forecast"] as? [String: Any]
+        var gapFillingModel = gapFillingModels?["3"] as? [String: Any]
+        gapFillingModel?["WINDSPD"] = ["1": 5.0]
+        gapFillingModels?["3"] = gapFillingModel
+        gapFillingBlock?["forecast"] = gapFillingModels
+
+        let firstHourlyForecast = try? SpotForecast(map: firstHourlyBlock)
+        let gapFillingForecast = try? SpotForecast(map: gapFillingBlock)
+        let gapFreeBlend = try? SpotForecast.blended([firstHourlyForecast!, gapFillingForecast!])
+        XCTAssertEqual(gapFreeBlend?.availableForecastHours, ["0", "1", "2"])
+        XCTAssertEqual(gapFreeBlend?.forecast?.cadenceDescription, "Hourly")
+
         XCTAssertEqual(forecast?.seaLevelPressure(hh: "10"), 1002.0)
         XCTAssertEqual(forecast?.freezingLevelHeightInMeters(hh: "10"), 2590.0)
         XCTAssertEqual(forecast?.precipitation(hh: "165"), 0)

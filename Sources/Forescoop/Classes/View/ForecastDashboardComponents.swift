@@ -54,6 +54,10 @@ public struct ForecastOverview: View {
                     .accessibilityLabel("About Windguru forecast models")
                     .accessibilityHint("Opens Windguru's model explanation")
                 }
+
+                Text(forecast.forecast?.cadenceDescription ?? "Forecast cadence unavailable")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             HStack(spacing: 12) {
