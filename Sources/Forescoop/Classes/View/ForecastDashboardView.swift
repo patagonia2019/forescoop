@@ -22,6 +22,7 @@ public struct ForecastDashboardView: View {
     private let favoriteSpotsLoader: @MainActor (String, String) async throws -> SpotResult?
     private let spotInfoLoader: @MainActor (String) async throws -> SpotInfo?
     private let coordinateModelLoader: @MainActor (Double, Double) async throws -> [String]
+    private let modelInfoLoader: @MainActor () async throws -> Models?
 #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
@@ -52,6 +53,7 @@ public struct ForecastDashboardView: View {
     /// All models validated for each spot, independent of the current selection.
     @State private var modelIDsBySpot = [String: [String]]()
     @State private var selectedModelIDsBySpot = [String: [String]]()
+    @State private var modelNamesByID = [String: String]()
     @State private var savedMapLocations = SavedMapLocationStore.load()
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
@@ -81,6 +83,7 @@ public struct ForecastDashboardView: View {
             let response = try await forecastService.models(bylat: String(latitude), lon: String(longitude))
             return Self.modelIDs(from: response)
         }
+        modelInfoLoader = { try await forecastService.modelInfo(onlyModelId: nil) }
     }
 
     private var usesWideLayout: Bool {
@@ -366,10 +369,16 @@ public struct ForecastDashboardView: View {
     }
 
     private func forecastGridContent(for forecast: SpotForecast) -> some View {
-        WindguruForecastGridView(
+        let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
+        let availableModelIDs = modelIDsBySpot[forecastSpotID] ?? usableModelIDs
+        let selectedForecastModelIDs = selectedModelIDsBySpot[forecastSpotID] ?? selectedModelIDs
+        return WindguruForecastGridView(
             forecast: forecast,
             coordinateLocationName: coordinateLocationName,
             selectedHour: selectedHour,
+            availableModelIDs: availableModelIDs,
+            selectedModelIDs: selectedForecastModelIDs,
+            modelNamesByID: modelNamesByID,
             temperatureUnit: $temperatureUnit,
             windSpeedUnit: $windSpeedUnit,
             waveHeightUnit: $waveHeightUnit,
@@ -378,12 +387,50 @@ public struct ForecastDashboardView: View {
             freezingLevelUnit: $freezingLevelUnit,
             showsWindDirectionArrow: $showsWindDirectionArrow,
             onSelectLocation: { showsSpotPicker = true },
-            onSelectModel: { showsModelPicker = true },
+            onToggleModel: { modelID in
+                toggleGridModel(modelID, for: forecastSpotID)
+            },
             onSelectHour: { hour in
                 selectedHour = hour
                 showsForecastGrid = false
             }
         )
+        .task(id: availableModelIDs) {
+            await loadModelNames(for: availableModelIDs)
+        }
+    }
+
+    private func toggleGridModel(_ modelID: String, for spotID: String) {
+        let availableModelIDs = modelIDsBySpot[spotID] ?? usableModelIDs
+        var selectedModelIDs = selectedModelIDsBySpot[spotID] ?? self.selectedModelIDs
+
+        if selectedModelIDs.contains(modelID) {
+            guard selectedModelIDs.count > 1 else { return }
+            selectedModelIDs.removeAll { $0 == modelID }
+        } else if availableModelIDs.contains(modelID) {
+            selectedModelIDs.append(modelID)
+        }
+
+        Task {
+            await loadForecast(
+                spotId: spotID,
+                modelIDs: selectedModelIDs,
+                persistSelection: spotID == selectedSpotID
+            )
+        }
+    }
+
+    private func loadModelNames(for modelIDs: [String]) async {
+        let missingModelIDs = modelIDs.filter { modelNamesByID[$0] == nil }
+        guard !missingModelIDs.isEmpty,
+              let models = try? await modelInfoLoader() else { return }
+
+        let names = models.sorted.reduce(into: [String: String]()) { names, model in
+            let identifier = String(model.identifier)
+            guard modelIDs.contains(identifier) else { return }
+            names[identifier] = model.oficinalName ?? model.shortName ?? "Model \(identifier)"
+        }
+        modelNamesByID.merge(names) { _, newValue in newValue }
     }
 
     private func iPadLocationWorkspace() -> some View {

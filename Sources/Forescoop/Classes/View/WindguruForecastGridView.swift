@@ -14,6 +14,9 @@ public struct WindguruForecastGridView: View {
     public let forecast: SpotForecast
     public let coordinateLocationName: String?
     public let selectedHour: String?
+    public let availableModelIDs: [String]
+    public let selectedModelIDs: [String]
+    public let modelNamesByID: [String: String]
     @Binding public var temperatureUnit: TemperatureUnit
     @Binding public var windSpeedUnit: WindSpeedUnit
     @Binding public var waveHeightUnit: WaveHeightUnit
@@ -22,7 +25,7 @@ public struct WindguruForecastGridView: View {
     @Binding public var freezingLevelUnit: FreezingLevelUnit
     @Binding public var showsWindDirectionArrow: Bool
     private let onSelectLocation: () -> Void
-    private let onSelectModel: () -> Void
+    private let onToggleModel: (String) -> Void
     private let onSelectHour: (String) -> Void
 
     @State private var areRowTitlesCollapsed = false
@@ -31,6 +34,9 @@ public struct WindguruForecastGridView: View {
         forecast: SpotForecast,
         coordinateLocationName: String? = nil,
         selectedHour: String? = nil,
+        availableModelIDs: [String] = [],
+        selectedModelIDs: [String] = [],
+        modelNamesByID: [String: String] = [:],
         temperatureUnit: Binding<TemperatureUnit>,
         windSpeedUnit: Binding<WindSpeedUnit>,
         waveHeightUnit: Binding<WaveHeightUnit>,
@@ -39,12 +45,15 @@ public struct WindguruForecastGridView: View {
         freezingLevelUnit: Binding<FreezingLevelUnit>,
         showsWindDirectionArrow: Binding<Bool>,
         onSelectLocation: @escaping () -> Void,
-        onSelectModel: @escaping () -> Void,
+        onToggleModel: @escaping (String) -> Void,
         onSelectHour: @escaping (String) -> Void
     ) {
         self.forecast = forecast
         self.coordinateLocationName = coordinateLocationName
         self.selectedHour = selectedHour
+        self.availableModelIDs = availableModelIDs
+        self.selectedModelIDs = selectedModelIDs
+        self.modelNamesByID = modelNamesByID
         _temperatureUnit = temperatureUnit
         _windSpeedUnit = windSpeedUnit
         _waveHeightUnit = waveHeightUnit
@@ -53,40 +62,44 @@ public struct WindguruForecastGridView: View {
         _freezingLevelUnit = freezingLevelUnit
         _showsWindDirectionArrow = showsWindDirectionArrow
         self.onSelectLocation = onSelectLocation
-        self.onSelectModel = onSelectModel
+        self.onToggleModel = onToggleModel
         self.onSelectHour = onSelectHour
     }
 
     public var body: some View {
         ScrollView(.vertical) {
-            HStack(alignment: .top, spacing: 0) {
-                VStack(alignment: .leading, spacing: 0) {
-                    labelHeader
-                    gridRows(in: .labels)
-                }
+            VStack(alignment: .leading, spacing: 8) {
+                modelSelector
 
-                ScrollView(.horizontal) {
-                    ScrollViewReader { proxy in
-                        VStack(alignment: .leading, spacing: 0) {
-                            timeHeader
-                            gridRows(in: .values)
-                        }
-                        .overlay(alignment: .topLeading) {
-                            selectedHourOutline
-                        }
-                        .onAppear {
-                            scrollToSelectedHour(with: proxy)
-                        }
-                        .onChange(of: selectedHour) { _, _ in
-                            scrollToSelectedHour(with: proxy)
+                HStack(alignment: .top, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        labelHeader
+                        gridRows(in: .labels)
+                    }
+
+                    ScrollView(.horizontal) {
+                        ScrollViewReader { proxy in
+                            VStack(alignment: .leading, spacing: 0) {
+                                timeHeader
+                                gridRows(in: .values)
+                            }
+                            .overlay(alignment: .topLeading) {
+                                selectedHourOutline
+                            }
+                            .onAppear {
+                                scrollToSelectedHour(with: proxy)
+                            }
+                            .onChange(of: selectedHour) { _, _ in
+                                scrollToSelectedHour(with: proxy)
+                            }
                         }
                     }
-                }
-                .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                    geometry.contentOffset.x
-                } action: { _, offset in
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        areRowTitlesCollapsed = offset > 8
+                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                        geometry.contentOffset.x
+                    } action: { _, offset in
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            areRowTitlesCollapsed = offset > 8
+                        }
                     }
                 }
             }
@@ -97,7 +110,6 @@ public struct WindguruForecastGridView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("Choose location", systemImage: "mappin.and.ellipse", action: onSelectLocation)
-                Button("Forecast model", systemImage: "cpu", action: onSelectModel)
             }
         }
     }
@@ -106,6 +118,43 @@ public struct WindguruForecastGridView: View {
     private var weather: Forecast? { forecast.forecast }
     private var hasWaveData: Bool {
         hours.contains { weather?.waveHeight(hh: $0) != nil }
+    }
+
+    @ViewBuilder private var modelSelector: some View {
+        if !availableModelIDs.isEmpty {
+            VStack(alignment: .leading, spacing: 4) {
+                Label("Forecast models", systemImage: "cpu")
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+
+                VStack(spacing: 0) {
+                    ForEach(availableModelIDs, id: \.self) { modelID in
+                        let isSelected = selectedModelIDs.contains(modelID)
+                        Button {
+                            guard isSelected ? selectedModelIDs.count > 1 : true else { return }
+                            onToggleModel(modelID)
+                        } label: {
+                            HStack {
+                                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                                Text(modelNamesByID[modelID] ?? "Model \(modelID)")
+                                Spacer()
+                            }
+                            .font(.subheadline)
+                            .padding(.vertical, 5)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(isSelected ? .blue : .primary)
+
+                        if modelID != availableModelIDs.last {
+                            Divider()
+                        }
+                    }
+                }
+                .padding(.horizontal, 10)
+                .background(gridLabelBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+        }
     }
 
     private var labelHeader: some View {
