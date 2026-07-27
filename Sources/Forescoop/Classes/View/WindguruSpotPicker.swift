@@ -41,6 +41,7 @@ public struct WindguruSpotPicker: View {
     @State private var favoriteIDsBeingRemoved = Set<String>()
     @State private var favoriteIDsBeingAdded = Set<String>()
     @State private var showsMap = false
+    @State private var mapCoordinateToShow: CLLocationCoordinate2D?
     @State private var savedLocations = SavedMapLocationStore.load()
     @State private var locationToRename: SavedMapLocation?
     @State private var renamedLocation = ""
@@ -175,6 +176,16 @@ public struct WindguruSpotPicker: View {
                 }
             }
         }
+        .sheet(isPresented: Binding(
+            get: { mapCoordinateToShow != nil },
+            set: { if !$0 { mapCoordinateToShow = nil } }
+        )) {
+            MapLocationPicker(
+                initialCoordinate: mapCoordinateToShow,
+                isSelectionEnabled: false,
+                onSelection: { _ in }
+            )
+        }
 #endif
         .alert("Rename location", isPresented: Binding(
             get: { locationToRename != nil },
@@ -224,21 +235,33 @@ public struct WindguruSpotPicker: View {
     }
 
     private func favoriteSpotRow(_ spot: SpotOwner) -> some View {
-        Button {
-            // Favorites are a temporary lookup: do not add them to map
-            // locations or replace the user's stored spot/model selection.
-            onFavoriteSelected(spot)
-        } label: {
-            Label {
-                VStack(alignment: .leading) {
-                    Text(spot.displayName)
-                    Text(spot.countryName ?? "")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+        HStack(spacing: 12) {
+            Button {
+                // Favorites are a temporary lookup: do not add them to map
+                // locations or replace the user's stored spot/model selection.
+                onFavoriteSelected(spot)
+            } label: {
+                Label {
+                    VStack(alignment: .leading) {
+                        Text(spot.displayName)
+                        Text(spot.countryName ?? "")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "star.fill")
                 }
-            } icon: {
-                Image(systemName: "star.fill")
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .buttonStyle(.plain)
+
+#if !os(tvOS)
+            Button("Show \(spot.displayName) on map", systemImage: "map") {
+                Task { await showMap(for: spot) }
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+#endif
         }
         .disabled(isLoading || favoriteIDsBeingRemoved.contains(spot.identifier ?? ""))
         .contextMenu {
@@ -267,6 +290,14 @@ public struct WindguruSpotPicker: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .buttonStyle(.plain)
             .disabled(isLoading || favoriteIDsBeingAdded.contains(location.spotID ?? ""))
+
+#if !os(tvOS)
+            Button("Show \(location.displayName) on map", systemImage: "map") {
+                mapCoordinateToShow = location.coordinate
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+#endif
 
 #if !os(macOS)
             if editMode.isEditing {
@@ -587,6 +618,16 @@ public struct WindguruSpotPicker: View {
         guard !savedLocations.contains(where: { SavedMapLocationStore.isSameLocation($0, location) }) else { return }
         savedLocations.append(location)
         saveLocations()
+    }
+
+    @MainActor
+    private func showMap(for spot: SpotOwner) async {
+        guard let spotID = spot.identifier,
+              let coordinate = try? await loadSpotInfo(spotID)?.location?.coordinate else {
+            errorMessage = "This favorite has no map location."
+            return
+        }
+        mapCoordinateToShow = coordinate
     }
 
     @MainActor

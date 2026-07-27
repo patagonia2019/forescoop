@@ -157,6 +157,7 @@ public struct ForecastWindDetails: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Wind direction")
                 .accessibilityHint("Shows the direction as an arrow")
+                Spacer()
             }
         } label: {
             Image(systemName: "wind")
@@ -254,7 +255,9 @@ public struct ForecastWeatherDetails: View {
                 cloudColumn("Low", value: low)
             }
         } label: {
-            Label("Cloud", systemImage: "cloud.fill")
+            HStack(alignment: .bottom) {
+                Label("Cloud", systemImage: "cloud.fill")
+            }
         }
     }
 
@@ -273,10 +276,10 @@ public struct ForecastWeatherDetails: View {
 
     private func cloudColumn(_ title: String, value: Int?) -> some View {
         VStack(spacing: 4) {
-            Text(title).font(.caption).foregroundStyle(.secondary)
-            Text(percent(value)).monospacedDigit().frame(maxWidth: .infinity).padding(.vertical, 6)
+            Text(title).font(.caption2).foregroundStyle(.secondary)
+            Text(percent(value)).monospacedDigit().frame(maxWidth: .infinity).padding(.vertical, 4)
                 .background(Color.gray.opacity(0.12 + Double(min(max(value ?? 0, 0), 100)) / 100 * 0.48))
-                .clipShape(.rect(cornerRadius: 6))
+                .clipShape(.rect(cornerRadius: 4))
         }
         .frame(maxWidth: .infinity)
     }

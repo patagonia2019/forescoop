@@ -12,15 +12,28 @@ import SwiftUI
 
 public struct MapLocationPicker: View {
     let initialCoordinate: CLLocationCoordinate2D?
+    let isSelectionEnabled: Bool
     let onSelection: (CLLocationCoordinate2D) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var selectedCoordinate: CLLocationCoordinate2D?
     @State private var position: MapCameraPosition = .automatic
 
-    public init(initialCoordinate: CLLocationCoordinate2D? = nil, onSelection: @escaping (CLLocationCoordinate2D) -> Void) {
+    public init(
+        initialCoordinate: CLLocationCoordinate2D? = nil,
+        isSelectionEnabled: Bool = true,
+        onSelection: @escaping (CLLocationCoordinate2D) -> Void
+    ) {
         self.initialCoordinate = initialCoordinate
+        self.isSelectionEnabled = isSelectionEnabled
         self.onSelection = onSelection
         _selectedCoordinate = State(initialValue: initialCoordinate)
+        if let initialCoordinate {
+            _position = State(initialValue: .region(MKCoordinateRegion(
+                center: initialCoordinate,
+                latitudinalMeters: 3000,
+                longitudinalMeters: 3000
+            )))
+        }
     }
 
     public var body: some View {
@@ -32,17 +45,22 @@ public struct MapLocationPicker: View {
                     }
                 }
                 .onTapGesture { point in
+                    guard isSelectionEnabled else { return }
                     selectedCoordinate = proxy.convert(point, from: .local)
                 }
             }
-            .navigationTitle("Pick location")
+            .navigationTitle(isSelectionEnabled ? "Pick location" : "Location")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Use Location") {
-                        if let selectedCoordinate { onSelection(selectedCoordinate) }
+                    Button(isSelectionEnabled ? "Use Location" : "Done") {
+                        if isSelectionEnabled, let selectedCoordinate {
+                            onSelection(selectedCoordinate)
+                        } else {
+                            dismiss()
+                        }
                     }
-                    .disabled(selectedCoordinate == nil)
+                    .disabled(isSelectionEnabled && selectedCoordinate == nil)
                 }
             }
         }

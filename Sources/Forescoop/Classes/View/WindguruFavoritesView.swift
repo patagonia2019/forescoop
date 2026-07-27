@@ -7,6 +7,7 @@
 //
 
 #if !os(watchOS)
+import CoreLocation
 import SwiftUI
 
 public struct WindguruFavoritesView: View {
@@ -16,6 +17,7 @@ public struct WindguruFavoritesView: View {
     private let isProUser: Bool
     private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
     private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
+    private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
     private let onSpotSelected: (SpotOwner) -> Void
 
     @State private var favorites: [SpotOwner] = []
@@ -23,6 +25,7 @@ public struct WindguruFavoritesView: View {
     @State private var errorMessage: String?
     @State private var removingIDs = Set<String>()
     @State private var showsAddFavorite = false
+    @State private var mapCoordinateToShow: CLLocationCoordinate2D?
 #if !os(macOS)
     @State private var editMode: EditMode = .inactive
 #endif
@@ -43,6 +46,7 @@ public struct WindguruFavoritesView: View {
         removeFavoriteSpot = { spotID, username, password in
             try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
         }
+        loadSpotInfo = { try await forecastService.spotInfo(bySpotId: $0) }
     }
 
     public var body: some View {
@@ -100,25 +104,48 @@ public struct WindguruFavoritesView: View {
                 }
             )
         }
+#if !os(tvOS)
+        .sheet(isPresented: Binding(
+            get: { mapCoordinateToShow != nil },
+            set: { if !$0 { mapCoordinateToShow = nil } }
+        )) {
+            MapLocationPicker(
+                initialCoordinate: mapCoordinateToShow,
+                isSelectionEnabled: false,
+                onSelection: { _ in }
+            )
+        }
+#endif
     }
 
     private func favoriteRow(_ spot: SpotOwner) -> some View {
-        Button {
-            guard !isEditingFavorites else { return }
-            onSpotSelected(spot)
-        } label: {
-            Label {
-                VStack(alignment: .leading) {
-                    Text(spot.displayName)
-                    Text(spot.countryName ?? "")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+        HStack(spacing: 12) {
+            Button {
+                guard !isEditingFavorites else { return }
+                onSpotSelected(spot)
+            } label: {
+                Label {
+                    VStack(alignment: .leading) {
+                        Text(spot.displayName)
+                        Text(spot.countryName ?? "")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "star.fill")
                 }
-            } icon: {
-                Image(systemName: "star.fill")
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .buttonStyle(.plain)
+
+#if !os(tvOS)
+            Button("Show \(spot.displayName) on map", systemImage: "map") {
+                Task { await showMap(for: spot) }
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+#endif
         }
-        .buttonStyle(.plain)
         .disabled(removingIDs.contains(spot.identifier ?? ""))
         .opacity(removingIDs.contains(spot.identifier ?? "") ? 0.45 : 1)
         .contextMenu {
@@ -141,6 +168,16 @@ public struct WindguruFavoritesView: View {
 #else
         false
 #endif
+    }
+
+    @MainActor
+    private func showMap(for spot: SpotOwner) async {
+        guard let spotID = spot.identifier,
+              let coordinate = try? await loadSpotInfo(spotID)?.location?.coordinate else {
+            errorMessage = "This favorite has no map location."
+            return
+        }
+        mapCoordinateToShow = coordinate
     }
 
     @MainActor
