@@ -83,9 +83,11 @@ public extension SpotForecast {
     }
 
     var currentForecastHour: String? {
-        availableForecastHours.min {
-            abs((Int($0) ?? .max) - currentHourInt) < abs((Int($1) ?? .max) - currentHourInt)
+        let hours = availableForecastHours.compactMap { hour -> (String, Int)? in
+            guard let value = Int(hour) else { return nil }
+            return (hour, value)
         }
+        return hours.last(where: { $0.1 <= currentHourInt })?.0 ?? hours.first?.0
     }
 
     /// The local calendar date represented by a forecast hour offset.

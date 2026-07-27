@@ -23,10 +23,9 @@ public struct ForecastHourSelector: View {
     }
 
     private var currentHour: String? {
-        hours.min {
-            abs((forecast.forecastDate(hour: $0)?.timeIntervalSinceNow ?? .greatestFiniteMagnitude))
-                < abs((forecast.forecastDate(hour: $1)?.timeIntervalSinceNow ?? .greatestFiniteMagnitude))
-        }
+        let now = Date()
+        return hours.last(where: { (forecast.forecastDate(hour: $0) ?? .distantFuture) <= now })
+            ?? hours.first
     }
 
     private var selection: String? {
@@ -97,8 +96,11 @@ public struct ForecastHourSelector: View {
             : date.formatted(.dateTime.weekday(.abbreviated).day())
         let formatter = DateFormatter()
         formatter.locale = .autoupdatingCurrent
-        formatter.timeStyle = .short
-        return "\(day), \(formatter.string(from: date))"
+        // The localized `j` hour skeleton follows the user's 12/24-hour
+        // preference while omitting minutes: "9 AM" or "21".
+        formatter.setLocalizedDateFormatFromTemplate("j")
+        let suffix = formatter.dateFormat.contains("a") ? "" : " hs"
+        return "\(day), \(formatter.string(from: date))\(suffix)"
     }
 }
 

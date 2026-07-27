@@ -664,10 +664,9 @@ public struct ForecastDashboardView: View {
     }
 
     private func closestHour(to date: Date, in forecast: SpotForecast) -> String? {
-        forecast.availableForecastHours.min {
-            abs((forecast.forecastDate(hour: $0)?.timeIntervalSince(date) ?? .greatestFiniteMagnitude))
-                < abs((forecast.forecastDate(hour: $1)?.timeIntervalSince(date) ?? .greatestFiniteMagnitude))
-        }
+        forecast.availableForecastHours.last(where: {
+            (forecast.forecastDate(hour: $0) ?? .distantFuture) <= date
+        }) ?? forecast.availableForecastHours.first
     }
 
     private static func modelIDs(from response: String?) -> [String] {
