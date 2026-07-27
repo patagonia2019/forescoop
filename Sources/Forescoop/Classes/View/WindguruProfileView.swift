@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct WindguruProfileView: View {
     public let user: User
+    private let forecastService: ForecastWindguruProtocol
     private let username: String
     private let password: String
     private let onSignOut: () -> Void
@@ -19,6 +20,7 @@ public struct WindguruProfileView: View {
     @State private var isLoadingFavorites = false
     @State private var favoritesErrorMessage: String?
     @State private var favoriteIDsBeingRemoved = Set<String>()
+    @State private var showsAddFavorite = false
 #if !os(macOS)
     @State private var editMode: EditMode = .inactive
 #endif
@@ -31,6 +33,7 @@ public struct WindguruProfileView: View {
         onSignOut: @escaping () -> Void = {}
     ) {
         self.user = user
+        self.forecastService = forecastService
         self.username = username ?? user.username ?? ""
         self.password = password ?? WindguruCredentialStore.password(for: username ?? user.username ?? "") ?? ""
         self.onSignOut = onSignOut
@@ -83,6 +86,10 @@ public struct WindguruProfileView: View {
             }
 
             Section("Favorites") {
+                Button("Add Favorite", systemImage: "star.badge.plus") {
+                    showsAddFavorite = true
+                }
+
                 if isLoadingFavorites {
                     ProgressView("Loading favorites…")
                 } else if let favoritesErrorMessage {
@@ -116,6 +123,18 @@ public struct WindguruProfileView: View {
         }
 #endif
         .task { await loadFavorites() }
+        .sheet(isPresented: $showsAddFavorite) {
+            WindguruSpotPicker(
+                forecastService: forecastService,
+                username: username,
+                onSpotSelected: { _ in },
+                onCoordinateSelected: { _ in },
+                purpose: .addFavorite,
+                onFavoriteAdded: {
+                    Task { await loadFavorites() }
+                }
+            )
+        }
     }
 
     private func favoriteRow(_ spot: SpotOwner) -> some View {

@@ -11,15 +11,22 @@ import CoreLocation
 import SwiftUI
 
 public struct WindguruSpotPicker: View {
+    public enum Purpose {
+        case chooseLocation
+        case addFavorite
+    }
+
     private let searchSpots: @MainActor (String) async throws -> SpotResult?
     private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
     private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
     private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
     private let addFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
+    private let purpose: Purpose
     let username: String
     let onSpotSelected: (SpotOwner) -> Void
     let onFavoriteSelected: (SpotOwner) -> Void
     let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
+    let onFavoriteAdded: () -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
@@ -44,7 +51,9 @@ public struct WindguruSpotPicker: View {
         username: String,
         onSpotSelected: @escaping (SpotOwner) -> Void,
         onFavoriteSelected: @escaping (SpotOwner) -> Void = { _ in },
-        onCoordinateSelected: @escaping (CLLocationCoordinate2D) -> Void
+        onCoordinateSelected: @escaping (CLLocationCoordinate2D) -> Void,
+        purpose: Purpose = .chooseLocation,
+        onFavoriteAdded: @escaping () -> Void = {}
     ) {
         searchSpots = { try await forecastService.searchSpots(byLocation: $0) }
         loadSpotInfo = { try await forecastService.spotInfo(bySpotId: $0) }
@@ -55,10 +64,12 @@ public struct WindguruSpotPicker: View {
         addFavoriteSpot = { spotID, username, password in
             try await forecastService.addFavoriteSpot(withSpotId: spotID, username: username, password: password)
         }
+        self.purpose = purpose
         self.username = username
         self.onSpotSelected = onSpotSelected
         self.onFavoriteSelected = onFavoriteSelected
         self.onCoordinateSelected = onCoordinateSelected
+        self.onFavoriteAdded = onFavoriteAdded
     }
 
     private var lastSavedCoordinate: CLLocationCoordinate2D? { savedLocations.last?.coordinate }
@@ -80,9 +91,10 @@ public struct WindguruSpotPicker: View {
                     Text("Map picks use an exact coordinate forecast for Windguru PRO, or the nearest public spot for guests.")
                 }
 
-                mapLocationsSection
-
-                favoritesSection
+                if purpose == .chooseLocation {
+                    mapLocationsSection
+                    favoritesSection
+                }
 
                 Section("Search Windguru spots") {
                     HStack {
@@ -118,7 +130,7 @@ public struct WindguruSpotPicker: View {
                     }
                 }
             }
-            .navigationTitle("Choose location")
+            .navigationTitle(purpose == .addFavorite ? "Add Favorite" : "Choose location")
 #if !os(macOS)
             .environment(\.editMode, $editMode)
 #endif
@@ -128,8 +140,10 @@ public struct WindguruSpotPicker: View {
                 }
 #if !os(macOS)
                 ToolbarItem(placement: .primaryAction) {
-                    Button(editMode.isEditing ? "Done" : "Edit") {
-                        editMode = editMode.isEditing ? .inactive : .active
+                    if purpose == .chooseLocation {
+                        Button(editMode.isEditing ? "Done" : "Edit") {
+                            editMode = editMode.isEditing ? .inactive : .active
+                        }
                     }
                 }
 #endif
@@ -142,7 +156,13 @@ public struct WindguruSpotPicker: View {
         .sheet(isPresented: $showsMap) {
             MapLocationPicker(initialCoordinate: lastSavedCoordinate) { coordinate in
                 showsMap = false
-                Task { await saveMapCoordinate(coordinate) }
+                Task {
+                    if purpose == .addFavorite {
+                        await selectMapCoordinate(coordinate)
+                    } else {
+                        await saveMapCoordinate(coordinate)
+                    }
+                }
             }
         }
 #endif
@@ -337,7 +357,9 @@ public struct WindguruSpotPicker: View {
 
         do {
             let location = try await CurrentLocationProvider().location()
-            if !username.isEmpty, WindguruCredentialStore.password(for: username) != nil {
+            if purpose == .chooseLocation,
+               !username.isEmpty,
+               WindguruCredentialStore.password(for: username) != nil {
                 onCoordinateSelected(location.coordinate)
                 return
             }
@@ -371,7 +393,9 @@ public struct WindguruSpotPicker: View {
 
     @MainActor
     private func selectMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
-        if !username.isEmpty, WindguruCredentialStore.password(for: username) != nil {
+        if purpose == .chooseLocation,
+           !username.isEmpty,
+           WindguruCredentialStore.password(for: username) != nil {
             onCoordinateSelected(coordinate)
             return
         }
@@ -406,6 +430,11 @@ public struct WindguruSpotPicker: View {
 
     @MainActor
     private func selectSpot(_ spot: SpotOwner) async {
+        if purpose == .addFavorite {
+            await addFavorite(spot)
+            return
+        }
+
         if let identifier = spot.identifier,
            let spotInfo = try? await loadSpotInfo(identifier),
            let coordinate = spotInfo.location?.coordinate {
@@ -418,6 +447,26 @@ public struct WindguruSpotPicker: View {
             }
         }
         onSpotSelected(spot)
+    }
+
+    @MainActor
+    private func addFavorite(_ spot: SpotOwner) async {
+        guard let spotID = spot.identifier,
+              !username.isEmpty,
+              let password = WindguruCredentialStore.password(for: username) else {
+            errorMessage = "Sign in to add Windguru favorites."
+            return
+        }
+
+        favoriteIDsBeingAdded.insert(spotID)
+        defer { favoriteIDsBeingAdded.remove(spotID) }
+        do {
+            _ = try await addFavoriteSpot(spotID, username, password)
+            onFavoriteAdded()
+            dismiss()
+        } catch {
+            errorMessage = "Couldn’t add this spot to Favorites."
+        }
     }
 
     private func beginRenaming(_ location: SavedMapLocation) {
