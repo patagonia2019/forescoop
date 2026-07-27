@@ -47,6 +47,7 @@ public struct ForecastDashboardView: View {
     @State private var showsFavorites = false
     @State private var showsForecastMap = false
     @State private var showsForecastGrid = false
+    @State private var showsDashboardModelComparison = false
     @State private var selectedModelIDs: [String] = []
     @State private var usableModelIDs: [String] = []
     @State private var displayedForecastSpotID: String?
@@ -223,8 +224,17 @@ public struct ForecastDashboardView: View {
                 }
 #endif
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Refresh", systemImage: "arrow.clockwise") {
-                        Task { await loadForecast() }
+                    HStack {
+                        if !showsForecastGrid, displayedModelForecasts.count > 1 {
+                            Button("Compare models", systemImage: "arrow.left.and.right") {
+                                showsDashboardModelComparison.toggle()
+                            }
+                            .tint(showsDashboardModelComparison ? .accentColor : .secondary)
+                        }
+
+                        Button("Refresh", systemImage: "arrow.clockwise") {
+                            Task { await loadForecast() }
+                        }
                     }
                 }
             }
@@ -343,6 +353,20 @@ public struct ForecastDashboardView: View {
                         ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow)
                         ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
                     }
+                }
+
+                if showsDashboardModelComparison, displayedModelForecasts.count > 1 {
+                    ForecastModelComparisonView(
+                        forecast: forecast,
+                        forecasts: displayedModelForecasts,
+                        selectedHour: selectedHour,
+                        modelNamesByID: modelNamesByID,
+                        temperatureUnit: temperatureUnit,
+                        windSpeedUnit: windSpeedUnit,
+                        freezingLevelUnit: freezingLevelUnit,
+                        precipitationUnit: precipitationUnit,
+                        pressureUnit: pressureUnit
+                    )
                 }
             }
             .frame(maxWidth: 1_100)
