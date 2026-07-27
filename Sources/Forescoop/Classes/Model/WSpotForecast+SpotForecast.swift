@@ -32,7 +32,7 @@ public extension SpotForecast {
             "model_name": forecast.model_name ?? spot.model ?? "Windguru PRO",
             "WINDSPD": values(forecast.WINDSPD),
             "GUST": values(forecast.GUST),
-            "WINDDIR": values(forecast.windDirection.map(\.value)),
+            "WINDDIR": values(forecast.windDirection.map { Double($0.value) }),
             "WINDIRNAME": values(forecast.windDirection.map(\.description)),
             "TMP": values(forecast.TMP),
             "TMPE": values(forecast.TMPE),
