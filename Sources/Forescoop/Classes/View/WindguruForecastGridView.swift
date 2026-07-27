@@ -13,54 +13,66 @@ import SwiftUI
 public struct WindguruForecastGridView: View {
     public let forecast: SpotForecast
     public let coordinateLocationName: String?
-    public let temperatureUnit: TemperatureUnit
-    public let windSpeedUnit: WindSpeedUnit
-    public let waveHeightUnit: WaveHeightUnit
-    public let pressureUnit: PressureUnit
-    public let precipitationUnit: PrecipitationUnit
-    public let freezingLevelUnit: FreezingLevelUnit
+    @Binding public var temperatureUnit: TemperatureUnit
+    @Binding public var windSpeedUnit: WindSpeedUnit
+    @Binding public var waveHeightUnit: WaveHeightUnit
+    @Binding public var pressureUnit: PressureUnit
+    @Binding public var precipitationUnit: PrecipitationUnit
+    @Binding public var freezingLevelUnit: FreezingLevelUnit
+    @Binding public var showsWindDirectionArrow: Bool
+    private let onSelectLocation: () -> Void
+    private let onSelectModel: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @State private var areRowTitlesCollapsed = false
 
     public init(
         forecast: SpotForecast,
         coordinateLocationName: String? = nil,
-        temperatureUnit: TemperatureUnit,
-        windSpeedUnit: WindSpeedUnit,
-        waveHeightUnit: WaveHeightUnit,
-        pressureUnit: PressureUnit,
-        precipitationUnit: PrecipitationUnit,
-        freezingLevelUnit: FreezingLevelUnit
+        temperatureUnit: Binding<TemperatureUnit>,
+        windSpeedUnit: Binding<WindSpeedUnit>,
+        waveHeightUnit: Binding<WaveHeightUnit>,
+        pressureUnit: Binding<PressureUnit>,
+        precipitationUnit: Binding<PrecipitationUnit>,
+        freezingLevelUnit: Binding<FreezingLevelUnit>,
+        showsWindDirectionArrow: Binding<Bool>,
+        onSelectLocation: @escaping () -> Void,
+        onSelectModel: @escaping () -> Void
     ) {
         self.forecast = forecast
         self.coordinateLocationName = coordinateLocationName
-        self.temperatureUnit = temperatureUnit
-        self.windSpeedUnit = windSpeedUnit
-        self.waveHeightUnit = waveHeightUnit
-        self.pressureUnit = pressureUnit
-        self.precipitationUnit = precipitationUnit
-        self.freezingLevelUnit = freezingLevelUnit
+        _temperatureUnit = temperatureUnit
+        _windSpeedUnit = windSpeedUnit
+        _waveHeightUnit = waveHeightUnit
+        _pressureUnit = pressureUnit
+        _precipitationUnit = precipitationUnit
+        _freezingLevelUnit = freezingLevelUnit
+        _showsWindDirectionArrow = showsWindDirectionArrow
+        self.onSelectLocation = onSelectLocation
+        self.onSelectModel = onSelectModel
     }
 
     public var body: some View {
         NavigationStack {
-            ScrollView([.horizontal, .vertical]) {
-                VStack(alignment: .leading, spacing: 0) {
-                    header
-                    gridRow("Wind speed (\(windSpeedUnit.label))", values: { windSpeed($0) }, background: windColor)
-                    gridRow("Wind gusts (\(windSpeedUnit.label))", values: { windGusts($0) }, background: gustColor)
-                    gridRow("Wind direction", values: { windDirection($0) })
-                    gridRow("Temperature (\(temperatureUnit.label))", values: { temperature($0) }, background: temperatureColor)
-                    gridRow("Freezing level (\(freezingLevelUnit.label))", values: { freezingLevel($0) })
-                    gridRow("Cloud cover (%)", values: { cloudCover($0) }, background: cloudColor)
-                    gridRow("Precipitation (\(precipitationUnit.label))", values: { precipitation($0) }, background: precipitationColor)
-                    gridRow("Sea level pressure (\(pressureUnit.label))", values: { pressure($0) })
-                    gridRow("Humidity (%)", values: { humidity($0) }, background: humidityColor)
-                    if hasWaveData {
-                        Divider()
-                        gridRow("Wave (\(waveHeightUnit.label))", values: { waveHeight($0) }, background: waveColor)
-                        gridRow("Wave period (s)", values: { wavePeriod($0) })
-                        gridRow("Wave direction", values: { waveDirection($0) })
+            ScrollView(.vertical) {
+                HStack(alignment: .top, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        labelHeader
+                        gridRows(in: .labels)
+                    }
+
+                    ScrollView(.horizontal) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            timeHeader
+                            gridRows(in: .values)
+                        }
+                    }
+                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                        geometry.contentOffset.x
+                    } action: { _, offset in
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            areRowTitlesCollapsed = offset > 8
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -70,6 +82,10 @@ public struct WindguruForecastGridView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
+                }
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button("Choose location", systemImage: "mappin.and.ellipse", action: onSelectLocation)
+                    Button("Forecast model", systemImage: "cpu", action: onSelectModel)
                 }
             }
         }
@@ -81,13 +97,22 @@ public struct WindguruForecastGridView: View {
         hours.contains { weather?.waveHeight(hh: $0) != nil }
     }
 
-    private var header: some View {
+    private var labelHeader: some View {
+        Text("Updated")
+            .opacity(showsRowTitles ? 1 : 0)
+            .overlay {
+                if !showsRowTitles {
+                    Image(systemName: "clock.arrow.circlepath")
+                }
+            }
+            .frame(width: rowLabelWidth, height: 48, alignment: .leading)
+            .font(.caption.bold())
+            .padding(.horizontal, 8)
+            .background(.thinMaterial)
+    }
+
+    private var timeHeader: some View {
         HStack(spacing: 0) {
-            Text("Updated")
-                .frame(width: 150, height: 48, alignment: .leading)
-                .font(.caption.bold())
-                .padding(.horizontal, 8)
-                .background(.thinMaterial)
             ForEach(hours, id: \.self) { hour in
                 VStack(spacing: 2) {
                     Text(day(for: hour)).font(.caption2)
@@ -99,28 +124,97 @@ public struct WindguruForecastGridView: View {
         }
     }
 
-    private func gridRow(
-        _ title: String,
+    private enum GridColumn {
+        case labels
+        case values
+    }
+
+    @ViewBuilder private func gridRows(in column: GridColumn) -> some View {
+        gridRow(label: unitLabel("Wind speed (\(windSpeedUnit.label))", icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windSpeed($0) }, background: windColor, in: column)
+        gridRow(label: unitLabel("Wind gusts (\(windSpeedUnit.label))", icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windGusts($0) }, background: gustColor, in: column)
+        gridRow(label: windDirectionLabel, values: { windDirection($0) }, in: column)
+        gridRow(label: unitLabel("Temperature (\(temperatureUnit.label))", icon: "thermometer.medium", selection: $temperatureUnit, unitLabel: \.label), values: { temperature($0) }, background: temperatureColor, in: column)
+        gridRow(label: unitLabel("Freezing level (\(freezingLevelUnit.label))", icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, in: column)
+        gridRow(label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, background: cloudColor, in: column)
+        gridRow(label: unitLabel("Precipitation (\(precipitationUnit.label))", icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, background: precipitationColor, in: column)
+        gridRow(label: unitLabel("Sea level pressure (\(pressureUnit.label))", icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, in: column)
+        gridRow(label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, background: humidityColor, in: column)
+        if hasWaveData {
+            Divider()
+            gridRow(label: unitLabel("Wave (\(waveHeightUnit.label))", icon: "water.waves", selection: $waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, background: waveColor, in: column)
+            gridRow(label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, in: column)
+            gridRow(label: rowLabel("Wave direction", icon: "location.north.line"), values: { waveDirection($0) }, in: column)
+        }
+    }
+
+    @ViewBuilder private func gridRow<Label: View>(
+        label: Label,
         values: @escaping (String) -> GridCell,
-        background: @escaping (GridCell) -> Color = { _ in .clear }
+        background: @escaping (GridCell) -> Color = { _ in .clear },
+        in column: GridColumn
     ) -> some View {
-        HStack(spacing: 0) {
-            Text(title)
+        switch column {
+        case .labels:
+            label
                 .font(.caption)
-                .frame(width: 150, height: 30, alignment: .leading)
+                .frame(width: rowLabelWidth, height: 30, alignment: showsRowTitles ? .leading : .center)
                 .padding(.horizontal, 8)
                 .background(.thinMaterial)
-            ForEach(hours, id: \.self) { hour in
-                let cell = values(hour)
-                Text(cell.text)
-                    .font(cell.isDirection ? .body : .caption)
-                    .monospacedDigit()
-                    .frame(width: 56, height: 30)
-                    .background(background(cell))
-                    .overlay(alignment: .bottom) { Divider().opacity(0.3) }
+        case .values:
+            HStack(spacing: 0) {
+                ForEach(hours, id: \.self) { hour in
+                    let cell = values(hour)
+                    Text(cell.text)
+                        .font(cell.isDirection ? .body : .caption)
+                        .monospacedDigit()
+                        .frame(width: 56, height: 30)
+                        .background(background(cell))
+                        .overlay(alignment: .bottom) { Divider().opacity(0.3) }
+                }
             }
         }
     }
+
+    private func unitLabel<Unit>(
+        _ title: String,
+        icon: String,
+        selection: Binding<Unit>,
+        unitLabel: @escaping (Unit) -> String
+    ) -> some View where Unit: CaseIterable & Identifiable & Hashable, Unit.AllCases: RandomAccessCollection, Unit.AllCases.Element == Unit {
+        Menu {
+            Picker(title, selection: selection) {
+                ForEach(Unit.allCases) { unit in
+                    Text(unitLabel(unit)).tag(unit)
+                }
+            }
+        } label: {
+            rowLabel(title, icon: icon, isInteractive: true)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var windDirectionLabel: some View {
+        Button {
+            showsWindDirectionArrow.toggle()
+        } label: {
+            rowLabel("Wind direction (\(showsWindDirectionArrow ? "→" : "N"))", icon: "location.north.line", isInteractive: true)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func rowLabel(_ title: String, icon: String, isInteractive: Bool = false) -> some View {
+        Group {
+            if showsRowTitles {
+                Label(title, systemImage: icon)
+            } else {
+                Image(systemName: icon)
+            }
+        }
+        .foregroundStyle(isInteractive ? .blue : .primary)
+    }
+
+    private var showsRowTitles: Bool { !areRowTitlesCollapsed }
+    private var rowLabelWidth: CGFloat { showsRowTitles ? 150 : 44 }
 
     private func day(for hour: String) -> String {
         guard let date = forecast.forecastDate(hour: hour) else { return "" }
@@ -147,7 +241,7 @@ public struct WindguruForecastGridView: View {
 
     private func windDirection(_ hour: String) -> GridCell {
         guard let direction = weather?.windDirection(hh: hour) else { return .empty }
-        return GridCell(value: direction, text: arrow(direction), isDirection: true)
+        return GridCell(value: direction, text: windDirectionText(direction), isDirection: showsWindDirectionArrow)
     }
 
     private func temperature(_ hour: String) -> GridCell {
@@ -208,6 +302,12 @@ public struct WindguruForecastGridView: View {
     private func arrow(_ direction: Double) -> String {
         let arrows = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"]
         return arrows[Int((direction + 22.5) / 45) % arrows.count]
+    }
+
+    private func windDirectionText(_ direction: Double) -> String {
+        showsWindDirectionArrow
+            ? arrow(direction)
+            : WindDirection(value: Int(direction.rounded())).description
     }
 
     private func windColor(_ cell: GridCell) -> Color { .cyan.opacity(min((cell.value ?? 0) / 45, 1) * 0.55) }

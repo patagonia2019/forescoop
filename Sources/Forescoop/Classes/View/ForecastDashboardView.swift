@@ -288,12 +288,21 @@ public struct ForecastDashboardView: View {
                     WindguruForecastGridView(
                         forecast: forecast,
                         coordinateLocationName: coordinateLocationName,
-                        temperatureUnit: temperatureUnit,
-                        windSpeedUnit: windSpeedUnit,
-                        waveHeightUnit: waveHeightUnit,
-                        pressureUnit: pressureUnit,
-                        precipitationUnit: precipitationUnit,
-                        freezingLevelUnit: freezingLevelUnit
+                        temperatureUnit: $temperatureUnit,
+                        windSpeedUnit: $windSpeedUnit,
+                        waveHeightUnit: $waveHeightUnit,
+                        pressureUnit: $pressureUnit,
+                        precipitationUnit: $precipitationUnit,
+                        freezingLevelUnit: $freezingLevelUnit,
+                        showsWindDirectionArrow: $showsWindDirectionArrow,
+                        onSelectLocation: {
+                            showsForecastGrid = false
+                            showsSpotPicker = true
+                        },
+                        onSelectModel: {
+                            showsForecastGrid = false
+                            showsModelPicker = true
+                        }
                     )
                 }
             }
