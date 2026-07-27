@@ -45,6 +45,7 @@ public struct ForecastDashboardView: View {
     @State private var showsLogin = false
     @State private var showsFavorites = false
     @State private var showsForecastMap = false
+    @State private var showsForecastGrid = false
     @State private var selectedModelIDs: [String] = []
     @State private var usableModelIDs: [String] = []
     @State private var displayedForecastSpotID: String?
@@ -98,6 +99,12 @@ public struct ForecastDashboardView: View {
 
     private var accountMenu: some View {
         Menu {
+            Button("Forecast Grid", systemImage: "tablecells") {
+                showsForecastGrid = true
+            }
+
+            Divider()
+
             if windguruUsername.isEmpty {
                 Button("Login", systemImage: "person.crop.circle") {
                     showsLogin = true
@@ -275,6 +282,20 @@ public struct ForecastDashboardView: View {
                         Task { await loadForecast(spotId: spotID, persistSelection: false) }
                     }
                 )
+            }
+            .sheet(isPresented: $showsForecastGrid) {
+                if let forecast {
+                    WindguruForecastGridView(
+                        forecast: forecast,
+                        coordinateLocationName: coordinateLocationName,
+                        temperatureUnit: temperatureUnit,
+                        windSpeedUnit: windSpeedUnit,
+                        waveHeightUnit: waveHeightUnit,
+                        pressureUnit: pressureUnit,
+                        precipitationUnit: precipitationUnit,
+                        freezingLevelUnit: freezingLevelUnit
+                    )
+                }
             }
 #if !os(tvOS)
             .sheet(isPresented: $showsForecastMap) {

@@ -109,12 +109,7 @@ public struct ForecastOverview: View {
     }
 
     private var locationName: String {
-        guard forecast.isCoordinateLocation,
-              let coordinateLocationName,
-              !coordinateLocationName.isEmpty else {
-            return forecast.displayName
-        }
-        return coordinateLocationName
+        forecast.locationDisplayName(coordinateLocationName: coordinateLocationName)
     }
 }
 

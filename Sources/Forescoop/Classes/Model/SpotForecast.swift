@@ -78,6 +78,17 @@ public class SpotForecast: SpotInfo {
 
 public extension SpotForecast {
 
+    /// The preferred title for a forecast location, including a reverse-geocoded
+    /// name for coordinate-only PRO forecasts when one is available.
+    func locationDisplayName(coordinateLocationName: String? = nil) -> String {
+        guard isCoordinateLocation,
+              let coordinateLocationName,
+              !coordinateLocationName.isEmpty else {
+            return displayName
+        }
+        return coordinateLocationName
+    }
+
     var availableForecastHours: [String] {
         forecast?.availableHours ?? []
     }
