@@ -372,9 +372,14 @@ public struct ForecastDashboardView: View {
     }
 
     private func forecastGridContent(for forecast: SpotForecast) -> some View {
+        let isCoordinateForecast = coordinateLocationName != nil
         let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
-        let availableModelIDs = modelIDsBySpot[forecastSpotID] ?? usableModelIDs
-        let selectedForecastModelIDs = selectedModelIDsBySpot[forecastSpotID] ?? selectedModelIDs
+        let availableModelIDs = isCoordinateForecast
+            ? usableModelIDs
+            : modelIDsBySpot[forecastSpotID] ?? usableModelIDs
+        let selectedForecastModelIDs = isCoordinateForecast
+            ? selectedModelIDs
+            : selectedModelIDsBySpot[forecastSpotID] ?? selectedModelIDs
         return WindguruForecastGridView(
             forecast: forecast,
             coordinateLocationName: coordinateLocationName,
@@ -392,7 +397,12 @@ public struct ForecastDashboardView: View {
             showsWindDirectionArrow: $showsWindDirectionArrow,
             onSelectLocation: { showsSpotPicker = true },
             onToggleModel: { modelID in
-                toggleGridModel(modelID, for: forecastSpotID)
+                toggleGridModel(
+                    modelID,
+                    for: forecastSpotID,
+                    coordinate: isCoordinateForecast ? forecast.location?.coordinate : nil,
+                    locationName: coordinateLocationName
+                )
             },
             onSelectHour: { hour in
                 selectedHour = hour
@@ -404,9 +414,14 @@ public struct ForecastDashboardView: View {
         }
     }
 
-    private func toggleGridModel(_ modelID: String, for spotID: String) {
-        let availableModelIDs = modelIDsBySpot[spotID] ?? usableModelIDs
-        var selectedModelIDs = selectedModelIDsBySpot[spotID] ?? self.selectedModelIDs
+    private func toggleGridModel(
+        _ modelID: String,
+        for spotID: String,
+        coordinate: CLLocationCoordinate2D? = nil,
+        locationName: String? = nil
+    ) {
+        let availableModelIDs = coordinate == nil ? modelIDsBySpot[spotID] ?? usableModelIDs : usableModelIDs
+        var selectedModelIDs = coordinate == nil ? selectedModelIDsBySpot[spotID] ?? self.selectedModelIDs : self.selectedModelIDs
 
         if selectedModelIDs.contains(modelID) {
             guard selectedModelIDs.count > 1 else { return }
@@ -416,11 +431,19 @@ public struct ForecastDashboardView: View {
         }
 
         Task {
-            await loadForecast(
-                spotId: spotID,
-                modelIDs: selectedModelIDs,
-                persistSelection: spotID == selectedSpotID
-            )
+            if let coordinate {
+                await loadForecast(
+                    coordinate: coordinate,
+                    locationName: locationName,
+                    modelIDs: selectedModelIDs
+                )
+            } else {
+                await loadForecast(
+                    spotId: spotID,
+                    modelIDs: selectedModelIDs,
+                    persistSelection: spotID == selectedSpotID
+                )
+            }
         }
     }
 
@@ -717,7 +740,8 @@ public struct ForecastDashboardView: View {
     @MainActor
     private func loadForecast(
         coordinate: CLLocationCoordinate2D,
-        locationName: String? = nil
+        locationName: String? = nil,
+        modelIDs: [String]? = nil
     ) async {
         guard let password = WindguruCredentialStore.password(for: windguruUsername), !windguruUsername.isEmpty else {
             errorMessage = "Sign in with Windguru PRO to load an exact map coordinate."
@@ -726,10 +750,11 @@ public struct ForecastDashboardView: View {
         isLoading = true
         errorMessage = nil
         coordinateLocationName = locationName
+        displayedForecastSpotID = nil
         defer { isLoading = false }
         do {
-            let modelIDs = try await coordinateModelLoader(coordinate.latitude, coordinate.longitude)
-            let requestedModelIDs = modelIDs.isEmpty ? [Model.defaultModel] : modelIDs
+            let discoveredModelIDs = try await coordinateModelLoader(coordinate.latitude, coordinate.longitude)
+            let requestedModelIDs = modelIDs ?? (discoveredModelIDs.isEmpty ? [Model.defaultModel] : discoveredModelIDs)
             var coordinateForecasts: [SpotForecast] = []
             var lastModelError: Error?
             for modelID in requestedModelIDs {

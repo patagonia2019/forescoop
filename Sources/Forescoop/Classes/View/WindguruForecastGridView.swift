@@ -377,7 +377,7 @@ public struct WindguruForecastGridView: View {
         Button {
             showsWindDirectionArrow.toggle()
         } label: {
-            rowLabel("Wind direction (\(showsWindDirectionArrow ? "→" : "X"))", compactTitle: showsWindDirectionArrow ? "→" : "X", icon: "location.north.line", isInteractive: true)
+            rowLabel("Wind direction (\(showsWindDirectionArrow ? "→" : ""))", compactTitle: showsWindDirectionArrow ? "→" : "X", icon: "location.north.line", isInteractive: true)
         }
         .buttonStyle(.plain)
     }
