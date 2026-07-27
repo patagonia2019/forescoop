@@ -53,6 +53,12 @@ enum TypeOfWeather: String {
     case WINDDIR //  Wind direction
     case WINDIRNAME //  wind direction (name)
     case TMPE //  temperature in 2 meters above ground with correction to real altitude of the spot.
+    case HTSGW // Significant combined wave height (m)
+    case WVHGT // Wind-wave height (m)
+    case WVPER // Wind-wave period (s)
+    case WVDIR // Wind-wave direction (degrees)
+    case PERPW // Peak wave period (s)
+    case DIRPW // Peak wave direction (degrees)
 }
 
 public class Forecast: Object, Mappable {
@@ -198,6 +204,22 @@ public extension Forecast {
     /// APCP1: Precip. (mm/1h)
     func precipitation1(hh: String?) -> Double? {
         weathers?[TypeOfWeather.APCP1.rawValue]?.value(hh: hh)
+    }
+
+    /// Significant combined wave height, with wind-wave height as a fallback.
+    func waveHeight(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.HTSGW.rawValue]?.value(hh: hh)
+            ?? weathers?[TypeOfWeather.WVHGT.rawValue]?.value(hh: hh)
+    }
+
+    func wavePeriod(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.PERPW.rawValue]?.value(hh: hh)
+            ?? weathers?[TypeOfWeather.WVPER.rawValue]?.value(hh: hh)
+    }
+
+    func waveDirection(hh: String?) -> Double? {
+        weathers?[TypeOfWeather.DIRPW.rawValue]?.value(hh: hh)
+            ?? weathers?[TypeOfWeather.WVDIR.rawValue]?.value(hh: hh)
     }
     
     var initializationStamp: Int {

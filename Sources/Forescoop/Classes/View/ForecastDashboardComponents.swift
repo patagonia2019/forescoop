@@ -126,23 +126,25 @@ public struct ForecastWindDetails: View {
     }
 
     public var body: some View {
-        LabeledContent {
-            HStack(spacing: 8) {
-                Text("Wind")
-                Menu {
-                    Picker("Wind speed unit", selection: $windSpeedUnit) {
-                        ForEach(WindSpeedUnit.allCases) { unit in
-                            Text(unit.label).tag(unit)
-                        }
+        VStack(alignment: .leading, spacing: 10) {
+            Menu {
+                Picker("Wind speed unit", selection: $windSpeedUnit) {
+                    ForEach(WindSpeedUnit.allCases) { unit in
+                        Text(unit.label).tag(unit)
                     }
-                } label: {
-                    Text(windSpeed(weather?.windSpeed(hh: hour)))
                 }
-                .accessibilityLabel("Wind speed")
-                Text("/")
-                    .foregroundStyle(.secondary)
-                Text("Gusts")
-                Text(windSpeed(weather?.windGustsKnots(hh: hour)))
+            } label: {
+                LabeledContent { Text(windSpeed(weather?.windSpeed(hh: hour))) } label: {
+                    Label("Wind speed", systemImage: "wind")
+                }
+            }
+            .accessibilityLabel("Wind speed")
+
+            LabeledContent { Text(windSpeed(weather?.windGustsKnots(hh: hour))) } label: {
+                Label("Wind gusts", systemImage: "wind")
+            }
+
+            LabeledContent {
                 Button {
                     showsDirectionArrow.toggle()
                 } label: {
@@ -157,10 +159,9 @@ public struct ForecastWindDetails: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Wind direction")
                 .accessibilityHint("Shows the direction as an arrow")
-                Spacer()
+            } label: {
+                Label("Wind direction", systemImage: "location.north.line")
             }
-        } label: {
-            Image(systemName: "wind")
         }
         .font(.body)
     }
@@ -177,6 +178,7 @@ public struct ForecastWindDetails: View {
 public struct ForecastWeatherDetails: View {
     public let forecast: SpotForecast
     public let selectedHour: String?
+    @Binding public var waveHeightUnit: WaveHeightUnit
     @Binding public var precipitationUnit: PrecipitationUnit
     @Binding public var freezingLevelUnit: FreezingLevelUnit
     @Binding public var pressureUnit: PressureUnit
@@ -184,12 +186,14 @@ public struct ForecastWeatherDetails: View {
     public init(
         forecast: SpotForecast,
         selectedHour: String?,
+        waveHeightUnit: Binding<WaveHeightUnit>,
         precipitationUnit: Binding<PrecipitationUnit>,
         freezingLevelUnit: Binding<FreezingLevelUnit>,
         pressureUnit: Binding<PressureUnit>
     ) {
         self.forecast = forecast
         self.selectedHour = selectedHour
+        _waveHeightUnit = waveHeightUnit
         _precipitationUnit = precipitationUnit
         _freezingLevelUnit = freezingLevelUnit
         _pressureUnit = pressureUnit
@@ -199,6 +203,7 @@ public struct ForecastWeatherDetails: View {
         VStack(alignment: .leading, spacing: 10) {
             cloudCover(high: weather?.cloudCoverHigh(hh: hour), mid: weather?.cloudCoverMid(hh: hour), low: weather?.cloudCoverLow(hh: hour))
             relativeHumidity(weather?.relativeHumidity(hh: hour))
+            waveRows
             precipitationRow
             freezingLevelRow
             pressureRow
@@ -223,6 +228,36 @@ public struct ForecastWeatherDetails: View {
                 }
             } label: {
                 Label("Precipitation", systemImage: "cloud.rain")
+            }
+        }
+    }
+
+    @ViewBuilder private var waveRows: some View {
+        if let waveHeight = weather?.waveHeight(hh: hour) {
+            Menu {
+                Picker("Wave height unit", selection: $waveHeightUnit) {
+                    ForEach(WaveHeightUnit.allCases) { unit in Text(unit.label).tag(unit) }
+                }
+            } label: {
+                LabeledContent { Text(waveHeightText(waveHeight)) } label: {
+                    Label("Wave", systemImage: "water.waves")
+                }
+            }
+        }
+
+        if let period = weather?.wavePeriod(hh: hour) {
+            LabeledContent { Text("\(format(period)) s") } label: {
+                Label("Wave period", systemImage: "waveform")
+            }
+        }
+
+        if let direction = weather?.waveDirection(hh: hour) {
+            LabeledContent {
+                Image(systemName: "arrow.right")
+                    .rotationEffect(.degrees(direction))
+                    .accessibilityLabel("\(Int(direction.rounded())) degrees")
+            } label: {
+                Label("Wave direction", systemImage: "arrow.triangle.turn.up.right.diamond")
             }
         }
     }
@@ -313,6 +348,9 @@ public struct ForecastWeatherDetails: View {
         guard let value = weather?.seaLevelPressure(hh: hour) else { return "—" }
         return "\(format(AtmosphericPressure(hectopascals: value).value(in: pressureUnit))) \(pressureUnit.label)"
     }
+    private func waveHeightText(_ height: Double) -> String {
+        "\(WaveHeight(meters: height).value(in: waveHeightUnit).formatted(.number.precision(.fractionLength(1)))) \(waveHeightUnit.label)"
+    }
     private func percent(_ value: Int?) -> String { value.map { "\($0)%" } ?? "—" }
 }
 
@@ -320,7 +358,7 @@ private func format(_ value: Double) -> String {
     value.formatted(.number.precision(.fractionLength(1)))
 }
 
-#Preview("Weather details") { ForecastComponentPreview { forecast, hour in ForecastWeatherDetails(forecast: forecast, selectedHour: hour, precipitationUnit: .constant(.millimeters), freezingLevelUnit: .constant(.meters), pressureUnit: .constant(.hectopascals)) } }
+#Preview("Weather details") { ForecastComponentPreview { forecast, hour in ForecastWeatherDetails(forecast: forecast, selectedHour: hour, waveHeightUnit: .constant(.meters), precipitationUnit: .constant(.millimeters), freezingLevelUnit: .constant(.meters), pressureUnit: .constant(.hectopascals)) } }
 
 @MainActor
 private enum ForecastComponentPreviewData {

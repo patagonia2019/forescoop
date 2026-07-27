@@ -224,3 +224,17 @@ public struct FreezingLevel: Sendable {
     }
 }
 
+public struct WaveHeight: Sendable {
+    public let meters: Double
+
+    public init(meters: Double) {
+        self.meters = meters
+    }
+
+    public func value(in unit: WaveHeightUnit) -> Double {
+        switch unit {
+        case .meters: meters
+        case .feet: meters * 3.280_839_895
+        }
+    }
+}

@@ -293,7 +293,7 @@ public struct ForecastDashboardView: View {
 
                         VStack(alignment: .leading, spacing: 28) {
                             ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow)
-                            ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
+                            ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -303,7 +303,7 @@ public struct ForecastDashboardView: View {
                     VStack(spacing: 24) {
                         ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true })
                         ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow)
-                        ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
+                        ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
                     }
                 }
             }

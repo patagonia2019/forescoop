@@ -40,7 +40,13 @@ public extension SpotForecast {
             "SLP": nullableValues(forecast.SLP),
             "FLHGT": values(forecast.FLHGT),
             "APCP": values(forecast.APCP),
-            "APCP1": values(forecast.APCP1)
+            "APCP1": values(forecast.APCP1),
+            "HTSGW": values(forecast.HTSGW),
+            "WVHGT": values(forecast.WVHGT),
+            "WVPER": values(forecast.WVPER),
+            "WVDIR": values(forecast.WVDIR),
+            "PERPW": values(forecast.PERPW),
+            "DIRPW": values(forecast.DIRPW)
         ]
         model["TCDC"] = values(forecast.TCDC)
         model["HCDC"] = values(forecast.HCDC)
