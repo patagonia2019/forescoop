@@ -88,14 +88,17 @@ public struct ForecastHourSelector: View {
 
     private func hourLabel(for hour: String) -> String {
         guard let date = forecast.forecastDate(hour: hour) else {
-            return String(format: "%02d hs", (Int(hour) ?? 0) % 24)
+            return String(format: "%02d:00", (Int(hour) ?? 0) % 24)
         }
 
         let calendar = Calendar.current
         let day = calendar.isDateInToday(date)
             ? "Today"
             : date.formatted(.dateTime.weekday(.abbreviated).day())
-        return "\(day), \(date.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)))) hs"
+        let formatter = DateFormatter()
+        formatter.locale = .autoupdatingCurrent
+        formatter.timeStyle = .short
+        return "\(day), \(formatter.string(from: date))"
     }
 }
 

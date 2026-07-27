@@ -133,6 +133,36 @@ public enum FreezingLevelUnit: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+/// Device defaults used when no Windguru account is signed in.
+/// They follow the iPhone's regional measurement system rather than app-specific values.
+public enum DeviceForecastPreferences {
+    private static var usesMetricSystem: Bool { Locale.autoupdatingCurrent.measurementSystem != .us }
+
+    public static var temperatureUnit: TemperatureUnit {
+        usesMetricSystem ? .celsius : .fahrenheit
+    }
+
+    public static var windSpeedUnit: WindSpeedUnit {
+        usesMetricSystem ? .kilometersPerHour : .milesPerHour
+    }
+
+    public static var waveHeightUnit: WaveHeightUnit {
+        usesMetricSystem ? .meters : .feet
+    }
+
+    public static var pressureUnit: PressureUnit {
+        usesMetricSystem ? .hectopascals : .inchesOfMercury
+    }
+
+    public static var precipitationUnit: PrecipitationUnit {
+        usesMetricSystem ? .millimeters : .inches
+    }
+
+    public static var freezingLevelUnit: FreezingLevelUnit {
+        usesMetricSystem ? .meters : .feet
+    }
+}
+
 public struct Temperature: Sendable {
     public let celsius: Double
 
@@ -193,3 +223,4 @@ public struct FreezingLevel: Sendable {
         }
     }
 }
+

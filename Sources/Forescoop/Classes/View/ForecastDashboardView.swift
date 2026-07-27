@@ -140,12 +140,7 @@ public struct ForecastDashboardView: View {
         selectedMapLocationID = nil
         SavedMapLocationStore.removeAll()
 
-        temperatureUnit = .celsius
-        windSpeedUnit = .knots
-        waveHeightUnit = .meters
-        pressureUnit = .hectopascals
-        precipitationUnit = .millimeters
-        freezingLevelUnit = .meters
+        applyDevicePreferences()
 
         showsModelPicker = false
         showsLogin = false
@@ -448,10 +443,10 @@ public struct ForecastDashboardView: View {
         guard !windguruUsername.isEmpty,
               let password = WindguruCredentialStore.password(for: windguruUsername),
               let user = try? await profileLoader(windguruUsername, password) else {
+            applyDevicePreferences()
             return
         }
         windguruIsProUser = user.isPro
-        guard user.isPro else { return }
         applyUserPreferences(user)
     }
 
@@ -465,6 +460,15 @@ public struct ForecastDashboardView: View {
         if let unit = WaveHeightUnit(windguruPreference: user.waveUnits) {
             waveHeightUnit = unit
         }
+    }
+
+    private func applyDevicePreferences() {
+        temperatureUnit = DeviceForecastPreferences.temperatureUnit
+        windSpeedUnit = DeviceForecastPreferences.windSpeedUnit
+        waveHeightUnit = DeviceForecastPreferences.waveHeightUnit
+        pressureUnit = DeviceForecastPreferences.pressureUnit
+        precipitationUnit = DeviceForecastPreferences.precipitationUnit
+        freezingLevelUnit = DeviceForecastPreferences.freezingLevelUnit
     }
 
     @MainActor
