@@ -31,6 +31,7 @@ public struct WindguruForecastGridView: View {
 
     @State private var areRowTitlesCollapsed = false
     @State private var expandedComparisonRows = Set<String>()
+    @State private var isModelComparisonEnabled = false
 
     public init(
         forecast: SpotForecast,
@@ -111,9 +112,26 @@ public struct WindguruForecastGridView: View {
             .padding(.bottom)
         }
         .navigationTitle(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName))
+        .onChange(of: modelForecasts.count) { _, count in
+            guard count < 2 else { return }
+            isModelComparisonEnabled = false
+            expandedComparisonRows = []
+        }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("Choose location", systemImage: "mappin.and.ellipse", action: onSelectLocation)
+                if modelForecasts.count > 1 {
+                    Button(
+                        "Compare models",
+                        systemImage: "arrow.left.and.right"
+                    ) {
+                        isModelComparisonEnabled.toggle()
+                        if !isModelComparisonEnabled {
+                            expandedComparisonRows = []
+                        }
+                    }
+                    .tint(isModelComparisonEnabled ? .accentColor : .secondary)
+                }
             }
         }
     }
@@ -249,7 +267,7 @@ public struct WindguruForecastGridView: View {
                 HStack(spacing: 4) {
                     label
                     Spacer(minLength: 0)
-                    if modelForecasts.count > 1 {
+                    if isModelComparisonEnabled, modelForecasts.count > 1 {
                         Button {
                             toggleComparisonRow(id)
                         } label: {
@@ -363,7 +381,7 @@ public struct WindguruForecastGridView: View {
     }
 
     private var showsRowTitles: Bool { !areRowTitlesCollapsed }
-    private var rowLabelWidth: CGFloat { showsRowTitles ? 134 : 56 }
+    private var rowLabelWidth: CGFloat { (showsRowTitles ? 134 : 60) + (isModelComparisonEnabled && modelForecasts.count > 1 ? 20 : 0) }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
     @ViewBuilder private var selectedHourOutline: some View {
