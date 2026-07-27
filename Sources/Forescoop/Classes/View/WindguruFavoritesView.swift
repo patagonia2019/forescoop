@@ -16,6 +16,7 @@ public struct WindguruFavoritesView: View {
     private let isProUser: Bool
     private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
     private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
+    private let onSpotSelected: (SpotOwner) -> Void
 
     @State private var favorites: [SpotOwner] = []
     @State private var isLoading = false
@@ -30,12 +31,14 @@ public struct WindguruFavoritesView: View {
         forecastService: ForecastWindguruProtocol = ForecastWindguruService(),
         username: String,
         password: String? = nil,
-        isProUser: Bool = false
+        isProUser: Bool = false,
+        onSpotSelected: @escaping (SpotOwner) -> Void = { _ in }
     ) {
         self.forecastService = forecastService
         self.username = username
         self.password = password ?? WindguruCredentialStore.password(for: username) ?? ""
         self.isProUser = isProUser
+        self.onSpotSelected = onSpotSelected
         loadFavoriteSpots = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
         removeFavoriteSpot = { spotID, username, password in
             try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
@@ -100,16 +103,23 @@ public struct WindguruFavoritesView: View {
     }
 
     private func favoriteRow(_ spot: SpotOwner) -> some View {
-        Label {
-            VStack(alignment: .leading) {
-                Text(spot.displayName)
-                Text(spot.countryName ?? "")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        Button {
+            guard !isEditingFavorites else { return }
+            onSpotSelected(spot)
+        } label: {
+            Label {
+                VStack(alignment: .leading) {
+                    Text(spot.displayName)
+                    Text(spot.countryName ?? "")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            } icon: {
+                Image(systemName: "star.fill")
             }
-        } icon: {
-            Image(systemName: "star.fill")
         }
+        .buttonStyle(.plain)
+        .disabled(removingIDs.contains(spot.identifier ?? ""))
         .opacity(removingIDs.contains(spot.identifier ?? "") ? 0.45 : 1)
         .contextMenu {
             Button("Remove from Favorites", systemImage: "star.slash", role: .destructive) {
@@ -122,6 +132,14 @@ public struct WindguruFavoritesView: View {
                 Task { await removeFavorite(spot) }
             }
         }
+#endif
+    }
+
+    private var isEditingFavorites: Bool {
+#if !os(macOS)
+        editMode.isEditing
+#else
+        false
 #endif
     }
 

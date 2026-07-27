@@ -267,7 +267,12 @@ public struct ForecastDashboardView: View {
                 WindguruFavoritesView(
                     forecastService: forecastService,
                     username: windguruUsername,
-                    isProUser: isProUser
+                    isProUser: isProUser,
+                    onSpotSelected: { spot in
+                        guard let spotID = spot.identifier else { return }
+                        showsFavorites = false
+                        Task { await loadForecast(spotId: spotID, persistSelection: false) }
+                    }
                 )
             }
         }
