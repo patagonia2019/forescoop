@@ -33,6 +33,8 @@ public struct WindguruForecastGridView: View {
     @State private var expandedComparisonRows = Set<String>()
     @State private var isModelComparisonEnabled = false
     @State private var horizontalGridOffset: CGFloat = 0
+    @State private var horizontalGridViewportWidth: CGFloat = 0
+    @State private var hasAppliedInitialGridPosition = false
 
     public init(
         forecast: SpotForecast,
@@ -92,20 +94,32 @@ public struct WindguruForecastGridView: View {
                                 selectedHourOutline
                             }
                             .onAppear {
+                                guard horizontalGridViewportWidth > 0 else { return }
+                                hasAppliedInitialGridPosition = true
                                 scrollToSelectedHour(with: proxy)
                             }
                             .onChange(of: selectedHour) { _, _ in
                                 scrollToSelectedHour(with: proxy)
                             }
+                            .onChange(of: horizontalGridViewportWidth) { _, width in
+                                guard width > 0, !hasAppliedInitialGridPosition else { return }
+                                hasAppliedInitialGridPosition = true
+                                scrollToSelectedHour(with: proxy)
+                            }
                         }
                     }
                     .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                        geometry.contentOffset.x
+                        (geometry.contentOffset.x / 4).rounded() * 4
                     } action: { _, offset in
                         horizontalGridOffset = offset
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            areRowTitlesCollapsed = offset > 8
-                        }
+                        let shouldCollapseRowTitles = offset > 8
+                        guard shouldCollapseRowTitles != areRowTitlesCollapsed else { return }
+                        areRowTitlesCollapsed = shouldCollapseRowTitles
+                    }
+                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                        geometry.containerSize.width
+                    } action: { _, width in
+                        horizontalGridViewportWidth = width
                     }
                 }
                 .padding(.bottom)
@@ -210,9 +224,9 @@ public struct WindguruForecastGridView: View {
                     Image(systemName: "clock.arrow.circlepath")
                 }
             }
-            .frame(width: rowLabelWidth, height: 48, alignment: .leading)
             .font(.caption.bold())
             .padding(.horizontal, 8)
+            .frame(width: rowLabelWidth, height: 48, alignment: .leading)
             .background(gridLabelBackground)
     }
 
@@ -299,8 +313,8 @@ public struct WindguruForecastGridView: View {
                     }
                 }
                 .font(.caption)
-                .frame(width: rowLabelWidth, height: 30, alignment: showsRowTitles ? .leading : .center)
                 .padding(.horizontal, 8)
+                .frame(width: rowLabelWidth, height: 30, alignment: showsRowTitles ? .leading : .center)
                 .background(gridLabelBackground)
 
                 if isExpanded {
@@ -308,8 +322,8 @@ public struct WindguruForecastGridView: View {
                         Text(modelName(for: source))
                             .font(.caption2)
                             .lineLimit(1)
-                            .frame(width: rowLabelWidth, height: 24, alignment: showsRowTitles ? .leading : .center)
                             .padding(.horizontal, 8)
+                            .frame(width: rowLabelWidth, height: 24, alignment: showsRowTitles ? .leading : .center)
                             .background(gridLabelBackground)
                     }
                 }
@@ -437,8 +451,14 @@ public struct WindguruForecastGridView: View {
     }
 
     private func scrollToSelectedHour(with proxy: ScrollViewProxy) {
-        guard let selectedHour else { return }
+        guard let selectedHour,
+              let index = hours.firstIndex(of: selectedHour) else { return }
         DispatchQueue.main.async {
+            let contentWidth = CGFloat(hours.count) * 56
+            let maximumOffset = max(0, contentWidth - horizontalGridViewportWidth)
+            let centeredOffset = CGFloat(index) * 56 - (horizontalGridViewportWidth - 56) / 2
+            horizontalGridOffset = min(max(0, centeredOffset), maximumOffset)
+            areRowTitlesCollapsed = horizontalGridOffset > 8
             proxy.scrollTo(selectedHour, anchor: .center)
         }
     }
