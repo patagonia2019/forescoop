@@ -20,6 +20,8 @@ public struct WindguruFavoritesView: View {
     private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
     private let onSpotSelected: (SpotOwner) -> Void
 
+    @Environment(\.dismiss) private var dismiss
+
     @State private var favorites: [SpotOwner] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
@@ -79,15 +81,20 @@ public struct WindguruFavoritesView: View {
                 }
             }
             .navigationTitle("Favorites")
-#if !os(macOS)
-            .environment(\.editMode, $editMode)
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+#if !os(macOS)
                 ToolbarItem(placement: .primaryAction) {
                     Button(editMode.isEditing ? "Done" : "Edit") {
                         editMode = editMode.isEditing ? .inactive : .active
                     }
                 }
+#endif
             }
+#if !os(macOS)
+            .environment(\.editMode, $editMode)
 #endif
         }
         .task { await loadFavorites() }
