@@ -275,6 +275,8 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(blendedForecast?.forecast?.modelName, "Forescoop Mix (2 models)")
         let blendHour = forecast?.availableHours.first
         XCTAssertEqual(blendedForecast?.forecast?.windSpeed(hh: blendHour), forecast?.windSpeed(hh: blendHour))
+        XCTAssertEqual(blendedForecast?.forecast?.cloudCoverTotal(hh: blendHour), forecast?.cloudCoverTotal(hh: blendHour))
+        XCTAssertEqual(blendedForecast?.forecast?.relativeHumidity(hh: blendHour), forecast?.relativeHumidity(hh: blendHour))
 
         var nonOverlappingResponse = spotForecastDict
         var nonOverlappingModels = nonOverlappingResponse?["forecast"] as? [String: Any]

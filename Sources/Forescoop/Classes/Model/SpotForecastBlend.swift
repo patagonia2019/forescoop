@@ -33,10 +33,12 @@ public extension SpotForecast {
             for hour in availableHours {
                 let values = sources.compactMap { numericValue($0.weathers?[key]?.info[hour]) }
                 guard !values.isEmpty else { continue }
-                let value = key == TypeOfWeather.WINDDIR.rawValue
+                let average = key == TypeOfWeather.WINDDIR.rawValue
                     ? circularMean(values)
                     : values.reduce(0, +) / Double(values.count)
-                valuesByHour[hour] = value
+                valuesByHour[hour] = integerWeatherKeys.contains(key)
+                    ? Int(average.rounded())
+                    : average
             }
             if !valuesByHour.isEmpty { blendedWeather[key] = valuesByHour }
         }
@@ -76,6 +78,14 @@ private func numericValue(_ value: Any?) -> Double? {
     default: nil
     }
 }
+
+private let integerWeatherKeys: Set<String> = [
+    TypeOfWeather.TCDC.rawValue,
+    TypeOfWeather.HCDC.rawValue,
+    TypeOfWeather.MCDC.rawValue,
+    TypeOfWeather.LCDC.rawValue,
+    TypeOfWeather.RH.rawValue
+]
 
 private func circularMean(_ degrees: [Double]) -> Double {
     let radians = degrees.map { $0 * .pi / 180 }
