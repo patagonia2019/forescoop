@@ -38,7 +38,7 @@ public extension SpotForecast {
             "TMPE": values(forecast.TMPE),
             "RH": values(forecast.RH),
             "SLP": nullableValues(forecast.SLP),
-            "FLHGT": values(forecast.FLHGT),
+            "FLHGT": values(forecast.FLHGT.map(Double.init)),
             "APCP": values(forecast.APCP),
             "APCP1": values(forecast.APCP1),
             "HTSGW": values(forecast.HTSGW),
