@@ -54,6 +54,7 @@ public struct ForecastDashboardView: View {
     @State private var modelIDsBySpot = [String: [String]]()
     @State private var selectedModelIDsBySpot = [String: [String]]()
     @State private var modelNamesByID = [String: String]()
+    @State private var displayedModelForecasts: [SpotForecast] = []
     @State private var savedMapLocations = SavedMapLocationStore.load()
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
@@ -151,6 +152,7 @@ public struct ForecastDashboardView: View {
         displayedForecastSpotID = nil
         modelIDsBySpot = [:]
         selectedModelIDsBySpot = [:]
+        displayedModelForecasts = []
         selectedHour = nil
         forecast = nil
         coordinateLocationName = nil
@@ -178,6 +180,7 @@ public struct ForecastDashboardView: View {
         displayedForecastSpotID = nil
         modelIDsBySpot = [:]
         selectedModelIDsBySpot = [:]
+        displayedModelForecasts = []
         selectedHour = nil
         forecast = nil
         coordinateLocationName = nil
@@ -379,6 +382,7 @@ public struct ForecastDashboardView: View {
             availableModelIDs: availableModelIDs,
             selectedModelIDs: selectedForecastModelIDs,
             modelNamesByID: modelNamesByID,
+            modelForecasts: displayedModelForecasts,
             temperatureUnit: $temperatureUnit,
             windSpeedUnit: $windSpeedUnit,
             waveHeightUnit: $waveHeightUnit,
@@ -688,6 +692,7 @@ public struct ForecastDashboardView: View {
                 throw lastModelError ?? CustomError.notMappeable
             }
             if forecast != nil {
+                displayedModelForecasts = validForecasts.isEmpty ? forecast.map { [$0] } ?? [] : validForecasts
                 let loadedModelIDs = validForecasts.compactMap(\.model)
                 let currentSpotModelIDs = loadedModelIDs.isEmpty
                     ? [forecast?.model ?? Model.defaultModel]
@@ -750,6 +755,7 @@ public struct ForecastDashboardView: View {
             forecast = coordinateForecasts.count == 1
                 ? coordinateForecasts[0]
                 : try SpotForecast.blended(coordinateForecasts)
+            displayedModelForecasts = coordinateForecasts
             selectedModelIDs = coordinateForecasts.compactMap(\.model)
             usableModelIDs = selectedModelIDs
             selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
