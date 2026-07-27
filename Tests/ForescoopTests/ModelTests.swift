@@ -364,6 +364,11 @@ class ModelTests: XCTestCase {
         let coordinateForecast = try? wspotForecast.flatMap(SpotForecast.from(coordinateForecast:))
         XCTAssertNotNil(coordinateForecast)
         XCTAssertNotNil(coordinateForecast?.forecast?.windSpeed(hh: "0"))
+        let pressureHour = coordinateForecast?.availableForecastHours.dropFirst(10).first
+        XCTAssertEqual(
+            coordinateForecast?.forecast?.seaLevelPressure(hh: pressureHour),
+            wspotForecast?.forecast?.seaLevelPressure(hour: 10)
+        )
         XCTAssertEqual(wspotForecast?.location?.coordinate.latitude, -41.1281)
         XCTAssertEqual(wspotForecast?.location?.coordinate.longitude, -71.348)
         XCTAssertEqual(wspotForecast?.location?.altitude, 770)
@@ -400,6 +405,8 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(forecast?.windGust(hour: 10), 14.0)
         XCTAssertEqual(forecast?.pcpt(hour: 10), 1)
         XCTAssertEqual(forecast?.seaLevelPressure(hour: 10), 1015)
+        let decimalPressureForecast = try? WForecast(map: ["SLP": [1012.5]])
+        XCTAssertEqual(decimalPressureForecast?.seaLevelPressure(hour: 0), 1012.5)
         XCTAssertEqual(forecast?.freezingLevel(hour: 10), 654)
         
         // marine values

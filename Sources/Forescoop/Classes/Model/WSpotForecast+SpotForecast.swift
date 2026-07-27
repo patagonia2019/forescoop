@@ -20,6 +20,12 @@ public extension SpotForecast {
                 value.map { (String(hour), $0) }
             })
         }
+        func nullableValues<T>(_ values: [T?]) -> [String: Any] {
+            Dictionary(uniqueKeysWithValues: zip(hours, values).compactMap { hour, value in
+                guard let value else { return nil }
+                return (String(hour), value)
+            })
+        }
         var model: [String: Any] = [
             "initstamp": forecast.initstamp,
             "initdate": forecast.initDate ?? "",
@@ -31,7 +37,7 @@ public extension SpotForecast {
             "TMP": values(forecast.TMP),
             "TMPE": values(forecast.TMPE),
             "RH": values(forecast.RH),
-            "SLP": values(forecast.SLP),
+            "SLP": nullableValues(forecast.SLP),
             "FLHGT": values(forecast.FLHGT),
             "APCP": values(forecast.APCP),
             "APCP1": values(forecast.APCP1)

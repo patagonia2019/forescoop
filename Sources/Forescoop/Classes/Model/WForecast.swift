@@ -69,7 +69,7 @@ public class WForecast: Object, Mappable {
     var LCDC        = [Int?]() // LCDC: Cloud cover (%) Low
     var RH          = [Int]() // RH: Relative humidity: relative humidity in percent
     var GUST        = [Double]() // GUST: Wind gusts (knots)
-    var SLP         = [Int]() // SLP: sea level pressure
+    var SLP         = [Double?]() // SLP: sea level pressure
     var FLHGT       = [Int]() //  FLHGT: Freezing Level height in meters (0 degree isoterm)
     var APCP        = [Double?]() //  APCP: Precip. (mm/3h)
     var APCP1       = [Double?]() //  APCP: Precip. (mm/1h)
@@ -124,7 +124,7 @@ public class WForecast: Object, Mappable {
         LCDC = optionalIntegers(map?["LCDC"])
         RH = map?["RH"] as? [Int] ?? []
         GUST = map?["GUST"] as? [Double] ?? []
-        SLP = map?["SLP"] as? [Int] ?? []
+        SLP = optionalDoubles(map?["SLP"])
         FLHGT = map?["FLHGT"] as? [Int] ?? []
         APCP = optionalDoubles(map?["APCP"])
         APCP1 = optionalDoubles(map?["APCP1"])
@@ -494,7 +494,7 @@ public extension WForecast {
         return nil
     }
     
-    func seaLevelPressure(hour: Int) -> Int? {
+    func seaLevelPressure(hour: Int) -> Double? {
         if SLP.count > 0 && hour < SLP.count {
             return SLP[hour]
         }
