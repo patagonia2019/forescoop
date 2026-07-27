@@ -13,6 +13,7 @@ import SwiftUI
 public struct WindguruForecastGridView: View {
     public let forecast: SpotForecast
     public let coordinateLocationName: String?
+    public let selectedHour: String?
     @Binding public var temperatureUnit: TemperatureUnit
     @Binding public var windSpeedUnit: WindSpeedUnit
     @Binding public var waveHeightUnit: WaveHeightUnit
@@ -22,6 +23,7 @@ public struct WindguruForecastGridView: View {
     @Binding public var showsWindDirectionArrow: Bool
     private let onSelectLocation: () -> Void
     private let onSelectModel: () -> Void
+    private let onSelectHour: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var areRowTitlesCollapsed = false
@@ -29,6 +31,7 @@ public struct WindguruForecastGridView: View {
     public init(
         forecast: SpotForecast,
         coordinateLocationName: String? = nil,
+        selectedHour: String? = nil,
         temperatureUnit: Binding<TemperatureUnit>,
         windSpeedUnit: Binding<WindSpeedUnit>,
         waveHeightUnit: Binding<WaveHeightUnit>,
@@ -37,10 +40,12 @@ public struct WindguruForecastGridView: View {
         freezingLevelUnit: Binding<FreezingLevelUnit>,
         showsWindDirectionArrow: Binding<Bool>,
         onSelectLocation: @escaping () -> Void,
-        onSelectModel: @escaping () -> Void
+        onSelectModel: @escaping () -> Void,
+        onSelectHour: @escaping (String) -> Void
     ) {
         self.forecast = forecast
         self.coordinateLocationName = coordinateLocationName
+        self.selectedHour = selectedHour
         _temperatureUnit = temperatureUnit
         _windSpeedUnit = windSpeedUnit
         _waveHeightUnit = waveHeightUnit
@@ -50,6 +55,7 @@ public struct WindguruForecastGridView: View {
         _showsWindDirectionArrow = showsWindDirectionArrow
         self.onSelectLocation = onSelectLocation
         self.onSelectModel = onSelectModel
+        self.onSelectHour = onSelectHour
     }
 
     public var body: some View {
@@ -62,9 +68,20 @@ public struct WindguruForecastGridView: View {
                     }
 
                     ScrollView(.horizontal) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            timeHeader
-                            gridRows(in: .values)
+                        ScrollViewReader { proxy in
+                            VStack(alignment: .leading, spacing: 0) {
+                                timeHeader
+                                gridRows(in: .values)
+                            }
+                            .overlay(alignment: .topLeading) {
+                                selectedHourOutline
+                            }
+                            .onAppear {
+                                scrollToSelectedHour(with: proxy)
+                            }
+                            .onChange(of: selectedHour) { _, _ in
+                                scrollToSelectedHour(with: proxy)
+                            }
                         }
                     }
                     .onScrollGeometryChange(for: CGFloat.self) { geometry in
@@ -114,12 +131,18 @@ public struct WindguruForecastGridView: View {
     private var timeHeader: some View {
         HStack(spacing: 0) {
             ForEach(hours, id: \.self) { hour in
-                VStack(spacing: 2) {
-                    Text(day(for: hour)).font(.caption2)
-                    Text(time(for: hour)).font(.caption.bold())
+                Button {
+                    onSelectHour(hour)
+                } label: {
+                    VStack(spacing: 2) {
+                        Text(day(for: hour)).font(.caption2)
+                        Text(time(for: hour)).font(.caption.bold())
+                    }
+                    .frame(width: 56, height: 48)
+                    .background(Color.secondary.opacity(0.12))
                 }
-                .frame(width: 56, height: 48)
-                .background(Color.secondary.opacity(0.12))
+                .buttonStyle(.plain)
+                .foregroundStyle(.blue)
             }
         }
     }
@@ -164,13 +187,19 @@ public struct WindguruForecastGridView: View {
             HStack(spacing: 0) {
                 ForEach(hours, id: \.self) { hour in
                     let cell = values(hour)
-                    Text(cell.text)
-                        .font(cell.isDirection ? .body : .caption)
-                        .monospacedDigit()
-                        .frame(width: 56, height: 30)
-                        .background(background(cell))
-                        .overlay(alignment: .bottom) { Divider().opacity(0.3) }
+                    Button {
+                        onSelectHour(hour)
+                    } label: {
+                        Text(cell.text)
+                            .font(cell.isDirection ? .body : .caption)
+                            .monospacedDigit()
+                            .frame(width: 56, height: 30)
+                            .background(background(cell))
+                            .overlay(alignment: .bottom) { Divider().opacity(0.3) }
                 }
+                .buttonStyle(.plain)
+                .id(hour)
+            }
             }
         }
     }
@@ -225,6 +254,19 @@ public struct WindguruForecastGridView: View {
     private var showsRowTitles: Bool { !areRowTitlesCollapsed }
     private var rowLabelWidth: CGFloat { showsRowTitles ? 150 : 60 }
 
+    @ViewBuilder private var selectedHourOutline: some View {
+        GeometryReader { geometry in
+            if let selectedHour,
+               let index = hours.firstIndex(of: selectedHour) {
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(.blue, lineWidth: 2)
+                    .frame(width: 56, height: geometry.size.height)
+                    .offset(x: CGFloat(index) * 56)
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
     private func day(for hour: String) -> String {
         guard let date = forecast.forecastDate(hour: hour) else { return "" }
         return date.formatted(.dateTime.weekday(.abbreviated).day())
@@ -235,12 +277,19 @@ public struct WindguruForecastGridView: View {
         let formatter = DateFormatter()
         formatter.locale = .autoupdatingCurrent
         formatter.setLocalizedDateFormatFromTemplate("j")
-        return formatter.string(from: date)
+        return formatter.string(from: date) + "h"
     }
 
     private func windSpeed(_ hour: String) -> GridCell {
         guard let value = weather?.windSpeed(hh: hour), let converted = Knots(value).value(in: windSpeedUnit) else { return .empty }
         return GridCell(value: converted, text: number(converted))
+    }
+
+    private func scrollToSelectedHour(with proxy: ScrollViewProxy) {
+        guard let selectedHour else { return }
+        DispatchQueue.main.async {
+            proxy.scrollTo(selectedHour, anchor: .center)
+        }
     }
 
     private func windGusts(_ hour: String) -> GridCell {

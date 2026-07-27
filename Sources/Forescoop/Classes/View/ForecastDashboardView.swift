@@ -288,6 +288,7 @@ public struct ForecastDashboardView: View {
                     WindguruForecastGridView(
                         forecast: forecast,
                         coordinateLocationName: coordinateLocationName,
+                        selectedHour: selectedHour,
                         temperatureUnit: $temperatureUnit,
                         windSpeedUnit: $windSpeedUnit,
                         waveHeightUnit: $waveHeightUnit,
@@ -302,6 +303,10 @@ public struct ForecastDashboardView: View {
                         onSelectModel: {
                             showsForecastGrid = false
                             showsModelPicker = true
+                        },
+                        onSelectHour: { hour in
+                            selectedHour = hour
+                            showsForecastGrid = false
                         }
                     )
                 }
