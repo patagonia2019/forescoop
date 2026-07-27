@@ -28,6 +28,10 @@ private func optionalDoubles(_ value: Any?) -> [Double?] {
     } ?? []
 }
 
+private func doubles(_ value: Any?) -> [Double] {
+    optionalDoubles(value).compactMap { $0 }
+}
+
 /*
  *  WForecast
  *
@@ -123,13 +127,13 @@ public class WForecast: Object, Mappable {
         MCDC = optionalIntegers(map?["MCDC"])
         LCDC = optionalIntegers(map?["LCDC"])
         RH = map?["RH"] as? [Int] ?? []
-        GUST = map?["GUST"] as? [Double] ?? []
+        GUST = doubles(map?["GUST"])
         SLP = optionalDoubles(map?["SLP"])
         FLHGT = map?["FLHGT"] as? [Int] ?? []
         APCP = optionalDoubles(map?["APCP"])
         APCP1 = optionalDoubles(map?["APCP1"])
-        WINDSPD = map?["WINDSPD"] as? [Double] ?? []
-        windDirection = (map?["WINDDIR"]as? [Int])?.compactMap {WindDirection(value: $0)} ?? []
+        WINDSPD = doubles(map?["WINDSPD"])
+        windDirection = optionalIntegers(map?["WINDDIR"]).compactMap { $0.flatMap(WindDirection.init(value:)) }
         SMERN = map?["SMERN"] as? [Int] ?? []
         SMER = map?["SMER"] as? [Int] ?? []
         TMPE = map?["TMPE"] as? [Double] ?? []
