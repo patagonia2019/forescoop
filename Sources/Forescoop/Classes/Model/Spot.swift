@@ -82,7 +82,9 @@ public extension Spot {
     /// share a name, so keep it beside the name whenever it is available.
     var displayName: String {
         let title = name?.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let identifier, !identifier.isEmpty else { return title?.isEmpty == false ? title! : "Unknown spot" }
+        guard let identifier, !identifier.isEmpty, identifier != "0" else { return title?.isEmpty == false ? title! : "Unknown location" }
         return "\(title?.isEmpty == false ? title! : "Windguru spot") #\(identifier)"
     }
+
+    var isCoordinateLocation: Bool { identifier == "0" }
 }

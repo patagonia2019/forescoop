@@ -31,8 +31,14 @@ public struct SavedMapLocation: Codable, Identifiable, Sendable {
 
     public var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }
     public var coordinateText: String { "\(latitude.formatted(.number.precision(.fractionLength(4)))), \(longitude.formatted(.number.precision(.fractionLength(4))))" }
-    public var displayName: String { spotID.map { "\(name) #\($0)" } ?? name }
-    public var detailText: String { placeDescription?.isEmpty == false ? placeDescription! : coordinateText }
+    public var displayName: String {
+        guard let spotID, spotID != "0" else { return name }
+        return "\(name) #\(spotID)"
+    }
+    public var detailText: String {
+        guard let spotID, spotID != "0" else { return coordinateText }
+        return placeDescription?.isEmpty == false ? placeDescription! : coordinateText
+    }
     public var isPrimaryLocation: Bool { spotID == SavedMapLocationStore.primarySpotID }
 }
 

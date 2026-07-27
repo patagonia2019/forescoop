@@ -27,7 +27,7 @@ public struct WindguruSpotPicker: View {
     let onSpotSelected: (SpotOwner) -> Void
     let onSpotIDSelected: (String) -> Void
     let onFavoriteSelected: (SpotOwner) -> Void
-    let onCoordinateSelected: (CLLocationCoordinate2D) -> Void
+    let onCoordinateSelected: (CLLocationCoordinate2D, String?) -> Void
     let onFavoriteAdded: () -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -55,7 +55,7 @@ public struct WindguruSpotPicker: View {
         onSpotSelected: @escaping (SpotOwner) -> Void,
         onSpotIDSelected: @escaping (String) -> Void = { _ in },
         onFavoriteSelected: @escaping (SpotOwner) -> Void = { _ in },
-        onCoordinateSelected: @escaping (CLLocationCoordinate2D) -> Void,
+        onCoordinateSelected: @escaping (CLLocationCoordinate2D, String?) -> Void,
         purpose: Purpose = .chooseLocation,
         onFavoriteAdded: @escaping () -> Void = {}
     ) {
@@ -251,7 +251,7 @@ public struct WindguruSpotPicker: View {
     private func savedLocationRow(_ location: SavedMapLocation) -> some View {
         HStack(spacing: 12) {
             Button {
-                Task { await selectMapCoordinate(location.coordinate) }
+                selectSavedLocation(location)
             } label: {
                 Label {
                     VStack(alignment: .leading) {
@@ -374,7 +374,7 @@ public struct WindguruSpotPicker: View {
             if purpose == .chooseLocation, isProUser,
                !username.isEmpty,
                WindguruCredentialStore.password(for: username) != nil {
-                onCoordinateSelected(location.coordinate)
+                onCoordinateSelected(location.coordinate, nil)
                 return
             }
             guard let searchTerm = try await searchTerm(for: location) else {
@@ -443,11 +443,23 @@ public struct WindguruSpotPicker: View {
     }
 
     @MainActor
+    private func selectSavedLocation(_ location: SavedMapLocation) {
+        if let spotID = location.spotID, spotID != "0" {
+            onSpotIDSelected(spotID)
+        } else {
+            onCoordinateSelected(
+                location.coordinate,
+                location.placeDescription?.isEmpty == false ? location.placeDescription : location.name
+            )
+        }
+    }
+
+    @MainActor
     private func selectMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
         if purpose == .chooseLocation, isProUser,
            !username.isEmpty,
            WindguruCredentialStore.password(for: username) != nil {
-            onCoordinateSelected(coordinate)
+            onCoordinateSelected(coordinate, nil)
             return
         }
         isLoading = true
@@ -487,11 +499,12 @@ public struct WindguruSpotPicker: View {
         } catch {
             // The coordinate remains usable even if a public spot cannot be resolved.
         }
+        let isCoordinateOnly = spotID == nil || spotID == "0"
         appendSavedLocation(SavedMapLocation(
-            name: name,
+            name: isCoordinateOnly ? (resolvedPlaceDescription ?? name) : name,
             coordinate: savedCoordinate,
-            spotID: spotID,
-            placeDescription: resolvedPlaceDescription
+            spotID: isCoordinateOnly ? nil : spotID,
+            placeDescription: isCoordinateOnly ? nil : resolvedPlaceDescription
         ))
     }
 
@@ -706,7 +719,7 @@ private enum DeviceLocationError: LocalizedError {
         forecastService: ForecastWindguruMockup(),
         username: "",
         onSpotSelected: { _ in },
-        onCoordinateSelected: { _ in }
+        onCoordinateSelected: { _, _ in }
     )
 }
 

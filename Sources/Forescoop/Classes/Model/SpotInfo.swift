@@ -144,6 +144,14 @@ public class SpotInfo: Spot {
 }
 
 public extension SpotInfo {
+    var coordinateText: String {
+        "\(latitude.formatted(.number.precision(.fractionLength(4)))), \(longitude.formatted(.number.precision(.fractionLength(4))))"
+    }
+
+    var coordinateSummary: String {
+        "\(coordinateText) · \(altitude) m"
+    }
+
     func elapseContainsTime(date: Date) -> Bool {
         elapse?.containsTime(date: date) == true
     }

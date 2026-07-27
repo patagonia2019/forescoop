@@ -90,7 +90,7 @@ public struct WindguruFavoritesView: View {
                 username: username,
                 isProUser: isProUser,
                 onSpotSelected: { _ in },
-                onCoordinateSelected: { _ in },
+                onCoordinateSelected: { _, _ in },
                 purpose: .addFavorite,
                 onFavoriteAdded: {
                     Task { await loadFavorites() }

@@ -29,6 +29,7 @@ public struct ForecastDashboardView: View {
     @AppStorage("windguruUsername") private var windguruUsername = ""
     @AppStorage("windguruIsProUser") private var windguruIsProUser = false
     @State private var forecast: SpotForecast?
+    @State private var coordinateLocationName: String?
     @State private var errorMessage: String?
     @State private var isLoading = false
     @State private var selectedHour: String?
@@ -135,6 +136,7 @@ public struct ForecastDashboardView: View {
         selectedModelIDsBySpot = [:]
         selectedHour = nil
         forecast = nil
+        coordinateLocationName = nil
         errorMessage = nil
         savedMapLocations = []
         selectedMapLocationID = nil
@@ -161,6 +163,7 @@ public struct ForecastDashboardView: View {
         selectedModelIDsBySpot = [:]
         selectedHour = nil
         forecast = nil
+        coordinateLocationName = nil
         errorMessage = nil
         showsLogin = false
         Task { await loadPreferredForecast() }
@@ -219,9 +222,9 @@ public struct ForecastDashboardView: View {
                         showsSpotPicker = false
                         Task { await loadForecast(spotId: spotID, persistSelection: false) }
                     },
-                    onCoordinateSelected: { coordinate in
+                    onCoordinateSelected: { coordinate, locationName in
                         showsSpotPicker = false
-                        Task { await loadForecast(coordinate: coordinate) }
+                        Task { await loadForecast(coordinate: coordinate, locationName: locationName) }
                     }
                 )
             }
@@ -280,7 +283,7 @@ public struct ForecastDashboardView: View {
 
                 if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true })
                             .frame(maxWidth: .infinity)
 
                         VStack(alignment: .leading, spacing: 28) {
@@ -293,7 +296,7 @@ public struct ForecastDashboardView: View {
                     iPadLocationWorkspace()
                 } else {
                     VStack(spacing: 24) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true })
                         ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow)
                         ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
                     }
@@ -403,13 +406,18 @@ public struct ForecastDashboardView: View {
 
     @MainActor
     private func loadSavedLocation(_ location: SavedMapLocation) async {
-        if let spotID = location.spotID {
+        if let spotID = location.spotID, spotID != "0" {
             await loadForecast(spotId: spotID)
             return
         }
 
-        if !windguruUsername.isEmpty, WindguruCredentialStore.password(for: windguruUsername) != nil {
-            await loadForecast(coordinate: location.coordinate)
+        if isProUser {
+            await loadForecast(
+                coordinate: location.coordinate,
+                locationName: location.placeDescription?.isEmpty == false
+                    ? location.placeDescription
+                    : location.name
+            )
             return
         }
 
@@ -496,6 +504,7 @@ public struct ForecastDashboardView: View {
         modelIDs: [String]? = nil,
         persistSelection: Bool = true
     ) async {
+        coordinateLocationName = nil
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -595,13 +604,17 @@ public struct ForecastDashboardView: View {
     }
 
     @MainActor
-    private func loadForecast(coordinate: CLLocationCoordinate2D) async {
+    private func loadForecast(
+        coordinate: CLLocationCoordinate2D,
+        locationName: String? = nil
+    ) async {
         guard let password = WindguruCredentialStore.password(for: windguruUsername), !windguruUsername.isEmpty else {
             errorMessage = "Sign in with Windguru PRO to load an exact map coordinate."
             return
         }
         isLoading = true
         errorMessage = nil
+        coordinateLocationName = locationName
         defer { isLoading = false }
         do {
             let modelIDs = try await coordinateModelLoader(coordinate.latitude, coordinate.longitude)

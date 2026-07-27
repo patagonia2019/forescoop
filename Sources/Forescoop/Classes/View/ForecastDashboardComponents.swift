@@ -9,6 +9,7 @@ import SwiftUI
 public struct ForecastOverview: View {
     public let forecast: SpotForecast
     public let selectedHour: String?
+    public let coordinateLocationName: String?
     @Binding public var temperatureUnit: TemperatureUnit
     private let onSelectLocation: () -> Void
     private let onSelectModel: () -> Void
@@ -18,12 +19,14 @@ public struct ForecastOverview: View {
         forecast: SpotForecast,
         selectedHour: String?,
         temperatureUnit: Binding<TemperatureUnit>,
+        coordinateLocationName: String? = nil,
         modelInfoURL: URL = URL(string: "https://www.windguru.cz/help.php?sec=models")!,
         onSelectLocation: @escaping () -> Void,
         onSelectModel: @escaping () -> Void
     ) {
         self.forecast = forecast
         self.selectedHour = selectedHour
+        self.coordinateLocationName = coordinateLocationName
         _temperatureUnit = temperatureUnit
         self.modelInfoURL = modelInfoURL
         self.onSelectLocation = onSelectLocation
@@ -34,11 +37,17 @@ public struct ForecastOverview: View {
         VStack(spacing: 16) {
             VStack(spacing: 4) {
                 Button(action: onSelectLocation) {
-                    Label(forecast.displayName, systemImage: "mappin.and.ellipse")
+                    Label(locationName, systemImage: "mappin.and.ellipse")
                 }
                 .buttonStyle(.plain)
                 .font(.title.bold())
                 .foregroundColor(.blue)
+
+                if forecast.isCoordinateLocation {
+                    Text(forecast.coordinateSummary)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
 
                 HStack(spacing: 6) {
                     Button(action: onSelectModel) {
@@ -86,6 +95,15 @@ public struct ForecastOverview: View {
         let hour = selectedHour ?? forecast.currentForecastHour
         guard let value = forecast.forecast?.temperatureReal(hh: hour) ?? forecast.forecast?.temperature(hh: hour) else { return "—" }
         return "\(format(Temperature(celsius: value).value(in: temperatureUnit)))\(temperatureUnit.label)"
+    }
+
+    private var locationName: String {
+        guard forecast.isCoordinateLocation,
+              let coordinateLocationName,
+              !coordinateLocationName.isEmpty else {
+            return forecast.displayName
+        }
+        return coordinateLocationName
     }
 }
 
