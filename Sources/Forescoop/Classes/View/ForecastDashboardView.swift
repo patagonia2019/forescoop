@@ -42,6 +42,7 @@ public struct ForecastDashboardView: View {
     @State private var showsSpotPicker = false
     @State private var showsModelPicker = false
     @State private var showsLogin = false
+    @State private var showsFavorites = false
     @State private var selectedModelIDs: [String] = []
     @State private var usableModelIDs: [String] = []
     @State private var displayedForecastSpotID: String?
@@ -103,6 +104,10 @@ public struct ForecastDashboardView: View {
                 Button("Profile", systemImage: "person.crop.circle") {
                     showsLogin = true
                 }
+
+                Button("Favorites", systemImage: "star") {
+                    showsFavorites = true
+                }
             }
 
             if !windguruUsername.isEmpty {
@@ -144,6 +149,7 @@ public struct ForecastDashboardView: View {
 
         showsModelPicker = false
         showsLogin = false
+        showsFavorites = false
         Task { await loadForecast() }
     }
 
@@ -252,6 +258,12 @@ public struct ForecastDashboardView: View {
                         startSession(username: username, isProUser: isProUser)
                     },
                     onProfileLoaded: applyUserPreferences
+                )
+            }
+            .sheet(isPresented: $showsFavorites) {
+                WindguruFavoritesView(
+                    forecastService: forecastService,
+                    username: windguruUsername
                 )
             }
         }

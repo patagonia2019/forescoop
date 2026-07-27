@@ -9,21 +9,7 @@ import SwiftUI
 
 public struct WindguruProfileView: View {
     public let user: User
-    private let forecastService: ForecastWindguruProtocol
-    private let username: String
-    private let password: String
     private let onSignOut: () -> Void
-    private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
-    private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
-
-    @State private var favorites: [SpotOwner] = []
-    @State private var isLoadingFavorites = false
-    @State private var favoritesErrorMessage: String?
-    @State private var favoriteIDsBeingRemoved = Set<String>()
-    @State private var showsAddFavorite = false
-#if !os(macOS)
-    @State private var editMode: EditMode = .inactive
-#endif
 
     public init(
         user: User,
@@ -33,14 +19,10 @@ public struct WindguruProfileView: View {
         onSignOut: @escaping () -> Void = {}
     ) {
         self.user = user
-        self.forecastService = forecastService
-        self.username = username ?? user.username ?? ""
-        self.password = password ?? WindguruCredentialStore.password(for: username ?? user.username ?? "") ?? ""
+        _ = forecastService
+        _ = username
+        _ = password
         self.onSignOut = onSignOut
-        loadFavoriteSpots = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
-        removeFavoriteSpot = { spotID, username, password in
-            try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
-        }
     }
 
     public var body: some View {
@@ -85,115 +67,12 @@ public struct WindguruProfileView: View {
                 }
             }
 
-            Section("Favorites") {
-                Button("Add Favorite", systemImage: "star.badge.plus") {
-                    showsAddFavorite = true
-                }
-
-                if isLoadingFavorites {
-                    ProgressView("Loading favorites…")
-                } else if let favoritesErrorMessage {
-                    Text(favoritesErrorMessage)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                } else if favorites.isEmpty {
-                    Text("No favorite spots")
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(favorites.indices, id: \.self) { index in
-                        favoriteRow(favorites[index])
-                    }
-#if !os(macOS)
-                    .onDelete(perform: removeFavorites)
-#endif
-                }
-            }
         }
 #if os(macOS)
         .listStyle(.inset)
 #else
         .listStyle(.insetGrouped)
-        .environment(\.editMode, $editMode)
-        .toolbar {
-            ToolbarItem(placement: .automatic) {
-                Button(editMode.isEditing ? "Done" : "Edit") {
-                    editMode = editMode.isEditing ? .inactive : .active
-                }
-            }
-        }
 #endif
-        .task { await loadFavorites() }
-        .sheet(isPresented: $showsAddFavorite) {
-            WindguruSpotPicker(
-                forecastService: forecastService,
-                username: username,
-                onSpotSelected: { _ in },
-                onCoordinateSelected: { _ in },
-                purpose: .addFavorite,
-                onFavoriteAdded: {
-                    Task { await loadFavorites() }
-                }
-            )
-        }
-    }
-
-    private func favoriteRow(_ spot: SpotOwner) -> some View {
-        Label {
-            VStack(alignment: .leading) {
-                Text(spot.name ?? "Unknown spot")
-                Text(spot.countryName ?? "")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        } icon: {
-            Image(systemName: "star.fill")
-        }
-        .opacity(favoriteIDsBeingRemoved.contains(spot.identifier ?? "") ? 0.45 : 1)
-        .contextMenu {
-            Button("Remove from Favorites", systemImage: "star.slash", role: .destructive) {
-                Task { await removeFavorite(spot) }
-            }
-        }
-#if !os(macOS)
-        .swipeActions {
-            Button("Remove", systemImage: "star.slash", role: .destructive) {
-                Task { await removeFavorite(spot) }
-            }
-        }
-#endif
-    }
-
-    @MainActor
-    private func loadFavorites() async {
-        guard !username.isEmpty, !password.isEmpty else { return }
-        isLoadingFavorites = true
-        favoritesErrorMessage = nil
-        defer { isLoadingFavorites = false }
-        do {
-            favorites = try await loadFavoriteSpots(username, password)?.allSpots ?? []
-        } catch {
-            favoritesErrorMessage = "Favorites are unavailable right now."
-        }
-    }
-
-    private func removeFavorites(at offsets: IndexSet) {
-        let spotsToRemove = offsets.map { favorites[$0] }
-        for spot in spotsToRemove {
-            Task { await removeFavorite(spot) }
-        }
-    }
-
-    @MainActor
-    private func removeFavorite(_ spot: SpotOwner) async {
-        guard let spotID = spot.identifier else { return }
-        favoriteIDsBeingRemoved.insert(spotID)
-        defer { favoriteIDsBeingRemoved.remove(spotID) }
-        do {
-            _ = try await removeFavoriteSpot(spotID, username, password)
-            favorites.removeAll { $0.identifier == spotID }
-        } catch {
-            favoritesErrorMessage = "Couldn’t remove this favorite."
-        }
     }
 
     private func unitLabel(_ value: String?, fallback: String) -> String {
