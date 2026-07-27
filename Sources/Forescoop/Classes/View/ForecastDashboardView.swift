@@ -19,6 +19,7 @@ public struct ForecastDashboardView: View {
     private let coordinateForecastLoader: @MainActor (Double, Double, String?, String, String) async throws -> WSpotForecast?
     private let spotSearch: @MainActor (String) async throws -> SpotResult?
     private let profileLoader: @MainActor (String, String) async throws -> User?
+    private let favoriteSpotsLoader: @MainActor (String, String) async throws -> SpotResult?
     private let spotInfoLoader: @MainActor (String) async throws -> SpotInfo?
     private let coordinateModelLoader: @MainActor (Double, Double) async throws -> [String]
 #if !os(macOS)
@@ -72,6 +73,7 @@ public struct ForecastDashboardView: View {
         }
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
         profileLoader = { try await forecastService.login(withUsername: $0, password: $1) }
+        favoriteSpotsLoader = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
         spotInfoLoader = { try await forecastService.spotInfo(bySpotId: $0) }
         coordinateModelLoader = { latitude, longitude in
             let response = try await forecastService.models(bylat: String(latitude), lon: String(longitude))
@@ -167,7 +169,7 @@ public struct ForecastDashboardView: View {
         forecast = nil
         errorMessage = nil
         showsLogin = false
-        Task { await loadForecast(spotId: selectedSpotID, modelIDs: []) }
+        Task { await loadPreferredForecast() }
     }
 
     public var body: some View {
@@ -202,7 +204,7 @@ public struct ForecastDashboardView: View {
             }
             .task {
                 await loadUserPreferences()
-                await loadForecast()
+                await loadPreferredForecast()
             }
             .sheet(isPresented: $showsSpotPicker, onDismiss: refreshSavedMapLocations) {
                 WindguruSpotPicker(
@@ -462,6 +464,19 @@ public struct ForecastDashboardView: View {
         if let unit = WaveHeightUnit(windguruPreference: user.waveUnits) {
             waveHeightUnit = unit
         }
+    }
+
+    @MainActor
+    private func loadPreferredForecast() async {
+        let preferredSpotID: String
+        if !windguruUsername.isEmpty,
+           let password = WindguruCredentialStore.password(for: windguruUsername),
+           let favoriteSpotID = try? await favoriteSpotsLoader(windguruUsername, password)?.allSpots.first?.identifier {
+            preferredSpotID = favoriteSpotID
+        } else {
+            preferredSpotID = "64141"
+        }
+        await loadForecast(spotId: preferredSpotID, modelIDs: [])
     }
 
     @MainActor
