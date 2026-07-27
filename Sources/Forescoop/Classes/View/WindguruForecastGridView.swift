@@ -25,7 +25,6 @@ public struct WindguruForecastGridView: View {
     private let onSelectModel: () -> Void
     private let onSelectHour: (String) -> Void
 
-    @Environment(\.dismiss) private var dismiss
     @State private var areRowTitlesCollapsed = false
 
     public init(
@@ -59,51 +58,46 @@ public struct WindguruForecastGridView: View {
     }
 
     public var body: some View {
-        NavigationStack {
-            ScrollView(.vertical) {
-                HStack(alignment: .top, spacing: 0) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        labelHeader
-                        gridRows(in: .labels)
-                    }
+        ScrollView(.vertical) {
+            HStack(alignment: .top, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
+                    labelHeader
+                    gridRows(in: .labels)
+                }
 
-                    ScrollView(.horizontal) {
-                        ScrollViewReader { proxy in
-                            VStack(alignment: .leading, spacing: 0) {
-                                timeHeader
-                                gridRows(in: .values)
-                            }
-                            .overlay(alignment: .topLeading) {
-                                selectedHourOutline
-                            }
-                            .onAppear {
-                                scrollToSelectedHour(with: proxy)
-                            }
-                            .onChange(of: selectedHour) { _, _ in
-                                scrollToSelectedHour(with: proxy)
-                            }
+                ScrollView(.horizontal) {
+                    ScrollViewReader { proxy in
+                        VStack(alignment: .leading, spacing: 0) {
+                            timeHeader
+                            gridRows(in: .values)
                         }
-                    }
-                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                        geometry.contentOffset.x
-                    } action: { _, offset in
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            areRowTitlesCollapsed = offset > 8
+                        .overlay(alignment: .topLeading) {
+                            selectedHourOutline
+                        }
+                        .onAppear {
+                            scrollToSelectedHour(with: proxy)
+                        }
+                        .onChange(of: selectedHour) { _, _ in
+                            scrollToSelectedHour(with: proxy)
                         }
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom)
+                .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.contentOffset.x
+                } action: { _, offset in
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        areRowTitlesCollapsed = offset > 8
+                    }
+                }
             }
-            .navigationTitle(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName))
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
-                }
-                ToolbarItemGroup(placement: .primaryAction) {
-                    Button("Choose location", systemImage: "mappin.and.ellipse", action: onSelectLocation)
-                    Button("Forecast model", systemImage: "cpu", action: onSelectModel)
-                }
+            .padding(.horizontal, 2)
+            .padding(.bottom)
+        }
+        .navigationTitle(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName))
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button("Choose location", systemImage: "mappin.and.ellipse", action: onSelectLocation)
+                Button("Forecast model", systemImage: "cpu", action: onSelectModel)
             }
         }
     }
@@ -125,7 +119,7 @@ public struct WindguruForecastGridView: View {
             .frame(width: rowLabelWidth, height: 48, alignment: .leading)
             .font(.caption.bold())
             .padding(.horizontal, 8)
-            .background(.thinMaterial)
+            .background(gridLabelBackground)
     }
 
     private var timeHeader: some View {
@@ -160,7 +154,7 @@ public struct WindguruForecastGridView: View {
         gridRow(label: unitLabel("Freezing level (\(freezingLevelUnit.label))", compactLabel: freezingLevelUnit.label, icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, in: column)
         gridRow(label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, background: cloudColor, in: column)
         gridRow(label: unitLabel("Precipitation (\(precipitationUnit.label))", compactLabel: precipitationUnit.label, icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, background: precipitationColor, in: column)
-        gridRow(label: unitLabel("Sea level pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, in: column)
+        gridRow(label: unitLabel("Pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, in: column)
         gridRow(label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, background: humidityColor, in: column)
         if hasWaveData {
             Divider()
@@ -182,7 +176,7 @@ public struct WindguruForecastGridView: View {
                 .font(.caption)
                 .frame(width: rowLabelWidth, height: 30, alignment: showsRowTitles ? .leading : .center)
                 .padding(.horizontal, 8)
-                .background(.thinMaterial)
+                .background(gridLabelBackground)
         case .values:
             HStack(spacing: 0) {
                 ForEach(hours, id: \.self) { hour in
@@ -252,7 +246,8 @@ public struct WindguruForecastGridView: View {
     }
 
     private var showsRowTitles: Bool { !areRowTitlesCollapsed }
-    private var rowLabelWidth: CGFloat { showsRowTitles ? 150 : 60 }
+    private var rowLabelWidth: CGFloat { showsRowTitles ? 126 : 46 }
+    private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
     @ViewBuilder private var selectedHourOutline: some View {
         GeometryReader { geometry in

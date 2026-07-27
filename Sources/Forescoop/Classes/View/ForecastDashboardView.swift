@@ -99,8 +99,14 @@ public struct ForecastDashboardView: View {
 
     private var accountMenu: some View {
         Menu {
-            Button("Forecast Grid", systemImage: "tablecells") {
-                showsForecastGrid = true
+            if showsForecastGrid {
+                Button("Forecast Dashboard", systemImage: "rectangle.3.group") {
+                    showsForecastGrid = false
+                }
+            } else {
+                Button("Forecast Grid", systemImage: "tablecells") {
+                    showsForecastGrid = true
+                }
             }
 
             Divider()
@@ -181,7 +187,16 @@ public struct ForecastDashboardView: View {
         NavigationStack {
             Group {
                 if let forecast {
-                    forecastContent(for: forecast)
+                    Group {
+                        if showsForecastGrid {
+                            forecastGridContent(for: forecast)
+                        } else {
+                            forecastContent(for: forecast)
+                        }
+                    }
+                    .background {
+                        weatherBackground(for: forecast)
+                    }
                 } else if isLoading {
                     ProgressView("Loading forecast…")
                 } else if let errorMessage {
@@ -283,34 +298,6 @@ public struct ForecastDashboardView: View {
                     }
                 )
             }
-            .sheet(isPresented: $showsForecastGrid) {
-                if let forecast {
-                    WindguruForecastGridView(
-                        forecast: forecast,
-                        coordinateLocationName: coordinateLocationName,
-                        selectedHour: selectedHour,
-                        temperatureUnit: $temperatureUnit,
-                        windSpeedUnit: $windSpeedUnit,
-                        waveHeightUnit: $waveHeightUnit,
-                        pressureUnit: $pressureUnit,
-                        precipitationUnit: $precipitationUnit,
-                        freezingLevelUnit: $freezingLevelUnit,
-                        showsWindDirectionArrow: $showsWindDirectionArrow,
-                        onSelectLocation: {
-                            showsForecastGrid = false
-                            showsSpotPicker = true
-                        },
-                        onSelectModel: {
-                            showsForecastGrid = false
-                            showsModelPicker = true
-                        },
-                        onSelectHour: { hour in
-                            selectedHour = hour
-                            showsForecastGrid = false
-                        }
-                    )
-                }
-            }
 #if !os(tvOS)
             .sheet(isPresented: $showsForecastMap) {
                 MapLocationPicker(
@@ -355,26 +342,48 @@ public struct ForecastDashboardView: View {
             .frame(maxWidth: 1_100)
             .padding()
         }
-        .background {
-            let hour = selectedHour ?? forecast.currentForecastHour
-            AnimatedWeatherBackground(
-                symbolNames: forecast.weatherSymbolNames(hour: hour),
-                precipitationMillimeters: forecast.forecast?.precipitation(hh: hour)
-                    ?? forecast.forecast?.precipitation1(hh: hour)
-                    ?? 0,
-                windSpeedKnots: forecast.forecast?.windSpeed(hh: hour) ?? 0,
-                windDirectionDegrees: forecast.forecast?.windDirection(hh: hour),
-                windGustKnots: forecast.forecast?.windGustsKnots(hh: hour) ?? 0,
-                cloudCoverPercent: forecast.forecast?.cloudCoverTotal(hh: hour) ?? 0,
-                temperatureCelsius: forecast.forecast?.temperatureReal(hh: hour)
-                    ?? forecast.forecast?.temperature(hh: hour)
-                    ?? 0,
-                humidityPercent: forecast.forecast?.relativeHumidity(hh: hour) ?? 0,
-                pressureHectopascals: forecast.forecast?.seaLevelPressure(hh: hour),
-                forecastDate: forecast.forecastDate(hour: hour) ?? Date()
-            )
-                .ignoresSafeArea()
-        }
+    }
+
+    private func weatherBackground(for forecast: SpotForecast) -> some View {
+        let hour = selectedHour ?? forecast.currentForecastHour
+        return AnimatedWeatherBackground(
+            symbolNames: forecast.weatherSymbolNames(hour: hour),
+            precipitationMillimeters: forecast.forecast?.precipitation(hh: hour)
+                ?? forecast.forecast?.precipitation1(hh: hour)
+                ?? 0,
+            windSpeedKnots: forecast.forecast?.windSpeed(hh: hour) ?? 0,
+            windDirectionDegrees: forecast.forecast?.windDirection(hh: hour),
+            windGustKnots: forecast.forecast?.windGustsKnots(hh: hour) ?? 0,
+            cloudCoverPercent: forecast.forecast?.cloudCoverTotal(hh: hour) ?? 0,
+            temperatureCelsius: forecast.forecast?.temperatureReal(hh: hour)
+                ?? forecast.forecast?.temperature(hh: hour)
+                ?? 0,
+            humidityPercent: forecast.forecast?.relativeHumidity(hh: hour) ?? 0,
+            pressureHectopascals: forecast.forecast?.seaLevelPressure(hh: hour),
+            forecastDate: forecast.forecastDate(hour: hour) ?? Date()
+        )
+        .ignoresSafeArea()
+    }
+
+    private func forecastGridContent(for forecast: SpotForecast) -> some View {
+        WindguruForecastGridView(
+            forecast: forecast,
+            coordinateLocationName: coordinateLocationName,
+            selectedHour: selectedHour,
+            temperatureUnit: $temperatureUnit,
+            windSpeedUnit: $windSpeedUnit,
+            waveHeightUnit: $waveHeightUnit,
+            pressureUnit: $pressureUnit,
+            precipitationUnit: $precipitationUnit,
+            freezingLevelUnit: $freezingLevelUnit,
+            showsWindDirectionArrow: $showsWindDirectionArrow,
+            onSelectLocation: { showsSpotPicker = true },
+            onSelectModel: { showsModelPicker = true },
+            onSelectHour: { hour in
+                selectedHour = hour
+                showsForecastGrid = false
+            }
+        )
     }
 
     private func iPadLocationWorkspace() -> some View {
