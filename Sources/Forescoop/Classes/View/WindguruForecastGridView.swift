@@ -30,7 +30,7 @@ public struct WindguruForecastGridView: View {
     private let onSelectHour: (String) -> Void
 
     @State private var areRowTitlesCollapsed = false
-    @State private var showsModelComparison = false
+    @State private var expandedComparisonRows = Set<String>()
 
     public init(
         forecast: SpotForecast,
@@ -114,13 +114,6 @@ public struct WindguruForecastGridView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("Choose location", systemImage: "mappin.and.ellipse", action: onSelectLocation)
-                Button(
-                    "Compare models",
-                    systemImage: showsModelComparison ? "rectangle.3.group.fill" : "rectangle.3.group"
-                ) {
-                    showsModelComparison.toggle()
-                }
-                .disabled(modelForecasts.count < 2)
             }
         }
     }
@@ -138,6 +131,14 @@ public struct WindguruForecastGridView: View {
     private func modelName(for source: SpotForecast) -> String {
         guard let modelID = source.model else { return source.forecast?.modelName ?? "Forecast model" }
         return modelNamesByID[modelID] ?? source.forecast?.modelName ?? "Model \(modelID)"
+    }
+
+    private func toggleComparisonRow(_ id: String) {
+        if expandedComparisonRows.contains(id) {
+            expandedComparisonRows.remove(id)
+        } else {
+            expandedComparisonRows.insert(id)
+        }
     }
 
     @ViewBuilder private var modelSelector: some View {
@@ -216,40 +217,54 @@ public struct WindguruForecastGridView: View {
     }
 
     @ViewBuilder private func gridRows(in column: GridColumn) -> some View {
-        gridRow(label: unitLabel("Wind speed (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windSpeed($0) }, comparisonValues: { windSpeed($1, source: $0) }, background: windColor, in: column)
-        gridRow(label: unitLabel("Wind gusts (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind.circle.fill", selection: $windSpeedUnit, unitLabel: \.label), values: { windGusts($0) }, comparisonValues: { windGusts($1, source: $0) }, background: gustColor, in: column)
-        gridRow(label: windDirectionLabel, values: { windDirection($0) }, comparisonValues: { windDirection($1, source: $0) }, in: column)
-        gridRow(label: unitLabel("Temperature (\(temperatureUnit.label))", compactLabel: temperatureUnit.label, icon: "thermometer.medium", selection: $temperatureUnit, unitLabel: \.label), values: { temperature($0) }, comparisonValues: { temperature($1, source: $0) }, background: temperatureColor, in: column)
-        gridRow(label: unitLabel("Freezing level (\(freezingLevelUnit.label))", compactLabel: freezingLevelUnit.label, icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, comparisonValues: { freezingLevel($1, source: $0) }, in: column)
-        gridRow(label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, comparisonValues: { cloudCover($1, source: $0) }, background: cloudColor, in: column)
-        gridRow(label: unitLabel("Precipitation (\(precipitationUnit.label))", compactLabel: precipitationUnit.label, icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, comparisonValues: { precipitation($1, source: $0) }, background: precipitationColor, in: column)
-        gridRow(label: unitLabel("Pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, in: column)
-        gridRow(label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, comparisonValues: { humidity($1, source: $0) }, background: humidityColor, in: column)
+        gridRow(id: "windSpeed", label: unitLabel("Wind speed (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windSpeed($0) }, comparisonValues: { windSpeed($1, source: $0) }, background: windColor, in: column)
+        gridRow(id: "windGusts", label: unitLabel("Wind gusts (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind.circle.fill", selection: $windSpeedUnit, unitLabel: \.label), values: { windGusts($0) }, comparisonValues: { windGusts($1, source: $0) }, background: gustColor, in: column)
+        gridRow(id: "windDirection", label: windDirectionLabel, values: { windDirection($0) }, comparisonValues: { windDirection($1, source: $0) }, in: column)
+        gridRow(id: "temperature", label: unitLabel("Temperature (\(temperatureUnit.label))", compactLabel: temperatureUnit.label, icon: "thermometer.medium", selection: $temperatureUnit, unitLabel: \.label), values: { temperature($0) }, comparisonValues: { temperature($1, source: $0) }, background: temperatureColor, in: column)
+        gridRow(id: "freezingLevel", label: unitLabel("Freezing level (\(freezingLevelUnit.label))", compactLabel: freezingLevelUnit.label, icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, comparisonValues: { freezingLevel($1, source: $0) }, in: column)
+        gridRow(id: "cloudCover", label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, comparisonValues: { cloudCover($1, source: $0) }, background: cloudColor, in: column)
+        gridRow(id: "precipitation", label: unitLabel("Precipitation (\(precipitationUnit.label))", compactLabel: precipitationUnit.label, icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, comparisonValues: { precipitation($1, source: $0) }, background: precipitationColor, in: column)
+        gridRow(id: "pressure", label: unitLabel("Pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, in: column)
+        gridRow(id: "humidity", label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, comparisonValues: { humidity($1, source: $0) }, background: humidityColor, in: column)
         if hasWaveData {
             Divider()
-            gridRow(label: unitLabel("Wave (\(waveHeightUnit.label))", compactLabel: waveHeightUnit.label, icon: "water.waves", selection: $waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, comparisonValues: { waveHeight($1, source: $0) }, background: waveColor, in: column)
-            gridRow(label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, comparisonValues: { wavePeriod($1, source: $0) }, in: column)
-            gridRow(label: rowLabel("Wave direction", icon: "location.north.line"), values: { waveDirection($0) }, comparisonValues: { waveDirection($1, source: $0) }, in: column)
+            gridRow(id: "waveHeight", label: unitLabel("Wave (\(waveHeightUnit.label))", compactLabel: waveHeightUnit.label, icon: "water.waves", selection: $waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, comparisonValues: { waveHeight($1, source: $0) }, background: waveColor, in: column)
+            gridRow(id: "wavePeriod", label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, comparisonValues: { wavePeriod($1, source: $0) }, in: column)
+            gridRow(id: "waveDirection", label: rowLabel("Wave direction", icon: "location.north.line"), values: { waveDirection($0) }, comparisonValues: { waveDirection($1, source: $0) }, in: column)
         }
     }
 
     @ViewBuilder private func gridRow<Label: View>(
+        id: String,
         label: Label,
         values: @escaping (String) -> GridCell,
         comparisonValues: @escaping (SpotForecast, String) -> GridCell,
         background: @escaping (GridCell) -> Color = { _ in .clear },
         in column: GridColumn
     ) -> some View {
+        let isExpanded = expandedComparisonRows.contains(id)
         switch column {
         case .labels:
             VStack(spacing: 0) {
-                label
-                    .font(.caption)
-                    .frame(width: rowLabelWidth, height: 30, alignment: showsRowTitles ? .leading : .center)
-                    .padding(.horizontal, 8)
-                    .background(gridLabelBackground)
+                HStack(spacing: 4) {
+                    label
+                    Spacer(minLength: 0)
+                    if modelForecasts.count > 1 {
+                        Button {
+                            toggleComparisonRow(id)
+                        } label: {
+                            Image(systemName: isExpanded ? "rectangle.compress.vertical" : "rectangle.expand.vertical")
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.blue)
+                    }
+                }
+                .font(.caption)
+                .frame(width: rowLabelWidth, height: 30, alignment: showsRowTitles ? .leading : .center)
+                .padding(.horizontal, 8)
+                .background(gridLabelBackground)
 
-                if showsModelComparison {
+                if isExpanded {
                     ForEach(Array(modelForecasts.enumerated()), id: \.offset) { _, source in
                         Text(modelName(for: source))
                             .font(.caption2)
@@ -263,7 +278,7 @@ public struct WindguruForecastGridView: View {
         case .values:
             VStack(spacing: 0) {
                 forecastValueRow(values: values, background: background)
-                if showsModelComparison {
+                if isExpanded {
                     ForEach(Array(modelForecasts.enumerated()), id: \.offset) { _, source in
                         forecastValueRow(
                             values: { comparisonValues(source, $0) },
@@ -323,7 +338,7 @@ public struct WindguruForecastGridView: View {
         Button {
             showsWindDirectionArrow.toggle()
         } label: {
-            rowLabel("Wind direction (\(showsWindDirectionArrow ? "→" : "N"))", compactTitle: showsWindDirectionArrow ? "→" : "N", icon: "location.north.line", isInteractive: true)
+            rowLabel("Wind direction (\(showsWindDirectionArrow ? "→" : "X"))", compactTitle: showsWindDirectionArrow ? "→" : "X", icon: "location.north.line", isInteractive: true)
         }
         .buttonStyle(.plain)
     }
