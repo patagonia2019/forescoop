@@ -16,11 +16,11 @@ import AppKit
 
 public struct CustomColor {
     
-    let info: String?
-    let alpha: Float
-    let red: Float
-    let green: Float
-    let blue: Float
+    public let info: String?
+    public let alpha: Float
+    public let red: Float
+    public let green: Float
+    public let blue: Float
     
     public var description : String {
         "\(type(of:self)): (\(info ?? "")\(alpha),\(red),\(green),\(blue))"

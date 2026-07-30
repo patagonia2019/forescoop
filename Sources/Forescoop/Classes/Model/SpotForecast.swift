@@ -166,15 +166,14 @@ public extension SpotForecast {
             symbols.append(isNight ? "moon.stars.fill" : modelTemperature >= 30 ? "sun.haze" : "sun.max.fill")
         }
 
-        if precipitation >= 8 {
+        if precipitation > 0 && modelTemperature <= 0 {
+            symbols.append("snowflake")
+        } else if precipitation >= 8 {
             symbols.append("cloud.heavyrain")
         } else if precipitation > 0 && precipitation < 2 {
             symbols.append("cloud.drizzle")
         } else if precipitation > 0 {
             symbols.append("cloud.rain.fill")
-        }
-        if precipitation > 0 && modelTemperature <= 0 {
-            symbols.append("snowflake")
         }
 
         return symbols

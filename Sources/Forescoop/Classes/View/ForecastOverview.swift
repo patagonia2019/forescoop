@@ -17,6 +17,7 @@ public struct ForecastOverview: View {
     public let modelNamesByID: [String: String]
     public let isModelComparisonEnabled: Bool
     @Binding public var temperatureUnit: TemperatureUnit
+    @State private var showsTemperatureSources = false
     private let onSelectLocation: () -> Void
     private let onSelectModel: () -> Void
     private let onShowMap: () -> Void
@@ -100,29 +101,77 @@ public struct ForecastOverview: View {
             .font(.system(size: 42))
             .symbolRenderingMode(.hierarchical)
 
-            Menu {
-                Picker("Temperature unit", selection: $temperatureUnit) {
-                    ForEach(TemperatureUnit.allCases) { unit in
-                        Text(unit.label).tag(unit)
+            VStack(spacing: 8) {
+                HStack(spacing: 12) {
+                    Menu {
+                        Picker("Temperature unit", selection: $temperatureUnit) {
+                            ForEach(TemperatureUnit.allCases) { unit in
+                                Text(unit.label).tag(unit)
+                            }
+                        }
+                    } label: {
+                        Label(temperature, systemImage: "thermometer.medium")
+                            .font(.system(size: 44, weight: .semibold))
+                    }
+                    .accessibilityLabel("Temperature")
+
+                    if supportsModelComparison {
+                        Button("Compare temperature", systemImage: showsTemperatureSources ? "rectangle.compress.vertical" : "rectangle.expand.vertical") {
+                            showsTemperatureSources.toggle()
+                        }
+                        .labelStyle(.iconOnly)
+                        .foregroundStyle(.blue)
                     }
                 }
-            } label: {
-                Label(temperature, systemImage: "thermometer.medium")
-                    .font(.system(size: 44, weight: .semibold))
+
+                if showsTemperatureSources {
+                    ForEach(Array(modelForecasts.enumerated()), id: \.offset) { _, source in
+                        HStack {
+                            Label(modelName(for: source), systemImage: "cpu")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text(temperature(for: source)).monospacedDigit()
+                        }
+                        .font(.caption)
+                    }
+                }
             }
-            .accessibilityLabel("Temperature")
         }
     }
 
     private var temperature: String {
-        let hour = selectedHour ?? forecast.currentForecastHour
-        guard let value = forecast.forecast?.temperatureReal(hh: hour) ?? forecast.forecast?.temperature(hh: hour) else { return "—" }
+        temperature(for: forecast)
+    }
+
+    private func temperature(for source: SpotForecast) -> String {
+        let hour = selectedHour ?? source.currentForecastHour
+        guard let value = source.forecast?.temperatureReal(hh: hour) ?? source.forecast?.temperature(hh: hour) else { return "—" }
         return "\(Temperature(celsius: value).value(in: temperatureUnit).forecastFormatted())\(temperatureUnit.label)"
+    }
+
+    private var supportsModelComparison: Bool { isModelComparisonEnabled && modelForecasts.count > 1 }
+
+    private func modelName(for source: SpotForecast) -> String {
+        guard let identifier = source.model else { return source.forecast?.modelName ?? "Forecast model" }
+        return modelNamesByID[identifier] ?? source.forecast?.modelName ?? "Model \(identifier)"
     }
 
     private var locationName: String {
         forecast.locationDisplayName(coordinateLocationName: coordinateLocationName)
     }
+}
+
+#Preview("Forecast overview") {
+    let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
+    ForecastOverview(
+        forecast: forecast,
+        selectedHour: "29",
+        temperatureUnit: .constant(.celsius),
+        onSelectLocation: {},
+        onSelectModel: {},
+        onShowMap: {}
+    )
+    .padding()
 }
 
 #endif

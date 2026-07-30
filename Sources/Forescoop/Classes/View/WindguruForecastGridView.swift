@@ -18,6 +18,7 @@ public struct WindguruForecastGridView: View {
     public let selectedModelIDs: [String]
     public let modelNamesByID: [String: String]
     public let modelForecasts: [SpotForecast]
+    public let userProfile: User?
     @Binding public var temperatureUnit: TemperatureUnit
     @Binding public var windSpeedUnit: WindSpeedUnit
     @Binding public var waveHeightUnit: WaveHeightUnit
@@ -44,6 +45,7 @@ public struct WindguruForecastGridView: View {
         selectedModelIDs: [String] = [],
         modelNamesByID: [String: String] = [:],
         modelForecasts: [SpotForecast] = [],
+        userProfile: User? = nil,
         temperatureUnit: Binding<TemperatureUnit>,
         windSpeedUnit: Binding<WindSpeedUnit>,
         waveHeightUnit: Binding<WaveHeightUnit>,
@@ -62,6 +64,7 @@ public struct WindguruForecastGridView: View {
         self.selectedModelIDs = selectedModelIDs
         self.modelNamesByID = modelNamesByID
         self.modelForecasts = modelForecasts
+        self.userProfile = userProfile
         _temperatureUnit = temperatureUnit
         _windSpeedUnit = windSpeedUnit
         _waveHeightUnit = waveHeightUnit
@@ -80,14 +83,14 @@ public struct WindguruForecastGridView: View {
                 ScrollView(.vertical) {
                 HStack(alignment: .top, spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Color.clear.frame(width: rowLabelWidth, height: 48)
+                        Color.clear.frame(width: rowLabelWidth, height: gridHeaderHeight)
                         gridRows(in: .labels)
                     }
 
                     ScrollView(.horizontal) {
                         ScrollViewReader { proxy in
                             VStack(alignment: .leading, spacing: 0) {
-                                Color.clear.frame(height: 48)
+                                Color.clear.frame(height: gridHeaderHeight)
                                 gridRows(in: .values)
                             }
                             .overlay(alignment: .topLeading) {
@@ -226,7 +229,7 @@ public struct WindguruForecastGridView: View {
             }
             .font(.caption.bold())
             .padding(.horizontal, 8)
-            .frame(width: rowLabelWidth, height: 48, alignment: .leading)
+            .frame(width: rowLabelWidth, height: gridHeaderHeight, alignment: .leading)
             .background(gridLabelBackground)
     }
 
@@ -238,11 +241,11 @@ public struct WindguruForecastGridView: View {
                 ZStack(alignment: .leading) {
                     timeHeader.offset(x: -horizontalGridOffset)
                 }
-                .frame(width: max(0, geometry.size.width - rowLabelWidth), height: 48, alignment: .leading)
+                .frame(width: max(0, geometry.size.width - rowLabelWidth), height: gridHeaderHeight, alignment: .leading)
                 .clipped()
             }
         }
-        .frame(height: 48)
+        .frame(height: gridHeaderHeight)
     }
 
     private var timeHeader: some View {
@@ -254,8 +257,16 @@ public struct WindguruForecastGridView: View {
                     VStack(spacing: 2) {
                         Text(day(for: hour)).font(.caption2)
                         Text(time(for: hour)).font(.caption.bold())
+                        HStack(spacing: 2) {
+                            ForEach(forecast.weatherSymbolNames(hour: hour).prefix(3), id: \.self) { symbol in
+                                Image(systemName: symbol)
+                            }
+                        }
+                        .font(.caption2)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.secondary)
                     }
-                    .frame(width: 56, height: 48)
+                    .frame(width: 56, height: gridHeaderHeight)
                     .background(Color.secondary.opacity(0.12))
                 }
                 .buttonStyle(.plain)
@@ -277,12 +288,12 @@ public struct WindguruForecastGridView: View {
         gridRow(id: "freezingLevel", label: unitLabel("Freezing level (\(freezingLevelUnit.label))", compactLabel: freezingLevelUnit.label, icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, comparisonValues: { freezingLevel($1, source: $0) }, in: column)
         gridRow(id: "cloudCover", label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, comparisonValues: { cloudCover($1, source: $0) }, background: cloudColor, in: column)
         gridRow(id: "precipitation", label: unitLabel("Precipitation (\(precipitationUnit.label))", compactLabel: precipitationUnit.label, icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, comparisonValues: { precipitation($1, source: $0) }, background: precipitationColor, in: column)
-        gridRow(id: "pressure", label: unitLabel("Pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, in: column)
+        gridRow(id: "pressure", label: unitLabel("Pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, background: pressureColor, in: column)
         gridRow(id: "humidity", label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, comparisonValues: { humidity($1, source: $0) }, background: humidityColor, in: column)
         if hasWaveData {
             Divider()
             gridRow(id: "waveHeight", label: unitLabel("Wave (\(waveHeightUnit.label))", compactLabel: waveHeightUnit.label, icon: "water.waves", selection: $waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, comparisonValues: { waveHeight($1, source: $0) }, background: waveColor, in: column)
-            gridRow(id: "wavePeriod", label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, comparisonValues: { wavePeriod($1, source: $0) }, in: column)
+            gridRow(id: "wavePeriod", label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, comparisonValues: { wavePeriod($1, source: $0) }, background: wavePeriodColor, in: column)
             gridRow(id: "waveDirection", label: rowLabel("Wave direction", icon: "location.north.line"), values: { waveDirection($0) }, comparisonValues: { waveDirection($1, source: $0) }, in: column)
         }
     }
@@ -356,8 +367,9 @@ public struct WindguruForecastGridView: View {
                     onSelectHour(hour)
                 } label: {
                     Text(cell.text)
-                        .font(cell.isDirection ? .body : .caption)
+                        .font(cell.isDirection ? .body : (cell.isSnow ? .caption.bold() : .caption))
                         .monospacedDigit()
+                        .foregroundStyle(cell.isSnow ? .blue : .primary)
                         .frame(width: 56, height: height)
                         .background(background(cell))
                         .overlay(alignment: .bottom) { Divider().opacity(0.3) }
@@ -417,6 +429,7 @@ public struct WindguruForecastGridView: View {
 
     private var showsRowTitles: Bool { !areRowTitlesCollapsed }
     private var rowLabelWidth: CGFloat { (showsRowTitles ? 134 : 60) + (isModelComparisonEnabled && modelForecasts.count > 1 ? 20 : 0) }
+    private var gridHeaderHeight: CGFloat { 64 }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
     @ViewBuilder private var selectedHourOutline: some View {
@@ -491,10 +504,18 @@ public struct WindguruForecastGridView: View {
     }
 
     private func precipitation(_ hour: String, source: SpotForecast? = nil) -> GridCell {
-        let millimeters = weather(for: source)?.precipitation(hh: hour) ?? weather(for: source)?.precipitation1(hh: hour)
+        let sourceWeather = weather(for: source)
+        let accumulatedPrecipitation = sourceWeather?.precipitation(hh: hour)
+        let millimeters = accumulatedPrecipitation ?? sourceWeather?.precipitation1(hh: hour)
         guard let millimeters else { return .empty }
         let converted = Precipitation(millimeters: millimeters).value(in: precipitationUnit)
-        return GridCell(value: converted, text: number(converted))
+        let temperature = sourceWeather?.temperatureReal(hh: hour) ?? sourceWeather?.temperature(hh: hour)
+        return GridCell(
+            value: converted,
+            text: number(converted),
+            isSnow: millimeters > 0 && (temperature ?? .infinity) <= 0,
+            usesAccumulatedPrecipitation: accumulatedPrecipitation != nil
+        )
     }
 
     private func pressure(_ hour: String, source: SpotForecast? = nil) -> GridCell {
@@ -539,80 +560,85 @@ public struct WindguruForecastGridView: View {
             : WindDirection(value: Int(direction.rounded())).description
     }
 
-    private func windColor(_ cell: GridCell) -> Color { .cyan.opacity(min((cell.value ?? 0) / 45, 1) * 0.55) }
-    private func gustColor(_ cell: GridCell) -> Color { .mint.opacity(min((cell.value ?? 0) / 55, 1) * 0.65) }
-    private func temperatureColor(_ cell: GridCell) -> Color { .yellow.opacity(min(max((cell.value ?? 0) + 10, 0) / 40, 1) * 0.6) }
-    private func cloudColor(_ cell: GridCell) -> Color { .gray.opacity(min((cell.value ?? 0) / 100, 1) * 0.65) }
-    private func precipitationColor(_ cell: GridCell) -> Color { .blue.opacity(min((cell.value ?? 0) / 5, 1) * 0.5) }
-    private func humidityColor(_ cell: GridCell) -> Color { .yellow.opacity(min((cell.value ?? 0) / 100, 1) * 0.4) }
-    private func waveColor(_ cell: GridCell) -> Color { .cyan.opacity(min((cell.value ?? 0) / 4, 1) * 0.5) }
+    private func windColor(_ cell: GridCell) -> Color { profileColor(userProfile?.windColor, value: cell.value) ?? .cyan.opacity(min((cell.value ?? 0) / 45, 1) * 0.55) }
+    private func gustColor(_ cell: GridCell) -> Color { profileColor(userProfile?.windColor, value: cell.value) ?? .mint.opacity(min((cell.value ?? 0) / 55, 1) * 0.65) }
+    private func temperatureColor(_ cell: GridCell) -> Color {
+        if let profileColor = profileColor(userProfile?.temperatureColor, value: cell.value) {
+            return profileColor
+        }
+        guard let temperature = cell.value else { return .clear }
+        let intensity = min(max((temperature + 10) / 40, 0), 1)
+        return .yellow.opacity(0.08 + (intensity * 0.62))
+    }
+    private func cloudColor(_ cell: GridCell) -> Color { profileColor(userProfile?.cloudColor, value: cell.value) ?? .gray.opacity(min((cell.value ?? 0) / 100, 1) * 0.65) }
+    private func precipitationColor(_ cell: GridCell) -> Color {
+        let profile = cell.usesAccumulatedPrecipitation
+            ? userProfile?.precipitationColor
+            : userProfile?.precip1Color
+        return profileColor(profile, value: cell.value) ?? .blue.opacity(min((cell.value ?? 0) / 5, 1) * 0.5)
+    }
+    private func humidityColor(_ cell: GridCell) -> Color { profileColor(userProfile?.rhColor, value: cell.value) ?? .yellow.opacity(min((cell.value ?? 0) / 100, 1) * 0.4) }
+    private func pressureColor(_ cell: GridCell) -> Color { profileColor(userProfile?.pressureColor, value: cell.value) ?? .clear }
+    private func waveColor(_ cell: GridCell) -> Color { profileColor(userProfile?.waveHeightColor, value: cell.value) ?? .cyan.opacity(min((cell.value ?? 0) / 4, 1) * 0.5) }
+    private func wavePeriodColor(_ cell: GridCell) -> Color { profileColor(userProfile?.wavePeriodColor, value: cell.value) ?? .clear }
+
+    private func profileColor(_ colors: [CustomColor]?, value: Double?) -> Color? {
+        guard let value, let colors, !colors.isEmpty else { return nil }
+        let palette = colors.compactMap { color -> (threshold: Double, color: CustomColor)? in
+            guard let threshold = Double(color.info ?? "") else { return nil }
+            return (threshold, color)
+        }
+        guard let selected = palette
+            .sorted(by: { $0.threshold < $1.threshold })
+            .last(where: { value >= $0.threshold }) ?? palette.min(by: { $0.threshold < $1.threshold }) else {
+            return nil
+        }
+        return Color(
+            red: Double(selected.color.red / 255),
+            green: Double(selected.color.green / 255),
+            blue: Double(selected.color.blue / 255),
+            opacity: Double(selected.color.alpha)
+        )
+    }
 
     private struct GridCell {
         let value: Double?
         let text: String
         var isDirection = false
+        var isSnow = false
+        var usesAccumulatedPrecipitation = false
 
         static let empty = GridCell(value: nil, text: "—")
     }
 }
 
-//#if DEBUG
-//
-//private struct _WindguruPreviewData {
-//    static let hours: [String] = ["00", "03", "06", "09", "12", "15", "18", "21", "24", "27", "30", "33"]
-//
-//    static func forecast() -> SpotForecast {
-//        // Create a minimal mock SpotForecast using available APIs.
-//        // If your SpotForecast provides an initializer or factory for previews, replace this implementation accordingly.
-//        // The following uses a lightweight shim via a private box that conforms to the expected interface at runtime.
-//        // If this doesn't compile due to unavailable initializers, update this method to construct a valid SpotForecast from your model.
-//        return SpotForecast.previewMock(hours: hours)
-//    }
-//}
-//
-//// MARK: - SpotForecast Preview Mock
-//private extension SpotForecast {
-//    static func previewMock(hours: [String]) -> SpotForecast {
-//        // Attempt to discover a convenience initializer at compile time.
-//        // If your concrete type doesn't have an accessible initializer, consider adding one in your model for previews,
-//        // or replace this with a static sample from your project (e.g., `SpotForecast.sample`).
-//        //
-//        // This fallback uses a minimal, generic approach by leveraging an internal preview initializer that you can implement.
-//        // To avoid build errors, we provide a fatalError as a clear signal to replace this with a real sample in your codebase.
-//        fatalError("Provide a real SpotForecast sample or initializer for previews, e.g., SpotForecast.sample or SpotForecast(...)")
-//    }
-//}
-//
-//#Preview("WindguruForecastGridView") {
-//    NavigationStack {
-//        WindguruForecastGridView(
-//            forecast: _WindguruPreviewData.forecast(),
-//            coordinateLocationName: "El Cóndor, AR",
-//            selectedHour: _WindguruPreviewData.hours[4],
-//            availableModelIDs: ["ECMWF", "GFS", "ICON"],
-//            selectedModelIDs: ["ECMWF", "GFS"],
-//            modelNamesByID: [
-//                "ECMWF": "ECMWF",
-//                "GFS": "GFS",
-//                "ICON": "ICON"
-//            ],
-//            modelForecasts: [
-//                // Replace with additional SpotForecast.previewMock(...) when available
-//            ],
-//            temperatureUnit: .constant(.celsius),
-//            windSpeedUnit: .constant(.knots),
-//            waveHeightUnit: .constant(.meters),
-//            pressureUnit: .constant(.hectopascals),
-//            precipitationUnit: .constant(.millimeters),
-//            freezingLevelUnit: .constant(.meters),
-//            showsWindDirectionArrow: .constant(true),
-//            onSelectLocation: {},
-//            onToggleModel: { _ in },
-//            onSelectHour: { _ in }
-//        )
-//    }
-//}
-//
-//#endif
+#if DEBUG
+
+#Preview("WindguruForecastGridView") {
+    let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
+    let modelID = forecast.model ?? Model.defaultModel
+    NavigationStack {
+        WindguruForecastGridView(
+            forecast: forecast,
+            selectedHour: "29",
+            availableModelIDs: [modelID],
+            selectedModelIDs: [modelID],
+            modelNamesByID: [modelID: forecast.forecast?.modelName ?? "Forecast model"],
+            modelForecasts: [forecast],
+            temperatureUnit: .constant(.celsius),
+            windSpeedUnit: .constant(.knots),
+            waveHeightUnit: .constant(.meters),
+            pressureUnit: .constant(.hectopascals),
+            precipitationUnit: .constant(.millimeters),
+            freezingLevelUnit: .constant(.meters),
+            showsWindDirectionArrow: .constant(true),
+            onSelectLocation: {},
+            onToggleModel: { _ in },
+            onSelectHour: { _ in }
+        )
+    }
+}
+
+#endif
 
 #endif

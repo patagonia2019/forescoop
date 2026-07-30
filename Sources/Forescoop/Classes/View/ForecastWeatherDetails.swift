@@ -44,11 +44,16 @@ public struct ForecastWeatherDetails: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             cloudCover(high: weather?.cloudCoverHigh(hh: hour), mid: weather?.cloudCoverMid(hh: hour), low: weather?.cloudCoverLow(hh: hour))
+            sourceRows { percent($0.forecast?.cloudCoverTotal(hh: hour)) }
             relativeHumidity(weather?.relativeHumidity(hh: hour))
+            sourceRows { percent($0.forecast?.relativeHumidity(hh: hour)) }
             waveRows
             precipitationRow
+            sourceRows { precipitation(for: $0.forecast) }
             freezingLevelRow
+            sourceRows { freezingLevel(for: $0.forecast) }
             pressureRow
+            sourceRows { pressure(for: $0.forecast) }
         }
         .font(.body)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -162,7 +167,12 @@ public struct ForecastWeatherDetails: View {
     }
 
     private var precipitation: String {
-        let converted = Precipitation(millimeters: precipitationValue).value(in: precipitationUnit)
+        precipitation(for: weather)
+    }
+
+    private func precipitation(for source: Forecast?) -> String {
+        let millimeters = source?.precipitation(hh: hour) ?? source?.precipitation1(hh: hour) ?? 0
+        let converted = Precipitation(millimeters: millimeters).value(in: precipitationUnit)
         let precision = precipitationUnit == .inches ? 2 : 1
         return "\(converted.formatted(.number.precision(.fractionLength(precision)))) \(precipitationUnit.label)"
     }
@@ -183,33 +193,33 @@ public struct ForecastWeatherDetails: View {
 
     private var precipitationValue: Double { weather?.precipitation(hh: hour) ?? weather?.precipitation1(hh: hour) ?? 0 }
     private var freezingLevel: String {
-        guard let value = weather?.freezingLevelHeightInMeters(hh: hour) else { return "—" }
+        freezingLevel(for: weather)
+    }
+    private func freezingLevel(for source: Forecast?) -> String {
+        guard let value = source?.freezingLevelHeightInMeters(hh: hour) else { return "—" }
         return "\(FreezingLevel(meters: value).value(in: freezingLevelUnit).formatted(.number.precision(.fractionLength(0)))) \(freezingLevelUnit.label)"
     }
     private var pressure: String {
-        guard let value = weather?.seaLevelPressure(hh: hour) else { return "—" }
+        pressure(for: weather)
+    }
+    private func pressure(for source: Forecast?) -> String {
+        guard let value = source?.seaLevelPressure(hh: hour) else { return "—" }
         return "\(AtmosphericPressure(hectopascals: value).value(in: pressureUnit).forecastFormatted()) \(pressureUnit.label)"
     }
     private func waveHeightText(_ height: Double) -> String {
         "\(WaveHeight(meters: height).value(in: waveHeightUnit).formatted(.number.precision(.fractionLength(1)))) \(waveHeightUnit.label)"
     }
     private func percent(_ value: Int?) -> String { value.map { "\($0)%" } ?? "—" }
-}
-#Preview("Forecast overview") {
-    ForecastComponentPreview { forecast, hour in
-        ForecastOverview(
-            forecast: forecast,
-            selectedHour: hour,
-            temperatureUnit: .constant(.celsius),
-            onSelectLocation: {},
-            onSelectModel: {},
-            onShowMap: {}
+
+    private func sourceRows(value: @escaping (SpotForecast) -> String) -> some View {
+        ForecastModelSourceRows(
+            forecasts: modelForecasts,
+            modelNamesByID: modelNamesByID,
+            isEnabled: isModelComparisonEnabled,
+            sourceValue: value
         )
-        .padding()
     }
 }
-
-
 @MainActor
 private enum ForecastComponentPreviewData {
     static let forecast: SpotForecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
@@ -218,7 +228,7 @@ private enum ForecastComponentPreviewData {
 @MainActor
 private struct ForecastComponentPreview<Content: View>: View {
     let content: (SpotForecast, String?) -> Content
-    var body: some View { content(ForecastComponentPreviewData.forecast, ForecastComponentPreviewData.forecast.currentForecastHour).padding() }
+    var body: some View { content(ForecastComponentPreviewData.forecast, "29").padding() }
 }
 
 #Preview("Weather details") { ForecastComponentPreview { forecast, hour in ForecastWeatherDetails(forecast: forecast, selectedHour: hour, waveHeightUnit: .constant(.meters), precipitationUnit: .constant(.millimeters), freezingLevelUnit: .constant(.meters), pressureUnit: .constant(.hectopascals)) } }

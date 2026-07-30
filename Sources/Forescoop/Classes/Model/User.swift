@@ -103,6 +103,8 @@ enum TypeOfColor: String {
     case precip1
     case pressure = "press"
     case rh
+    case waveHeight = "htsgw"
+    case wavePeriod = "perpw"
     case wpower
     case tide
     case initial = "init"
@@ -148,11 +150,17 @@ public class User: Object, Mappable {
         customColors = (map?["colors"] as? [String: Any])?
             .compactMapValues { value in
                 (value as? [[Double]])?
-                    .compactMap({CustomColor(info: String($0[0]),
-                                             alpha: Float($0[1]),
-                                             red: Float($0[2]),
-                                             green: Float($0[3]),
-                                             blue: Float($0[4]))})
+                    .compactMap { values in
+                        guard values.count >= 4 else { return nil }
+                        // Windguru serializes palettes as [threshold, red, green, blue, alpha?].
+                        return CustomColor(
+                            info: String(values[0]),
+                            alpha: Float(values.count > 4 ? values[4] : 1),
+                            red: Float(values[1]),
+                            green: Float(values[2]),
+                            blue: Float(values[3])
+                        )
+                    }
             }
     }
     
@@ -254,6 +262,12 @@ public extension User {
     }
     var rhColor: [CustomColor] {
         customColors?[TypeOfColor.rh.rawValue] ?? []
+    }
+    var waveHeightColor: [CustomColor] {
+        customColors?[TypeOfColor.waveHeight.rawValue] ?? []
+    }
+    var wavePeriodColor: [CustomColor] {
+        customColors?[TypeOfColor.wavePeriod.rawValue] ?? []
     }
     var wpowerColor: [CustomColor] {
         customColors?[TypeOfColor.wpower.rawValue] ?? []

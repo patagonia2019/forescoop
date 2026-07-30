@@ -15,7 +15,33 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
     
     public func forecast(bySpotId spotId: String,
                          model modelId: String? = nil) async throws -> SpotForecast? {
-        try SpotForecast(map: definition.json(jsonFile: "SpotForecast"))
+        try SpotForecast(map: snowForecastMap())
+    }
+
+    /// Keeps SwiftUI previews visibly representative of cold, snowy weather.
+    private func snowForecastMap() -> [String: Any]? {
+        guard var response = definition.json(jsonFile: "SpotForecast"),
+              var forecasts = response["forecast"] as? [String: Any] else {
+            return nil
+        }
+
+        for identifier in forecasts.keys {
+            guard var model = forecasts[identifier] as? [String: Any] else { continue }
+            for key in ["TMP", "TMPE"] {
+                guard var temperatures = model[key] as? [String: Any] else { continue }
+                for hour in 0...24 { temperatures["\(hour)"] = -2.0 }
+                model[key] = temperatures
+            }
+            for key in ["APCP", "APCP1"] {
+                guard var precipitation = model[key] as? [String: Any] else { continue }
+                for hour in 0...24 { precipitation["\(hour)"] = 1.5 }
+                model[key] = precipitation
+            }
+            forecasts[identifier] = model
+        }
+
+        response["forecast"] = forecasts
+        return response
     }
 
     public func wforecast(bySpotId spotId: String,

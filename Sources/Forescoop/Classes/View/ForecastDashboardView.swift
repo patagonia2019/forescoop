@@ -56,6 +56,7 @@ public struct ForecastDashboardView: View {
     @State private var selectedModelIDsBySpot = [String: [String]]()
     @State private var modelNamesByID = [String: String]()
     @State private var displayedModelForecasts: [SpotForecast] = []
+    @State private var userProfile: User?
     @State private var savedMapLocations = SavedMapLocationStore.load()
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
@@ -154,6 +155,7 @@ public struct ForecastDashboardView: View {
         modelIDsBySpot = [:]
         selectedModelIDsBySpot = [:]
         displayedModelForecasts = []
+        userProfile = nil
         selectedHour = nil
         forecast = nil
         coordinateLocationName = nil
@@ -399,6 +401,7 @@ public struct ForecastDashboardView: View {
             selectedModelIDs: selectedForecastModelIDs,
             modelNamesByID: modelNamesByID,
             modelForecasts: displayedModelForecasts,
+            userProfile: userProfile,
             temperatureUnit: $temperatureUnit,
             windSpeedUnit: $windSpeedUnit,
             waveHeightUnit: $waveHeightUnit,
@@ -609,6 +612,7 @@ public struct ForecastDashboardView: View {
     }
 
     private func applyUserPreferences(_ user: User) {
+        userProfile = user
         if let unit = WindSpeedUnit(windguruPreference: user.windUnits) {
             windSpeedUnit = unit
         }

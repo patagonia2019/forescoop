@@ -49,9 +49,15 @@ public struct ForecastWindDetails: View {
                 }
             }
             .accessibilityLabel("Wind speed")
+            ForecastModelSourceRows(forecasts: modelForecasts, modelNamesByID: modelNamesByID, isEnabled: isModelComparisonEnabled) {
+                windSpeed($0.forecast?.windSpeed(hh: hour))
+            }
 
             LabeledContent { Text(windSpeed(weather?.windGustsKnots(hh: hour))) } label: {
                 Label("Wind gusts", systemImage: "wind.circle.fill")
+            }
+            ForecastModelSourceRows(forecasts: modelForecasts, modelNamesByID: modelNamesByID, isEnabled: isModelComparisonEnabled) {
+                windSpeed($0.forecast?.windGustsKnots(hh: hour))
             }
 
             LabeledContent {
@@ -72,6 +78,9 @@ public struct ForecastWindDetails: View {
             } label: {
                 Label("Wind direction", systemImage: "location.north.line")
             }
+            ForecastModelSourceRows(forecasts: modelForecasts, modelNamesByID: modelNamesByID, isEnabled: isModelComparisonEnabled) {
+                $0.forecast?.windDirectionName(hh: hour) ?? "—"
+            }
         }
         .font(.body)
     }
@@ -83,6 +92,17 @@ public struct ForecastWindDetails: View {
         guard let knots, let value = Knots(knots).value(in: windSpeedUnit) else { return "—" }
         return "\(value.forecastFormatted()) \(windSpeedUnit.label)"
     }
+}
+
+#Preview("Wind details") {
+    let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
+    ForecastWindDetails(
+        forecast: forecast,
+        selectedHour: "29",
+        windSpeedUnit: .constant(.knots),
+        showsDirectionArrow: .constant(false)
+    )
+    .padding()
 }
 
 #endif
