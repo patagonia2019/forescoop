@@ -19,13 +19,8 @@ public final class WindguruAccount: ObservableObject {
     public var isAuthenticated: Bool { !username.isEmpty && password != nil }
 
     public init() {
-        let legacyUsername = UserDefaults.standard.string(forKey: "windguruUsername")
-        username = WindguruCredentialStore.activeUsername() ?? legacyUsername ?? ""
-        if WindguruCredentialStore.activeUsername() == nil, let legacyUsername {
-            try? WindguruCredentialStore.saveActiveUsername(legacyUsername)
-            UserDefaults.standard.removeObject(forKey: "windguruUsername")
-        }
-        isProUser = UserDefaults.standard.bool(forKey: "windguruIsProUser")
+        username = WindguruCredentialStore.activeUsername() ?? ""
+        isProUser = WindguruCredentialStore.activeProUser()
     }
 
     public init(username: String, isProUser: Bool = false) {
@@ -37,13 +32,13 @@ public final class WindguruAccount: ObservableObject {
         self.username = username
         self.isProUser = isProUser
         try? WindguruCredentialStore.saveActiveUsername(username)
-        UserDefaults.standard.set(isProUser, forKey: "windguruIsProUser")
+        try? WindguruCredentialStore.saveActiveProUser(isProUser)
     }
 
     public func update(profile: User) {
         self.profile = profile
         isProUser = profile.isPro
-        UserDefaults.standard.set(profile.isPro, forKey: "windguruIsProUser")
+        try? WindguruCredentialStore.saveActiveProUser(profile.isPro)
     }
 
     public func signOut() {
@@ -52,6 +47,6 @@ public final class WindguruAccount: ObservableObject {
         isProUser = false
         profile = nil
         WindguruCredentialStore.removeActiveUsername()
-        UserDefaults.standard.removeObject(forKey: "windguruIsProUser")
+        WindguruCredentialStore.removeActiveProUser()
     }
 }

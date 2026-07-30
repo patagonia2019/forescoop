@@ -165,6 +165,7 @@ private enum LoginError: LocalizedError {
 public enum WindguruCredentialStore {
     private static let service = "Forescoop.Windguru"
     private static let activeAccountKey = "active-account"
+    private static let activeProUserKey = "active-pro-user"
 
     public static func activeUsername() -> String? {
         string(for: activeAccountKey)
@@ -176,6 +177,18 @@ public enum WindguruCredentialStore {
 
     public static func removeActiveUsername() {
         removeValue(for: activeAccountKey)
+    }
+
+    public static func activeProUser() -> Bool {
+        string(for: activeProUserKey) == "true"
+    }
+
+    public static func saveActiveProUser(_ isProUser: Bool) throws {
+        try save(value: isProUser ? "true" : "false", for: activeProUserKey)
+    }
+
+    public static func removeActiveProUser() {
+        removeValue(for: activeProUserKey)
     }
 
     public static func password(for username: String) -> String? {
