@@ -97,7 +97,7 @@ public struct WindguruLoginView: View {
             }
             .onAppear {
                 enteredUsername = username
-                password = WindguruCredentialStore.password(for: username) ?? ""
+                password = WindguruAccount(username: username).password ?? ""
                 if !enteredUsername.isEmpty, !password.isEmpty {
                     Task { await loadProfile() }
                 }

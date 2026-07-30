@@ -41,8 +41,7 @@ public struct ForecastDashboardView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
-    @AppStorage("windguruUsername") private var windguruUsername = ""
-    @AppStorage("windguruIsProUser") private var windguruIsProUser = false
+    @StateObject private var account: WindguruAccount
     @StateObject private var viewModel: ForecastDashboardViewModel
     @State private var showsWindDirectionArrow = false
     @State private var activeSheet: DashboardSheet?
@@ -54,6 +53,7 @@ public struct ForecastDashboardView: View {
     public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
         _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
+        _account = StateObject(wrappedValue: WindguruAccount())
         forecastLoader = { try await forecastService.forecast(bySpotId: $0, model: $1) }
         proSpotForecastLoader = { spotID, modelID, username, password in
             guard let proForecast = try await forecastService.wforecast(
@@ -80,6 +80,8 @@ public struct ForecastDashboardView: View {
     }
 
     private var forecast: SpotForecast? { get { viewModel.forecast } nonmutating set { viewModel.forecast = newValue } }
+    private var windguruUsername: String { account.username }
+    private var windguruIsProUser: Bool { account.isProUser }
     private var coordinateLocationName: String? { get { viewModel.coordinateLocationName } nonmutating set { viewModel.coordinateLocationName = newValue } }
     private var errorMessage: String? { get { viewModel.errorMessage } nonmutating set { viewModel.errorMessage = newValue } }
     private var isLoading: Bool { get { viewModel.isLoading } nonmutating set { viewModel.isLoading = newValue } }
@@ -106,9 +108,7 @@ public struct ForecastDashboardView: View {
     }
 
     private var isProUser: Bool {
-        windguruIsProUser
-            && !windguruUsername.isEmpty
-            && WindguruCredentialStore.password(for: windguruUsername) != nil
+        windguruIsProUser && account.isAuthenticated
     }
 
     private func sheetBinding(_ sheet: DashboardSheet) -> Binding<Bool> {
@@ -166,9 +166,7 @@ public struct ForecastDashboardView: View {
     }
 
     private func logout() {
-        WindguruCredentialStore.removePassword(for: windguruUsername)
-        windguruUsername = ""
-        windguruIsProUser = false
+        account.signOut()
         selectedSpotID = "64141"
         selectedModelIDs = []
         usableModelIDs = []
@@ -192,8 +190,7 @@ public struct ForecastDashboardView: View {
     }
 
     private func startSession(username: String, isProUser: Bool) {
-        windguruUsername = username
-        windguruIsProUser = isProUser
+        account.signIn(username: username, isProUser: isProUser)
         viewModel.clearUserProfile()
         // Do not reuse the previous session's model cache. A PRO session can
         // expose more models for the same spot, while a regular session must
@@ -606,16 +603,16 @@ public struct ForecastDashboardView: View {
     @MainActor
     private func loadUserPreferences() async {
         guard !windguruUsername.isEmpty,
-              let password = WindguruCredentialStore.password(for: windguruUsername),
+              let password = account.password,
               let user = await viewModel.loadUserProfile(username: windguruUsername, password: password) else {
             applyDevicePreferences()
             return
         }
-        windguruIsProUser = user.isPro
         applyUserPreferences(user)
     }
 
     private func applyUserPreferences(_ user: User) {
+        account.update(profile: user)
         viewModel.applyUserProfile(user)
     }
 
@@ -627,7 +624,7 @@ public struct ForecastDashboardView: View {
     private func loadPreferredForecast() async {
         let preferredSpotID: String
         if !windguruUsername.isEmpty,
-           let password = WindguruCredentialStore.password(for: windguruUsername),
+           let password = account.password,
            let favoriteSpotID = try? await favoriteSpotsLoader(windguruUsername, password)?.allSpots.first?.identifier {
             preferredSpotID = favoriteSpotID
         } else {
@@ -676,7 +673,7 @@ public struct ForecastDashboardView: View {
             }
             let selectedForecastLoader: @MainActor (String?) async throws -> SpotForecast?
             if isProUser,
-               let password = WindguruCredentialStore.password(for: windguruUsername),
+               let password = account.password,
                !windguruUsername.isEmpty {
                 selectedForecastLoader = { modelID in
                     try await proSpotForecastLoader(requestedSpotID, modelID, windguruUsername, password)
@@ -748,7 +745,7 @@ public struct ForecastDashboardView: View {
         locationName: String? = nil,
         modelIDs: [String]? = nil
     ) async {
-        guard let password = WindguruCredentialStore.password(for: windguruUsername), !windguruUsername.isEmpty else {
+        guard let password = account.password, !windguruUsername.isEmpty else {
             errorMessage = "Sign in with Windguru PRO to load an exact map coordinate."
             return
         }

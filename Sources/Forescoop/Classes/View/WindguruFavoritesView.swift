@@ -15,17 +15,11 @@ public struct WindguruFavoritesView: View {
     private let username: String
     private let password: String
     private let isProUser: Bool
-    private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
-    private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
-    private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
     private let onSpotSelected: (SpotOwner) -> Void
 
     @Environment(\.dismiss) private var dismiss
 
-    @State private var favorites: [SpotOwner] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-    @State private var removingIDs = Set<String>()
+    @StateObject private var viewModel: WindguruFavoritesViewModel
     @State private var showsAddFavorite = false
     @State private var mapCoordinateToShow: CLLocationCoordinate2D?
 #if !os(macOS)
@@ -41,14 +35,10 @@ public struct WindguruFavoritesView: View {
     ) {
         self.forecastService = forecastService
         self.username = username
-        self.password = password ?? WindguruCredentialStore.password(for: username) ?? ""
+        self.password = password ?? WindguruAccount(username: username, isProUser: isProUser).password ?? ""
         self.isProUser = isProUser
         self.onSpotSelected = onSpotSelected
-        loadFavoriteSpots = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
-        removeFavoriteSpot = { spotID, username, password in
-            try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
-        }
-        loadSpotInfo = { try await forecastService.spotInfo(bySpotId: $0) }
+        _viewModel = StateObject(wrappedValue: WindguruFavoritesViewModel(forecastService: forecastService))
     }
 
     public var body: some View {
@@ -63,16 +53,16 @@ public struct WindguruFavoritesView: View {
                 }
 
                 Section("Favorites") {
-                    if isLoading {
+                    if viewModel.isLoading {
                         ProgressView("Loading favorites…")
-                    } else if let errorMessage {
+                    } else if let errorMessage = viewModel.errorMessage {
                         ContentUnavailableView("Favorites unavailable", systemImage: "star.slash", description: Text(errorMessage))
-                    } else if favorites.isEmpty {
+                    } else if viewModel.favorites.isEmpty {
                         Text("No favorite spots")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(favorites.indices, id: \.self) { index in
-                            favoriteRow(favorites[index])
+                        ForEach(viewModel.favorites.indices, id: \.self) { index in
+                            favoriteRow(viewModel.favorites[index])
                         }
 #if !os(macOS)
                         .onDelete(perform: removeFavorites)
@@ -97,7 +87,7 @@ public struct WindguruFavoritesView: View {
             .environment(\.editMode, $editMode)
 #endif
         }
-        .task { await loadFavorites() }
+        .task { await viewModel.loadFavorites(username: username, password: password) }
         .sheet(isPresented: $showsAddFavorite) {
             WindguruSpotPicker(
                 forecastService: forecastService,
@@ -107,7 +97,7 @@ public struct WindguruFavoritesView: View {
                 onCoordinateSelected: { _, _ in },
                 purpose: .addFavorite,
                 onFavoriteAdded: {
-                    Task { await loadFavorites() }
+                    Task { await viewModel.loadFavorites(username: username, password: password) }
                 }
             )
         }
@@ -153,8 +143,8 @@ public struct WindguruFavoritesView: View {
             .buttonStyle(.borderless)
 #endif
         }
-        .disabled(removingIDs.contains(spot.identifier ?? ""))
-        .opacity(removingIDs.contains(spot.identifier ?? "") ? 0.45 : 1)
+        .disabled(viewModel.removingIDs.contains(spot.identifier ?? ""))
+        .opacity(viewModel.removingIDs.contains(spot.identifier ?? "") ? 0.45 : 1)
         .contextMenu {
             Button("Remove from Favorites", systemImage: "star.slash", role: .destructive) {
                 Task { await removeFavorite(spot) }
@@ -179,44 +169,22 @@ public struct WindguruFavoritesView: View {
 
     @MainActor
     private func showMap(for spot: SpotOwner) async {
-        guard let spotID = spot.identifier,
-              let coordinate = try? await loadSpotInfo(spotID)?.location?.coordinate else {
-            errorMessage = "This favorite has no map location."
+        guard let coordinate = await viewModel.coordinate(for: spot) else {
+            viewModel.errorMessage = "This favorite has no map location."
             return
         }
         mapCoordinateToShow = coordinate
     }
 
-    @MainActor
-    private func loadFavorites() async {
-        guard !username.isEmpty, !password.isEmpty else { return }
-        isLoading = true
-        errorMessage = nil
-        defer { isLoading = false }
-        do {
-            favorites = try await loadFavoriteSpots(username, password)?.allSpots ?? []
-        } catch {
-            errorMessage = "Windguru favorites are unavailable right now."
-        }
-    }
-
     private func removeFavorites(at offsets: IndexSet) {
-        for spot in offsets.map({ favorites[$0] }) {
+        for spot in offsets.map({ viewModel.favorites[$0] }) {
             Task { await removeFavorite(spot) }
         }
     }
 
     @MainActor
     private func removeFavorite(_ spot: SpotOwner) async {
-        guard let spotID = spot.identifier else { return }
-        removingIDs.insert(spotID)
-        defer { removingIDs.remove(spotID) }
-        do {
-            _ = try await removeFavoriteSpot(spotID, username, password)
-            favorites.removeAll { $0.identifier == spotID }
-        } catch {
-            errorMessage = "Couldn’t remove this favorite."
-        }
+        await viewModel.removeFavorite(spot, username: username, password: password)
     }
 }
 

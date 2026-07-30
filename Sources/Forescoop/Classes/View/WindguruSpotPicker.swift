@@ -24,6 +24,7 @@ public struct WindguruSpotPicker: View {
     private let purpose: Purpose
     let username: String
     let isProUser: Bool
+    private let account: WindguruAccount
     let onSpotSelected: (SpotOwner) -> Void
     let onSpotIDSelected: (String) -> Void
     let onFavoriteSelected: (SpotOwner) -> Void
@@ -72,6 +73,7 @@ public struct WindguruSpotPicker: View {
         self.purpose = purpose
         self.username = username
         self.isProUser = isProUser
+        account = WindguruAccount(username: username, isProUser: isProUser)
         self.onSpotSelected = onSpotSelected
         self.onSpotIDSelected = onSpotIDSelected
         self.onFavoriteSelected = onFavoriteSelected
@@ -336,7 +338,7 @@ public struct WindguruSpotPicker: View {
     @MainActor
     private func loadFavorites() async {
         guard !username.isEmpty,
-              let password = WindguruCredentialStore.password(for: username) else {
+              let password = account.password else {
             return
         }
 
@@ -361,7 +363,7 @@ public struct WindguruSpotPicker: View {
     private func removeFavorite(_ spot: SpotOwner) async {
         guard let identifier = spot.identifier,
               !username.isEmpty,
-              let password = WindguruCredentialStore.password(for: username) else {
+              let password = account.password else {
             return
         }
         favoriteIDsBeingRemoved.insert(identifier)
@@ -379,7 +381,7 @@ public struct WindguruSpotPicker: View {
         guard !location.isPrimaryLocation,
               let spotID = location.spotID,
               !username.isEmpty,
-              let password = WindguruCredentialStore.password(for: username) else {
+              let password = account.password else {
             return
         }
         favoriteIDsBeingAdded.insert(spotID)
@@ -404,7 +406,7 @@ public struct WindguruSpotPicker: View {
             let location = try await CurrentLocationProvider().location()
             if purpose == .chooseLocation, isProUser,
                !username.isEmpty,
-               WindguruCredentialStore.password(for: username) != nil {
+               account.password != nil {
                 onCoordinateSelected(location.coordinate, nil)
                 return
             }
@@ -489,7 +491,7 @@ public struct WindguruSpotPicker: View {
     private func selectMapCoordinate(_ coordinate: CLLocationCoordinate2D) async {
         if purpose == .chooseLocation, isProUser,
            !username.isEmpty,
-           WindguruCredentialStore.password(for: username) != nil {
+           account.password != nil {
             onCoordinateSelected(coordinate, nil)
             return
         }
@@ -563,7 +565,7 @@ public struct WindguruSpotPicker: View {
     private func addFavorite(_ spot: SpotOwner) async {
         guard let spotID = spot.identifier,
               !username.isEmpty,
-              let password = WindguruCredentialStore.password(for: username) else {
+              let password = account.password else {
             errorMessage = "Sign in to add Windguru favorites."
             return
         }
