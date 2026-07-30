@@ -163,11 +163,27 @@ private enum LoginError: LocalizedError {
 }
 
 public enum WindguruCredentialStore {
+    private static let service = "Forescoop.Windguru"
+    private static let activeAccountKey = "active-account"
+
+    public static func activeUsername() -> String? {
+        string(for: activeAccountKey)
+    }
+
+    public static func saveActiveUsername(_ username: String) throws {
+        try save(value: username, for: activeAccountKey)
+    }
+
+    public static func removeActiveUsername() {
+        removeValue(for: activeAccountKey)
+    }
+
     public static func password(for username: String) -> String? {
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecAttrService as String: "Forescoop.Windguru",
-                                    kSecAttrAccount as String: username,
-                                    kSecReturnData as String: true]
+        string(for: username)
+    }
+
+    private static func string(for account: String) -> String? {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account, kSecReturnData as String: true]
         var item: CFTypeRef?
         guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
               let data = item as? Data else { return nil }
@@ -175,14 +191,16 @@ public enum WindguruCredentialStore {
     }
 
     public static func save(password: String, for username: String) throws {
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecAttrService as String: "Forescoop.Windguru",
-                                    kSecAttrAccount as String: username]
-        let attributes = [kSecValueData as String: Data(password.utf8)]
+        try save(value: password, for: username)
+    }
+
+    private static func save(value: String, for account: String) throws {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account]
+        let attributes = [kSecValueData as String: Data(value.utf8)]
         let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
         if status == errSecItemNotFound {
             var item = query
-            item[kSecValueData as String] = Data(password.utf8)
+            item[kSecValueData as String] = Data(value.utf8)
             guard SecItemAdd(item as CFDictionary, nil) == errSecSuccess else { throw LoginError.credentialsUnavailable }
         } else if status != errSecSuccess {
             throw LoginError.credentialsUnavailable
@@ -190,9 +208,11 @@ public enum WindguruCredentialStore {
     }
 
     public static func removePassword(for username: String) {
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecAttrService as String: "Forescoop.Windguru",
-                                    kSecAttrAccount as String: username]
+        removeValue(for: username)
+    }
+
+    private static func removeValue(for account: String) {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account]
         SecItemDelete(query as CFDictionary)
     }
 }
