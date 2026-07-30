@@ -8,15 +8,7 @@
 #if !os(watchOS)
 import SwiftUI
 
-private struct ForecastModelOption: Identifiable {
-    let identifier: String
-    let name: String
-
-    var id: String { identifier }
-}
-
 public struct ForecastModelPicker: View {
-    private let modelLoader: @MainActor (String, Bool) async throws -> (SpotInfo?, Models?, [String])
     let spotID: String
     let selectedModelIDs: Set<String>
     /// Model IDs verified by the dashboard to return usable forecast hours.
@@ -25,10 +17,7 @@ public struct ForecastModelPicker: View {
     let onModelSelected: ([String]) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var models: [ForecastModelOption] = []
-    @State private var isLoading = true
-    @State private var errorMessage: String?
-    @State private var selectedIDs: Set<String> = []
+    @StateObject private var viewModel: ForecastModelPickerViewModel
 
     public init(
         forecastService: ForecastWindguruProtocol,
@@ -38,24 +27,7 @@ public struct ForecastModelPicker: View {
         isProUser: Bool = false,
         onModelSelected: @escaping ([String]) -> Void
     ) {
-        modelLoader = { spotID, isProUser in
-            let spotInfo = try await forecastService.spotInfo(bySpotId: spotID)
-            let modelInfo = try await forecastService.modelInfo(onlyModelId: nil)
-            guard isProUser, let coordinate = spotInfo?.location?.coordinate else {
-                return (spotInfo, modelInfo, [])
-            }
-            let discoveredModelIDs: [String]
-            if let response = try? await forecastService.models(
-                bylat: String(coordinate.latitude),
-                lon: String(coordinate.longitude)
-            ), let data = response.data(using: .utf8),
-               let modelIDs = try? JSONSerialization.jsonObject(with: data) as? [Int] {
-                discoveredModelIDs = modelIDs.map(String.init)
-            } else {
-                discoveredModelIDs = []
-            }
-            return (spotInfo, modelInfo, discoveredModelIDs)
-        }
+        _viewModel = StateObject(wrappedValue: ForecastModelPickerViewModel(forecastService: forecastService, selectedModelIDs: selectedModelIDs))
         self.spotID = spotID
         self.selectedModelIDs = selectedModelIDs
         self.usableModelIDs = usableModelIDs
@@ -66,21 +38,21 @@ public struct ForecastModelPicker: View {
     public var body: some View {
         NavigationStack {
             Group {
-                if isLoading {
+                if viewModel.isLoading {
                     ProgressView("Loading forecast models…")
-                } else if let errorMessage {
+                } else if let errorMessage = viewModel.errorMessage {
                     ContentUnavailableView("Models unavailable", systemImage: "exclamationmark.triangle", description: Text(errorMessage))
-                } else if models.isEmpty {
+                } else if viewModel.models.isEmpty {
                     ContentUnavailableView("No forecast models", systemImage: "cpu")
                 } else {
                     List {
-                        Section("\(selectedIDs.count) selected of \(models.count) available") {
-                            ForEach(models) { model in
+                        Section("\(viewModel.selectedIDs.count) selected of \(viewModel.models.count) available") {
+                            ForEach(viewModel.models) { model in
                                 Button {
-                                    toggle(model.identifier)
+                                    viewModel.toggle(model.identifier)
                                 } label: {
                                     HStack {
-                                        Image(systemName: selectedIDs.contains(model.identifier) ? "checkmark.square.fill" : "square")
+                                        Image(systemName: viewModel.selectedIDs.contains(model.identifier) ? "checkmark.square.fill" : "square")
                                         Text(model.name)
                                         Spacer()
                                     }
@@ -97,49 +69,16 @@ public struct ForecastModelPicker: View {
                     Button("Done") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Apply") { onModelSelected(selectedIDs.sorted()) }
-                        .disabled(selectedIDs.isEmpty)
+                    Button("Apply") { onModelSelected(viewModel.selectedIDs.sorted()) }
+                        .disabled(viewModel.selectedIDs.isEmpty)
                 }
             }
             .task {
-                selectedIDs = selectedModelIDs
-                await loadModels()
+                await viewModel.loadModels(spotID: spotID, selectedModelIDs: selectedModelIDs, usableModelIDs: usableModelIDs, isProUser: isProUser)
             }
         }
     }
 
-    private func toggle(_ identifier: String) {
-        if selectedIDs.contains(identifier) {
-            selectedIDs.remove(identifier)
-        } else {
-            selectedIDs.insert(identifier)
-        }
-    }
-
-    @MainActor
-    private func loadModels() async {
-        isLoading = true
-        errorMessage = nil
-        defer { isLoading = false }
-
-        do {
-            let (spotInfo, modelInfo, proModelIDs) = try await modelLoader(spotID, isProUser)
-            let discoveredAndPublicModelIDs = Set(spotInfo?.currentModels.map(String.init) ?? [])
-                .union(isProUser ? Set(proModelIDs) : [])
-            let availableModelIDs = (isProUser && !usableModelIDs.isEmpty
-                ? usableModelIDs
-                : discoveredAndPublicModelIDs)
-                .union(selectedModelIDs)
-            let availableModels = modelInfo?.sorted ?? []
-            models = availableModels.compactMap { model in
-                let identifier = String(model.identifier)
-                guard availableModelIDs.contains(identifier) else { return nil }
-                return ForecastModelOption(identifier: identifier, name: model.oficinalName ?? model.shortName ?? "Model \(identifier)")
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
 }
 
 #Preview("Forecast model picker") {
