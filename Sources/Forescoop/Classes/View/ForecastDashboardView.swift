@@ -336,12 +336,12 @@ public struct ForecastDashboardView: View {
 
                 if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
                             .frame(maxWidth: .infinity)
 
                         VStack(alignment: .leading, spacing: 28) {
-                            ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow)
-                            ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
+                            ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
+                            ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -349,25 +349,12 @@ public struct ForecastDashboardView: View {
                     iPadLocationWorkspace()
                 } else {
                     VStack(spacing: 24) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
-                        ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow)
-                        ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit)
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
+                        ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
+                        ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
                     }
                 }
 
-                if showsDashboardModelComparison, displayedModelForecasts.count > 1 {
-                    ForecastModelComparisonView(
-                        forecast: forecast,
-                        forecasts: displayedModelForecasts,
-                        selectedHour: selectedHour,
-                        modelNamesByID: modelNamesByID,
-                        temperatureUnit: temperatureUnit,
-                        windSpeedUnit: windSpeedUnit,
-                        freezingLevelUnit: freezingLevelUnit,
-                        precipitationUnit: precipitationUnit,
-                        pressureUnit: pressureUnit
-                    )
-                }
             }
             .frame(maxWidth: 1_100)
             .padding()
