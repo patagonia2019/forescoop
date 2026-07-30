@@ -23,50 +23,20 @@ public struct AnimatedWeatherBackground: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var isAnimating = false
 
-    public init(
-        symbolNames: [String],
-        precipitationMillimeters: Double,
-        windSpeedKnots: Double,
-        windDirectionDegrees: Double?,
-        windGustKnots: Double = 0,
-        cloudCoverPercent: Int = 0,
-        temperatureCelsius: Double = 0,
-        humidityPercent: Int = 0,
-        pressureHectopascals: Double? = nil,
-        forecastDate: Date = Date()
-    ) {
-        self.symbolNames = symbolNames
-        self.precipitationMillimeters = precipitationMillimeters
-        self.windSpeedKnots = windSpeedKnots
-        self.windDirectionDegrees = windDirectionDegrees
-        self.windGustKnots = windGustKnots
-        self.cloudCoverPercent = cloudCoverPercent
-        self.temperatureCelsius = temperatureCelsius
-        self.humidityPercent = humidityPercent
-        self.pressureHectopascals = pressureHectopascals
-        self.forecastDate = forecastDate
-    }
-
     /// Creates the animation from a forecast at the selected (or current) hour.
     public init(forecast: SpotForecast, hour: String? = nil) {
         let selectedHour = hour ?? forecast.currentForecastHour
         let weather = forecast.forecast
-        self.init(
-            symbolNames: forecast.weatherSymbolNames(hour: selectedHour),
-            precipitationMillimeters: weather?.precipitation(hh: selectedHour)
-                ?? weather?.precipitation1(hh: selectedHour)
-                ?? 0,
-            windSpeedKnots: weather?.windSpeed(hh: selectedHour) ?? 0,
-            windDirectionDegrees: weather?.windDirection(hh: selectedHour),
-            windGustKnots: weather?.windGustsKnots(hh: selectedHour) ?? 0,
-            cloudCoverPercent: weather?.cloudCoverTotal(hh: selectedHour) ?? 0,
-            temperatureCelsius: weather?.temperatureReal(hh: selectedHour)
-                ?? weather?.temperature(hh: selectedHour)
-                ?? 0,
-            humidityPercent: weather?.relativeHumidity(hh: selectedHour) ?? 0,
-            pressureHectopascals: weather?.seaLevelPressure(hh: selectedHour),
-            forecastDate: forecast.forecastDate(hour: selectedHour) ?? Date()
-        )
+        symbolNames = forecast.weatherSymbolNames(hour: selectedHour)
+        precipitationMillimeters = weather?.precipitation(hh: selectedHour) ?? weather?.precipitation1(hh: selectedHour) ?? 0
+        windSpeedKnots = weather?.windSpeed(hh: selectedHour) ?? 0
+        windDirectionDegrees = weather?.windDirection(hh: selectedHour)
+        windGustKnots = weather?.windGustsKnots(hh: selectedHour) ?? 0
+        cloudCoverPercent = weather?.cloudCoverTotal(hh: selectedHour) ?? 0
+        temperatureCelsius = weather?.temperatureReal(hh: selectedHour) ?? weather?.temperature(hh: selectedHour) ?? 0
+        humidityPercent = weather?.relativeHumidity(hh: selectedHour) ?? 0
+        pressureHectopascals = weather?.seaLevelPressure(hh: selectedHour)
+        forecastDate = forecast.forecastDate(hour: selectedHour) ?? Date()
     }
 
     private var isSunny: Bool { symbolNames.contains { $0.contains("sun") } }
@@ -76,17 +46,17 @@ public struct AnimatedWeatherBackground: View {
     private var isRainy: Bool { symbolNames.contains { $0.contains("rain") || $0.contains("drizzle") } }
     private var isSnowy: Bool { symbolNames.contains { $0.contains("snow") } }
     private var isFoggy: Bool { symbolNames.contains { $0.contains("fog") } || (humidityPercent >= 95 && cloudCoverPercent >= 80) }
-    private var isStormy: Bool { isRainy && precipitationMillimeters >= 8 && windGustKnots >= 35 }
+    private var isHeavyRain: Bool { isRainy && precipitationMillimeters >= 8 }
     private var isFreezing: Bool { temperatureCelsius <= 0 }
     private var isHot: Bool { temperatureCelsius >= 30 }
     private var usesPressurePulse: Bool { (pressureHectopascals ?? 1_013) < 995 || (pressureHectopascals ?? 1_013) > 1_030 }
     private var cloudParticleCount: Int { min(max(cloudCoverPercent / 25, 1), 4) }
     private var precipitationParticleCount: Int {
         if isSnowy {
-            return min(max(Int((precipitationMillimeters * 14).rounded(.up)) + 4, 5), 48)
+            return min(max(Int((precipitationMillimeters * 18).rounded(.up)) + 16, 32), 72)
         }
         if isRainy {
-            return min(max(Int((precipitationMillimeters * 18).rounded(.up)) + 5, 6), 60)
+            return min(max(Int((precipitationMillimeters * 10).rounded(.up)) + 18, 26), 72)
         }
         return 0
     }
@@ -216,13 +186,11 @@ public struct AnimatedWeatherBackground: View {
                     }
                 }
 
-                if isStormy {
+                if isHeavyRain {
                     TimelineView(.animation) { timeline in
-                        Image(systemName: "bolt.fill")
-                            .font(.system(size: 92, weight: .light))
-                            .foregroundStyle(.white.opacity(lightningOpacity(at: timeline.date)))
-                            .shadow(color: .white.opacity(0.7), radius: 18)
-                            .offset(x: proxy.size.width * 0.20, y: -proxy.size.height * 0.20)
+                        Color.white
+                            .opacity(lightningOpacity(at: timeline.date) * 0.22)
+                            .blendMode(.screen)
                     }
                 }
             }
@@ -315,30 +283,32 @@ public struct AnimatedWeatherBackground: View {
     @ViewBuilder
     private func precipitationParticle(index: Int, in size: CGSize, time: TimeInterval) -> some View {
         let column = CGFloat((index * 37) % 100) / 100
-        let speed = isSnowy ? 0.07 : 0.26
+        // A deterministic depth value gives foreground particles more size and speed.
+        let depth = CGFloat((index * 53) % 100) / 100
+        let speed = isSnowy ? 0.075 + Double(depth) * 0.09 : 0.16 + Double(depth) * 0.17
         let progress = (time * speed + Double(index) * 0.137).truncatingRemainder(dividingBy: 1)
         let y = size.height * (CGFloat(progress) - 0.55)
-        let sway = CGFloat(sin(time * (isSnowy ? 1.4 : 0.7) + Double(index))) * (isSnowy ? 18 : 8)
+        let sway = CGFloat(sin(time * (isSnowy ? 1.4 : 0.7) + Double(index))) * (isSnowy ? 26 : 5)
         let windStrength = CGFloat(windVelocity / 50)
-        let windTravel = windStrength * (isSnowy ? 115 : 72) * CGFloat(progress)
+        let windTravel = windStrength * (isSnowy ? 125 : 58) * CGFloat(progress)
         let windDriftX = windTravelVector.x * windTravel
         // Gravity remains dominant while the precipitation is carried slightly downwind.
-        let windDriftY = windTravelVector.y * windTravel * 0.35
-        let rainTilt = atan2(Double(windDriftX), 110) * 180 / .pi
+        let windDriftY = windTravelVector.y * windTravel * 0.20
+        let rainTilt = atan2(Double(windDriftX), 150) * 180 / .pi
 
         if isSnowy {
             Image(systemName: "snowflake")
-                .font(.system(size: CGFloat(8 + index % 5)))
+                .font(.system(size: 7 + depth * 8))
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.white.opacity(0.55))
-                .rotationEffect(.degrees(time * Double(8 + index % 7)))
+                .foregroundStyle(.white.opacity(0.25 + Double(depth) * 0.50))
+                .rotationEffect(.degrees(time * (14 + Double(index % 7))))
                 .offset(x: size.width * (column - 0.5) + sway + windDriftX,
                         y: y + windDriftY)
         } else {
             Image(systemName: "drop.fill")
-                .font(.system(size: CGFloat((precipitationMillimeters >= 8 ? 12 : 9) + index % 6), weight: .medium))
-                .foregroundStyle(precipitationMillimeters >= 8 ? .blue.opacity(0.70) : .cyan.opacity(0.55))
-                .shadow(color: .cyan.opacity(0.25), radius: precipitationMillimeters >= 8 ? 3 : 2)
+                .font(.system(size: 8 + depth * (isHeavyRain ? 10 : 6), weight: .medium))
+                .foregroundStyle((isHeavyRain ? Color.blue : Color.cyan).opacity(0.22 + Double(depth) * (isHeavyRain ? 0.60 : 0.42)))
+                .shadow(color: .cyan.opacity(0.22), radius: isHeavyRain ? 2 : 1)
                 .rotationEffect(.degrees(rainTilt))
                 .offset(x: size.width * (column - 0.5) + sway + windDriftX,
                         y: y + windDriftY)
@@ -346,12 +316,71 @@ public struct AnimatedWeatherBackground: View {
     }
 }
 
-#Preview("Sunny and windy") {
+private enum AnimatedWeatherPreviewData {
+    static func forecast(
+        precipitation: Double,
+        temperature: Double,
+        cloudCover: Int,
+        windSpeed: Double,
+        gusts: Double
+    ) -> SpotForecast {
+        guard var response = Definition().json(jsonFile: "SpotForecast"),
+              var forecasts = response["forecast"] as? [String: Any] else {
+            fatalError("Missing SpotForecast preview fixture")
+        }
+
+        response["sunrise"] = "00:00"
+        response["sunset"] = "23:59"
+        for identifier in forecasts.keys {
+            guard var model = forecasts[identifier] as? [String: Any] else { continue }
+            set(precipitation, for: ["APCP", "APCP1"], in: &model)
+            set(temperature, for: ["TMP", "TMPE"], in: &model)
+            set(cloudCover, for: ["TCDC"], in: &model)
+            set(windSpeed, for: ["WINDSPD"], in: &model)
+            set(gusts, for: ["GUST"], in: &model)
+            forecasts[identifier] = model
+        }
+        response["forecast"] = forecasts
+        return try! SpotForecast(map: response)!
+    }
+
+    private static func set(_ value: Any, for keys: [String], in model: inout [String: Any]) {
+        for key in keys {
+            guard var values = model[key] as? [String: Any] else { continue }
+            values["29"] = value
+            model[key] = values
+        }
+    }
+}
+
+#Preview("Sunny") {
     AnimatedWeatherBackground(
-        symbolNames: ["sun.max.fill", "wind"],
-        precipitationMillimeters: 0,
-        windSpeedKnots: 22,
-        windDirectionDegrees: 270
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 0, temperature: 23, cloudCover: 0, windSpeed: 7, gusts: 10),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("Rain") {
+    AnimatedWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 3, temperature: 11, cloudCover: 95, windSpeed: 14, gusts: 20),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("Snow") {
+    AnimatedWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 4, temperature: -3, cloudCover: 95, windSpeed: 12, gusts: 18),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("Heavy rain and lightning") {
+    AnimatedWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 12, temperature: 14, cloudCover: 100, windSpeed: 28, gusts: 45),
+        hour: "29"
     )
         .frame(height: 400)
 }
