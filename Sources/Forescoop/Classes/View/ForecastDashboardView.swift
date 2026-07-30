@@ -40,7 +40,7 @@ public struct ForecastDashboardView: View {
 #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
-    @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
+    @State private var selectedSpotID: String
     @StateObject private var account: WindguruAccount
     @StateObject private var viewModel: ForecastDashboardViewModel
     @State private var showsWindDirectionArrow = false
@@ -52,6 +52,7 @@ public struct ForecastDashboardView: View {
 
     public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
+        _selectedSpotID = State(initialValue: SelectedWindguruSpotStore.load())
         _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
         _account = StateObject(wrappedValue: WindguruAccount())
         forecastLoader = { try await forecastService.forecast(bySpotId: $0, model: $1) }
@@ -259,6 +260,7 @@ public struct ForecastDashboardView: View {
                 await loadUserPreferences()
                 await loadPreferredForecast()
             }
+            .onChange(of: selectedSpotID) { _, spotID in SelectedWindguruSpotStore.save(spotID) }
             .sheet(isPresented: sheetBinding(.spotPicker), onDismiss: refreshSavedMapLocations) {
                 WindguruSpotPicker(
                     forecastService: forecastService,

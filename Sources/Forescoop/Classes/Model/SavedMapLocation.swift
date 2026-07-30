@@ -5,6 +5,29 @@
 
 import CoreLocation
 import Foundation
+import SwiftData
+
+@Model private final class SavedMapLocationRecord {
+    @Attribute(.unique) var id: UUID
+    var name: String
+    var latitude: Double
+    var longitude: Double
+    var spotID: String?
+    var placeDescription: String?
+
+    init(_ location: SavedMapLocation) {
+        id = location.id; name = location.name; latitude = location.latitude; longitude = location.longitude
+        spotID = location.spotID; placeDescription = location.placeDescription
+    }
+
+    var location: SavedMapLocation { SavedMapLocation(id: id, name: name, coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), spotID: spotID, placeDescription: placeDescription) }
+}
+
+@Model private final class VentusPreferenceRecord {
+    @Attribute(.unique) var key: String
+    var value: String
+    init(key: String, value: String) { self.key = key; self.value = value }
+}
 
 public struct SavedMapLocation: Codable, Identifiable, Sendable {
     public let id: UUID
@@ -43,7 +66,7 @@ public struct SavedMapLocation: Codable, Identifiable, Sendable {
 }
 
 public enum SavedMapLocationStore {
-    private static let key = "savedMapLocations"
+    fileprivate static let container = try! ModelContainer(for: SavedMapLocationRecord.self, VentusPreferenceRecord.self)
     public static let primarySpotID = "64141"
     private static let primaryLocation = SavedMapLocation(
         id: UUID(uuidString: "64141000-0000-4000-8000-000000000000")!,
@@ -54,15 +77,16 @@ public enum SavedMapLocationStore {
     )
 
     public static func load() -> [SavedMapLocation] {
-        guard let data = UserDefaults.standard.data(forKey: key),
-              let locations = try? JSONDecoder().decode([SavedMapLocation].self, from: data) else {
-            return [primaryLocation]
-        }
+        let context = ModelContext(container)
+        let locations = (try? context.fetch(FetchDescriptor<SavedMapLocationRecord>()))?.map(\.location) ?? []
         return normalized(locations)
     }
 
     public static func save(_ locations: [SavedMapLocation]) {
-        UserDefaults.standard.set(try? JSONEncoder().encode(normalized(locations)), forKey: key)
+        let context = ModelContext(container)
+        (try? context.fetch(FetchDescriptor<SavedMapLocationRecord>()))?.forEach { context.delete($0) }
+        normalized(locations).forEach { context.insert(SavedMapLocationRecord($0)) }
+        try? context.save()
     }
 
     /// Removes locations associated with the current Windguru session.
@@ -86,5 +110,18 @@ public enum SavedMapLocationStore {
         }
         return abs(lhs.latitude - rhs.latitude) < 0.0001
             && abs(lhs.longitude - rhs.longitude) < 0.0001
+    }
+}
+
+public enum SelectedWindguruSpotStore {
+    private static let key = "selectedWindguruSpotID"
+    public static func load() -> String {
+        let context = ModelContext(SavedMapLocationStore.container)
+        return (try? context.fetch(FetchDescriptor<VentusPreferenceRecord>()))?.first(where: { $0.key == key })?.value ?? SavedMapLocationStore.primarySpotID
+    }
+    public static func save(_ spotID: String) {
+        let context = ModelContext(SavedMapLocationStore.container)
+        if let record = (try? context.fetch(FetchDescriptor<VentusPreferenceRecord>()))?.first(where: { $0.key == key }) { record.value = spotID } else { context.insert(VentusPreferenceRecord(key: key, value: spotID)) }
+        try? context.save()
     }
 }
