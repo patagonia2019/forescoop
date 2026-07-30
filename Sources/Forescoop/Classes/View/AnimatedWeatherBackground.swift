@@ -47,6 +47,28 @@ public struct AnimatedWeatherBackground: View {
         self.forecastDate = forecastDate
     }
 
+    /// Creates the animation from a forecast at the selected (or current) hour.
+    public init(forecast: SpotForecast, hour: String? = nil) {
+        let selectedHour = hour ?? forecast.currentForecastHour
+        let weather = forecast.forecast
+        self.init(
+            symbolNames: forecast.weatherSymbolNames(hour: selectedHour),
+            precipitationMillimeters: weather?.precipitation(hh: selectedHour)
+                ?? weather?.precipitation1(hh: selectedHour)
+                ?? 0,
+            windSpeedKnots: weather?.windSpeed(hh: selectedHour) ?? 0,
+            windDirectionDegrees: weather?.windDirection(hh: selectedHour),
+            windGustKnots: weather?.windGustsKnots(hh: selectedHour) ?? 0,
+            cloudCoverPercent: weather?.cloudCoverTotal(hh: selectedHour) ?? 0,
+            temperatureCelsius: weather?.temperatureReal(hh: selectedHour)
+                ?? weather?.temperature(hh: selectedHour)
+                ?? 0,
+            humidityPercent: weather?.relativeHumidity(hh: selectedHour) ?? 0,
+            pressureHectopascals: weather?.seaLevelPressure(hh: selectedHour),
+            forecastDate: forecast.forecastDate(hour: selectedHour) ?? Date()
+        )
+    }
+
     private var isSunny: Bool { symbolNames.contains { $0.contains("sun") } }
     private var isNight: Bool { symbolNames.contains { $0.contains("moon") } }
     private var isCloudy: Bool { symbolNames.contains { $0.contains("cloud") } }

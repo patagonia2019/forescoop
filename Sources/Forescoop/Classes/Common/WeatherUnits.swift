@@ -133,33 +133,76 @@ public enum FreezingLevelUnit: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+public struct ForecastUnitPreferences: Equatable, Sendable {
+    public let temperatureUnit: TemperatureUnit
+    public let windSpeedUnit: WindSpeedUnit
+    public let waveHeightUnit: WaveHeightUnit
+    public let pressureUnit: PressureUnit
+    public let precipitationUnit: PrecipitationUnit
+    public let freezingLevelUnit: FreezingLevelUnit
+
+    public init(temperatureUnit: TemperatureUnit, windSpeedUnit: WindSpeedUnit, waveHeightUnit: WaveHeightUnit, pressureUnit: PressureUnit, precipitationUnit: PrecipitationUnit, freezingLevelUnit: FreezingLevelUnit) {
+        self.temperatureUnit = temperatureUnit
+        self.windSpeedUnit = windSpeedUnit
+        self.waveHeightUnit = waveHeightUnit
+        self.pressureUnit = pressureUnit
+        self.precipitationUnit = precipitationUnit
+        self.freezingLevelUnit = freezingLevelUnit
+    }
+}
+
+public protocol ForecastPreferencesProviding {
+    var forecastUnitPreferences: ForecastUnitPreferences { get }
+}
+
 /// Device defaults used when no Windguru account is signed in.
-/// They follow the iPhone's regional measurement system rather than app-specific values.
+/// They follow the device regional measurement system rather than app-specific values.
+public struct DeviceForecastPreferenceProvider: ForecastPreferencesProviding {
+    private let locale: Locale
+
+    public init(locale: Locale = .autoupdatingCurrent) {
+        self.locale = locale
+    }
+
+    public var forecastUnitPreferences: ForecastUnitPreferences {
+        let usesMetricSystem = locale.measurementSystem != .us
+        return ForecastUnitPreferences(
+            temperatureUnit: usesMetricSystem ? .celsius : .fahrenheit,
+            windSpeedUnit: usesMetricSystem ? .kilometersPerHour : .milesPerHour,
+            waveHeightUnit: usesMetricSystem ? .meters : .feet,
+            pressureUnit: usesMetricSystem ? .hectopascals : .inchesOfMercury,
+            precipitationUnit: usesMetricSystem ? .millimeters : .inches,
+            freezingLevelUnit: usesMetricSystem ? .meters : .feet
+        )
+    }
+}
+
+/// Backwards-compatible access to device forecast defaults.
 public enum DeviceForecastPreferences {
-    private static var usesMetricSystem: Bool { Locale.autoupdatingCurrent.measurementSystem != .us }
+    private static var values: ForecastUnitPreferences { DeviceForecastPreferenceProvider().forecastUnitPreferences }
 
     public static var temperatureUnit: TemperatureUnit {
-        usesMetricSystem ? .celsius : .fahrenheit
+        values.temperatureUnit
     }
 
     public static var windSpeedUnit: WindSpeedUnit {
-        usesMetricSystem ? .kilometersPerHour : .milesPerHour
+        values.windSpeedUnit
     }
 
     public static var waveHeightUnit: WaveHeightUnit {
-        usesMetricSystem ? .meters : .feet
+        values.waveHeightUnit
     }
 
     public static var pressureUnit: PressureUnit {
-        usesMetricSystem ? .hectopascals : .inchesOfMercury
+        values.pressureUnit
     }
 
     public static var precipitationUnit: PrecipitationUnit {
-        usesMetricSystem ? .millimeters : .inches
+        values.precipitationUnit
     }
 
     public static var freezingLevelUnit: FreezingLevelUnit {
-        usesMetricSystem ? .meters : .feet
+        values.freezingLevelUnit
     }
 }
 

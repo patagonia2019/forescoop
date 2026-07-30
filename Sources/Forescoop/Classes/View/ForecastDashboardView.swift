@@ -13,12 +13,26 @@ import SwiftUI
 
 @MainActor
 public struct ForecastDashboardView: View {
+    private enum DashboardContent: Equatable {
+        case dashboard
+        case grid
+    }
+
+    private enum DashboardSheet: String, Identifiable, Equatable {
+        case spotPicker
+        case modelPicker
+        case login
+        case favorites
+        case forecastMap
+
+        var id: String { rawValue }
+    }
+
     private let forecastService: ForecastWindguruProtocol
     private let forecastLoader: @MainActor (String, String?) async throws -> SpotForecast?
     private let proSpotForecastLoader: @MainActor (String, String?, String, String) async throws -> SpotForecast?
     private let coordinateForecastLoader: @MainActor (Double, Double, String?, String, String) async throws -> WSpotForecast?
     private let spotSearch: @MainActor (String) async throws -> SpotResult?
-    private let profileLoader: @MainActor (String, String) async throws -> User?
     private let favoriteSpotsLoader: @MainActor (String, String) async throws -> SpotResult?
     private let spotInfoLoader: @MainActor (String) async throws -> SpotInfo?
     private let coordinateModelLoader: @MainActor (Double, Double) async throws -> [String]
@@ -29,40 +43,17 @@ public struct ForecastDashboardView: View {
     @AppStorage("selectedWindguruSpotID") private var selectedSpotID = "64141"
     @AppStorage("windguruUsername") private var windguruUsername = ""
     @AppStorage("windguruIsProUser") private var windguruIsProUser = false
-    @State private var forecast: SpotForecast?
-    @State private var coordinateLocationName: String?
-    @State private var errorMessage: String?
-    @State private var isLoading = false
-    @State private var selectedHour: String?
-    @State private var temperatureUnit: TemperatureUnit = .celsius
-    @State private var windSpeedUnit: WindSpeedUnit = .knots
-    @AppStorage("windguruWaveHeightUnit") private var waveHeightUnit: WaveHeightUnit = .meters
-    @State private var pressureUnit: PressureUnit = .hectopascals
-    @State private var precipitationUnit: PrecipitationUnit = .millimeters
-    @State private var freezingLevelUnit: FreezingLevelUnit = .meters
+    @StateObject private var viewModel: ForecastDashboardViewModel
     @State private var showsWindDirectionArrow = false
-    @State private var showsSpotPicker = false
-    @State private var showsModelPicker = false
-    @State private var showsLogin = false
-    @State private var showsFavorites = false
-    @State private var showsForecastMap = false
-    @State private var showsForecastGrid = false
+    @State private var activeSheet: DashboardSheet?
+    @State private var content = DashboardContent.dashboard
     @State private var showsDashboardModelComparison = false
-    @State private var selectedModelIDs: [String] = []
-    @State private var usableModelIDs: [String] = []
-    @State private var displayedForecastSpotID: String?
-    /// All models validated for each spot, independent of the current selection.
-    @State private var modelIDsBySpot = [String: [String]]()
-    @State private var selectedModelIDsBySpot = [String: [String]]()
-    @State private var modelNamesByID = [String: String]()
-    @State private var displayedModelForecasts: [SpotForecast] = []
-    @State private var userProfile: User?
-    @State private var savedMapLocations = SavedMapLocationStore.load()
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
 
     public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
+        _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
         forecastLoader = { try await forecastService.forecast(bySpotId: $0, model: $1) }
         proSpotForecastLoader = { spotID, modelID, username, password in
             guard let proForecast = try await forecastService.wforecast(
@@ -79,7 +70,6 @@ public struct ForecastDashboardView: View {
             try await forecastService.wforecast(byLatitude: $0, longitude: $1, model: $2, username: $3, password: $4)
         }
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
-        profileLoader = { try await forecastService.login(withUsername: $0, password: $1) }
         favoriteSpotsLoader = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
         spotInfoLoader = { try await forecastService.spotInfo(bySpotId: $0) }
         coordinateModelLoader = { latitude, longitude in
@@ -87,6 +77,24 @@ public struct ForecastDashboardView: View {
             return Self.modelIDs(from: response)
         }
         modelInfoLoader = { try await forecastService.modelInfo(onlyModelId: nil) }
+    }
+
+    private var forecast: SpotForecast? { get { viewModel.forecast } nonmutating set { viewModel.forecast = newValue } }
+    private var coordinateLocationName: String? { get { viewModel.coordinateLocationName } nonmutating set { viewModel.coordinateLocationName = newValue } }
+    private var errorMessage: String? { get { viewModel.errorMessage } nonmutating set { viewModel.errorMessage = newValue } }
+    private var isLoading: Bool { get { viewModel.isLoading } nonmutating set { viewModel.isLoading = newValue } }
+    private var selectedHour: String? { get { viewModel.selectedHour } nonmutating set { viewModel.selectedHour = newValue } }
+    private var selectedModelIDs: [String] { get { viewModel.selectedModelIDs } nonmutating set { viewModel.selectedModelIDs = newValue } }
+    private var usableModelIDs: [String] { get { viewModel.usableModelIDs } nonmutating set { viewModel.usableModelIDs = newValue } }
+    private var displayedForecastSpotID: String? { get { viewModel.displayedForecastSpotID } nonmutating set { viewModel.displayedForecastSpotID = newValue } }
+    private var modelIDsBySpot: [String: [String]] { get { viewModel.modelIDsBySpot } nonmutating set { viewModel.modelIDsBySpot = newValue } }
+    private var selectedModelIDsBySpot: [String: [String]] { get { viewModel.selectedModelIDsBySpot } nonmutating set { viewModel.selectedModelIDsBySpot = newValue } }
+    private var modelNamesByID: [String: String] { get { viewModel.modelNamesByID } nonmutating set { viewModel.modelNamesByID = newValue } }
+    private var displayedModelForecasts: [SpotForecast] { get { viewModel.displayedModelForecasts } nonmutating set { viewModel.displayedModelForecasts = newValue } }
+    private var savedMapLocations: [SavedMapLocation] { get { viewModel.savedMapLocations } nonmutating set { viewModel.savedMapLocations = newValue } }
+
+    private var selectedHourBinding: Binding<String?> {
+        Binding(get: { viewModel.selectedHour }, set: { viewModel.selectedHour = $0 })
     }
 
     private var usesWideLayout: Bool {
@@ -103,15 +111,28 @@ public struct ForecastDashboardView: View {
             && WindguruCredentialStore.password(for: windguruUsername) != nil
     }
 
+    private func sheetBinding(_ sheet: DashboardSheet) -> Binding<Bool> {
+        Binding(
+            get: { activeSheet == sheet },
+            set: { isPresented in
+                if isPresented {
+                    activeSheet = sheet
+                } else if activeSheet == sheet {
+                    activeSheet = nil
+                }
+            }
+        )
+    }
+
     private var accountMenu: some View {
         Menu {
-            if showsForecastGrid {
+            if content == .grid {
                 Button("Forecast Dashboard", systemImage: "rectangle.3.group") {
-                    showsForecastGrid = false
+                    content = .dashboard
                 }
             } else {
                 Button("Forecast Grid", systemImage: "tablecells") {
-                    showsForecastGrid = true
+                    content = .grid
                 }
             }
 
@@ -119,15 +140,15 @@ public struct ForecastDashboardView: View {
 
             if windguruUsername.isEmpty {
                 Button("Login", systemImage: "person.crop.circle") {
-                    showsLogin = true
+                    activeSheet = .login
                 }
             } else {
                 Button("Profile", systemImage: "person.crop.circle") {
-                    showsLogin = true
+                    activeSheet = .login
                 }
 
                 Button("Favorites", systemImage: "star") {
-                    showsFavorites = true
+                    activeSheet = .favorites
                 }
             }
 
@@ -155,7 +176,7 @@ public struct ForecastDashboardView: View {
         modelIDsBySpot = [:]
         selectedModelIDsBySpot = [:]
         displayedModelForecasts = []
-        userProfile = nil
+        viewModel.clearUserProfile()
         selectedHour = nil
         forecast = nil
         coordinateLocationName = nil
@@ -166,15 +187,14 @@ public struct ForecastDashboardView: View {
 
         applyDevicePreferences()
 
-        showsModelPicker = false
-        showsLogin = false
-        showsFavorites = false
+        activeSheet = nil
         Task { await loadForecast() }
     }
 
     private func startSession(username: String, isProUser: Bool) {
         windguruUsername = username
         windguruIsProUser = isProUser
+        viewModel.clearUserProfile()
         // Do not reuse the previous session's model cache. A PRO session can
         // expose more models for the same spot, while a regular session must
         // return to the public forecast set.
@@ -188,7 +208,7 @@ public struct ForecastDashboardView: View {
         forecast = nil
         coordinateLocationName = nil
         errorMessage = nil
-        showsLogin = false
+        activeSheet = nil
         Task { await loadPreferredForecast() }
     }
 
@@ -197,7 +217,7 @@ public struct ForecastDashboardView: View {
             Group {
                 if let forecast {
                     Group {
-                        if showsForecastGrid {
+                        if content == .grid {
                             forecastGridContent(for: forecast)
                         } else {
                             forecastContent(for: forecast)
@@ -227,7 +247,7 @@ public struct ForecastDashboardView: View {
 #endif
                 ToolbarItem(placement: .primaryAction) {
                     HStack {
-                        if !showsForecastGrid, displayedModelForecasts.count > 1 {
+                        if content == .dashboard, displayedModelForecasts.count > 1 {
                             Button("Compare models", systemImage: "arrow.left.and.right") {
                                 showsDashboardModelComparison.toggle()
                             }
@@ -244,32 +264,32 @@ public struct ForecastDashboardView: View {
                 await loadUserPreferences()
                 await loadPreferredForecast()
             }
-            .sheet(isPresented: $showsSpotPicker, onDismiss: refreshSavedMapLocations) {
+            .sheet(isPresented: sheetBinding(.spotPicker), onDismiss: refreshSavedMapLocations) {
                 WindguruSpotPicker(
                     forecastService: forecastService,
                     username: windguruUsername,
                     isProUser: isProUser,
                     onSpotSelected: { spot in
                         guard let spotId = spot.identifier else { return }
-                        showsSpotPicker = false
+                        activeSheet = nil
                         Task { await loadForecast(spotId: spotId) }
                     },
                     onSpotIDSelected: { spotID in
-                        showsSpotPicker = false
+                        activeSheet = nil
                         Task { await loadForecast(spotId: spotID) }
                     },
                     onFavoriteSelected: { spot in
                         guard let spotID = spot.identifier else { return }
-                        showsSpotPicker = false
+                        activeSheet = nil
                         Task { await loadForecast(spotId: spotID, persistSelection: false) }
                     },
                     onCoordinateSelected: { coordinate, locationName in
-                        showsSpotPicker = false
+                        activeSheet = nil
                         Task { await loadForecast(coordinate: coordinate, locationName: locationName) }
                     }
                 )
             }
-            .sheet(isPresented: $showsModelPicker) {
+            .sheet(isPresented: sheetBinding(.modelPicker)) {
                 let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
                 let availableModelIDs = modelIDsBySpot[forecastSpotID] ?? []
                 let selectedForecastModelIDs = selectedModelIDsBySpot[forecastSpotID] ?? availableModelIDs
@@ -280,7 +300,7 @@ public struct ForecastDashboardView: View {
                     usableModelIDs: Set(availableModelIDs),
                     isProUser: isProUser
                 ) { modelIDs in
-                    showsModelPicker = false
+                    activeSheet = nil
                     Task {
                         await loadForecast(
                             spotId: forecastSpotID,
@@ -290,7 +310,7 @@ public struct ForecastDashboardView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showsLogin) {
+            .sheet(isPresented: sheetBinding(.login)) {
                 WindguruLoginView(
                     forecastService: forecastService,
                     username: windguruUsername,
@@ -304,20 +324,20 @@ public struct ForecastDashboardView: View {
                     onProfileLoaded: applyUserPreferences
                 )
             }
-            .sheet(isPresented: $showsFavorites) {
+            .sheet(isPresented: sheetBinding(.favorites)) {
                 WindguruFavoritesView(
                     forecastService: forecastService,
                     username: windguruUsername,
                     isProUser: isProUser,
                     onSpotSelected: { spot in
                         guard let spotID = spot.identifier else { return }
-                        showsFavorites = false
+                        activeSheet = nil
                         Task { await loadForecast(spotId: spotID, persistSelection: false) }
                     }
                 )
             }
 #if !os(tvOS)
-            .sheet(isPresented: $showsForecastMap) {
+            .sheet(isPresented: sheetBinding(.forecastMap)) {
                 MapLocationPicker(
                     initialCoordinate: forecast?.location?.coordinate,
                     isSelectionEnabled: false,
@@ -333,17 +353,17 @@ public struct ForecastDashboardView: View {
             VStack(spacing: 28) {
                 ForecastHourSelector(
                     forecast: forecast,
-                    selectedHour: $selectedHour
+                    selectedHour: selectedHourBinding
                 )
 
                 if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
                             .frame(maxWidth: .infinity)
 
                         VStack(alignment: .leading, spacing: 28) {
-                            ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
-                            ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
+                            ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $viewModel.windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
+                            ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $viewModel.waveHeightUnit, precipitationUnit: $viewModel.precipitationUnit, freezingLevelUnit: $viewModel.freezingLevelUnit, pressureUnit: $viewModel.pressureUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -351,9 +371,9 @@ public struct ForecastDashboardView: View {
                     iPadLocationWorkspace()
                 } else {
                     VStack(spacing: 24) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { showsSpotPicker = true }, onSelectModel: { showsModelPicker = true }, onShowMap: { showsForecastMap = true })
-                        ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
-                        ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $waveHeightUnit, precipitationUnit: $precipitationUnit, freezingLevelUnit: $freezingLevelUnit, pressureUnit: $pressureUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
+                        ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $viewModel.windSpeedUnit, showsDirectionArrow: $showsWindDirectionArrow, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
+                        ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $viewModel.waveHeightUnit, precipitationUnit: $viewModel.precipitationUnit, freezingLevelUnit: $viewModel.freezingLevelUnit, pressureUnit: $viewModel.pressureUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
                     }
                 }
 
@@ -364,24 +384,8 @@ public struct ForecastDashboardView: View {
     }
 
     private func weatherBackground(for forecast: SpotForecast) -> some View {
-        let hour = selectedHour ?? forecast.currentForecastHour
-        return AnimatedWeatherBackground(
-            symbolNames: forecast.weatherSymbolNames(hour: hour),
-            precipitationMillimeters: forecast.forecast?.precipitation(hh: hour)
-                ?? forecast.forecast?.precipitation1(hh: hour)
-                ?? 0,
-            windSpeedKnots: forecast.forecast?.windSpeed(hh: hour) ?? 0,
-            windDirectionDegrees: forecast.forecast?.windDirection(hh: hour),
-            windGustKnots: forecast.forecast?.windGustsKnots(hh: hour) ?? 0,
-            cloudCoverPercent: forecast.forecast?.cloudCoverTotal(hh: hour) ?? 0,
-            temperatureCelsius: forecast.forecast?.temperatureReal(hh: hour)
-                ?? forecast.forecast?.temperature(hh: hour)
-                ?? 0,
-            humidityPercent: forecast.forecast?.relativeHumidity(hh: hour) ?? 0,
-            pressureHectopascals: forecast.forecast?.seaLevelPressure(hh: hour),
-            forecastDate: forecast.forecastDate(hour: hour) ?? Date()
-        )
-        .ignoresSafeArea()
+        AnimatedWeatherBackground(forecast: forecast, hour: selectedHour)
+            .ignoresSafeArea()
     }
 
     private func forecastGridContent(for forecast: SpotForecast) -> some View {
@@ -401,15 +405,15 @@ public struct ForecastDashboardView: View {
             selectedModelIDs: selectedForecastModelIDs,
             modelNamesByID: modelNamesByID,
             modelForecasts: displayedModelForecasts,
-            userProfile: userProfile,
-            temperatureUnit: $temperatureUnit,
-            windSpeedUnit: $windSpeedUnit,
-            waveHeightUnit: $waveHeightUnit,
-            pressureUnit: $pressureUnit,
-            precipitationUnit: $precipitationUnit,
-            freezingLevelUnit: $freezingLevelUnit,
+            userProfile: viewModel.userProfile,
+            temperatureUnit: $viewModel.temperatureUnit,
+            windSpeedUnit: $viewModel.windSpeedUnit,
+            waveHeightUnit: $viewModel.waveHeightUnit,
+            pressureUnit: $viewModel.pressureUnit,
+            precipitationUnit: $viewModel.precipitationUnit,
+            freezingLevelUnit: $viewModel.freezingLevelUnit,
             showsWindDirectionArrow: $showsWindDirectionArrow,
-            onSelectLocation: { showsSpotPicker = true },
+            onSelectLocation: { activeSheet = .spotPicker },
             onToggleModel: { modelID in
                 toggleGridModel(
                     modelID,
@@ -420,7 +424,7 @@ public struct ForecastDashboardView: View {
             },
             onSelectHour: { hour in
                 selectedHour = hour
-                showsForecastGrid = false
+                content = .dashboard
             }
         )
         .task(id: availableModelIDs) {
@@ -481,7 +485,7 @@ public struct ForecastDashboardView: View {
                     .font(.title2.bold())
                 Spacer()
                 Button("Manage locations", systemImage: "slider.horizontal.3") {
-                    showsSpotPicker = true
+                    activeSheet = .spotPicker
                 }
             }
 
@@ -603,7 +607,7 @@ public struct ForecastDashboardView: View {
     private func loadUserPreferences() async {
         guard !windguruUsername.isEmpty,
               let password = WindguruCredentialStore.password(for: windguruUsername),
-              let user = try? await profileLoader(windguruUsername, password) else {
+              let user = await viewModel.loadUserProfile(username: windguruUsername, password: password) else {
             applyDevicePreferences()
             return
         }
@@ -612,25 +616,11 @@ public struct ForecastDashboardView: View {
     }
 
     private func applyUserPreferences(_ user: User) {
-        userProfile = user
-        if let unit = WindSpeedUnit(windguruPreference: user.windUnits) {
-            windSpeedUnit = unit
-        }
-        if let unit = TemperatureUnit(windguruPreference: user.temperatureUnits) {
-            temperatureUnit = unit
-        }
-        if let unit = WaveHeightUnit(windguruPreference: user.waveUnits) {
-            waveHeightUnit = unit
-        }
+        viewModel.applyUserProfile(user)
     }
 
     private func applyDevicePreferences() {
-        temperatureUnit = DeviceForecastPreferences.temperatureUnit
-        windSpeedUnit = DeviceForecastPreferences.windSpeedUnit
-        waveHeightUnit = DeviceForecastPreferences.waveHeightUnit
-        pressureUnit = DeviceForecastPreferences.pressureUnit
-        precipitationUnit = DeviceForecastPreferences.precipitationUnit
-        freezingLevelUnit = DeviceForecastPreferences.freezingLevelUnit
+        viewModel.applyDeviceUnitPreferences()
     }
 
     @MainActor
