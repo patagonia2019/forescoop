@@ -378,9 +378,15 @@ public struct ForecastDashboardView: View {
         }
     }
 
+    @ViewBuilder
     private func weatherBackground(for forecast: SpotForecast) -> some View {
-        AnimatedWeatherBackground(forecast: forecast, hour: selectedHour)
-            .ignoresSafeArea()
+        if account.isProUser {
+            MetalWeatherBackground(forecast: forecast, hour: selectedHour)
+                .ignoresSafeArea()
+        } else {
+            AnimatedWeatherBackground(forecast: forecast, hour: selectedHour)
+                .ignoresSafeArea()
+        }
     }
 
     private func forecastGridContent(for forecast: SpotForecast) -> some View {
