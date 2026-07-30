@@ -12,9 +12,10 @@ import SwiftUI
 
 public struct WindguruFavoritesView: View {
     private let forecastService: ForecastWindguruProtocol
-    private let username: String
-    private let password: String
-    private let isProUser: Bool
+    private let account: WindguruAccount
+    private var username: String { account.username }
+    private var password: String { account.password ?? "" }
+    private var isProUser: Bool { account.isProUser }
     private let onSpotSelected: (SpotOwner) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -28,15 +29,11 @@ public struct WindguruFavoritesView: View {
 
     public init(
         forecastService: ForecastWindguruProtocol = ForecastWindguruService(),
-        username: String,
-        password: String? = nil,
-        isProUser: Bool = false,
+        account: WindguruAccount,
         onSpotSelected: @escaping (SpotOwner) -> Void = { _ in }
     ) {
         self.forecastService = forecastService
-        self.username = username
-        self.password = password ?? WindguruAccount(username: username, isProUser: isProUser).password ?? ""
-        self.isProUser = isProUser
+        self.account = account
         self.onSpotSelected = onSpotSelected
         _viewModel = StateObject(wrappedValue: WindguruFavoritesViewModel(forecastService: forecastService))
     }
@@ -91,8 +88,7 @@ public struct WindguruFavoritesView: View {
         .sheet(isPresented: $showsAddFavorite) {
             WindguruSpotPicker(
                 forecastService: forecastService,
-                username: username,
-                isProUser: isProUser,
+                account: account,
                 onSpotSelected: { _ in },
                 onCoordinateSelected: { _, _ in },
                 purpose: .addFavorite,
@@ -189,6 +185,6 @@ public struct WindguruFavoritesView: View {
 }
 
 #Preview("Favorites") {
-    WindguruFavoritesView(forecastService: ForecastWindguruMockup(), username: "forescoop", password: "password")
+    WindguruFavoritesView(forecastService: ForecastWindguruMockup(), account: WindguruAccount())
 }
 #endif

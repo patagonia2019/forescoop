@@ -80,8 +80,6 @@ public struct ForecastDashboardView: View {
     }
 
     private var forecast: SpotForecast? { get { viewModel.forecast } nonmutating set { viewModel.forecast = newValue } }
-    private var windguruUsername: String { account.username }
-    private var windguruIsProUser: Bool { account.isProUser }
     private var coordinateLocationName: String? { get { viewModel.coordinateLocationName } nonmutating set { viewModel.coordinateLocationName = newValue } }
     private var errorMessage: String? { get { viewModel.errorMessage } nonmutating set { viewModel.errorMessage = newValue } }
     private var isLoading: Bool { get { viewModel.isLoading } nonmutating set { viewModel.isLoading = newValue } }
@@ -108,7 +106,7 @@ public struct ForecastDashboardView: View {
     }
 
     private var isProUser: Bool {
-        windguruIsProUser && account.isAuthenticated
+        account.isProUser && account.isAuthenticated
     }
 
     private func sheetBinding(_ sheet: DashboardSheet) -> Binding<Bool> {
@@ -138,7 +136,7 @@ public struct ForecastDashboardView: View {
 
             Divider()
 
-            if windguruUsername.isEmpty {
+            if account.username.isEmpty {
                 Button("Login", systemImage: "person.crop.circle") {
                     activeSheet = .login
                 }
@@ -152,7 +150,7 @@ public struct ForecastDashboardView: View {
                 }
             }
 
-            if !windguruUsername.isEmpty {
+            if !account.username.isEmpty {
                 Divider()
                 Button("Logout", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
                     logout()
@@ -264,8 +262,7 @@ public struct ForecastDashboardView: View {
             .sheet(isPresented: sheetBinding(.spotPicker), onDismiss: refreshSavedMapLocations) {
                 WindguruSpotPicker(
                     forecastService: forecastService,
-                    username: windguruUsername,
-                    isProUser: isProUser,
+                    account: account,
                     onSpotSelected: { spot in
                         guard let spotId = spot.identifier else { return }
                         activeSheet = nil
@@ -310,7 +307,7 @@ public struct ForecastDashboardView: View {
             .sheet(isPresented: sheetBinding(.login)) {
                 WindguruLoginView(
                     forecastService: forecastService,
-                    username: windguruUsername,
+                    username: account.username,
                     onLoggedIn: { username, isProUser in
                         if username.isEmpty {
                             logout()
@@ -324,8 +321,7 @@ public struct ForecastDashboardView: View {
             .sheet(isPresented: sheetBinding(.favorites)) {
                 WindguruFavoritesView(
                     forecastService: forecastService,
-                    username: windguruUsername,
-                    isProUser: isProUser,
+                    account: account,
                     onSpotSelected: { spot in
                         guard let spotID = spot.identifier else { return }
                         activeSheet = nil
@@ -602,9 +598,9 @@ public struct ForecastDashboardView: View {
 
     @MainActor
     private func loadUserPreferences() async {
-        guard !windguruUsername.isEmpty,
+        guard !account.username.isEmpty,
               let password = account.password,
-              let user = await viewModel.loadUserProfile(username: windguruUsername, password: password) else {
+              let user = await viewModel.loadUserProfile(username: account.username, password: password) else {
             applyDevicePreferences()
             return
         }
@@ -623,9 +619,9 @@ public struct ForecastDashboardView: View {
     @MainActor
     private func loadPreferredForecast() async {
         let preferredSpotID: String
-        if !windguruUsername.isEmpty,
+        if !account.username.isEmpty,
            let password = account.password,
-           let favoriteSpotID = try? await favoriteSpotsLoader(windguruUsername, password)?.allSpots.first?.identifier {
+           let favoriteSpotID = try? await favoriteSpotsLoader(account.username, password)?.allSpots.first?.identifier {
             preferredSpotID = favoriteSpotID
         } else {
             preferredSpotID = "64141"
@@ -674,9 +670,9 @@ public struct ForecastDashboardView: View {
             let selectedForecastLoader: @MainActor (String?) async throws -> SpotForecast?
             if isProUser,
                let password = account.password,
-               !windguruUsername.isEmpty {
+               !account.username.isEmpty {
                 selectedForecastLoader = { modelID in
-                    try await proSpotForecastLoader(requestedSpotID, modelID, windguruUsername, password)
+                    try await proSpotForecastLoader(requestedSpotID, modelID, account.username, password)
                 }
             } else {
                 selectedForecastLoader = { modelID in
@@ -745,7 +741,7 @@ public struct ForecastDashboardView: View {
         locationName: String? = nil,
         modelIDs: [String]? = nil
     ) async {
-        guard let password = account.password, !windguruUsername.isEmpty else {
+        guard let password = account.password, !account.username.isEmpty else {
             errorMessage = "Sign in with Windguru PRO to load an exact map coordinate."
             return
         }
@@ -765,7 +761,7 @@ public struct ForecastDashboardView: View {
                         coordinate.latitude,
                         coordinate.longitude,
                         modelID,
-                        windguruUsername,
+                        account.username,
                         password
                     ) else {
                         continue

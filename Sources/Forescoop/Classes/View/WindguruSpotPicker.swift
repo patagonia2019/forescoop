@@ -22,9 +22,9 @@ public struct WindguruSpotPicker: View {
     private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
     private let addFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
     private let purpose: Purpose
-    let username: String
-    let isProUser: Bool
-    private let account: WindguruAccount
+    let account: WindguruAccount
+    private var username: String { account.username }
+    private var isProUser: Bool { account.isProUser }
     let onSpotSelected: (SpotOwner) -> Void
     let onSpotIDSelected: (String) -> Void
     let onFavoriteSelected: (SpotOwner) -> Void
@@ -52,8 +52,7 @@ public struct WindguruSpotPicker: View {
 
     public init(
         forecastService: ForecastWindguruProtocol,
-        username: String,
-        isProUser: Bool = false,
+        account: WindguruAccount,
         onSpotSelected: @escaping (SpotOwner) -> Void,
         onSpotIDSelected: @escaping (String) -> Void = { _ in },
         onFavoriteSelected: @escaping (SpotOwner) -> Void = { _ in },
@@ -71,9 +70,7 @@ public struct WindguruSpotPicker: View {
             try await forecastService.addFavoriteSpot(withSpotId: spotID, username: username, password: password)
         }
         self.purpose = purpose
-        self.username = username
-        self.isProUser = isProUser
-        account = WindguruAccount(username: username, isProUser: isProUser)
+        self.account = account
         self.onSpotSelected = onSpotSelected
         self.onSpotIDSelected = onSpotIDSelected
         self.onFavoriteSelected = onFavoriteSelected
@@ -760,7 +757,7 @@ private enum DeviceLocationError: LocalizedError {
 #Preview("Windguru spot picker") {
     WindguruSpotPicker(
         forecastService: ForecastWindguruMockup(),
-        username: "",
+        account: WindguruAccount(),
         onSpotSelected: { _ in },
         onCoordinateSelected: { _, _ in }
     )
