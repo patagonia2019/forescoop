@@ -556,4 +556,63 @@ public struct WindguruForecastGridView: View {
     }
 }
 
+//#if DEBUG
+//
+//private struct _WindguruPreviewData {
+//    static let hours: [String] = ["00", "03", "06", "09", "12", "15", "18", "21", "24", "27", "30", "33"]
+//
+//    static func forecast() -> SpotForecast {
+//        // Create a minimal mock SpotForecast using available APIs.
+//        // If your SpotForecast provides an initializer or factory for previews, replace this implementation accordingly.
+//        // The following uses a lightweight shim via a private box that conforms to the expected interface at runtime.
+//        // If this doesn't compile due to unavailable initializers, update this method to construct a valid SpotForecast from your model.
+//        return SpotForecast.previewMock(hours: hours)
+//    }
+//}
+//
+//// MARK: - SpotForecast Preview Mock
+//private extension SpotForecast {
+//    static func previewMock(hours: [String]) -> SpotForecast {
+//        // Attempt to discover a convenience initializer at compile time.
+//        // If your concrete type doesn't have an accessible initializer, consider adding one in your model for previews,
+//        // or replace this with a static sample from your project (e.g., `SpotForecast.sample`).
+//        //
+//        // This fallback uses a minimal, generic approach by leveraging an internal preview initializer that you can implement.
+//        // To avoid build errors, we provide a fatalError as a clear signal to replace this with a real sample in your codebase.
+//        fatalError("Provide a real SpotForecast sample or initializer for previews, e.g., SpotForecast.sample or SpotForecast(...)")
+//    }
+//}
+//
+//#Preview("WindguruForecastGridView") {
+//    NavigationStack {
+//        WindguruForecastGridView(
+//            forecast: _WindguruPreviewData.forecast(),
+//            coordinateLocationName: "El Cóndor, AR",
+//            selectedHour: _WindguruPreviewData.hours[4],
+//            availableModelIDs: ["ECMWF", "GFS", "ICON"],
+//            selectedModelIDs: ["ECMWF", "GFS"],
+//            modelNamesByID: [
+//                "ECMWF": "ECMWF",
+//                "GFS": "GFS",
+//                "ICON": "ICON"
+//            ],
+//            modelForecasts: [
+//                // Replace with additional SpotForecast.previewMock(...) when available
+//            ],
+//            temperatureUnit: .constant(.celsius),
+//            windSpeedUnit: .constant(.knots),
+//            waveHeightUnit: .constant(.meters),
+//            pressureUnit: .constant(.hectopascals),
+//            precipitationUnit: .constant(.millimeters),
+//            freezingLevelUnit: .constant(.meters),
+//            showsWindDirectionArrow: .constant(true),
+//            onSelectLocation: {},
+//            onToggleModel: { _ in },
+//            onSelectHour: { _ in }
+//        )
+//    }
+//}
+//
+//#endif
+
 #endif

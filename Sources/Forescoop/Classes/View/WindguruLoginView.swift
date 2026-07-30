@@ -196,4 +196,27 @@ public enum WindguruCredentialStore {
         SecItemDelete(query as CFDictionary)
     }
 }
+
+
+//#if DEBUG
+//private struct MockForecastWindguruService: ForecastWindguruProtocol {
+//    func login(withUsername username: String, password: String) async throws -> User? {
+//        // Simulate a small delay
+//        try? await Task.sleep(nanoseconds: 200_000_000)
+//        return User(id: 12345, name: "Windy Pro", isPro: true)
+//    }
+//}
+//
+//#Preview("Windguru Login") {
+//    NavigationStack {
+//        WindguruLoginView(
+//            forecastService: MockForecastWindguruService(),
+//            username: "demo_user",
+//            onLoggedIn: { _, _ in },
+//            onProfileLoaded: { _ in }
+//        )
+//    }
+//}
+//#endif
+
 #endif

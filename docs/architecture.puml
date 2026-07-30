@@ -1,5 +1,5 @@
 @startuml
-title Forescoop architecture
+title Ventus architecture
 
 skinparam backgroundColor #FFFFFF
 skinparam shadowing false
@@ -16,9 +16,10 @@ skinparam database {
   BorderColor #A67820
 }
 
-package "Example applications" #F5F8FB {
-  [SwiftUI apps\niOS / iPadOS / macOS / visionOS / watchOS] as apps
-  [Legacy UIKit and tvOS\nlogin, API navigation, storyboard] as legacy
+package "Ventus applications" #F5F8FB {
+  [SwiftUI apps\niOS / iPadOS / macOS / tvOS / visionOS / watchOS] as apps
+  [ForecastDashboardView\nDashboard + animated background] as dashboard
+  [WindguruForecastGridView\nFrozen headers + source comparison] as grid
 }
 
 package "Forescoop Swift package" #E9F4EC {
@@ -26,24 +27,28 @@ package "Forescoop Swift package" #E9F4EC {
   [ForecastWindguruService\nURLSession REST client] as service
   [ForecastWindguruMockup\nfixture-backed service] as mock
   [Forecast domain\nSpotForecast, models, units\nand weather presentation] as domain
+  [Session and location state\nAppStorage + saved map locations] as session
   database "Package resources\nJSON fixtures + service plist" as resources
 }
 
 cloud "Windguru public API" as windguru
-cloud "Windguru PRO\ncoordinate forecast" as pro
-database "AppStorage\nselected and saved locations" as storage
+cloud "Windguru PRO API\nspot and coordinate forecasts" as pro
 database "Keychain\nPRO password" as keychain
 
 apps --> protocol
-legacy --> domain
+apps --> dashboard
+apps --> grid
+dashboard --> domain : dashboard and\nper-metric comparison
+grid --> domain : blended grid and\nper-model source rows
+dashboard --> session
+grid --> session
 protocol <|.. service
 protocol <|.. mock
-service --> windguru : public forecasts, spots\nand model metadata
-service --> pro : authenticated lat/lon forecast
+service --> windguru : forecasts, spots, favorites\nand model metadata
+service --> pro : authenticated spot\nand coordinate forecasts
 service --> domain : maps responses
 mock --> resources : loads fixtures
 mock --> domain : maps fixtures
-apps --> storage : separate watch container
 apps --> keychain : stores PRO password only
 
 note right of protocol
@@ -51,8 +56,9 @@ Views receive the protocol so previews
 and tests can use the mock service.
 end note
 
-note bottom of storage
-The username is stored in AppStorage;
-the password stays in Keychain.
+note bottom of session
+The username, selected spot, saved locations,
+and model choices are session-aware. The password
+stays in Keychain.
 end note
 @enduml
