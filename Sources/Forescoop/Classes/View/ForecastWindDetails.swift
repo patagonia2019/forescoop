@@ -83,6 +83,7 @@ public struct ForecastWindDetails: View {
             }
         }
         .font(.body)
+        .labelStyle(ForecastDetailLabelStyle())
     }
 
     private var hour: String? { selectedHour ?? forecast.currentForecastHour }

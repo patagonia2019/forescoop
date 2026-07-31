@@ -56,6 +56,7 @@ public struct ForecastWeatherDetails: View {
             sourceRows { pressure(for: $0.forecast) }
         }
         .font(.body)
+        .labelStyle(ForecastDetailLabelStyle())
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -130,15 +131,13 @@ public struct ForecastWeatherDetails: View {
     }
 
     private func cloudCover(high: Int?, mid: Int?, low: Int?) -> some View {
-        LabeledContent {
+        HStack(alignment: .bottom, spacing: 16) {
+            Label("Cloud", systemImage: "cloud.fill")
+            Spacer(minLength: 16)
             HStack(alignment: .bottom, spacing: 8) {
                 cloudColumn("High", value: high)
                 cloudColumn("Mid", value: mid)
                 cloudColumn("Low", value: low)
-            }
-        } label: {
-            HStack(alignment: .bottom) {
-                Label("Cloud", systemImage: "cloud.fill")
             }
         }
     }
