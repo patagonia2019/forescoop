@@ -6,6 +6,7 @@
 //  Copyright © 2026 Mobile Patagonia. All rights reserved.
 //
 
+import Foundation
 import SwiftUI
 
 /// Product and acknowledgement information for Ventus.
@@ -30,9 +31,19 @@ public struct AboutView: View {
                     }
                 }
                 .padding(.vertical, 4)
+
+                LabeledContent("Created by", value: "Javier Fuchs")
+                LabeledContent("Version", value: versionDescription)
+                Link(destination: URL(string: "mailto:javier.fuchs@gmail.com")!) {
+                    Label("javier.fuchs@gmail.com", systemImage: "envelope")
+                }
+                Link(destination: URL(string: "https://github.com/patagonia2019/forescoop")!) {
+                    Label("Ventus on GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
+                }
             }
 
             Section("Supported devices") {
+                LabeledContent("Minimum Apple OS", value: "Version 26 or later")
                 supportedDevice("macOS", symbol: "laptopcomputer")
                 supportedDevice("iOS", symbol: "iphone")
                 supportedDevice("iPadOS", symbol: "ipad")
@@ -54,6 +65,24 @@ public struct AboutView: View {
                         Image(systemName: "play.rectangle")
                     }
                 }
+            }
+
+            Section("Forecast data") {
+                Link(destination: URL(string: "https://www.windguru.cz")!) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Windguru API")
+                            Text("Forecast and location data")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "wind")
+                    }
+                }
+                Text("Thank you to Windguru for making its forecast API available to anyone.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Animation artwork") {
@@ -91,6 +120,21 @@ public struct AboutView: View {
             }
         }
         .navigationTitle("About")
+    }
+
+    private var versionDescription: String {
+        guard let metadataURL = Bundle.module.url(forResource: "VentusPackageInfo", withExtension: "plist"),
+              let metadataData = try? Data(contentsOf: metadataURL),
+              let metadata = try? PropertyListSerialization.propertyList(
+                  from: metadataData,
+                  format: nil
+              ) as? [String: Any],
+              let version = metadata["CFBundleShortVersionString"] as? String else {
+            return "0.1.0"
+        }
+        let build = metadata["CFBundleVersion"] as? String
+        guard let build, build != version else { return version }
+        return "\(version) (\(build))"
     }
 
     @ViewBuilder
