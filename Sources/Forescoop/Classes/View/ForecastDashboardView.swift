@@ -385,6 +385,7 @@ public struct ForecastDashboardView: View {
             forecast: forecast,
             hour: selectedHour
         )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
     }
 

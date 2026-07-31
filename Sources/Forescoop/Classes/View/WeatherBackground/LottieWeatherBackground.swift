@@ -28,6 +28,8 @@ public struct LottieWeatherBackground: WeatherBackground {
     public var body: some View {
         if let asset, asset.isAvailable {
             LottieWeatherAnimationView(asset: asset)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .opacity(0.30)
                 .accessibilityHidden(true)
                 .allowsHitTesting(false)
         } else {
@@ -94,7 +96,10 @@ private struct LottieWeatherAnimationView: View {
             switch DotLottieFile.SynchronouslyBlockingCurrentThread.named(name, bundle: .module) {
             case let .success(file):
                 LottieView(dotLottieFile: file)
+                    .resizable()
+                    .configure(\.contentMode, to: .scaleAspectFill)
                     .playing(loopMode: .loop)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .failure:
                 Color.clear
             }
