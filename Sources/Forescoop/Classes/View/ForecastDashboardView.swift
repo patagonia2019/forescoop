@@ -24,6 +24,7 @@ public struct ForecastDashboardView: View {
         case login
         case favorites
         case forecastMap
+        case weatherBackgroundSettings
 
         var id: String { rawValue }
     }
@@ -46,6 +47,7 @@ public struct ForecastDashboardView: View {
     @State private var showsWindDirectionArrow = false
     @State private var activeSheet: DashboardSheet?
     @State private var content = DashboardContent.dashboard
+    @State private var weatherBackgroundStyle: WeatherBackgroundStyle
     @State private var showsDashboardModelComparison = false
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
@@ -53,6 +55,7 @@ public struct ForecastDashboardView: View {
     public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
         _selectedSpotID = State(initialValue: SelectedWindguruSpotStore.load())
+        _weatherBackgroundStyle = State(initialValue: WeatherBackgroundStyleStore.load())
         _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
         _account = StateObject(wrappedValue: WindguruAccount())
         forecastLoader = { try await forecastService.forecast(bySpotId: $0, model: $1) }
@@ -133,6 +136,12 @@ public struct ForecastDashboardView: View {
                 Button("Forecast Grid", systemImage: "tablecells") {
                     content = .grid
                 }
+            }
+
+            Divider()
+
+            Button("Settings", systemImage: "gearshape") {
+                activeSheet = .weatherBackgroundSettings
             }
 
             Divider()
@@ -331,6 +340,9 @@ public struct ForecastDashboardView: View {
                     }
                 )
             }
+            .sheet(isPresented: sheetBinding(.weatherBackgroundSettings)) {
+                SettingsView(weatherBackgroundStyle: $weatherBackgroundStyle)
+            }
 #if !os(tvOS)
             .sheet(isPresented: sheetBinding(.forecastMap)) {
                 MapLocationPicker(
@@ -381,7 +393,7 @@ public struct ForecastDashboardView: View {
     @ViewBuilder
     private func weatherBackground(for forecast: SpotForecast) -> some View {
         WeatherBackgroundRenderer(
-            style: .lottie,
+            style: weatherBackgroundStyle,
             forecast: forecast,
             hour: selectedHour
         )

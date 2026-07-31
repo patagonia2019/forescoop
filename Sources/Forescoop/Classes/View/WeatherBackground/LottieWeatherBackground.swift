@@ -8,6 +8,12 @@
 
 import SwiftUI
 
+/// The bundled Lottie artwork collections available in Ventus.
+enum LottieWeatherTheme {
+    case adrianaMandjarova
+    case asadAwan
+}
+
 #if canImport(Lottie)
 import Lottie
 
@@ -20,9 +26,13 @@ public struct LottieWeatherBackground: WeatherBackground {
     private let asset: LottieWeatherAsset?
 
     public init(forecast: SpotForecast, hour: String? = nil) {
+        self.init(forecast: forecast, hour: hour, theme: .adrianaMandjarova)
+    }
+
+    init(forecast: SpotForecast, hour: String? = nil, theme: LottieWeatherTheme) {
         self.forecast = forecast
         self.hour = hour
-        asset = Self.animationAsset(for: forecast, hour: hour)
+        asset = Self.animationAsset(for: forecast, hour: hour, theme: theme)
     }
 
     public var body: some View {
@@ -37,7 +47,11 @@ public struct LottieWeatherBackground: WeatherBackground {
         }
     }
 
-    private static func animationAsset(for forecast: SpotForecast, hour: String?) -> LottieWeatherAsset? {
+    private static func animationAsset(
+        for forecast: SpotForecast,
+        hour: String?,
+        theme: LottieWeatherTheme
+    ) -> LottieWeatherAsset? {
         let selectedHour = hour ?? forecast.currentForecastHour
         let weather = forecast.forecast
         let symbols = forecast.weatherSymbolNames(hour: selectedHour)
@@ -46,6 +60,35 @@ public struct LottieWeatherBackground: WeatherBackground {
             ?? 0
         let windSpeed = weather?.windSpeed(hh: selectedHour) ?? 0
         let gusts = weather?.windGustsKnots(hh: selectedHour) ?? 0
+        let cloudCover = weather?.cloudCoverTotal(hh: selectedHour) ?? 0
+
+        switch theme {
+        case .adrianaMandjarova:
+            return adrianaAsset(
+                symbols: symbols,
+                precipitation: precipitation,
+                windSpeed: windSpeed,
+                gusts: gusts,
+                cloudCover: cloudCover
+            )
+        case .asadAwan:
+            return asadAsset(
+                symbols: symbols,
+                precipitation: precipitation,
+                windSpeed: windSpeed,
+                gusts: gusts,
+                cloudCover: cloudCover
+            )
+        }
+    }
+
+    private static func adrianaAsset(
+        symbols: [String],
+        precipitation: Double,
+        windSpeed: Double,
+        gusts: Double,
+        cloudCover: Int
+    ) -> LottieWeatherAsset {
         let isNight = symbols.contains { $0.contains("moon") || $0.contains("stars") }
         let dayOrNight = isNight ? "Weather Night - " : "Weather Day - "
         let brokenClouds: LottieWeatherAsset = isNight
@@ -60,7 +103,6 @@ public struct LottieWeatherBackground: WeatherBackground {
         }
         // The supplied set has no dedicated wind artwork; use moving broken clouds.
         if max(windSpeed, gusts) >= 18 { return brokenClouds }
-        let cloudCover = weather?.cloudCoverTotal(hh: selectedHour) ?? 0
         if cloudCover >= 80 { return brokenClouds }
         if cloudCover > 0 {
             return isNight
@@ -70,6 +112,22 @@ public struct LottieWeatherBackground: WeatherBackground {
         return isNight
             ? .dotLottie("Weather Night - Few clouds")
             : .dotLottie("Weather Day - clear sky")
+    }
+
+    private static func asadAsset(
+        symbols: [String],
+        precipitation: Double,
+        windSpeed: Double,
+        gusts: Double,
+        cloudCover: Int
+    ) -> LottieWeatherAsset {
+        if symbols.contains(where: { $0.contains("snow") }) { return .dotLottie("Snow Day") }
+        if precipitation >= 8 { return .dotLottie("Thunder Night") }
+        if precipitation > 0 { return .dotLottie("Rainy Day") }
+        if symbols.contains(where: { $0.contains("fog") }) || max(windSpeed, gusts) >= 18 || cloudCover > 0 {
+            return .dotLottie("Cloudy Day")
+        }
+        return .dotLottie("Clear Day")
     }
 }
 
@@ -135,6 +193,12 @@ private struct LottieAssetPreview: View {
 #Preview("Night · shower rains") { LottieAssetPreview(name: "Weather Night - Shower rains") }
 #Preview("Night · snow") { LottieAssetPreview(name: "Weather Night - snow") }
 #Preview("Night · thunderstorm") { LottieAssetPreview(name: "Weather Night - Thunderstorm") }
+
+#Preview("Asad · clear day") { LottieAssetPreview(name: "Clear Day") }
+#Preview("Asad · cloudy day") { LottieAssetPreview(name: "Cloudy Day") }
+#Preview("Asad · rainy day") { LottieAssetPreview(name: "Rainy Day") }
+#Preview("Asad · snow day") { LottieAssetPreview(name: "Snow Day") }
+#Preview("Asad · thunder night") { LottieAssetPreview(name: "Thunder Night") }
 #else
 /// Native fallback on platforms where the Lottie framework is unavailable.
 public struct LottieWeatherBackground: WeatherBackground {
@@ -144,6 +208,10 @@ public struct LottieWeatherBackground: WeatherBackground {
     public init(forecast: SpotForecast, hour: String? = nil) {
         self.forecast = forecast
         self.hour = hour
+    }
+
+    init(forecast: SpotForecast, hour: String? = nil, theme: LottieWeatherTheme) {
+        self.init(forecast: forecast, hour: hour)
     }
 
     public var body: some View {

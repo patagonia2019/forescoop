@@ -14,10 +14,30 @@ public protocol WeatherBackground: View {
 }
 
 /// The available visual renderers for a forecast background.
-public enum WeatherBackgroundStyle: Sendable {
+public enum WeatherBackgroundStyle: String, CaseIterable, Identifiable, Sendable {
     case animated
     case metal
-    case lottie
+    case lottieAdriana
+    case lottieAsad
+
+    public var id: String { rawValue }
+
+    public var title: String {
+        switch self {
+        case .animated: "Native"
+        case .metal: "Metal"
+        case .lottieAdriana: "Lottie – Adriana"
+        case .lottieAsad: "Lottie – Asad"
+        }
+    }
+
+    public var systemImage: String {
+        switch self {
+        case .animated: "sparkles"
+        case .metal: "cpu"
+        case .lottieAdriana, .lottieAsad: "play.rectangle"
+        }
+    }
 }
 
 /// Selects one of the interchangeable weather-background renderers.
@@ -45,8 +65,10 @@ public struct WeatherBackgroundRenderer: View {
             AnimatedWeatherBackground(forecast: forecast, hour: hour)
         case .metal:
             MetalWeatherBackground(forecast: forecast, hour: hour)
-        case .lottie:
-            LottieWeatherBackground(forecast: forecast, hour: hour)
+        case .lottieAdriana:
+            LottieWeatherBackground(forecast: forecast, hour: hour, theme: .adrianaMandjarova)
+        case .lottieAsad:
+            LottieWeatherBackground(forecast: forecast, hour: hour, theme: .asadAwan)
         }
     }
 }
