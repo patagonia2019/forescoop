@@ -25,11 +25,18 @@ let package = Package(
             targets: ["Forescoop"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.6.1"),
     ],
     targets: [
         .target(
             name: "Forescoop",
-            dependencies: [],
+            dependencies: [
+                .product(
+                    name: "Lottie",
+                    package: "lottie-spm",
+                    condition: .when(platforms: [.iOS, .macOS, .tvOS, .visionOS])
+                ),
+            ],
             path: "Sources/Forescoop",
             resources: [.process("Resources")]),
         .testTarget(

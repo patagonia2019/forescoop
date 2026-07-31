@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-public struct AnimatedWeatherBackground: View {
+public struct AnimatedWeatherBackground: WeatherBackground {
     let symbolNames: [String]
     let precipitationMillimeters: Double
     let windSpeedKnots: Double
