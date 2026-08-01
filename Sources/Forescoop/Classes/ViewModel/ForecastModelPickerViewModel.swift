@@ -10,12 +10,6 @@
 import Combine
 import Foundation
 
-struct ForecastModelOption: Identifiable {
-    let identifier: String
-    let name: String
-    var id: String { identifier }
-}
-
 @MainActor
 final class ForecastModelPickerViewModel: ObservableObject {
     @Published private(set) var models = [ForecastModelOption]()

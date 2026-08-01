@@ -23,29 +23,20 @@ struct ForecastGridModelSelector: View {
                     .font(.caption.bold())
                     .foregroundStyle(.secondary)
 
-                VStack(spacing: 0) {
-                    ForEach(modelIDs, id: \.self) { modelID in
-                        let isSelected = selectedModelIDs.contains(modelID)
-                        Button {
-                            guard isSelected ? selectedModelIDs.count > 1 : true else { return }
-                            onToggle(modelID)
-                        } label: {
-                            HStack {
-                                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                                Text(modelNamesByID[modelID] ?? "Model \(modelID)")
-                                Spacer()
-                            }
-                            .font(.subheadline)
-                            .padding(.vertical, 5)
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(isSelected ? .blue : .primary)
-
-                        if modelID != modelIDs.last {
-                            Divider()
-                        }
-                    }
-                }
+                ForecastModelSelectionList(
+                    models: modelIDs.map {
+                        ForecastModelOption(
+                            identifier: $0,
+                            name: modelNamesByID[$0] ?? "Model \($0)"
+                        )
+                    },
+                    selectedModelIDs: Set(selectedModelIDs),
+                    minimumSelectionCount: 1,
+                    showsDividers: true,
+                    onToggle: onToggle
+                )
+                .font(.subheadline)
+                .padding(.vertical, 5)
                 .padding(.horizontal, 10)
                 .background(Color.primary.opacity(0.06))
                 .clipShape(RoundedRectangle(cornerRadius: 10))

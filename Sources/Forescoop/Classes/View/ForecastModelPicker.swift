@@ -47,18 +47,11 @@ public struct ForecastModelPicker: View {
                 } else {
                     List {
                         Section("\(viewModel.selectedIDs.count) selected of \(viewModel.models.count) available") {
-                            ForEach(viewModel.models) { model in
-                                Button {
-                                    viewModel.toggle(model.identifier)
-                                } label: {
-                                    HStack {
-                                        Image(systemName: viewModel.selectedIDs.contains(model.identifier) ? "checkmark.square.fill" : "square")
-                                        Text(model.name)
-                                        Spacer()
-                                    }
-                                }
-                                .foregroundStyle(.primary)
-                            }
+                            ForecastModelSelectionList(
+                                models: viewModel.models,
+                                selectedModelIDs: viewModel.selectedIDs,
+                                onToggle: viewModel.toggle
+                            )
                         }
                     }
                 }
