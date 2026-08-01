@@ -8,6 +8,9 @@
 
 #if !os(watchOS)
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// A compact, Windguru-inspired table for comparing forecast hours at a glance.
 public struct WindguruForecastGridView: View {
@@ -27,6 +30,7 @@ public struct WindguruForecastGridView: View {
     @Binding public var freezingLevelUnit: FreezingLevelUnit
     @Binding public var showsWindDirectionArrow: Bool
     private let onSelectLocation: () -> Void
+    private let onShowMap: () -> Void
     private let onToggleModel: (String) -> Void
     private let onSelectHour: (String) -> Void
 
@@ -52,7 +56,8 @@ public struct WindguruForecastGridView: View {
         showsWindDirectionArrow: Binding<Bool>,
         onSelectLocation: @escaping () -> Void,
         onToggleModel: @escaping (String) -> Void,
-        onSelectHour: @escaping (String) -> Void
+        onSelectHour: @escaping (String) -> Void,
+        onShowMap: @escaping () -> Void = {}
     ) {
         self.forecast = forecast
         self.coordinateLocationName = coordinateLocationName
@@ -70,41 +75,40 @@ public struct WindguruForecastGridView: View {
         _freezingLevelUnit = freezingLevelUnit
         _showsWindDirectionArrow = showsWindDirectionArrow
         self.onSelectLocation = onSelectLocation
+        self.onShowMap = onShowMap
         self.onToggleModel = onToggleModel
         self.onSelectHour = onSelectHour
     }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ScrollViewReader { proxy in
-                ScrollView([.horizontal, .vertical]) {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        HStack(spacing: 0) {
-                            labelHeader
-                            timeHeader
-                        }
-
-                HStack(alignment: .top, spacing: 0) {
-                            LazyVStack(alignment: .leading, spacing: 0) {
-                        gridRows(in: .labels)
-                    }
-
-                            LazyHStack(alignment: .top, spacing: 0) {
-                                ForEach(hours, id: \.self) { hour in
-                                    hourColumn(for: hour)
-                                        .id(hour)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.bottom)
+            HStack(spacing: 8) {
+                Button(action: onSelectLocation) {
+                    Label(
+                        forecast.locationDisplayName(coordinateLocationName: coordinateLocationName),
+                        systemImage: "mappin.and.ellipse"
+                    )
                 }
-                .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                    geometry.contentOffset.x
-                } action: { _, offset in
-                    let shouldCollapseRowTitles = offset > 8
-                    guard shouldCollapseRowTitles != areRowTitlesCollapsed else { return }
-                    areRowTitlesCollapsed = shouldCollapseRowTitles
+                .buttonStyle(.plain)
+                .accessibilityLabel("Choose location")
+
+#if !os(tvOS)
+                Button(
+                    "Show \(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName)) on map",
+                    systemImage: "map",
+                    action: onShowMap
+                )
+                .labelStyle(.iconOnly)
+                .buttonStyle(.plain)
+#endif
+            }
+            .font(.title.bold())
+            .foregroundStyle(.blue)
+
+            ScrollViewReader { proxy in
+                ViewThatFits(in: .vertical) {
+                    gridScroll(axes: .horizontal)
+                    gridScroll(axes: [.horizontal, .vertical])
                 }
                 .onAppear { scrollToSelectedHour(with: proxy) }
                 .onChange(of: selectedHour) { _, _ in scrollToSelectedHour(with: proxy) }
@@ -113,7 +117,10 @@ public struct WindguruForecastGridView: View {
             modelSelector
         }
         .padding(.horizontal, 2)
-        .navigationTitle(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName))
+        .navigationTitle("Ventus")
+#if !os(macOS)
+        .navigationBarTitleDisplayMode(.large)
+#endif
         .onChange(of: modelForecasts.count) { _, count in
             guard count < 2 else { return }
             isModelComparisonEnabled = false
@@ -121,7 +128,6 @@ public struct WindguruForecastGridView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button("Choose location", systemImage: "mappin.and.ellipse", action: onSelectLocation)
                 if modelForecasts.count > 1 {
                     Button(
                         "Compare models",
@@ -146,6 +152,41 @@ public struct WindguruForecastGridView: View {
 
     private func weather(for source: SpotForecast?) -> Forecast? {
         source?.forecast ?? weather
+    }
+
+    private func gridScroll(axes: Axis.Set) -> some View {
+        ScrollView(axes) {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 0) {
+                    labelHeader
+                    timeHeader
+                }
+
+                HStack(alignment: .top, spacing: 0) {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        gridRows(in: .labels)
+                    }
+
+                    LazyHStack(alignment: .top, spacing: 0) {
+                        ForEach(hours, id: \.self) { hour in
+                            hourColumn(for: hour)
+                                .id(hour)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom)
+        }
+#if canImport(UIKit)
+        .background(ScrollViewBounceDisabler())
+#endif
+        .onScrollGeometryChange(for: CGFloat.self) { geometry in
+            geometry.contentOffset.x
+        } action: { _, offset in
+            let shouldCollapseRowTitles = offset > 8
+            guard shouldCollapseRowTitles != areRowTitlesCollapsed else { return }
+            areRowTitlesCollapsed = shouldCollapseRowTitles
+        }
     }
 
     private func modelName(for source: SpotForecast) -> String {
@@ -566,6 +607,29 @@ public struct WindguruForecastGridView: View {
         static let empty = GridCell(value: nil, text: "—")
     }
 }
+
+#if canImport(UIKit)
+/// Restricts UIKit scroll configuration to this grid instead of changing the
+/// app-wide `UIScrollView` appearance.
+private struct ScrollViewBounceDisabler: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView { UIView(frame: .zero) }
+
+    func updateUIView(_ view: UIView, context: Context) {
+        DispatchQueue.main.async {
+            var ancestor = view.superview
+            while let current = ancestor {
+                if let scrollView = current as? UIScrollView {
+                    scrollView.bounces = false
+                    scrollView.alwaysBounceHorizontal = false
+                    scrollView.alwaysBounceVertical = false
+                    return
+                }
+                ancestor = current.superview
+            }
+        }
+    }
+}
+#endif
 
 #if DEBUG
 

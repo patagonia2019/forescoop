@@ -250,6 +250,9 @@ public struct ForecastDashboardView: View {
                 }
             }
             .navigationTitle("Ventus")
+#if !os(macOS)
+            .navigationBarTitleDisplayMode(.large)
+#endif
             .toolbar {
 #if os(macOS)
                 ToolbarItem(placement: .navigation) {
@@ -463,7 +466,8 @@ public struct ForecastDashboardView: View {
             onSelectHour: { hour in
                 selectedHour = hour
                 content = .dashboard
-            }
+            },
+            onShowMap: { activeSheet = .forecastMap }
         )
         .task(id: availableModelIDs) {
             await loadModelNames(for: availableModelIDs)
