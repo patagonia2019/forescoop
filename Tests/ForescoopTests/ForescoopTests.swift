@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Forescoop
+import CoreLocation
 
 final class ForescoopTests: XCTestCase {
     private struct TestPreferencesProvider: ForecastPreferencesProviding {
@@ -37,5 +38,31 @@ final class ForescoopTests: XCTestCase {
         )
 
         XCTAssertEqual(viewModel.deviceUnitPreferences, expected)
+    }
+
+    @MainActor
+    func testDashboardSessionCleanupClearsPersistedLocationsAndSelectedSpot() {
+        let originalLocations = SavedMapLocationStore.load()
+        let originalSpotID = SelectedWindguruSpotStore.load()
+        defer {
+            SavedMapLocationStore.save(originalLocations)
+            SelectedWindguruSpotStore.save(originalSpotID)
+        }
+
+        let sessionLocation = SavedMapLocation(
+            name: "Session location",
+            coordinate: CLLocationCoordinate2D(latitude: -33.4489, longitude: -70.6693),
+            spotID: "999999",
+            placeDescription: "Chile"
+        )
+        SavedMapLocationStore.save(originalLocations + [sessionLocation])
+        SelectedWindguruSpotStore.save(sessionLocation.spotID!)
+
+        let viewModel = ForecastDashboardViewModel(forecastService: ForecastWindguruMockup())
+        viewModel.clearPersistedSessionData()
+
+        XCTAssertEqual(viewModel.savedMapLocations.map(\.spotID), [SavedMapLocationStore.primarySpotID])
+        XCTAssertEqual(SavedMapLocationStore.load().map(\.spotID), [SavedMapLocationStore.primarySpotID])
+        XCTAssertEqual(SelectedWindguruSpotStore.load(), SavedMapLocationStore.primarySpotID)
     }
 }

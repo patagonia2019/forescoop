@@ -120,21 +120,10 @@ public struct ForecastDashboardView: View {
     private func logout() {
         account.signOut()
         selectedSpotID = "64141"
-        selectedModelIDs = []
-        usableModelIDs = []
-        displayedForecastSpotID = nil
-        modelIDsBySpot = [:]
-        selectedModelIDsBySpot = [:]
-        displayedModelForecasts = []
-        viewModel.clearUserProfile()
-        selectedHour = nil
-        forecast = nil
-        coordinateLocationName = nil
-        errorMessage = nil
-        savedMapLocations = []
+        viewModel.resetSessionForecastState()
+        viewModel.clearPersistedSessionData()
         favoriteMapLocations = []
         selectedMapLocationID = nil
-        SavedMapLocationStore.removeAll()
 
         applyDevicePreferences()
 
@@ -144,20 +133,10 @@ public struct ForecastDashboardView: View {
 
     private func startSession(username: String, isProUser: Bool) {
         account.signIn(username: username, isProUser: isProUser)
-        viewModel.clearUserProfile()
         // Do not reuse the previous session's model cache. A PRO session can
         // expose more models for the same spot, while a regular session must
         // return to the public forecast set.
-        selectedModelIDs = []
-        usableModelIDs = []
-        displayedForecastSpotID = nil
-        modelIDsBySpot = [:]
-        selectedModelIDsBySpot = [:]
-        displayedModelForecasts = []
-        selectedHour = nil
-        forecast = nil
-        coordinateLocationName = nil
-        errorMessage = nil
+        viewModel.resetSessionForecastState()
         activeSheet = nil
         Task {
             await loadFavoriteMapLocations()

@@ -94,6 +94,14 @@ public enum SavedMapLocationStore {
         save([primaryLocation])
     }
 
+    /// Clears persisted Windguru session data while keeping the required
+    /// default map location and app-wide preferences intact.
+    public static func clearSessionData() -> [SavedMapLocation] {
+        removeAll()
+        SelectedWindguruSpotStore.clear()
+        return load()
+    }
+
     private static func normalized(_ locations: [SavedMapLocation]) -> [SavedMapLocation] {
         let primary = locations.first(where: \.isPrimaryLocation) ?? primaryLocation
         return locations
@@ -122,6 +130,13 @@ public enum SelectedWindguruSpotStore {
     public static func save(_ spotID: String) {
         let context = ModelContext(SavedMapLocationStore.container)
         if let record = (try? context.fetch(FetchDescriptor<VentusPreferenceRecord>()))?.first(where: { $0.key == key }) { record.value = spotID } else { context.insert(VentusPreferenceRecord(key: key, value: spotID)) }
+        try? context.save()
+    }
+
+    public static func clear() {
+        let context = ModelContext(SavedMapLocationStore.container)
+        guard let record = (try? context.fetch(FetchDescriptor<VentusPreferenceRecord>()))?.first(where: { $0.key == key }) else { return }
+        context.delete(record)
         try? context.save()
     }
 }

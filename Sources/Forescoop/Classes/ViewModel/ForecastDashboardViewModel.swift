@@ -122,6 +122,26 @@ public final class ForecastDashboardViewModel: ObservableObject {
         userProfile = nil
     }
 
+    /// Clears forecast data scoped to the prior Windguru session or spot.
+    func resetSessionForecastState() {
+        selectedModelIDs = []
+        usableModelIDs = []
+        displayedForecastSpotID = nil
+        modelIDsBySpot = [:]
+        selectedModelIDsBySpot = [:]
+        modelNamesByID = [:]
+        displayedModelForecasts = []
+        userProfile = nil
+        selectedHour = nil
+        forecast = nil
+        coordinateLocationName = nil
+        errorMessage = nil
+    }
+
+    func clearPersistedSessionData() {
+        savedMapLocations = SavedMapLocationStore.clearSessionData()
+    }
+
     func loadModelNames(for modelIDs: [String]) async {
         let missingModelIDs = modelIDs.filter { modelNamesByID[$0] == nil }
         guard !missingModelIDs.isEmpty,
