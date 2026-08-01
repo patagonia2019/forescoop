@@ -34,9 +34,10 @@ public struct WindguruForecastGridView: View {
     private let onToggleModel: (String) -> Void
     private let onSelectHour: (String) -> Void
 
-    @State private var areRowTitlesCollapsed = false
     @State private var expandedComparisonRows = Set<String>()
     @State private var isModelComparisonEnabled = false
+    @State private var horizontalGridOffset: CGFloat = 0
+    private var columnWidth: CGFloat = 56
 
     public init(
         forecast: SpotForecast,
@@ -105,15 +106,7 @@ public struct WindguruForecastGridView: View {
             .font(.title.bold())
             .foregroundStyle(.blue)
 
-            ScrollViewReader { proxy in
-                ViewThatFits(in: .vertical) {
-                    gridScroll(axes: .horizontal)
-                    gridScroll(axes: [.horizontal, .vertical])
-                }
-                .onAppear { scrollToSelectedHour(with: proxy) }
-                .onChange(of: selectedHour) { _, _ in scrollToSelectedHour(with: proxy) }
-            }
-
+            frozenGrid(scrollsVertically: false)
             modelSelector
         }
         .padding(.horizontal, 2)
@@ -154,17 +147,40 @@ public struct WindguruForecastGridView: View {
         source?.forecast ?? weather
     }
 
-    private func gridScroll(axes: Axis.Set) -> some View {
-        ScrollView(axes) {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 0) {
-                    labelHeader
-                    timeHeader
+    @ViewBuilder
+    private func frozenGrid(scrollsVertically: Bool) -> some View {
+        if scrollsVertically {
+            ZStack(alignment: .topLeading) {
+                ScrollView(.vertical) {
+                    gridBody(includesHeader: false)
                 }
+#if canImport(UIKit)
+                .background(ScrollViewBounceDisabler())
+#endif
 
-                HStack(alignment: .top, spacing: 0) {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        gridRows(in: .labels)
+                stickyGridHeader
+            }
+        } else {
+            gridBody(includesHeader: true)
+        }
+    }
+
+    private func gridBody(includesHeader: Bool) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                if includesHeader {
+                    labelHeader
+                } else {
+                    Color.clear.frame(width: rowLabelWidth, height: gridHeaderHeight)
+                }
+                gridRows(in: .labels)
+            }
+            .frame(width: rowLabelWidth, alignment: .leading)
+
+            ScrollView(.horizontal) {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    if includesHeader {
+                        timeHeader
                     }
 
                     LazyHStack(alignment: .top, spacing: 0) {
@@ -174,19 +190,20 @@ public struct WindguruForecastGridView: View {
                         }
                     }
                 }
+                .padding(.top, includesHeader ? 0 : gridHeaderHeight)
             }
-            .padding(.bottom)
-        }
+            .contentMargins(.zero, for: .scrollContent)
+            .frame(maxWidth: .infinity, alignment: .leading)
 #if canImport(UIKit)
-        .background(ScrollViewBounceDisabler())
+            .background(ScrollViewBounceDisabler())
 #endif
-        .onScrollGeometryChange(for: CGFloat.self) { geometry in
-            geometry.contentOffset.x
-        } action: { _, offset in
-            let shouldCollapseRowTitles = offset > 8
-            guard shouldCollapseRowTitles != areRowTitlesCollapsed else { return }
-            areRowTitlesCollapsed = shouldCollapseRowTitles
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                (geometry.contentOffset.x / 4).rounded() * 4
+            } action: { _, offset in
+                horizontalGridOffset = offset
+            }
         }
+        .padding(.bottom)
     }
 
     private func modelName(for source: SpotForecast) -> String {
@@ -241,12 +258,6 @@ public struct WindguruForecastGridView: View {
 
     private var labelHeader: some View {
         Text("Updated")
-            .opacity(showsRowTitles ? 1 : 0)
-            .overlay {
-                if !showsRowTitles {
-                    Image(systemName: "clock.arrow.circlepath")
-                }
-            }
             .font(.caption.bold())
             .padding(.horizontal, 8)
             .frame(width: rowLabelWidth, height: gridHeaderHeight, alignment: .leading)
@@ -271,13 +282,32 @@ public struct WindguruForecastGridView: View {
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(.secondary)
                     }
-                    .frame(width: 56, height: gridHeaderHeight)
+                    .frame(width: columnWidth, height: gridHeaderHeight)
                     .background(Color.secondary.opacity(0.12))
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.blue)
             }
         }
+    }
+
+    /// Keeps the day/hour row aligned with the horizontally scrolling columns.
+    private var stickyGridHeader: some View {
+        GeometryReader { geometry in
+            HStack(spacing: 0) {
+                labelHeader
+
+                timeHeader
+                    .offset(x: -horizontalGridOffset)
+                    .frame(
+                        width: max(0, geometry.size.width - rowLabelWidth),
+                        height: gridHeaderHeight,
+                        alignment: .leading
+                    )
+                    .clipped()
+            }
+        }
+        .frame(height: gridHeaderHeight)
     }
 
     private enum GridColumn {
@@ -317,7 +347,6 @@ public struct WindguruForecastGridView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 4) {
                     label
-                    Spacer(minLength: 0)
                     if isModelComparisonEnabled, modelForecasts.count > 1 {
                         Button {
                             toggleComparisonRow(id)
@@ -365,7 +394,7 @@ public struct WindguruForecastGridView: View {
         LazyVStack(spacing: 0) {
             gridRows(in: .value(hour))
         }
-        .frame(width: 56)
+        .frame(width: columnWidth)
         .overlay {
             if selectedHour == hour {
                 RoundedRectangle(cornerRadius: 3)
@@ -388,7 +417,7 @@ public struct WindguruForecastGridView: View {
                 .font(cell.isDirection ? .body : (cell.isSnow ? .caption.bold() : .caption))
                 .monospacedDigit()
                 .foregroundStyle(cell.isSnow ? .blue : .primary)
-                .frame(width: 56, height: height)
+                .frame(width: columnWidth, height: height)
                 .background(background(cell))
                 .overlay(alignment: .bottom) { Divider().opacity(0.3) }
         }
@@ -442,8 +471,8 @@ public struct WindguruForecastGridView: View {
         .foregroundStyle(isInteractive ? .blue : .primary)
     }
 
-    private var showsRowTitles: Bool { !areRowTitlesCollapsed }
-    private var rowLabelWidth: CGFloat { (showsRowTitles ? 134 : 60) + (isModelComparisonEnabled && modelForecasts.count > 1 ? 20 : 0) }
+    private var showsRowTitles: Bool { true }
+    private var rowLabelWidth: CGFloat { 134 + (isModelComparisonEnabled && modelForecasts.count > 1 ? 20 : 0) }
     private var gridHeaderHeight: CGFloat { 64 }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
@@ -463,13 +492,6 @@ public struct WindguruForecastGridView: View {
     private func windSpeed(_ hour: String, source: SpotForecast? = nil) -> GridCell {
         guard let value = weather(for: source)?.windSpeed(hh: hour), let converted = Knots(value).value(in: windSpeedUnit) else { return .empty }
         return GridCell(value: converted, text: number(converted))
-    }
-
-    private func scrollToSelectedHour(with proxy: ScrollViewProxy) {
-        guard let selectedHour, hours.contains(selectedHour) else { return }
-        DispatchQueue.main.async {
-            proxy.scrollTo(selectedHour, anchor: .center)
-        }
     }
 
     private func windGusts(_ hour: String, source: SpotForecast? = nil) -> GridCell {
