@@ -54,22 +54,13 @@ struct DashboardLocationWorkspace: View {
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
                     ForEach(locations) { location in
-                        Button { onSelectLocation(location) } label: {
-                            Label {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(location.displayName)
-                                    Text(location.detailText)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            } icon: {
-                                Image(systemName: isFavorite(location) ? "star.circle.fill" : "mappin.and.ellipse")
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(12)
-                            .background(.thinMaterial, in: .rect(cornerRadius: 12))
-                        }
-                        .buttonStyle(.plain)
+                        SavedLocationRow(
+                            location: location,
+                            isFavorite: isFavorite(location),
+                            onSelect: { onSelectLocation(location) }
+                        )
+                        .padding(12)
+                        .background(.thinMaterial, in: .rect(cornerRadius: 12))
                     }
                 }
             }

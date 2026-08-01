@@ -23,14 +23,7 @@ public struct VisionLocationsView: View {
                 .clipShape(.rect(cornerRadius: 24))
 
                 List(locations) { location in
-                    Label {
-                        VStack(alignment: .leading) {
-                            Text(location.displayName)
-                            Text(location.detailText).font(.caption).foregroundStyle(.secondary)
-                        }
-                    } icon: {
-                        Image(systemName: "mappin.and.ellipse")
-                    }
+                    SavedLocationRow(location: location)
                 }
                 .frame(width: 280)
                 .scrollContentBackground(.hidden)

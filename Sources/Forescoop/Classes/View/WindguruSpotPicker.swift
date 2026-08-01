@@ -272,23 +272,11 @@ public struct WindguruSpotPicker: View {
 
     private func savedLocationRow(_ location: SavedMapLocation) -> some View {
         HStack(spacing: 12) {
-            Button {
-                selectSavedLocation(location)
-            } label: {
-                Label {
-                    VStack(alignment: .leading) {
-                        Text(location.displayName)
-                        Text(location.detailText)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                } icon: {
-                    Image(systemName: "mappin.and.ellipse")
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .buttonStyle(.plain)
-            .disabled(isLoading || favoriteIDsBeingAdded.contains(location.spotID ?? ""))
+            SavedLocationRow(
+                location: location,
+                isDisabled: isLoading || favoriteIDsBeingAdded.contains(location.spotID ?? ""),
+                onSelect: { selectSavedLocation(location) }
+            )
 
 #if !os(tvOS)
             Button("Show \(location.displayName) on map", systemImage: "map") {
