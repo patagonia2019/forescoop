@@ -52,6 +52,7 @@ public struct ForecastDashboardView: View {
     @State private var showsDashboardModelComparison = false
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
+    @State private var favoriteMapLocations = [SavedMapLocation]()
 
     public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
@@ -193,6 +194,7 @@ public struct ForecastDashboardView: View {
         coordinateLocationName = nil
         errorMessage = nil
         savedMapLocations = []
+        favoriteMapLocations = []
         selectedMapLocationID = nil
         SavedMapLocationStore.removeAll()
 
@@ -219,7 +221,10 @@ public struct ForecastDashboardView: View {
         coordinateLocationName = nil
         errorMessage = nil
         activeSheet = nil
-        Task { await loadPreferredForecast() }
+        Task {
+            await loadFavoriteMapLocations()
+            await loadPreferredForecast()
+        }
     }
 
     public var body: some View {
@@ -272,10 +277,14 @@ public struct ForecastDashboardView: View {
             }
             .task {
                 await loadUserPreferences()
+                await loadFavoriteMapLocations()
                 await loadPreferredForecast()
             }
             .onChange(of: selectedSpotID) { _, spotID in SelectedWindguruSpotStore.save(spotID) }
-            .sheet(isPresented: sheetBinding(.spotPicker), onDismiss: refreshSavedMapLocations) {
+            .sheet(isPresented: sheetBinding(.spotPicker), onDismiss: {
+                refreshSavedMapLocations()
+                Task { await loadFavoriteMapLocations() }
+            }) {
                 WindguruSpotPicker(
                     forecastService: forecastService,
                     account: account,
@@ -334,7 +343,9 @@ public struct ForecastDashboardView: View {
                     onProfileLoaded: applyUserPreferences
                 )
             }
-            .sheet(isPresented: sheetBinding(.favorites)) {
+            .sheet(isPresented: sheetBinding(.favorites), onDismiss: {
+                Task { await loadFavoriteMapLocations() }
+            }) {
                 WindguruFavoritesView(
                     forecastService: forecastService,
                     account: account,
@@ -358,6 +369,10 @@ public struct ForecastDashboardView: View {
                 MapLocationPicker(
                     initialCoordinate: forecast?.location?.coordinate,
                     isSelectionEnabled: false,
+                    savedLocations: savedMapLocations,
+                    favoriteLocations: favoriteMapLocations,
+                    forecast: forecast,
+                    selectedForecastHour: selectedHour,
                     onSelection: { _ in }
                 )
             }
@@ -514,25 +529,52 @@ public struct ForecastDashboardView: View {
 
             Map(position: $iPadMapPosition, selection: $selectedMapLocationID) {
                 ForEach(savedMapLocations) { location in
+#if !os(tvOS)
+                    Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
+                        SavedMapLocationAnnotation(
+                            location: location,
+                            forecast: forecast(for: location),
+                            hour: selectedHour
+                        )
+                    }
+                    .tag(location.id)
+#else
                     Marker(location.name, coordinate: location.coordinate)
                         .tag(location.id)
+#endif
+                }
+                ForEach(favoriteLocationsNotSaved) { location in
+#if !os(tvOS)
+                    Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
+                        SavedMapLocationAnnotation(
+                            location: location,
+                            forecast: forecast(for: location),
+                            hour: selectedHour,
+                            isFavorite: true
+                        )
+                    }
+                    .tag(location.id)
+#else
+                    Marker(location.name, coordinate: location.coordinate)
+                        .tag(location.id)
+#endif
                 }
             }
             .frame(height: 280)
             .clipShape(.rect(cornerRadius: 16))
             .onChange(of: selectedMapLocationID) { _, locationID in
                 guard let locationID,
-                      let location = savedMapLocations.first(where: { $0.id == locationID }) else { return }
+                      let location = (savedMapLocations + favoriteLocationsNotSaved).first(where: { $0.id == locationID }) else { return }
                 centerMap(on: location.coordinate)
                 Task { await loadSavedLocation(location) }
             }
 
-            if savedMapLocations.isEmpty {
+            if savedMapLocations.isEmpty && favoriteLocationsNotSaved.isEmpty {
                 ContentUnavailableView("No saved locations", systemImage: "mappin.slash", description: Text("Use Manage locations to search, pick, and save a location."))
                     .frame(maxWidth: .infinity)
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
-                    ForEach(savedMapLocations) { location in
+                    ForEach(savedMapLocations + favoriteLocationsNotSaved) { location in
                         Button {
                             selectMapLocation(location)
                         } label: {
@@ -544,7 +586,7 @@ public struct ForecastDashboardView: View {
                                         .foregroundStyle(.secondary)
                                 }
                             } icon: {
-                                Image(systemName: "mappin.and.ellipse")
+                                Image(systemName: favoriteLocationsNotSaved.contains(where: { $0.id == location.id }) ? "star.circle.fill" : "mappin.and.ellipse")
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(12)
@@ -562,11 +604,59 @@ public struct ForecastDashboardView: View {
         savedMapLocations = SavedMapLocationStore.load()
     }
 
+    private var favoriteLocationsNotSaved: [SavedMapLocation] {
+        favoriteMapLocations.filter { favorite in
+            !savedMapLocations.contains { SavedMapLocationStore.isSameLocation($0, favorite) }
+        }
+    }
+
+    @MainActor
+    private func loadFavoriteMapLocations() async {
+        guard !account.username.isEmpty, let password = account.password else {
+            favoriteMapLocations = []
+            return
+        }
+
+        guard let spots = try? await favoriteSpotsLoader(account.username, password)?.allSpots else {
+            favoriteMapLocations = []
+            return
+        }
+
+        var locations = [SavedMapLocation]()
+        for spot in spots {
+            guard let spotID = spot.identifier,
+                  let info = try? await spotInfoLoader(spotID),
+                  let coordinate = info.location?.coordinate else { continue }
+            let location = SavedMapLocation(
+                name: spot.name?.isEmpty == false ? spot.name! : info.name ?? "Windguru spot",
+                coordinate: coordinate,
+                spotID: spotID,
+                placeDescription: spot.countryName ?? info.countryName
+            )
+            guard !locations.contains(where: { SavedMapLocationStore.isSameLocation($0, location) }) else { continue }
+            locations.append(location)
+        }
+        favoriteMapLocations = locations
+    }
+
     private func centerMap(on coordinate: CLLocationCoordinate2D) {
         iPadMapPosition = .region(MKCoordinateRegion(
             center: coordinate,
             span: MKCoordinateSpan(latitudeDelta: 3, longitudeDelta: 3)
         ))
+    }
+
+    private func forecast(for location: SavedMapLocation) -> SpotForecast? {
+        guard let forecast else { return nil }
+        if let savedSpotID = location.spotID,
+           savedSpotID != "0",
+           savedSpotID == forecast.identifier {
+            return forecast
+        }
+        guard let forecastCoordinate = forecast.location?.coordinate else { return nil }
+        let coordinateMatches = abs(location.coordinate.latitude - forecastCoordinate.latitude) < 0.0001
+            && abs(location.coordinate.longitude - forecastCoordinate.longitude) < 0.0001
+        return coordinateMatches ? forecast : nil
     }
 
     private func selectMapLocation(_ location: SavedMapLocation) {

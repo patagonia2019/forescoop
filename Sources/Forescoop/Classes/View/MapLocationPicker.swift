@@ -38,6 +38,10 @@ public struct MapLocationPicker: View {
     let initialCoordinate: CLLocationCoordinate2D?
     let isSelectionEnabled: Bool
     let onSelection: (CLLocationCoordinate2D) -> Void
+    let savedLocations: [SavedMapLocation]
+    let favoriteLocations: [SavedMapLocation]
+    let forecast: SpotForecast?
+    let selectedForecastHour: String?
     @Environment(\.dismiss) private var dismiss
     @State private var selectedCoordinate: CLLocationCoordinate2D?
     @State private var position: MapCameraPosition = .automatic
@@ -46,10 +50,22 @@ public struct MapLocationPicker: View {
     public init(
         initialCoordinate: CLLocationCoordinate2D? = nil,
         isSelectionEnabled: Bool = true,
+        savedLocations: [SavedMapLocation]? = nil,
+        favoriteLocations: [SavedMapLocation] = [],
+        forecast: SpotForecast? = nil,
+        selectedForecastHour: String? = nil,
         onSelection: @escaping (CLLocationCoordinate2D) -> Void
     ) {
         self.initialCoordinate = initialCoordinate
         self.isSelectionEnabled = isSelectionEnabled
+        self.savedLocations = savedLocations ?? SavedMapLocationStore.load()
+        self.favoriteLocations = favoriteLocations.filter { favorite in
+            !(savedLocations ?? SavedMapLocationStore.load()).contains {
+                SavedMapLocationStore.isSameLocation($0, favorite)
+            }
+        }
+        self.forecast = forecast
+        self.selectedForecastHour = selectedForecastHour
         self.onSelection = onSelection
         _selectedCoordinate = State(initialValue: initialCoordinate)
         if let initialCoordinate {
@@ -119,8 +135,29 @@ public struct MapLocationPicker: View {
 
     private var mapContent: some View {
         Map(position: $position) {
+            ForEach(savedLocations) { location in
+                Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
+                    SavedMapLocationAnnotation(
+                        location: location,
+                        forecast: forecast(for: location),
+                        hour: selectedForecastHour
+                    )
+                }
+            }
+            ForEach(favoriteLocations) { location in
+                Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
+                    SavedMapLocationAnnotation(
+                        location: location,
+                        forecast: forecast(for: location),
+                        hour: selectedForecastHour,
+                        isFavorite: true
+                    )
+                }
+            }
             if let selectedCoordinate {
-                Marker("Selected location", coordinate: selectedCoordinate)
+                if !(savedLocations + favoriteLocations).contains(where: { isSameCoordinate($0.coordinate, selectedCoordinate) }) {
+                    Marker("Selected location", coordinate: selectedCoordinate)
+                }
             }
         }
         .mapControls {
@@ -132,6 +169,21 @@ public struct MapLocationPicker: View {
 
     private var outdoorPlaces: [MKPointOfInterestCategory] {
         [.beach, .campground, .marina, .nationalPark, .park]
+    }
+
+    private func forecast(for location: SavedMapLocation) -> SpotForecast? {
+        guard let forecast else { return nil }
+        if let savedSpotID = location.spotID,
+           savedSpotID != "0",
+           savedSpotID == forecast.identifier {
+            return forecast
+        }
+        guard let forecastCoordinate = forecast.location?.coordinate else { return nil }
+        return isSameCoordinate(location.coordinate, forecastCoordinate) ? forecast : nil
+    }
+
+    private func isSameCoordinate(_ lhs: CLLocationCoordinate2D, _ rhs: CLLocationCoordinate2D) -> Bool {
+        abs(lhs.latitude - rhs.latitude) < 0.0001 && abs(lhs.longitude - rhs.longitude) < 0.0001
     }
 }
 

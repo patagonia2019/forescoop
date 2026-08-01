@@ -530,12 +530,26 @@ public struct WindguruSpotPicker: View {
             // The coordinate remains usable even if a public spot cannot be resolved.
         }
         let isCoordinateOnly = spotID == nil || spotID == "0"
-        appendSavedLocation(SavedMapLocation(
+        let savedLocation = SavedMapLocation(
             name: isCoordinateOnly ? (resolvedPlaceDescription ?? name) : name,
             coordinate: savedCoordinate,
             spotID: isCoordinateOnly ? nil : spotID,
             placeDescription: isCoordinateOnly ? nil : resolvedPlaceDescription
-        ))
+        )
+        appendSavedLocation(savedLocation)
+
+        // A picked place should behave exactly like a searched place: keep it
+        // in Map Locations and immediately make it the dashboard location.
+        if let spotID, spotID != "0" {
+            onSpotIDSelected(spotID)
+        } else {
+            onCoordinateSelected(
+                savedLocation.coordinate,
+                savedLocation.placeDescription?.isEmpty == false
+                    ? savedLocation.placeDescription
+                    : savedLocation.name
+            )
+        }
     }
 
     @MainActor
