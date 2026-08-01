@@ -31,14 +31,9 @@ public struct ForecastDashboardView: View {
     }
 
     private let forecastService: ForecastWindguruProtocol
-    private let forecastLoader: @MainActor (String, String?) async throws -> SpotForecast?
-    private let proSpotForecastLoader: @MainActor (String, String?, String, String) async throws -> SpotForecast?
-    private let coordinateForecastLoader: @MainActor (Double, Double, String?, String, String) async throws -> WSpotForecast?
     private let spotSearch: @MainActor (String) async throws -> SpotResult?
     private let favoriteSpotsLoader: @MainActor (String, String) async throws -> SpotResult?
     private let spotInfoLoader: @MainActor (String) async throws -> SpotInfo?
-    private let coordinateModelLoader: @MainActor (Double, Double) async throws -> [String]
-    private let modelInfoLoader: @MainActor () async throws -> Models?
 #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
@@ -60,29 +55,9 @@ public struct ForecastDashboardView: View {
         _weatherBackgroundStyle = State(initialValue: WeatherBackgroundStyleStore.load())
         _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
         _account = StateObject(wrappedValue: WindguruAccount())
-        forecastLoader = { try await forecastService.forecast(bySpotId: $0, model: $1) }
-        proSpotForecastLoader = { spotID, modelID, username, password in
-            guard let proForecast = try await forecastService.wforecast(
-                bySpotId: spotID,
-                model: modelID,
-                username: username,
-                password: password
-            ) else {
-                return nil
-            }
-            return try SpotForecast.from(coordinateForecast: proForecast)
-        }
-        coordinateForecastLoader = {
-            try await forecastService.wforecast(byLatitude: $0, longitude: $1, model: $2, username: $3, password: $4)
-        }
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
         favoriteSpotsLoader = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
         spotInfoLoader = { try await forecastService.spotInfo(bySpotId: $0) }
-        coordinateModelLoader = { latitude, longitude in
-            let response = try await forecastService.models(bylat: String(latitude), lon: String(longitude))
-            return Self.modelIDs(from: response)
-        }
-        modelInfoLoader = { try await forecastService.modelInfo(onlyModelId: nil) }
     }
 
     private var forecast: SpotForecast? { get { viewModel.forecast } nonmutating set { viewModel.forecast = newValue } }
@@ -443,7 +418,7 @@ public struct ForecastDashboardView: View {
             onShowMap: { activeSheet = .forecastMap }
         )
         .task(id: availableModelIDs) {
-            await loadModelNames(for: availableModelIDs)
+            await viewModel.loadModelNames(for: availableModelIDs)
         }
     }
 
@@ -478,19 +453,6 @@ public struct ForecastDashboardView: View {
                 )
             }
         }
-    }
-
-    private func loadModelNames(for modelIDs: [String]) async {
-        let missingModelIDs = modelIDs.filter { modelNamesByID[$0] == nil }
-        guard !missingModelIDs.isEmpty,
-              let models = try? await modelInfoLoader() else { return }
-
-        let names = models.sorted.reduce(into: [String: String]()) { names, model in
-            let identifier = String(model.identifier)
-            guard modelIDs.contains(identifier) else { return }
-            names[identifier] = model.oficinalName ?? model.shortName ?? "Model \(identifier)"
-        }
-        modelNamesByID.merge(names) { _, newValue in newValue }
     }
 
     private func refreshSavedMapLocations() {
@@ -581,7 +543,7 @@ public struct ForecastDashboardView: View {
             }
             await loadForecast(spotId: spotID)
         } catch {
-            errorMessage = unavailableForecastMessage(for: error)
+            errorMessage = viewModel.forecastErrorMessage(for: error)
         }
     }
 
@@ -635,103 +597,16 @@ public struct ForecastDashboardView: View {
         modelIDs: [String]? = nil,
         persistSelection: Bool = true
     ) async {
-        coordinateLocationName = nil
-        isLoading = true
-        errorMessage = nil
-        defer { isLoading = false }
-
-        do {
-            let requestedSpotID = spotId ?? selectedSpotID
-            let isChangingSpot = requestedSpotID != selectedSpotID
-            if isChangingSpot, persistSelection {
-                // Model availability is scoped to a spot. Never let a prior
-                // spot's cached model list drive the next spot's picker.
-                selectedModelIDs = []
-                usableModelIDs = []
-            }
-            let configuredModelIDs = modelIDs ?? (isChangingSpot ? [] : selectedModelIDs)
-            let isDiscoveringSpotModels = configuredModelIDs.isEmpty
-            let requestedModelIDs: [String]
-            if configuredModelIDs.isEmpty {
-                let spotInfo = try await spotInfoLoader(requestedSpotID)
-                let spotModelIDs = spotInfo?.currentModels.map(String.init) ?? []
-                if isProUser, let coordinate = spotInfo?.location?.coordinate {
-                    let coordinateModelIDs = (try? await coordinateModelLoader(
-                        coordinate.latitude,
-                        coordinate.longitude
-                    )) ?? []
-                    requestedModelIDs = orderedUnique(coordinateModelIDs + spotModelIDs)
-                } else {
-                    requestedModelIDs = spotModelIDs
-                }
-            } else {
-                requestedModelIDs = configuredModelIDs
-            }
-            let selectedForecastLoader: @MainActor (String?) async throws -> SpotForecast?
-            if isProUser,
-               let password = account.password,
-               !account.username.isEmpty {
-                selectedForecastLoader = { modelID in
-                    try await proSpotForecastLoader(requestedSpotID, modelID, account.username, password)
-                }
-            } else {
-                selectedForecastLoader = { modelID in
-                    try await forecastLoader(requestedSpotID, modelID)
-                }
-            }
-            var validForecasts: [SpotForecast] = []
-            var lastModelError: Error?
-            for modelID in requestedModelIDs {
-                do {
-                    if let loadedForecast = try await selectedForecastLoader(modelID),
-                       !loadedForecast.availableForecastHours.isEmpty {
-                        validForecasts.append(loadedForecast)
-                    }
-                } catch {
-                    // Models can be unavailable for a particular account or location.
-                    lastModelError = error
-                }
-            }
-            if validForecasts.isEmpty, configuredModelIDs.isEmpty,
-               let loadedForecast = try await selectedForecastLoader(nil),
-               !loadedForecast.availableForecastHours.isEmpty {
-                forecast = loadedForecast
-            } else if validForecasts.count == 1 {
-                forecast = validForecasts[0]
-            } else if validForecasts.count > 1 {
-                forecast = try SpotForecast.blended(validForecasts)
-            } else if configuredModelIDs.isEmpty {
-                guard let loadedForecast = try await selectedForecastLoader(nil),
-                      !loadedForecast.availableForecastHours.isEmpty else {
-                    throw lastModelError ?? CustomError.unexpected(
-                        code: nil,
-                        message: "Windguru returned no usable forecast hours."
-                    )
-                }
-                forecast = loadedForecast
-            } else {
-                throw lastModelError ?? CustomError.notMappeable
-            }
-            if forecast != nil {
-                displayedModelForecasts = validForecasts.isEmpty ? forecast.map { [$0] } ?? [] : validForecasts
-                let loadedModelIDs = validForecasts.compactMap(\.model)
-                let currentSpotModelIDs = loadedModelIDs.isEmpty
-                    ? [forecast?.model ?? Model.defaultModel]
-                    : loadedModelIDs
-                displayedForecastSpotID = requestedSpotID
-                if isDiscoveringSpotModels || modelIDsBySpot[requestedSpotID] == nil {
-                    modelIDsBySpot[requestedSpotID] = currentSpotModelIDs
-                }
-                selectedModelIDsBySpot[requestedSpotID] = currentSpotModelIDs
-                if persistSelection {
-                    selectedSpotID = requestedSpotID
-                    usableModelIDs = currentSpotModelIDs
-                    selectedModelIDs = currentSpotModelIDs
-                }
-            }
-            selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
-        } catch {
-            errorMessage = unavailableForecastMessage(for: error)
+        let requestedSpotID = spotId ?? selectedSpotID
+        let didLoad = await viewModel.loadForecast(
+            spotID: requestedSpotID,
+            modelIDs: modelIDs,
+            isChangingSpot: requestedSpotID != selectedSpotID,
+            persistSelection: persistSelection,
+            account: account
+        )
+        if didLoad, persistSelection {
+            selectedSpotID = requestedSpotID
         }
     }
 
@@ -741,50 +616,12 @@ public struct ForecastDashboardView: View {
         locationName: String? = nil,
         modelIDs: [String]? = nil
     ) async {
-        guard let password = account.password, !account.username.isEmpty else {
-            errorMessage = "Sign in with Windguru PRO to load an exact map coordinate."
-            return
-        }
-        isLoading = true
-        errorMessage = nil
-        coordinateLocationName = locationName
-        displayedForecastSpotID = nil
-        defer { isLoading = false }
-        do {
-            let discoveredModelIDs = try await coordinateModelLoader(coordinate.latitude, coordinate.longitude)
-            let requestedModelIDs = modelIDs ?? (discoveredModelIDs.isEmpty ? [Model.defaultModel] : discoveredModelIDs)
-            var coordinateForecasts: [SpotForecast] = []
-            var lastModelError: Error?
-            for modelID in requestedModelIDs {
-                do {
-                    guard let coordinateForecast = try await coordinateForecastLoader(
-                        coordinate.latitude,
-                        coordinate.longitude,
-                        modelID,
-                        account.username,
-                        password
-                    ) else {
-                        continue
-                    }
-                    guard let convertedForecast = try SpotForecast.from(coordinateForecast: coordinateForecast) else {
-                        continue
-                    }
-                    coordinateForecasts.append(convertedForecast)
-                } catch {
-                    lastModelError = error
-                }
-            }
-            guard !coordinateForecasts.isEmpty else { throw lastModelError ?? CustomError.notMappeable }
-            forecast = coordinateForecasts.count == 1
-                ? coordinateForecasts[0]
-                : try SpotForecast.blended(coordinateForecasts)
-            displayedModelForecasts = coordinateForecasts
-            selectedModelIDs = coordinateForecasts.compactMap(\.model)
-            usableModelIDs = selectedModelIDs
-            selectedHour = forecast.flatMap { closestHour(to: Date(), in: $0) }
-        } catch {
-            errorMessage = unavailableForecastMessage(for: error)
-        }
+        await viewModel.loadCoordinateForecast(
+            coordinate: coordinate,
+            locationName: locationName,
+            modelIDs: modelIDs,
+            account: account
+        )
     }
 
     private func unavailableForecastContent(errorMessage: String) -> some View {
@@ -797,46 +634,6 @@ public struct ForecastDashboardView: View {
             Task { await loadForecast() }
         }
 #endif
-    }
-
-    private func unavailableForecastMessage(for error: Error) -> String {
-#if DEBUG
-        let nsError = error as NSError
-        var details = [
-            String(reflecting: error),
-            "Domain: \(nsError.domain)",
-            "Code: \(nsError.code)"
-        ]
-        if !error.localizedDescription.isEmpty {
-            details.append("Description: \(error.localizedDescription)")
-        }
-        if !nsError.userInfo.isEmpty {
-            details.append("Details: \(nsError.userInfo)")
-        }
-        return details.joined(separator: "\n")
-#else
-        return ""
-#endif
-    }
-
-    private func closestHour(to date: Date, in forecast: SpotForecast) -> String? {
-        forecast.availableForecastHours.last(where: {
-            (forecast.forecastDate(hour: $0) ?? .distantFuture) <= date
-        }) ?? forecast.availableForecastHours.first
-    }
-
-    private static func modelIDs(from response: String?) -> [String] {
-        guard let response,
-              let data = response.data(using: .utf8),
-              let modelIDs = try? JSONSerialization.jsonObject(with: data) as? [Int] else {
-            return []
-        }
-        return modelIDs.map(String.init)
-    }
-
-    private func orderedUnique(_ modelIDs: [String]) -> [String] {
-        var seen = Set<String>()
-        return modelIDs.filter { seen.insert($0).inserted }
     }
 
 }

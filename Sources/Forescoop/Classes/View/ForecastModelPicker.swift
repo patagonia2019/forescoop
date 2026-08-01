@@ -74,6 +74,7 @@ public struct ForecastModelPicker: View {
 
 }
 
+#if DEBUG
 #Preview("Forecast model picker") {
     ForecastModelPicker(
         forecastService: ForecastWindguruMockup(),
@@ -84,4 +85,5 @@ public struct ForecastModelPicker: View {
         onModelSelected: { _ in }
     )
 }
+#endif
 #endif

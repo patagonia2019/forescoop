@@ -104,6 +104,7 @@ public struct ForecastHourSelector: View {
     }
 }
 
+#if DEBUG
 #Preview {
     ForecastHourSelectorPreview()
         .padding()
@@ -119,4 +120,5 @@ private struct ForecastHourSelectorPreview: View {
     private static let forecast: SpotForecast =
         try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
 }
+#endif
 #endif

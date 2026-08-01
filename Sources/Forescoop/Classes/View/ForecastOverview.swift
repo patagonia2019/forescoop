@@ -8,7 +8,6 @@
 #if !os(watchOS)
 import SwiftUI
 
-
 public struct ForecastOverview: View {
     public let forecast: SpotForecast
     public let selectedHour: String?
