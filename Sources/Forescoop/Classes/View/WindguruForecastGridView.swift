@@ -33,9 +33,6 @@ public struct WindguruForecastGridView: View {
     @State private var areRowTitlesCollapsed = false
     @State private var expandedComparisonRows = Set<String>()
     @State private var isModelComparisonEnabled = false
-    @State private var horizontalGridOffset: CGFloat = 0
-    @State private var horizontalGridViewportWidth: CGFloat = 0
-    @State private var hasAppliedInitialGridPosition = false
 
     public init(
         forecast: SpotForecast,
@@ -79,56 +76,38 @@ public struct WindguruForecastGridView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                ScrollView(.vertical) {
+            ScrollViewReader { proxy in
+                ScrollView([.horizontal, .vertical]) {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        HStack(spacing: 0) {
+                            labelHeader
+                            timeHeader
+                        }
+
                 HStack(alignment: .top, spacing: 0) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Color.clear.frame(width: rowLabelWidth, height: gridHeaderHeight)
+                            LazyVStack(alignment: .leading, spacing: 0) {
                         gridRows(in: .labels)
                     }
 
-                    ScrollView(.horizontal) {
-                        ScrollViewReader { proxy in
-                            VStack(alignment: .leading, spacing: 0) {
-                                Color.clear.frame(height: gridHeaderHeight)
-                                gridRows(in: .values)
-                            }
-                            .overlay(alignment: .topLeading) {
-                                selectedHourOutline
-                            }
-                            .onAppear {
-                                guard horizontalGridViewportWidth > 0 else { return }
-                                hasAppliedInitialGridPosition = true
-                                scrollToSelectedHour(with: proxy)
-                            }
-                            .onChange(of: selectedHour) { _, _ in
-                                scrollToSelectedHour(with: proxy)
-                            }
-                            .onChange(of: horizontalGridViewportWidth) { _, width in
-                                guard width > 0, !hasAppliedInitialGridPosition else { return }
-                                hasAppliedInitialGridPosition = true
-                                scrollToSelectedHour(with: proxy)
+                            LazyHStack(alignment: .top, spacing: 0) {
+                                ForEach(hours, id: \.self) { hour in
+                                    hourColumn(for: hour)
+                                        .id(hour)
+                                }
                             }
                         }
                     }
-                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                        (geometry.contentOffset.x / 4).rounded() * 4
-                    } action: { _, offset in
-                        horizontalGridOffset = offset
-                        let shouldCollapseRowTitles = offset > 8
-                        guard shouldCollapseRowTitles != areRowTitlesCollapsed else { return }
-                        areRowTitlesCollapsed = shouldCollapseRowTitles
-                    }
-                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                        geometry.containerSize.width
-                    } action: { _, width in
-                        horizontalGridViewportWidth = width
-                    }
+                    .padding(.bottom)
                 }
-                .padding(.bottom)
+                .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.contentOffset.x
+                } action: { _, offset in
+                    let shouldCollapseRowTitles = offset > 8
+                    guard shouldCollapseRowTitles != areRowTitlesCollapsed else { return }
+                    areRowTitlesCollapsed = shouldCollapseRowTitles
                 }
-
-                stickyGridHeader
+                .onAppear { scrollToSelectedHour(with: proxy) }
+                .onChange(of: selectedHour) { _, _ in scrollToSelectedHour(with: proxy) }
             }
 
             modelSelector
@@ -233,23 +212,8 @@ public struct WindguruForecastGridView: View {
             .background(gridLabelBackground)
     }
 
-    private var stickyGridHeader: some View {
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                labelHeader
-
-                ZStack(alignment: .leading) {
-                    timeHeader.offset(x: -horizontalGridOffset)
-                }
-                .frame(width: max(0, geometry.size.width - rowLabelWidth), height: gridHeaderHeight, alignment: .leading)
-                .clipped()
-            }
-        }
-        .frame(height: gridHeaderHeight)
-    }
-
     private var timeHeader: some View {
-        HStack(spacing: 0) {
+        LazyHStack(spacing: 0) {
             ForEach(hours, id: \.self) { hour in
                 Button {
                     onSelectHour(hour)
@@ -277,7 +241,7 @@ public struct WindguruForecastGridView: View {
 
     private enum GridColumn {
         case labels
-        case values
+        case value(String)
     }
 
     @ViewBuilder private func gridRows(in column: GridColumn) -> some View {
@@ -339,12 +303,13 @@ public struct WindguruForecastGridView: View {
                     }
                 }
             }
-        case .values:
+        case .value(let hour):
             VStack(spacing: 0) {
-                forecastValueRow(values: values, background: background)
+                forecastValueCell(hour: hour, values: values, background: background)
                 if isExpanded {
                     ForEach(Array(modelForecasts.enumerated()), id: \.offset) { _, source in
-                        forecastValueRow(
+                        forecastValueCell(
+                            hour: hour,
                             values: { comparisonValues(source, $0) },
                             background: background,
                             height: 24
@@ -355,29 +320,38 @@ public struct WindguruForecastGridView: View {
         }
     }
 
-    private func forecastValueRow(
+    private func hourColumn(for hour: String) -> some View {
+        LazyVStack(spacing: 0) {
+            gridRows(in: .value(hour))
+        }
+        .frame(width: 56)
+        .overlay {
+            if selectedHour == hour {
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(.blue, lineWidth: 2)
+            }
+        }
+    }
+
+    private func forecastValueCell(
+        hour: String,
         values: @escaping (String) -> GridCell,
         background: @escaping (GridCell) -> Color,
         height: CGFloat = 30
     ) -> some View {
-        HStack(spacing: 0) {
-            ForEach(hours, id: \.self) { hour in
-                let cell = values(hour)
-                Button {
-                    onSelectHour(hour)
-                } label: {
-                    Text(cell.text)
-                        .font(cell.isDirection ? .body : (cell.isSnow ? .caption.bold() : .caption))
-                        .monospacedDigit()
-                        .foregroundStyle(cell.isSnow ? .blue : .primary)
-                        .frame(width: 56, height: height)
-                        .background(background(cell))
-                        .overlay(alignment: .bottom) { Divider().opacity(0.3) }
-                }
-                .buttonStyle(.plain)
-                .id(hour)
-            }
+        let cell = values(hour)
+        return Button {
+            onSelectHour(hour)
+        } label: {
+            Text(cell.text)
+                .font(cell.isDirection ? .body : (cell.isSnow ? .caption.bold() : .caption))
+                .monospacedDigit()
+                .foregroundStyle(cell.isSnow ? .blue : .primary)
+                .frame(width: 56, height: height)
+                .background(background(cell))
+                .overlay(alignment: .bottom) { Divider().opacity(0.3) }
         }
+        .buttonStyle(.plain)
     }
 
     private func unitLabel<Unit>(
@@ -432,19 +406,6 @@ public struct WindguruForecastGridView: View {
     private var gridHeaderHeight: CGFloat { 64 }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
-    @ViewBuilder private var selectedHourOutline: some View {
-        GeometryReader { geometry in
-            if let selectedHour,
-               let index = hours.firstIndex(of: selectedHour) {
-                RoundedRectangle(cornerRadius: 3)
-                    .stroke(.blue, lineWidth: 2)
-                    .frame(width: 56, height: geometry.size.height)
-                    .offset(x: CGFloat(index) * 56)
-            }
-        }
-        .allowsHitTesting(false)
-    }
-
     private func day(for hour: String) -> String {
         guard let date = forecast.forecastDate(hour: hour) else { return "" }
         return date.formatted(.dateTime.weekday(.abbreviated).day())
@@ -464,14 +425,8 @@ public struct WindguruForecastGridView: View {
     }
 
     private func scrollToSelectedHour(with proxy: ScrollViewProxy) {
-        guard let selectedHour,
-              let index = hours.firstIndex(of: selectedHour) else { return }
+        guard let selectedHour, hours.contains(selectedHour) else { return }
         DispatchQueue.main.async {
-            let contentWidth = CGFloat(hours.count) * 56
-            let maximumOffset = max(0, contentWidth - horizontalGridViewportWidth)
-            let centeredOffset = CGFloat(index) * 56 - (horizontalGridViewportWidth - 56) / 2
-            horizontalGridOffset = min(max(0, centeredOffset), maximumOffset)
-            areRowTitlesCollapsed = horizontalGridOffset > 8
             proxy.scrollTo(selectedHour, anchor: .center)
         }
     }
