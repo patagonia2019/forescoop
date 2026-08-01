@@ -89,6 +89,9 @@ public struct WindguruLoginView: View {
                                 Button("Use Preview PRO Account", systemImage: "checkmark.seal") {
                                     usePreviewProAccount()
                                 }
+                                Button("Use Preview Regular Account", systemImage: "person") {
+                                    usePreviewRegularAccount()
+                                }
                             }
                         }
 #endif
@@ -164,12 +167,21 @@ public struct WindguruLoginView: View {
 
     @MainActor
     private func usePreviewProAccount() {
-        let previewUsername = "preview-pro"
+        usePreviewAccount(username: "preview-pro", isProUser: true)
+    }
+
+    @MainActor
+    private func usePreviewRegularAccount() {
+        usePreviewAccount(username: "preview-regular", isProUser: false)
+    }
+
+    @MainActor
+    private func usePreviewAccount(username previewUsername: String, isProUser: Bool) {
         let previewPassword = "preview-only"
         guard let user = try? User(map: [
             "id_user": 1,
             "username": previewUsername,
-            "pro": 1,
+            "pro": isProUser ? 1 : 0,
             "no_ads": 1,
             "wind_units": "knots",
             "temp_units": "c",
@@ -185,7 +197,7 @@ public struct WindguruLoginView: View {
         try? WindguruCredentialStore.save(password: previewPassword, for: previewUsername)
         loggedInUser = user
         onProfileLoaded(user)
-        onLoggedIn(previewUsername, true)
+        onLoggedIn(previewUsername, isProUser)
     }
 #endif
 }
@@ -298,25 +310,15 @@ public enum WindguruCredentialStore {
 }
 
 
-//#if DEBUG
-//private struct MockForecastWindguruService: ForecastWindguruProtocol {
-//    func login(withUsername username: String, password: String) async throws -> User? {
-//        // Simulate a small delay
-//        try? await Task.sleep(nanoseconds: 200_000_000)
-//        return User(id: 12345, name: "Windy Pro", isPro: true)
-//    }
-//}
-//
-//#Preview("Windguru Login") {
-//    NavigationStack {
-//        WindguruLoginView(
-//            forecastService: MockForecastWindguruService(),
-//            username: "demo_user",
-//            onLoggedIn: { _, _ in },
-//            onProfileLoaded: { _ in }
-//        )
-//    }
-//}
-//#endif
+#if DEBUG
+#Preview("Windguru Login") {
+    WindguruLoginView(
+        forecastService: ForecastWindguruMockup(),
+        username: "",
+        onLoggedIn: { _, _ in },
+        onProfileLoaded: { _ in }
+    )
+}
+#endif
 
 #endif
