@@ -17,48 +17,99 @@ skinparam database {
 }
 
 package "Ventus applications" #F5F8FB {
-  [SwiftUI apps\niOS / iPadOS / macOS / tvOS / visionOS / watchOS] as apps
-  [ForecastDashboardView\nDashboard + animated background] as dashboard
-  [WindguruForecastGridView\nFrozen headers + source comparison] as grid
+  [SwiftUI app targets\niOS / iPadOS / macOS / tvOS / visionOS / watchOS] as apps
 }
 
 package "Forescoop Swift package" #E9F4EC {
-  interface "ForecastWindguruProtocol" as protocol
-  [ForecastWindguruService\nURLSession REST client] as service
-  [ForecastWindguruMockup\nfixture-backed service] as mock
-  [Forecast domain\nSpotForecast, models, units\nand weather presentation] as domain
-  [Session and location state\nAppStorage + saved map locations] as session
-  database "Package resources\nJSON fixtures + service plist" as resources
+  package "Views" #F8FCF8 {
+    [Dashboard\nForecastDashboardView\nDashboardAccountMenu\nDashboardLocationWorkspace] as dashboard
+    [Forecast\nOverview, hour selector,\ndetails, model comparison] as forecastViews
+    [Grid\nWindguruForecastGridView\nfrozen headers and model selector] as grid
+    [Location and SpotPicker\nlocation list, map picker,\nsaved-location row] as locationViews
+    [Account\nlogin, profile, favorites] as accountViews
+    [Settings and About] as settingsViews
+    [WeatherBackground\nNative, Metal, Lottie] as weatherViews
+    [VisionOS views] as visionViews
+  }
+
+  package "View models" #F1F8EE {
+    [ForecastDashboardViewModel] as dashboardVM
+    [ForecastModelPickerViewModel] as modelPickerVM
+    [WindguruSpotPickerViewModel] as spotPickerVM
+    [WindguruFavoritesViewModel] as favoritesVM
+  }
+
+  package "Domain and configuration" #F1F8EE {
+    [Forecast domain\nSpotForecast, Forecast,\nmodels, units, User] as domain
+    [WindguruAccount\nauthenticated session] as account
+    [Forecast preferences provider\ndevice or profile units] as preferences
+    [WeatherBackgroundRenderer\nselected rendering style] as renderer
+  }
+
+  package "Services" #F1F8EE {
+    interface "ForecastWindguruProtocol" as forecastProtocol
+    [ForecastWindguruService\nURLSession REST client] as service
+    [ForecastWindguruMockup\nfixture-backed service] as mock
+  }
+
+  database "SwiftData\nSavedMapLocationStore\nSelectedWindguruSpotStore\nand background preference" as swiftData
+  database "Keychain\nWindguruCredentialStore\naccount + PRO password" as keychain
+  database "Package resources\nJSON fixtures, Lottie, Metal assets\nand service plist" as resources
 }
 
 cloud "Windguru public API" as windguru
 cloud "Windguru PRO API\nspot and coordinate forecasts" as pro
-database "Keychain\nPRO password" as keychain
 
-apps --> protocol
 apps --> dashboard
 apps --> grid
-dashboard --> domain : dashboard and\nper-metric comparison
-grid --> domain : blended grid and\nper-model source rows
-dashboard --> session
-grid --> session
-protocol <|.. service
-protocol <|.. mock
-service --> windguru : forecasts, spots, favorites\nand model metadata
-service --> pro : authenticated spot\nand coordinate forecasts
-service --> domain : maps responses
-mock --> resources : loads fixtures
-mock --> domain : maps fixtures
-apps --> keychain : stores PRO password only
+apps --> visionViews
 
-note right of protocol
-Views receive the protocol so previews
-and tests can use the mock service.
+dashboard --> dashboardVM
+grid --> dashboardVM
+forecastViews --> dashboardVM
+locationViews --> spotPickerVM
+accountViews --> favoritesVM
+accountViews --> account
+settingsViews --> preferences
+weatherViews --> renderer
+
+dashboardVM --> forecastProtocol : forecast, spot and\nmodel requests
+modelPickerVM --> forecastProtocol
+spotPickerVM --> forecastProtocol
+favoritesVM --> forecastProtocol
+dashboardVM --> domain
+modelPickerVM --> domain
+spotPickerVM --> domain
+favoritesVM --> domain
+
+dashboardVM --> swiftData
+spotPickerVM --> swiftData
+locationViews --> swiftData
+account --> keychain
+accountViews --> keychain
+
+forecastProtocol <|.. service
+forecastProtocol <|.. mock
+service --> windguru : public forecasts, spots,\nfavorites and model metadata
+service --> pro : authenticated forecasts
+service --> domain : maps API responses
+mock --> resources : loads fixture data
+weatherViews --> resources : Lottie and Metal assets
+
+note right of forecastProtocol
+Service injection keeps views and view models
+testable; previews use the mock service.
 end note
 
-note bottom of session
-The username, selected spot, saved locations,
-and model choices are session-aware. The password
-stays in Keychain.
+note bottom of swiftData
+Locations and the selected spot persist locally.
+Logout clears session-scoped data while preserving
+the primary spot (#64141).
+end note
+
+note bottom of keychain
+Credentials never use UserDefaults in release builds.
+DEBUG previews can use a local fallback when Keychain
+is unavailable.
 end note
 @enduml
