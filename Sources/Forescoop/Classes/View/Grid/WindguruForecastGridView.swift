@@ -16,18 +16,9 @@ import UIKit
 public struct WindguruForecastGridView: View {
     public let forecast: SpotForecast
     public let coordinateLocationName: String?
-    public let selectedHour: String?
+    @ObservedObject private var viewModel: ForecastDashboardViewModel
     public let availableModelIDs: [String]
     public let selectedModelIDs: [String]
-    public let modelNamesByID: [String: String]
-    public let modelForecasts: [SpotForecast]
-    public let userProfile: User?
-    @Binding public var temperatureUnit: TemperatureUnit
-    @Binding public var windSpeedUnit: WindSpeedUnit
-    @Binding public var waveHeightUnit: WaveHeightUnit
-    @Binding public var pressureUnit: PressureUnit
-    @Binding public var precipitationUnit: PrecipitationUnit
-    @Binding public var freezingLevelUnit: FreezingLevelUnit
     @Binding public var showsWindDirectionArrow: Bool
     private let onSelectLocation: () -> Void
     private let onShowMap: () -> Void
@@ -42,18 +33,9 @@ public struct WindguruForecastGridView: View {
     public init(
         forecast: SpotForecast,
         coordinateLocationName: String? = nil,
-        selectedHour: String? = nil,
+        viewModel: ForecastDashboardViewModel,
         availableModelIDs: [String] = [],
         selectedModelIDs: [String] = [],
-        modelNamesByID: [String: String] = [:],
-        modelForecasts: [SpotForecast] = [],
-        userProfile: User? = nil,
-        temperatureUnit: Binding<TemperatureUnit>,
-        windSpeedUnit: Binding<WindSpeedUnit>,
-        waveHeightUnit: Binding<WaveHeightUnit>,
-        pressureUnit: Binding<PressureUnit>,
-        precipitationUnit: Binding<PrecipitationUnit>,
-        freezingLevelUnit: Binding<FreezingLevelUnit>,
         showsWindDirectionArrow: Binding<Bool>,
         onSelectLocation: @escaping () -> Void,
         onToggleModel: @escaping (String) -> Void,
@@ -62,18 +44,9 @@ public struct WindguruForecastGridView: View {
     ) {
         self.forecast = forecast
         self.coordinateLocationName = coordinateLocationName
-        self.selectedHour = selectedHour
+        _viewModel = ObservedObject(wrappedValue: viewModel)
         self.availableModelIDs = availableModelIDs
         self.selectedModelIDs = selectedModelIDs
-        self.modelNamesByID = modelNamesByID
-        self.modelForecasts = modelForecasts
-        self.userProfile = userProfile
-        _temperatureUnit = temperatureUnit
-        _windSpeedUnit = windSpeedUnit
-        _waveHeightUnit = waveHeightUnit
-        _pressureUnit = pressureUnit
-        _precipitationUnit = precipitationUnit
-        _freezingLevelUnit = freezingLevelUnit
         _showsWindDirectionArrow = showsWindDirectionArrow
         self.onSelectLocation = onSelectLocation
         self.onShowMap = onShowMap
@@ -93,7 +66,7 @@ public struct WindguruForecastGridView: View {
             ForecastGridModelSelector(
                 modelIDs: availableModelIDs,
                 selectedModelIDs: selectedModelIDs,
-                modelNamesByID: modelNamesByID,
+                modelNamesByID: viewModel.modelNamesByID,
                 onToggle: onToggleModel
             )
         }
@@ -102,14 +75,14 @@ public struct WindguruForecastGridView: View {
 #if !os(macOS)
         .navigationBarTitleDisplayMode(.large)
 #endif
-        .onChange(of: modelForecasts.count) { _, count in
+        .onChange(of: viewModel.displayedModelForecasts.count) { _, count in
             guard count < 2 else { return }
             isModelComparisonEnabled = false
             expandedComparisonRows = []
         }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                if modelForecasts.count > 1 {
+                if viewModel.displayedModelForecasts.count > 1 {
                     Button(
                         "Compare models",
                         systemImage: "arrow.left.and.right"
@@ -196,7 +169,7 @@ public struct WindguruForecastGridView: View {
 
     private func modelName(for source: SpotForecast) -> String {
         guard let modelID = source.model else { return source.forecast?.modelName ?? "Forecast model" }
-        return modelNamesByID[modelID] ?? source.forecast?.modelName ?? "Model \(modelID)"
+        return viewModel.modelNamesByID[modelID] ?? source.forecast?.modelName ?? "Model \(modelID)"
     }
 
     private func toggleComparisonRow(_ id: String) {
@@ -252,18 +225,18 @@ public struct WindguruForecastGridView: View {
     }
 
     @ViewBuilder private func gridRows(in column: GridColumn) -> some View {
-        gridRow(id: "windSpeed", label: unitLabel("Wind speed (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind", selection: $windSpeedUnit, unitLabel: \.label), values: { windSpeed($0) }, comparisonValues: { windSpeed($1, source: $0) }, background: windColor, in: column)
-        gridRow(id: "windGusts", label: unitLabel("Wind gusts (\(windSpeedUnit.label))", compactLabel: windSpeedUnit.label, icon: "wind.circle.fill", selection: $windSpeedUnit, unitLabel: \.label), values: { windGusts($0) }, comparisonValues: { windGusts($1, source: $0) }, background: gustColor, in: column)
+        gridRow(id: "windSpeed", label: unitLabel("Wind speed (\(viewModel.windSpeedUnit.label))", compactLabel: viewModel.windSpeedUnit.label, icon: "wind", selection: $viewModel.windSpeedUnit, unitLabel: \.label), values: { windSpeed($0) }, comparisonValues: { windSpeed($1, source: $0) }, background: windColor, in: column)
+        gridRow(id: "windGusts", label: unitLabel("Wind gusts (\(viewModel.windSpeedUnit.label))", compactLabel: viewModel.windSpeedUnit.label, icon: "wind.circle.fill", selection: $viewModel.windSpeedUnit, unitLabel: \.label), values: { windGusts($0) }, comparisonValues: { windGusts($1, source: $0) }, background: gustColor, in: column)
         gridRow(id: "windDirection", label: windDirectionLabel, values: { windDirection($0) }, comparisonValues: { windDirection($1, source: $0) }, in: column)
-        gridRow(id: "temperature", label: unitLabel("Temperature (\(temperatureUnit.label))", compactLabel: temperatureUnit.label, icon: "thermometer.medium", selection: $temperatureUnit, unitLabel: \.label), values: { temperature($0) }, comparisonValues: { temperature($1, source: $0) }, background: temperatureColor, in: column)
-        gridRow(id: "freezingLevel", label: unitLabel("Freezing level (\(freezingLevelUnit.label))", compactLabel: freezingLevelUnit.label, icon: "snowflake", selection: $freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, comparisonValues: { freezingLevel($1, source: $0) }, in: column)
+        gridRow(id: "temperature", label: unitLabel("Temperature (\(viewModel.temperatureUnit.label))", compactLabel: viewModel.temperatureUnit.label, icon: "thermometer.medium", selection: $viewModel.temperatureUnit, unitLabel: \.label), values: { temperature($0) }, comparisonValues: { temperature($1, source: $0) }, background: temperatureColor, in: column)
+        gridRow(id: "freezingLevel", label: unitLabel("Freezing level (\(viewModel.freezingLevelUnit.label))", compactLabel: viewModel.freezingLevelUnit.label, icon: "snowflake", selection: $viewModel.freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, comparisonValues: { freezingLevel($1, source: $0) }, in: column)
         gridRow(id: "cloudCover", label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, comparisonValues: { cloudCover($1, source: $0) }, background: cloudColor, in: column)
-        gridRow(id: "precipitation", label: unitLabel("Precipitation (\(precipitationUnit.label))", compactLabel: precipitationUnit.label, icon: "cloud.rain", selection: $precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, comparisonValues: { precipitation($1, source: $0) }, background: precipitationColor, in: column)
-        gridRow(id: "pressure", label: unitLabel("Pressure (\(pressureUnit.label))", compactLabel: pressureUnit.label, icon: "gauge.medium", selection: $pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, background: pressureColor, in: column)
+        gridRow(id: "precipitation", label: unitLabel("Precipitation (\(viewModel.precipitationUnit.label))", compactLabel: viewModel.precipitationUnit.label, icon: "cloud.rain", selection: $viewModel.precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, comparisonValues: { precipitation($1, source: $0) }, background: precipitationColor, in: column)
+        gridRow(id: "pressure", label: unitLabel("Pressure (\(viewModel.pressureUnit.label))", compactLabel: viewModel.pressureUnit.label, icon: "gauge.medium", selection: $viewModel.pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, background: pressureColor, in: column)
         gridRow(id: "humidity", label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, comparisonValues: { humidity($1, source: $0) }, background: humidityColor, in: column)
         if hasWaveData {
             Divider()
-            gridRow(id: "waveHeight", label: unitLabel("Wave (\(waveHeightUnit.label))", compactLabel: waveHeightUnit.label, icon: "water.waves", selection: $waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, comparisonValues: { waveHeight($1, source: $0) }, background: waveColor, in: column)
+            gridRow(id: "waveHeight", label: unitLabel("Wave (\(viewModel.waveHeightUnit.label))", compactLabel: viewModel.waveHeightUnit.label, icon: "water.waves", selection: $viewModel.waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, comparisonValues: { waveHeight($1, source: $0) }, background: waveColor, in: column)
             gridRow(id: "wavePeriod", label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, comparisonValues: { wavePeriod($1, source: $0) }, background: wavePeriodColor, in: column)
             gridRow(id: "waveDirection", label: rowLabel("Wave direction", icon: "location.north.line"), values: { waveDirection($0) }, comparisonValues: { waveDirection($1, source: $0) }, in: column)
         }
@@ -283,7 +256,7 @@ public struct WindguruForecastGridView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 4) {
                     label
-                    if isModelComparisonEnabled, modelForecasts.count > 1 {
+                    if isModelComparisonEnabled, viewModel.displayedModelForecasts.count > 1 {
                         Button {
                             toggleComparisonRow(id)
                         } label: {
@@ -299,7 +272,7 @@ public struct WindguruForecastGridView: View {
                 .background(gridLabelBackground)
 
                 if isExpanded {
-                    ForEach(Array(modelForecasts.enumerated()), id: \.offset) { _, source in
+                    ForEach(Array(viewModel.displayedModelForecasts.enumerated()), id: \.offset) { _, source in
                         Text(modelName(for: source))
                             .font(.caption2)
                             .lineLimit(1)
@@ -313,7 +286,7 @@ public struct WindguruForecastGridView: View {
             VStack(spacing: 0) {
                 forecastValueCell(hour: hour, values: values, background: background)
                 if isExpanded {
-                    ForEach(Array(modelForecasts.enumerated()), id: \.offset) { _, source in
+                    ForEach(Array(viewModel.displayedModelForecasts.enumerated()), id: \.offset) { _, source in
                         forecastValueCell(
                             hour: hour,
                             values: { comparisonValues(source, $0) },
@@ -332,7 +305,7 @@ public struct WindguruForecastGridView: View {
         }
         .frame(width: columnWidth)
         .overlay {
-            if selectedHour == hour {
+            if viewModel.selectedHour == hour {
                 RoundedRectangle(cornerRadius: 3)
                     .stroke(.blue, lineWidth: 2)
             }
@@ -408,7 +381,7 @@ public struct WindguruForecastGridView: View {
     }
 
     private var showsRowTitles: Bool { true }
-    private var rowLabelWidth: CGFloat { 134 + (isModelComparisonEnabled && modelForecasts.count > 1 ? 20 : 0) }
+    private var rowLabelWidth: CGFloat { 134 + (isModelComparisonEnabled && viewModel.displayedModelForecasts.count > 1 ? 20 : 0) }
     private var gridHeaderHeight: CGFloat { 64 }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
@@ -426,12 +399,12 @@ public struct WindguruForecastGridView: View {
     }
 
     private func windSpeed(_ hour: String, source: SpotForecast? = nil) -> GridCell {
-        guard let value = weather(for: source)?.windSpeed(hh: hour), let converted = Knots(value).value(in: windSpeedUnit) else { return .empty }
+        guard let value = weather(for: source)?.windSpeed(hh: hour), let converted = Knots(value).value(in: viewModel.windSpeedUnit) else { return .empty }
         return GridCell(value: converted, text: number(converted))
     }
 
     private func windGusts(_ hour: String, source: SpotForecast? = nil) -> GridCell {
-        guard let value = weather(for: source)?.windGustsKnots(hh: hour), let converted = Knots(value).value(in: windSpeedUnit) else { return .empty }
+        guard let value = weather(for: source)?.windGustsKnots(hh: hour), let converted = Knots(value).value(in: viewModel.windSpeedUnit) else { return .empty }
         return GridCell(value: converted, text: number(converted))
     }
 
@@ -442,13 +415,13 @@ public struct WindguruForecastGridView: View {
 
     private func temperature(_ hour: String, source: SpotForecast? = nil) -> GridCell {
         guard let value = weather(for: source)?.temperatureReal(hh: hour) ?? weather(for: source)?.temperature(hh: hour) else { return .empty }
-        let converted = Temperature(celsius: value).value(in: temperatureUnit)
+        let converted = Temperature(celsius: value).value(in: viewModel.temperatureUnit)
         return GridCell(value: converted, text: number(converted))
     }
 
     private func freezingLevel(_ hour: String, source: SpotForecast? = nil) -> GridCell {
         guard let value = weather(for: source)?.freezingLevelHeightInMeters(hh: hour) else { return .empty }
-        let converted = FreezingLevel(meters: value).value(in: freezingLevelUnit)
+        let converted = FreezingLevel(meters: value).value(in: viewModel.freezingLevelUnit)
         return GridCell(value: converted, text: number(converted, precision: 0))
     }
 
@@ -462,7 +435,7 @@ public struct WindguruForecastGridView: View {
         let accumulatedPrecipitation = sourceWeather?.precipitation(hh: hour)
         let millimeters = accumulatedPrecipitation ?? sourceWeather?.precipitation1(hh: hour)
         guard let millimeters else { return .empty }
-        let converted = Precipitation(millimeters: millimeters).value(in: precipitationUnit)
+        let converted = Precipitation(millimeters: millimeters).value(in: viewModel.precipitationUnit)
         let temperature = sourceWeather?.temperatureReal(hh: hour) ?? sourceWeather?.temperature(hh: hour)
         return GridCell(
             value: converted,
@@ -474,7 +447,7 @@ public struct WindguruForecastGridView: View {
 
     private func pressure(_ hour: String, source: SpotForecast? = nil) -> GridCell {
         guard let value = weather(for: source)?.seaLevelPressure(hh: hour) else { return .empty }
-        let converted = AtmosphericPressure(hectopascals: value).value(in: pressureUnit)
+        let converted = AtmosphericPressure(hectopascals: value).value(in: viewModel.pressureUnit)
         return GridCell(value: converted, text: number(converted, precision: 0))
     }
 
@@ -485,7 +458,7 @@ public struct WindguruForecastGridView: View {
 
     private func waveHeight(_ hour: String, source: SpotForecast? = nil) -> GridCell {
         guard let value = weather(for: source)?.waveHeight(hh: hour) else { return .empty }
-        let converted = WaveHeight(meters: value).value(in: waveHeightUnit)
+        let converted = WaveHeight(meters: value).value(in: viewModel.waveHeightUnit)
         return GridCell(value: converted, text: number(converted))
     }
 
@@ -514,27 +487,27 @@ public struct WindguruForecastGridView: View {
             : WindDirection(value: Int(direction.rounded())).description
     }
 
-    private func windColor(_ cell: GridCell) -> Color { profileColor(userProfile?.windColor, value: cell.value) ?? .cyan.opacity(min((cell.value ?? 0) / 45, 1) * 0.55) }
-    private func gustColor(_ cell: GridCell) -> Color { profileColor(userProfile?.windColor, value: cell.value) ?? .mint.opacity(min((cell.value ?? 0) / 55, 1) * 0.65) }
+    private func windColor(_ cell: GridCell) -> Color { profileColor(viewModel.userProfile?.windColor, value: cell.value) ?? .cyan.opacity(min((cell.value ?? 0) / 45, 1) * 0.55) }
+    private func gustColor(_ cell: GridCell) -> Color { profileColor(viewModel.userProfile?.windColor, value: cell.value) ?? .mint.opacity(min((cell.value ?? 0) / 55, 1) * 0.65) }
     private func temperatureColor(_ cell: GridCell) -> Color {
-        if let profileColor = profileColor(userProfile?.temperatureColor, value: cell.value) {
+        if let profileColor = profileColor(viewModel.userProfile?.temperatureColor, value: cell.value) {
             return profileColor
         }
         guard let temperature = cell.value else { return .clear }
         let intensity = min(max((temperature + 10) / 40, 0), 1)
         return .yellow.opacity(0.08 + (intensity * 0.62))
     }
-    private func cloudColor(_ cell: GridCell) -> Color { profileColor(userProfile?.cloudColor, value: cell.value) ?? .gray.opacity(min((cell.value ?? 0) / 100, 1) * 0.65) }
+    private func cloudColor(_ cell: GridCell) -> Color { profileColor(viewModel.userProfile?.cloudColor, value: cell.value) ?? .gray.opacity(min((cell.value ?? 0) / 100, 1) * 0.65) }
     private func precipitationColor(_ cell: GridCell) -> Color {
         let profile = cell.usesAccumulatedPrecipitation
-            ? userProfile?.precipitationColor
-            : userProfile?.precip1Color
+            ? viewModel.userProfile?.precipitationColor
+            : viewModel.userProfile?.precip1Color
         return profileColor(profile, value: cell.value) ?? .blue.opacity(min((cell.value ?? 0) / 5, 1) * 0.5)
     }
-    private func humidityColor(_ cell: GridCell) -> Color { profileColor(userProfile?.rhColor, value: cell.value) ?? .yellow.opacity(min((cell.value ?? 0) / 100, 1) * 0.4) }
-    private func pressureColor(_ cell: GridCell) -> Color { profileColor(userProfile?.pressureColor, value: cell.value) ?? .clear }
-    private func waveColor(_ cell: GridCell) -> Color { profileColor(userProfile?.waveHeightColor, value: cell.value) ?? .cyan.opacity(min((cell.value ?? 0) / 4, 1) * 0.5) }
-    private func wavePeriodColor(_ cell: GridCell) -> Color { profileColor(userProfile?.wavePeriodColor, value: cell.value) ?? .clear }
+    private func humidityColor(_ cell: GridCell) -> Color { profileColor(viewModel.userProfile?.rhColor, value: cell.value) ?? .yellow.opacity(min((cell.value ?? 0) / 100, 1) * 0.4) }
+    private func pressureColor(_ cell: GridCell) -> Color { profileColor(viewModel.userProfile?.pressureColor, value: cell.value) ?? .clear }
+    private func waveColor(_ cell: GridCell) -> Color { profileColor(viewModel.userProfile?.waveHeightColor, value: cell.value) ?? .cyan.opacity(min((cell.value ?? 0) / 4, 1) * 0.5) }
+    private func wavePeriodColor(_ cell: GridCell) -> Color { profileColor(viewModel.userProfile?.wavePeriodColor, value: cell.value) ?? .clear }
 
     private func profileColor(_ colors: [CustomColor]?, value: Double?) -> Color? {
         guard let value, let colors, !colors.isEmpty else { return nil }
@@ -594,20 +567,13 @@ private struct ScrollViewBounceDisabler: UIViewRepresentable {
 #Preview("WindguruForecastGridView") {
     let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
     let modelID = forecast.model ?? Model.defaultModel
+    let viewModel = ForecastDashboardViewModel(forecastService: ForecastWindguruMockup())
     NavigationStack {
         WindguruForecastGridView(
             forecast: forecast,
-            selectedHour: "29",
+            viewModel: viewModel,
             availableModelIDs: [modelID],
             selectedModelIDs: [modelID],
-            modelNamesByID: [modelID: forecast.forecast?.modelName ?? "Forecast model"],
-            modelForecasts: [forecast],
-            temperatureUnit: .constant(.celsius),
-            windSpeedUnit: .constant(.knots),
-            waveHeightUnit: .constant(.meters),
-            pressureUnit: .constant(.hectopascals),
-            precipitationUnit: .constant(.millimeters),
-            freezingLevelUnit: .constant(.meters),
             showsWindDirectionArrow: .constant(true),
             onSelectLocation: {},
             onToggleModel: { _ in },
