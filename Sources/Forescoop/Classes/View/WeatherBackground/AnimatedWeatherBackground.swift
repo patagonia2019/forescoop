@@ -47,6 +47,7 @@ public struct AnimatedWeatherBackground: WeatherBackground {
     private var isSnowy: Bool { symbolNames.contains { $0.contains("snow") } }
     private var isFoggy: Bool { symbolNames.contains { $0.contains("fog") } || (humidityPercent >= 95 && cloudCoverPercent >= 80) }
     private var isHeavyRain: Bool { isRainy && precipitationMillimeters >= 8 }
+    private var showsRainbow: Bool { isSunny && precipitationMillimeters > 0 && !isSnowy }
     private var isFreezing: Bool { temperatureCelsius <= 0 }
     private var isHot: Bool { temperatureCelsius >= 30 }
     private var usesPressurePulse: Bool { (pressureHectopascals ?? 1_013) < 995 || (pressureHectopascals ?? 1_013) > 1_030 }
@@ -193,6 +194,8 @@ public struct AnimatedWeatherBackground: WeatherBackground {
                             .blendMode(.screen)
                     }
                 }
+
+                WeatherRainbowOverlay(isVisible: showsRainbow)
             }
             .scaleEffect(1.10)
             .offset(
@@ -364,6 +367,14 @@ enum AnimatedWeatherPreviewData {
 #Preview("Rain") {
     AnimatedWeatherBackground(
         forecast: AnimatedWeatherPreviewData.forecast(precipitation: 3, temperature: 11, cloudCover: 95, windSpeed: 14, gusts: 20),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("Sun shower rainbow") {
+    AnimatedWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 2, temperature: 18, cloudCover: 25, windSpeed: 8, gusts: 13),
         hour: "29"
     )
     .frame(height: 400)

@@ -38,6 +38,9 @@ public struct SpriteKitWeatherBackground: WeatherBackground {
             isSunny: symbols.contains { $0.contains("sun") },
             isCloudy: symbols.contains { $0.contains("cloud") },
             isSnowy: symbols.contains { $0.contains("snow") },
+            showsRainbow: symbols.contains { $0.contains("sun") }
+                && precipitation > 0
+                && !symbols.contains(where: { $0.contains("snow") }),
             precipitationMillimeters: precipitation,
             windVector: CGPoint(
                 x: sin(downwindRadians),
@@ -53,6 +56,7 @@ public struct SpriteKitWeatherBackground: WeatherBackground {
     public var body: some View {
         #if canImport(SpriteKit) && !os(watchOS)
         SpriteKitWeatherSurface(condition: condition)
+            .overlay { WeatherRainbowOverlay(isVisible: condition.showsRainbow) }
             .allowsHitTesting(false)
             .accessibilityHidden(true)
         #else
@@ -66,6 +70,7 @@ private struct SpriteWeatherCondition: Equatable {
     let isSunny: Bool
     let isCloudy: Bool
     let isSnowy: Bool
+    let showsRainbow: Bool
     let precipitationMillimeters: Double
     let windVector: CGPoint
     let windSpeedKnots: Double
@@ -379,6 +384,14 @@ private enum SpriteWeatherTexture {
 #Preview("SpriteKit cloudy") {
     SpriteKitWeatherBackground(
         forecast: AnimatedWeatherPreviewData.forecast(precipitation: 0, temperature: 15, cloudCover: 95, windSpeed: 7, gusts: 12),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("SpriteKit sun shower rainbow") {
+    SpriteKitWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 2, temperature: 18, cloudCover: 25, windSpeed: 8, gusts: 13),
         hour: "29"
     )
     .frame(height: 400)

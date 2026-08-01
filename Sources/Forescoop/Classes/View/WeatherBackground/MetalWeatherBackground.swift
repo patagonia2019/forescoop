@@ -31,6 +31,9 @@ public struct MetalWeatherBackground: WeatherBackground {
 
         condition = MetalWeatherCondition(
             isSnowy: symbols.contains { $0.contains("snow") },
+            showsRainbow: symbols.contains { $0.contains("sun") }
+                && precipitation > 0
+                && !symbols.contains(where: { $0.contains("snow") }),
             precipitationMillimeters: precipitation,
             windVector: SIMD2(Float(sin(downwindDirection)), Float(-cos(downwindDirection))),
             windSpeedKnots: windSpeed
@@ -41,6 +44,7 @@ public struct MetalWeatherBackground: WeatherBackground {
         #if canImport(MetalKit) && !os(watchOS)
         MetalWeatherSurface(condition: condition)
             .background(.black.opacity(0.48))
+            .overlay { WeatherRainbowOverlay(isVisible: condition.showsRainbow) }
             .allowsHitTesting(false)
             .accessibilityHidden(true)
         #else
@@ -52,6 +56,7 @@ public struct MetalWeatherBackground: WeatherBackground {
 
 private struct MetalWeatherCondition: Equatable {
     let isSnowy: Bool
+    let showsRainbow: Bool
     let precipitationMillimeters: Double
     let windVector: SIMD2<Float>
     let windSpeedKnots: Double
@@ -305,7 +310,13 @@ private final class MetalWeatherRenderer: NSObject, MTKViewDelegate {
 #endif
 
 private enum MetalWeatherPreviewData {
-    static func forecast(precipitation: Double, temperature: Double, windSpeed: Double, gusts: Double) -> SpotForecast {
+    static func forecast(
+        precipitation: Double,
+        temperature: Double,
+        cloudCover: Int = 0,
+        windSpeed: Double,
+        gusts: Double
+    ) -> SpotForecast {
         guard var response = Definition().json(jsonFile: "SpotForecast"),
               var forecasts = response["forecast"] as? [String: Any] else {
             fatalError("Missing SpotForecast preview fixture")
@@ -317,6 +328,7 @@ private enum MetalWeatherPreviewData {
             guard var model = forecasts[identifier] as? [String: Any] else { continue }
             set(precipitation, for: ["APCP", "APCP1"], in: &model)
             set(temperature, for: ["TMP", "TMPE"], in: &model)
+            set(cloudCover, for: ["TCDC"], in: &model)
             set(windSpeed, for: ["WINDSPD"], in: &model)
             set(gusts, for: ["GUST"], in: &model)
             forecasts[identifier] = model
@@ -350,6 +362,15 @@ private enum MetalWeatherPreviewData {
     )
         .background(.black.opacity(0.35))
         .frame(height: 400)
+}
+
+#Preview("Metal sun shower rainbow") {
+    MetalWeatherBackground(
+        forecast: MetalWeatherPreviewData.forecast(precipitation: 2, temperature: 18, cloudCover: 25, windSpeed: 8, gusts: 13),
+        hour: "29"
+    )
+    .background(.black.opacity(0.30))
+    .frame(height: 400)
 }
 
 #Preview("Metal snow") {

@@ -24,6 +24,7 @@ public struct LottieWeatherBackground: WeatherBackground {
     private let forecast: SpotForecast
     private let hour: String?
     private let asset: LottieWeatherAsset?
+    private let showsRainbow: Bool
 
     public init(forecast: SpotForecast, hour: String? = nil) {
         self.init(forecast: forecast, hour: hour, theme: .adrianaMandjarova)
@@ -33,6 +34,7 @@ public struct LottieWeatherBackground: WeatherBackground {
         self.forecast = forecast
         self.hour = hour
         asset = Self.animationAsset(for: forecast, hour: hour, theme: theme)
+        showsRainbow = Self.showsRainbow(for: forecast, hour: hour)
     }
 
     public var body: some View {
@@ -40,6 +42,7 @@ public struct LottieWeatherBackground: WeatherBackground {
             LottieWeatherAnimationView(asset: asset)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .opacity(0.30)
+                .overlay { WeatherRainbowOverlay(isVisible: showsRainbow) }
                 .accessibilityHidden(true)
                 .allowsHitTesting(false)
         } else {
@@ -80,6 +83,18 @@ public struct LottieWeatherBackground: WeatherBackground {
                 cloudCover: cloudCover
             )
         }
+    }
+
+    private static func showsRainbow(for forecast: SpotForecast, hour: String?) -> Bool {
+        let selectedHour = hour ?? forecast.currentForecastHour
+        let weather = forecast.forecast
+        let symbols = forecast.weatherSymbolNames(hour: selectedHour)
+        let precipitation = weather?.precipitation(hh: selectedHour)
+            ?? weather?.precipitation1(hh: selectedHour)
+            ?? 0
+        return symbols.contains { $0.contains("sun") }
+            && precipitation > 0
+            && !symbols.contains(where: { $0.contains("snow") })
     }
 
     private static func adrianaAsset(
@@ -199,6 +214,23 @@ private struct LottieAssetPreview: View {
 #Preview("Asad · rainy day") { LottieAssetPreview(name: "Rainy Day") }
 #Preview("Asad · snow day") { LottieAssetPreview(name: "Snow Day") }
 #Preview("Asad · thunder night") { LottieAssetPreview(name: "Thunder Night") }
+
+#Preview("Lottie · sun shower rainbow") {
+    LottieWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 2, temperature: 18, cloudCover: 25, windSpeed: 8, gusts: 13),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("Lottie Asad · sun shower rainbow") {
+    LottieWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 2, temperature: 18, cloudCover: 25, windSpeed: 8, gusts: 13),
+        hour: "29",
+        theme: .asadAwan
+    )
+    .frame(height: 400)
+}
 #else
 /// Native fallback on platforms where the Lottie framework is unavailable.
 public struct LottieWeatherBackground: WeatherBackground {
