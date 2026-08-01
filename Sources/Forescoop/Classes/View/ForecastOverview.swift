@@ -52,20 +52,11 @@ public struct ForecastOverview: View {
     public var body: some View {
         VStack(spacing: 16) {
             VStack(spacing: 4) {
-                HStack(spacing: 8) {
-                    Button(action: onSelectLocation) {
-                        Label(locationName, systemImage: "mappin.and.ellipse")
-                    }
-                    .buttonStyle(.plain)
-
-#if !os(tvOS)
-                    Button("Show \(locationName) on map", systemImage: "map", action: onShowMap)
-                        .labelStyle(.iconOnly)
-                        .buttonStyle(.plain)
-#endif
-                }
-                .font(.title.bold())
-                .foregroundColor(.blue)
+                ForecastLocationHeader(
+                    locationName: locationName,
+                    onSelectLocation: onSelectLocation,
+                    onShowMap: onShowMap
+                )
 
                 if forecast.isCoordinateLocation {
                     Text(forecast.coordinateSummary)

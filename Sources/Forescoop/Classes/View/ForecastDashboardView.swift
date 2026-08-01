@@ -129,54 +129,17 @@ public struct ForecastDashboardView: View {
     }
 
     private var accountMenu: some View {
-        Menu {
-            if content == .grid {
-                Button("Forecast Dashboard", systemImage: "rectangle.3.group") {
-                    content = .dashboard
-                }
-            } else {
-                Button("Forecast Grid", systemImage: "tablecells") {
-                    content = .grid
-                }
-            }
-
-            Divider()
-
-            Button("Settings", systemImage: "gearshape") {
-                activeSheet = .weatherBackgroundSettings
-            }
-
-            Button("About", systemImage: "info.circle") {
-                activeSheet = .about
-            }
-
-            Divider()
-
-            if account.username.isEmpty {
-                Button("Login", systemImage: "person.crop.circle") {
-                    activeSheet = .login
-                }
-            } else {
-                Button("Profile", systemImage: "person.crop.circle") {
-                    activeSheet = .login
-                }
-
-                Button("Favorites", systemImage: "star") {
-                    activeSheet = .favorites
-                }
-            }
-
-            if !account.username.isEmpty {
-                Divider()
-                Button("Logout", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
-                    logout()
-                }
-            }
-        } label: {
-            Label("Menu", systemImage: "line.3.horizontal")
-                .labelStyle(.iconOnly)
-        }
-        .accessibilityLabel("Menu")
+        DashboardAccountMenu(
+            isShowingGrid: content == .grid,
+            isLoggedIn: !account.username.isEmpty,
+            onShowDashboard: { content = .dashboard },
+            onShowGrid: { content = .grid },
+            onShowSettings: { activeSheet = .weatherBackgroundSettings },
+            onShowAbout: { activeSheet = .about },
+            onShowAccount: { activeSheet = .login },
+            onShowFavorites: { activeSheet = .favorites },
+            onLogout: logout
+        )
     }
 
     private func logout() {
@@ -233,7 +196,48 @@ public struct ForecastDashboardView: View {
                 if let forecast {
                     Group {
                         if content == .grid {
-                            forecastGridContent(for: forecast)
+                            let isCoordinateForecast = coordinateLocationName != nil
+                            let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
+                            let availableModelIDs = isCoordinateForecast
+                                ? usableModelIDs
+                                : modelIDsBySpot[forecastSpotID] ?? usableModelIDs
+                            let selectedForecastModelIDs = isCoordinateForecast
+                                ? selectedModelIDs
+                                : selectedModelIDsBySpot[forecastSpotID] ?? selectedModelIDs
+                            WindguruForecastGridView(
+                                forecast: forecast,
+                                coordinateLocationName: coordinateLocationName,
+                                selectedHour: $viewModel.selectedHour,
+                                availableModelIDs: availableModelIDs,
+                                selectedModelIDs: selectedForecastModelIDs,
+                                modelNamesByID: modelNamesByID,
+                                modelForecasts: displayedModelForecasts,
+                                userProfile: viewModel.userProfile,
+                                temperatureUnit: $viewModel.temperatureUnit,
+                                windSpeedUnit: $viewModel.windSpeedUnit,
+                                waveHeightUnit: $viewModel.waveHeightUnit,
+                                pressureUnit: $viewModel.pressureUnit,
+                                precipitationUnit: $viewModel.precipitationUnit,
+                                freezingLevelUnit: $viewModel.freezingLevelUnit,
+                                showsWindDirectionArrow: $showsWindDirectionArrow,
+                                onSelectLocation: { activeSheet = .spotPicker },
+                                onToggleModel: { modelID in
+                                    toggleGridModel(
+                                        modelID,
+                                        for: forecastSpotID,
+                                        coordinate: isCoordinateForecast ? forecast.location?.coordinate : nil,
+                                        locationName: coordinateLocationName
+                                    )
+                                },
+                                onShowMap: { activeSheet = .forecastMap },
+                                onSelectHour: { hour in
+                                    selectedHour = hour
+                                    content = .dashboard
+                                }
+                            )
+                            .task(id: availableModelIDs) {
+                                await loadModelNames(for: availableModelIDs)
+                            }
                         } else {
                             forecastContent(for: forecast)
                         }
@@ -403,7 +407,16 @@ public struct ForecastDashboardView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    iPadLocationWorkspace()
+                    DashboardLocationWorkspace(
+                        savedLocations: savedMapLocations,
+                        favoriteLocations: favoriteLocationsNotSaved,
+                        mapPosition: $iPadMapPosition,
+                        selectedLocationID: $selectedMapLocationID,
+                        selectedHour: selectedHour,
+                        forecast: forecast(for:),
+                        onManageLocations: { activeSheet = .spotPicker },
+                        onSelectLocation: selectMapLocation
+                    )
                 } else {
                     VStack(spacing: 24) {
                         ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
@@ -427,51 +440,6 @@ public struct ForecastDashboardView: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
-    }
-
-    private func forecastGridContent(for forecast: SpotForecast) -> some View {
-        let isCoordinateForecast = coordinateLocationName != nil
-        let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
-        let availableModelIDs = isCoordinateForecast
-            ? usableModelIDs
-            : modelIDsBySpot[forecastSpotID] ?? usableModelIDs
-        let selectedForecastModelIDs = isCoordinateForecast
-            ? selectedModelIDs
-            : selectedModelIDsBySpot[forecastSpotID] ?? selectedModelIDs
-        return WindguruForecastGridView(
-            forecast: forecast,
-            coordinateLocationName: coordinateLocationName,
-            selectedHour: selectedHour,
-            availableModelIDs: availableModelIDs,
-            selectedModelIDs: selectedForecastModelIDs,
-            modelNamesByID: modelNamesByID,
-            modelForecasts: displayedModelForecasts,
-            userProfile: viewModel.userProfile,
-            temperatureUnit: $viewModel.temperatureUnit,
-            windSpeedUnit: $viewModel.windSpeedUnit,
-            waveHeightUnit: $viewModel.waveHeightUnit,
-            pressureUnit: $viewModel.pressureUnit,
-            precipitationUnit: $viewModel.precipitationUnit,
-            freezingLevelUnit: $viewModel.freezingLevelUnit,
-            showsWindDirectionArrow: $showsWindDirectionArrow,
-            onSelectLocation: { activeSheet = .spotPicker },
-            onToggleModel: { modelID in
-                toggleGridModel(
-                    modelID,
-                    for: forecastSpotID,
-                    coordinate: isCoordinateForecast ? forecast.location?.coordinate : nil,
-                    locationName: coordinateLocationName
-                )
-            },
-            onSelectHour: { hour in
-                selectedHour = hour
-                content = .dashboard
-            },
-            onShowMap: { activeSheet = .forecastMap }
-        )
-        .task(id: availableModelIDs) {
-            await loadModelNames(for: availableModelIDs)
-        }
     }
 
     private func toggleGridModel(
@@ -518,90 +486,6 @@ public struct ForecastDashboardView: View {
             names[identifier] = model.oficinalName ?? model.shortName ?? "Model \(identifier)"
         }
         modelNamesByID.merge(names) { _, newValue in newValue }
-    }
-
-    private func iPadLocationWorkspace() -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Label("Choose location", systemImage: "mappin.and.ellipse")
-                    .font(.title2.bold())
-                Spacer()
-                Button("Manage locations", systemImage: "slider.horizontal.3") {
-                    activeSheet = .spotPicker
-                }
-            }
-
-            Map(position: $iPadMapPosition, selection: $selectedMapLocationID) {
-                ForEach(savedMapLocations) { location in
-#if !os(tvOS)
-                    Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
-                        SavedMapLocationAnnotation(
-                            location: location,
-                            forecast: forecast(for: location),
-                            hour: selectedHour
-                        )
-                    }
-                    .tag(location.id)
-#else
-                    Marker(location.name, coordinate: location.coordinate)
-                        .tag(location.id)
-#endif
-                }
-                ForEach(favoriteLocationsNotSaved) { location in
-#if !os(tvOS)
-                    Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
-                        SavedMapLocationAnnotation(
-                            location: location,
-                            forecast: forecast(for: location),
-                            hour: selectedHour,
-                            isFavorite: true
-                        )
-                    }
-                    .tag(location.id)
-#else
-                    Marker(location.name, coordinate: location.coordinate)
-                        .tag(location.id)
-#endif
-                }
-            }
-            .frame(height: 280)
-            .clipShape(.rect(cornerRadius: 16))
-            .onChange(of: selectedMapLocationID) { _, locationID in
-                guard let locationID,
-                      let location = (savedMapLocations + favoriteLocationsNotSaved).first(where: { $0.id == locationID }) else { return }
-                centerMap(on: location.coordinate)
-                Task { await loadSavedLocation(location) }
-            }
-
-            if savedMapLocations.isEmpty && favoriteLocationsNotSaved.isEmpty {
-                ContentUnavailableView("No saved locations", systemImage: "mappin.slash", description: Text("Use Manage locations to search, pick, and save a location."))
-                    .frame(maxWidth: .infinity)
-            } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
-                    ForEach(savedMapLocations + favoriteLocationsNotSaved) { location in
-                        Button {
-                            selectMapLocation(location)
-                        } label: {
-                            Label {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(location.displayName)
-                                    Text(location.detailText)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            } icon: {
-                                Image(systemName: favoriteLocationsNotSaved.contains(where: { $0.id == location.id }) ? "star.circle.fill" : "mappin.and.ellipse")
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(12)
-                            .background(.thinMaterial, in: .rect(cornerRadius: 12))
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
-        }
-        .padding(.top, 8)
     }
 
     private func refreshSavedMapLocations() {

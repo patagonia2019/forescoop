@@ -83,31 +83,19 @@ public struct WindguruForecastGridView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                Button(action: onSelectLocation) {
-                    Label(
-                        forecast.locationDisplayName(coordinateLocationName: coordinateLocationName),
-                        systemImage: "mappin.and.ellipse"
-                    )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Choose location")
-
-#if !os(tvOS)
-                Button(
-                    "Show \(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName)) on map",
-                    systemImage: "map",
-                    action: onShowMap
-                )
-                .labelStyle(.iconOnly)
-                .buttonStyle(.plain)
-#endif
-            }
-            .font(.title.bold())
-            .foregroundStyle(.blue)
+            ForecastLocationHeader(
+                locationName: forecast.locationDisplayName(coordinateLocationName: coordinateLocationName),
+                onSelectLocation: onSelectLocation,
+                onShowMap: onShowMap
+            )
 
             frozenGrid(scrollsVertically: false)
-            modelSelector
+            ForecastGridModelSelector(
+                modelIDs: availableModelIDs,
+                selectedModelIDs: selectedModelIDs,
+                modelNamesByID: modelNamesByID,
+                onToggle: onToggleModel
+            )
         }
         .padding(.horizontal, 2)
         .navigationTitle("Ventus")
@@ -219,43 +207,6 @@ public struct WindguruForecastGridView: View {
         }
     }
 
-    @ViewBuilder private var modelSelector: some View {
-        if !availableModelIDs.isEmpty {
-            VStack(alignment: .leading, spacing: 4) {
-                Label("Forecast models", systemImage: "cpu")
-                    .font(.caption.bold())
-                    .foregroundStyle(.secondary)
-
-                VStack(spacing: 0) {
-                    ForEach(availableModelIDs, id: \.self) { modelID in
-                        let isSelected = selectedModelIDs.contains(modelID)
-                        Button {
-                            guard isSelected ? selectedModelIDs.count > 1 : true else { return }
-                            onToggleModel(modelID)
-                        } label: {
-                            HStack {
-                                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                                Text(modelNamesByID[modelID] ?? "Model \(modelID)")
-                                Spacer()
-                            }
-                            .font(.subheadline)
-                            .padding(.vertical, 5)
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(isSelected ? .blue : .primary)
-
-                        if modelID != availableModelIDs.last {
-                            Divider()
-                        }
-                    }
-                }
-                .padding(.horizontal, 10)
-                .background(gridLabelBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-        }
-    }
-
     private var labelHeader: some View {
         Text("Updated")
             .font(.caption.bold())
@@ -265,30 +216,15 @@ public struct WindguruForecastGridView: View {
     }
 
     private var timeHeader: some View {
-        LazyHStack(spacing: 0) {
-            ForEach(hours, id: \.self) { hour in
-                Button {
-                    onSelectHour(hour)
-                } label: {
-                    VStack(spacing: 2) {
-                        Text(day(for: hour)).font(.caption2)
-                        Text(time(for: hour)).font(.caption.bold())
-                        HStack(spacing: 2) {
-                            ForEach(forecast.weatherSymbolNames(hour: hour).prefix(3), id: \.self) { symbol in
-                                Image(systemName: symbol)
-                            }
-                        }
-                        .font(.caption2)
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(.secondary)
-                    }
-                    .frame(width: columnWidth, height: gridHeaderHeight)
-                    .background(Color.secondary.opacity(0.12))
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.blue)
-            }
-        }
+        ForecastGridHourHeader(
+            hours: hours,
+            columnWidth: columnWidth,
+            height: gridHeaderHeight,
+            day: day(for:),
+            time: time(for:),
+            weatherSymbols: forecast.weatherSymbolNames(hour:),
+            onSelectHour: onSelectHour
+        )
     }
 
     /// Keeps the day/hour row aligned with the horizontally scrolling columns.
