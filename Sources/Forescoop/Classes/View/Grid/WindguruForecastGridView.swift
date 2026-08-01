@@ -72,7 +72,7 @@ public struct WindguruForecastGridView: View {
         }
         .padding(.horizontal, 2)
         .navigationTitle("Ventus")
-#if !os(macOS)
+#if os(iOS)
         .navigationBarTitleDisplayMode(.large)
 #endif
         .onChange(of: viewModel.displayedModelForecasts.count) { _, count in

@@ -167,7 +167,7 @@ public struct ForecastDashboardView: View {
                 }
             }
             .navigationTitle("Ventus")
-#if !os(macOS)
+#if os(iOS)
             .navigationBarTitleDisplayMode(.large)
 #endif
             .toolbar {

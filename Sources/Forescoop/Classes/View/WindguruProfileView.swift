@@ -70,7 +70,7 @@ public struct WindguruProfileView: View {
         }
 #if os(macOS)
         .listStyle(.inset)
-#else
+#elseif !os(tvOS)
         .listStyle(.insetGrouped)
 #endif
     }

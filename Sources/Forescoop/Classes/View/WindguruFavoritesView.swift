@@ -144,7 +144,7 @@ public struct WindguruFavoritesView: View {
                 Task { await removeFavorite(spot) }
             }
         }
-#if !os(macOS)
+#if os(iOS) || os(visionOS)
         .swipeActions {
             Button("Remove", systemImage: "star.slash", role: .destructive) {
                 Task { await removeFavorite(spot) }
@@ -154,7 +154,7 @@ public struct WindguruFavoritesView: View {
     }
 
     private var isEditingFavorites: Bool {
-#if !os(macOS)
+#if os(iOS) || os(visionOS)
         editMode.isEditing
 #else
         false
