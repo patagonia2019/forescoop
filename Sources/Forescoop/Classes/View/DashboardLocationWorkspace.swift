@@ -18,7 +18,7 @@ struct DashboardLocationWorkspace: View {
     @Binding var mapPosition: MapCameraPosition
     @Binding var selectedLocationID: SavedMapLocation.ID?
     let selectedHour: String?
-    let forecast: (SavedMapLocation) -> SpotForecast?
+    let forecast: SpotForecast?
     let onManageLocations: () -> Void
     let onSelectLocation: (SavedMapLocation) -> Void
 
@@ -34,8 +34,12 @@ struct DashboardLocationWorkspace: View {
             }
 
             Map(position: $mapPosition, selection: $selectedLocationID) {
-                locationAnnotations(savedLocations, isFavorite: false)
-                locationAnnotations(favoriteLocations, isFavorite: true)
+                ForecastLocationAnnotations(
+                    savedLocations: savedLocations,
+                    favoriteLocations: favoriteLocations,
+                    forecast: forecast,
+                    selectedHour: selectedHour
+                )
             }
             .frame(height: 280)
             .clipShape(.rect(cornerRadius: 16))
@@ -73,26 +77,6 @@ struct DashboardLocationWorkspace: View {
         .padding(.top, 8)
     }
 
-    @MapContentBuilder
-    private func locationAnnotations(_ locations: [SavedMapLocation], isFavorite: Bool) -> some MapContent {
-        ForEach(locations) { location in
-#if !os(tvOS)
-            Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
-                SavedMapLocationAnnotation(
-                    location: location,
-                    forecast: forecast(location),
-                    hour: selectedHour,
-                    isFavorite: isFavorite
-                )
-            }
-            .tag(location.id)
-#else
-            Marker(location.name, coordinate: location.coordinate)
-                .tag(location.id)
-#endif
-        }
-    }
-
     private func isFavorite(_ location: SavedMapLocation) -> Bool {
         favoriteLocations.contains(where: { $0.id == location.id })
     }
@@ -123,7 +107,7 @@ struct DashboardLocationWorkspace: View {
         ))),
         selectedLocationID: .constant(nil),
         selectedHour: nil,
-        forecast: { _ in nil },
+        forecast: nil,
         onManageLocations: {},
         onSelectLocation: { _ in }
     )

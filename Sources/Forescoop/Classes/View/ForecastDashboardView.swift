@@ -196,48 +196,7 @@ public struct ForecastDashboardView: View {
                 if let forecast {
                     Group {
                         if content == .grid {
-                            let isCoordinateForecast = coordinateLocationName != nil
-                            let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
-                            let availableModelIDs = isCoordinateForecast
-                                ? usableModelIDs
-                                : modelIDsBySpot[forecastSpotID] ?? usableModelIDs
-                            let selectedForecastModelIDs = isCoordinateForecast
-                                ? selectedModelIDs
-                                : selectedModelIDsBySpot[forecastSpotID] ?? selectedModelIDs
-                            WindguruForecastGridView(
-                                forecast: forecast,
-                                coordinateLocationName: coordinateLocationName,
-                                selectedHour: $viewModel.selectedHour,
-                                availableModelIDs: availableModelIDs,
-                                selectedModelIDs: selectedForecastModelIDs,
-                                modelNamesByID: modelNamesByID,
-                                modelForecasts: displayedModelForecasts,
-                                userProfile: viewModel.userProfile,
-                                temperatureUnit: $viewModel.temperatureUnit,
-                                windSpeedUnit: $viewModel.windSpeedUnit,
-                                waveHeightUnit: $viewModel.waveHeightUnit,
-                                pressureUnit: $viewModel.pressureUnit,
-                                precipitationUnit: $viewModel.precipitationUnit,
-                                freezingLevelUnit: $viewModel.freezingLevelUnit,
-                                showsWindDirectionArrow: $showsWindDirectionArrow,
-                                onSelectLocation: { activeSheet = .spotPicker },
-                                onToggleModel: { modelID in
-                                    toggleGridModel(
-                                        modelID,
-                                        for: forecastSpotID,
-                                        coordinate: isCoordinateForecast ? forecast.location?.coordinate : nil,
-                                        locationName: coordinateLocationName
-                                    )
-                                },
-                                onShowMap: { activeSheet = .forecastMap },
-                                onSelectHour: { hour in
-                                    selectedHour = hour
-                                    content = .dashboard
-                                }
-                            )
-                            .task(id: availableModelIDs) {
-                                await loadModelNames(for: availableModelIDs)
-                            }
+                            forecastGridContent(for: forecast)
                         } else {
                             forecastContent(for: forecast)
                         }
@@ -413,7 +372,7 @@ public struct ForecastDashboardView: View {
                         mapPosition: $iPadMapPosition,
                         selectedLocationID: $selectedMapLocationID,
                         selectedHour: selectedHour,
-                        forecast: forecast(for:),
+                        forecast: forecast,
                         onManageLocations: { activeSheet = .spotPicker },
                         onSelectLocation: selectMapLocation
                     )
@@ -440,6 +399,52 @@ public struct ForecastDashboardView: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
+    }
+
+    private func forecastGridContent(for forecast: SpotForecast) -> some View {
+        let isCoordinateForecast = coordinateLocationName != nil
+        let forecastSpotID = displayedForecastSpotID ?? selectedSpotID
+        let availableModelIDs = isCoordinateForecast
+            ? usableModelIDs
+            : modelIDsBySpot[forecastSpotID] ?? usableModelIDs
+        let selectedForecastModelIDs = isCoordinateForecast
+            ? selectedModelIDs
+            : selectedModelIDsBySpot[forecastSpotID] ?? selectedModelIDs
+
+        return WindguruForecastGridView(
+            forecast: forecast,
+            coordinateLocationName: coordinateLocationName,
+            selectedHour: selectedHour,
+            availableModelIDs: availableModelIDs,
+            selectedModelIDs: selectedForecastModelIDs,
+            modelNamesByID: modelNamesByID,
+            modelForecasts: displayedModelForecasts,
+            userProfile: viewModel.userProfile,
+            temperatureUnit: $viewModel.temperatureUnit,
+            windSpeedUnit: $viewModel.windSpeedUnit,
+            waveHeightUnit: $viewModel.waveHeightUnit,
+            pressureUnit: $viewModel.pressureUnit,
+            precipitationUnit: $viewModel.precipitationUnit,
+            freezingLevelUnit: $viewModel.freezingLevelUnit,
+            showsWindDirectionArrow: $showsWindDirectionArrow,
+            onSelectLocation: { activeSheet = .spotPicker },
+            onToggleModel: { modelID in
+                toggleGridModel(
+                    modelID,
+                    for: forecastSpotID,
+                    coordinate: isCoordinateForecast ? forecast.location?.coordinate : nil,
+                    locationName: coordinateLocationName
+                )
+            },
+            onSelectHour: { hour in
+                selectedHour = hour
+                content = .dashboard
+            },
+            onShowMap: { activeSheet = .forecastMap }
+        )
+        .task(id: availableModelIDs) {
+            await loadModelNames(for: availableModelIDs)
+        }
     }
 
     private func toggleGridModel(
@@ -532,19 +537,6 @@ public struct ForecastDashboardView: View {
             center: coordinate,
             span: MKCoordinateSpan(latitudeDelta: 3, longitudeDelta: 3)
         ))
-    }
-
-    private func forecast(for location: SavedMapLocation) -> SpotForecast? {
-        guard let forecast else { return nil }
-        if let savedSpotID = location.spotID,
-           savedSpotID != "0",
-           savedSpotID == forecast.identifier {
-            return forecast
-        }
-        guard let forecastCoordinate = forecast.location?.coordinate else { return nil }
-        let coordinateMatches = abs(location.coordinate.latitude - forecastCoordinate.latitude) < 0.0001
-            && abs(location.coordinate.longitude - forecastCoordinate.longitude) < 0.0001
-        return coordinateMatches ? forecast : nil
     }
 
     private func selectMapLocation(_ location: SavedMapLocation) {

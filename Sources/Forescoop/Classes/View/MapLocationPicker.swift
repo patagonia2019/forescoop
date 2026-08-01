@@ -135,25 +135,12 @@ public struct MapLocationPicker: View {
 
     private var mapContent: some View {
         Map(position: $position) {
-            ForEach(savedLocations) { location in
-                Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
-                    SavedMapLocationAnnotation(
-                        location: location,
-                        forecast: forecast(for: location),
-                        hour: selectedForecastHour
-                    )
-                }
-            }
-            ForEach(favoriteLocations) { location in
-                Annotation(location.displayName, coordinate: location.coordinate, anchor: .bottom) {
-                    SavedMapLocationAnnotation(
-                        location: location,
-                        forecast: forecast(for: location),
-                        hour: selectedForecastHour,
-                        isFavorite: true
-                    )
-                }
-            }
+            ForecastLocationAnnotations(
+                savedLocations: savedLocations,
+                favoriteLocations: favoriteLocations,
+                forecast: forecast,
+                selectedHour: selectedForecastHour
+            )
             if let selectedCoordinate {
                 if !(savedLocations + favoriteLocations).contains(where: { isSameCoordinate($0.coordinate, selectedCoordinate) }) {
                     Marker("Selected location", coordinate: selectedCoordinate)
@@ -169,17 +156,6 @@ public struct MapLocationPicker: View {
 
     private var outdoorPlaces: [MKPointOfInterestCategory] {
         [.beach, .campground, .marina, .nationalPark, .park]
-    }
-
-    private func forecast(for location: SavedMapLocation) -> SpotForecast? {
-        guard let forecast else { return nil }
-        if let savedSpotID = location.spotID,
-           savedSpotID != "0",
-           savedSpotID == forecast.identifier {
-            return forecast
-        }
-        guard let forecastCoordinate = forecast.location?.coordinate else { return nil }
-        return isSameCoordinate(location.coordinate, forecastCoordinate) ? forecast : nil
     }
 
     private func isSameCoordinate(_ lhs: CLLocationCoordinate2D, _ rhs: CLLocationCoordinate2D) -> Bool {
