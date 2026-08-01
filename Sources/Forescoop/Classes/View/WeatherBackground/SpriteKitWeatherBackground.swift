@@ -35,6 +35,8 @@ public struct SpriteKitWeatherBackground: WeatherBackground {
         let downwindRadians = (windDirection + 180) * .pi / 180
 
         condition = SpriteWeatherCondition(
+            isSunny: symbols.contains { $0.contains("sun") },
+            isCloudy: symbols.contains { $0.contains("cloud") },
             isSnowy: symbols.contains { $0.contains("snow") },
             precipitationMillimeters: precipitation,
             windVector: CGPoint(
@@ -61,6 +63,8 @@ public struct SpriteKitWeatherBackground: WeatherBackground {
 }
 
 private struct SpriteWeatherCondition: Equatable {
+    let isSunny: Bool
+    let isCloudy: Bool
     let isSnowy: Bool
     let precipitationMillimeters: Double
     let windVector: CGPoint
@@ -124,14 +128,107 @@ private final class SpriteWeatherScene: SKScene {
         removeAllChildren()
         didBuildParticles = true
 
+        if condition.isSunny {
+            addSun()
+        }
+        if condition.isCloudy {
+            addClouds()
+        }
         if condition.hasPrecipitation {
-            addChild(precipitationEmitter())
+            if condition.isSnowy {
+                addChild(precipitationEmitter())
+            } else {
+                addRainDrops()
+            }
         }
         if condition.hasWind {
             addChild(leafEmitter())
         }
         if condition.isHeavyRain {
             addLightning()
+        }
+    }
+
+    private func addSun() {
+        let sun = SKNode()
+        sun.position = CGPoint(x: size.width * 0.78, y: size.height * 0.76)
+        sun.alpha = 0.44
+        sun.zPosition = -2
+
+        let color = SKColor(red: 1, green: 0.76, blue: 0.10, alpha: 1)
+        let disc = SKShapeNode(circleOfRadius: 34)
+        disc.fillColor = color
+        disc.strokeColor = .clear
+        sun.addChild(disc)
+
+        let rays = CGMutablePath()
+        for index in 0..<8 {
+            let angle = CGFloat(index) * .pi / 4
+            rays.move(to: CGPoint(x: cos(angle) * 47, y: sin(angle) * 47))
+            rays.addLine(to: CGPoint(x: cos(angle) * 61, y: sin(angle) * 61))
+        }
+        let rayNode = SKShapeNode(path: rays)
+        rayNode.strokeColor = color
+        rayNode.lineWidth = 4
+        rayNode.lineCap = .round
+        sun.addChild(rayNode)
+        addChild(sun)
+
+        let pulse = SKAction.sequence([
+            .scale(to: 1.12, duration: 3.2),
+            .scale(to: 0.96, duration: 3.2)
+        ])
+        sun.run(.repeatForever(pulse))
+    }
+
+    private func addRainDrops() {
+        let wind = spriteKitWindVector
+        let intensity = min(max(condition.precipitationMillimeters, 0.4), 16)
+        let count = min(20 + Int(intensity * 4), 72)
+        let color = SKColor(red: 0.34, green: 0.78, blue: 1, alpha: 1)
+
+        for index in 0..<count {
+            let depth = CGFloat((index * 53) % 100) / 100
+            let drop = SKShapeNode(ellipseOf: CGSize(width: 3 + depth * 2, height: 8 + depth * 7))
+            drop.fillColor = color
+            drop.strokeColor = .clear
+            drop.alpha = 0.34 + depth * 0.44
+            drop.zPosition = 1
+            addChild(drop)
+
+            let startX = size.width * CGFloat((index * 37) % 100) / 100
+            let endX = startX + wind.dx * (40 + CGFloat(condition.windSpeedKnots) * 2)
+            let duration = 0.85 + Double(1 - depth) * 0.75
+            let start = CGPoint(x: startX, y: size.height + 28)
+            let end = CGPoint(x: endX, y: -28)
+            drop.position = CGPoint(
+                x: startX,
+                y: size.height * CGFloat((index * 29) % 100) / 100
+            )
+            let fall = SKAction.move(to: end, duration: duration)
+            let reset = SKAction.move(to: start, duration: 0)
+            drop.run(.repeatForever(.sequence([fall, reset])))
+        }
+    }
+
+    private func addClouds() {
+        for index in 0..<3 {
+            let cloud = SKSpriteNode(texture: SpriteWeatherTexture.symbol("cloud.fill"))
+            cloud.position = CGPoint(
+                x: -size.width * 0.20 + CGFloat(index) * size.width * 0.45,
+                y: size.height * (0.68 - CGFloat(index) * 0.16)
+            )
+            cloud.setScale(CGFloat(5 + index * 2))
+            cloud.color = .white
+            cloud.colorBlendFactor = 1
+            cloud.alpha = 0.10 + CGFloat(index) * 0.035
+            cloud.zPosition = -1
+            addChild(cloud)
+
+            let duration = 18.0 + Double(index * 5)
+            let drift = SKAction.moveTo(x: size.width * 1.20, duration: duration)
+            let reset = SKAction.moveTo(x: -size.width * 0.25, duration: 0)
+            cloud.run(.repeatForever(.sequence([drift, reset])))
         }
     }
 
@@ -165,9 +262,7 @@ private final class SpriteWeatherScene: SKScene {
         emitter.particleAlpha = condition.isSnowy ? 0.72 : 0.72
         emitter.particleAlphaRange = condition.isSnowy ? 0.22 : 0.18
         emitter.particleAlphaSpeed = condition.isSnowy ? -0.05 : -0.16
-        emitter.particleColor = condition.isSnowy
-            ? .white
-            : SKColor(red: 0.12, green: 0.62, blue: 1, alpha: 1)
+        emitter.particleColor = .white
         emitter.particleColorBlendFactor = 1
         emitter.particleBlendMode = .alpha
         return emitter
@@ -233,11 +328,15 @@ private final class SpriteWeatherScene: SKScene {
 
 private enum SpriteWeatherTexture {
     static func precipitation(snow: Bool) -> SKTexture? {
-        snow ? texture(named: "snowflake-sprite") : systemSymbol("drop.fill")
+        texture(named: "snowflake-sprite")
     }
 
     static func leaf() -> SKTexture? {
         systemSymbol("leaf.fill")
+    }
+
+    static func symbol(_ name: String) -> SKTexture? {
+        systemSymbol(name)
     }
 
     private static func texture(named name: String) -> SKTexture? {
@@ -264,6 +363,22 @@ private enum SpriteWeatherTexture {
 #Preview("SpriteKit rain") {
     SpriteKitWeatherBackground(
         forecast: AnimatedWeatherPreviewData.forecast(precipitation: 5, temperature: 11, cloudCover: 95, windSpeed: 16, gusts: 24),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("SpriteKit sunny") {
+    SpriteKitWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 0, temperature: 24, cloudCover: 0, windSpeed: 5, gusts: 8),
+        hour: "29"
+    )
+    .frame(height: 400)
+}
+
+#Preview("SpriteKit cloudy") {
+    SpriteKitWeatherBackground(
+        forecast: AnimatedWeatherPreviewData.forecast(precipitation: 0, temperature: 15, cloudCover: 95, windSpeed: 7, gusts: 12),
         hour: "29"
     )
     .frame(height: 400)
