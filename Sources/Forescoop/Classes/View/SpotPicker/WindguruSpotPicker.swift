@@ -153,7 +153,7 @@ public struct WindguruSpotPicker: View {
         }
 #if !os(tvOS)
         .sheet(isPresented: $showsMap) {
-            MapLocationPicker(initialCoordinate: lastSavedCoordinate) { coordinate in
+            WindguruMapSpotPicker(initialCoordinate: lastSavedCoordinate) { coordinate in
                 showsMap = false
                 Task {
                     if purpose == .addFavorite {
