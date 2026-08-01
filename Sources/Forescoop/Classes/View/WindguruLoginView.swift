@@ -6,6 +6,7 @@
 //  Copyright © 2026 Forescoop. All rights reserved.
 
 #if !os(watchOS)
+import Foundation
 import Security
 import SwiftUI
 
@@ -82,6 +83,15 @@ public struct WindguruLoginView: View {
                         if let errorMessage {
                             Section { Text(errorMessage).foregroundStyle(.red) }
                         }
+#if DEBUG
+                        if isRunningInXcodePreview {
+                            Section("Preview") {
+                                Button("Use Preview PRO Account", systemImage: "checkmark.seal") {
+                                    usePreviewProAccount()
+                                }
+                            }
+                        }
+#endif
                     }
                 }
             }
@@ -146,6 +156,38 @@ public struct WindguruLoginView: View {
         password = ""
         onLoggedIn("", false)
     }
+
+#if DEBUG
+    private var isRunningInXcodePreview: Bool {
+        ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+    }
+
+    @MainActor
+    private func usePreviewProAccount() {
+        let previewUsername = "preview-pro"
+        let previewPassword = "preview-only"
+        guard let user = try? User(map: [
+            "id_user": 1,
+            "username": previewUsername,
+            "pro": 1,
+            "no_ads": 1,
+            "wind_units": "knots",
+            "temp_units": "c",
+            "wave_units": "m",
+            "view_hours_from": 3,
+            "view_hours_to": 22
+        ]) else {
+            return
+        }
+
+        enteredUsername = previewUsername
+        password = previewPassword
+        try? WindguruCredentialStore.save(password: previewPassword, for: previewUsername)
+        loggedInUser = user
+        onProfileLoaded(user)
+        onLoggedIn(previewUsername, true)
+    }
+#endif
 }
 
 private enum LoginError: LocalizedError {
@@ -166,6 +208,9 @@ public enum WindguruCredentialStore {
     private static let service = "Forescoop.Windguru"
     private static let activeAccountKey = "active-account"
     private static let activeProUserKey = "active-pro-user"
+#if DEBUG
+    private static let debugFallbackPrefix = "Forescoop.Windguru.Debug."
+#endif
 
     public static func activeUsername() -> String? {
         string(for: activeAccountKey)
@@ -198,9 +243,15 @@ public enum WindguruCredentialStore {
     private static func string(for account: String) -> String? {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account, kSecReturnData as String: true]
         var item: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
-              let data = item as? Data else { return nil }
-        return String(data: data, encoding: .utf8)
+        if SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
+           let data = item as? Data {
+            return String(data: data, encoding: .utf8)
+        }
+#if DEBUG
+        return UserDefaults.standard.string(forKey: debugFallbackKey(for: account))
+#else
+        return nil
+#endif
     }
 
     public static func save(password: String, for username: String) throws {
@@ -214,10 +265,17 @@ public enum WindguruCredentialStore {
         if status == errSecItemNotFound {
             var item = query
             item[kSecValueData as String] = Data(value.utf8)
-            guard SecItemAdd(item as CFDictionary, nil) == errSecSuccess else { throw LoginError.credentialsUnavailable }
+            if SecItemAdd(item as CFDictionary, nil) == errSecSuccess { return }
         } else if status != errSecSuccess {
-            throw LoginError.credentialsUnavailable
+            // Fall through to the DEBUG-only Preview fallback below.
+        } else {
+            return
         }
+#if DEBUG
+        UserDefaults.standard.set(value, forKey: debugFallbackKey(for: account))
+#else
+        throw LoginError.credentialsUnavailable
+#endif
     }
 
     public static func removePassword(for username: String) {
@@ -227,7 +285,16 @@ public enum WindguruCredentialStore {
     private static func removeValue(for account: String) {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account]
         SecItemDelete(query as CFDictionary)
+#if DEBUG
+        UserDefaults.standard.removeObject(forKey: debugFallbackKey(for: account))
+#endif
     }
+
+#if DEBUG
+    private static func debugFallbackKey(for account: String) -> String {
+        debugFallbackPrefix + account
+    }
+#endif
 }
 
 
