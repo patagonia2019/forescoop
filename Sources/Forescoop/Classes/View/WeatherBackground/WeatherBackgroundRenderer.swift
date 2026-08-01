@@ -17,6 +17,7 @@ public protocol WeatherBackground: View {
 public enum WeatherBackgroundStyle: String, CaseIterable, Identifiable, Sendable {
     case animated
     case metal
+    case spriteKit
     case lottieAdriana
     case lottieAsad
 
@@ -26,6 +27,7 @@ public enum WeatherBackgroundStyle: String, CaseIterable, Identifiable, Sendable
         switch self {
         case .animated: "Native"
         case .metal: "Metal"
+        case .spriteKit: "SpriteKit"
         case .lottieAdriana: "Lottie – Adriana"
         case .lottieAsad: "Lottie – Asad"
         }
@@ -35,6 +37,7 @@ public enum WeatherBackgroundStyle: String, CaseIterable, Identifiable, Sendable
         switch self {
         case .animated: "sparkles"
         case .metal: "cpu"
+        case .spriteKit: "leaf.arrow.circlepath"
         case .lottieAdriana, .lottieAsad: "play.rectangle"
         }
     }
@@ -65,6 +68,8 @@ public struct WeatherBackgroundRenderer: View {
             AnimatedWeatherBackground(forecast: forecast, hour: hour)
         case .metal:
             MetalWeatherBackground(forecast: forecast, hour: hour)
+        case .spriteKit:
+            SpriteKitWeatherBackground(forecast: forecast, hour: hour)
         case .lottieAdriana:
             LottieWeatherBackground(forecast: forecast, hour: hour, theme: .adrianaMandjarova)
         case .lottieAsad:

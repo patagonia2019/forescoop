@@ -28,7 +28,7 @@ package "Forescoop Swift package" #E9F4EC {
     [Location and SpotPicker\nlocation list, map picker,\nsaved-location row] as locationViews
     [Account\nlogin, profile, favorites] as accountViews
     [Settings and About] as settingsViews
-    [WeatherBackground\nNative, Metal, Lottie] as weatherViews
+    [WeatherBackground\nNative, SpriteKit particles,\nMetal, Lottie] as weatherViews
     [VisionOS views] as visionViews
   }
 
@@ -94,7 +94,7 @@ service --> windguru : public forecasts, spots,\nfavorites and model metadata
 service --> pro : authenticated forecasts
 service --> domain : maps API responses
 mock --> resources : loads fixture data
-weatherViews --> resources : Lottie and Metal assets
+weatherViews --> resources : Lottie, Metal and\nSpriteKit particle assets
 
 note right of forecastProtocol
 Service injection keeps views and view models
@@ -111,5 +111,11 @@ note bottom of keychain
 Credentials never use UserDefaults in release builds.
 DEBUG previews can use a local fallback when Keychain
 is unavailable.
+end note
+
+note bottom of weatherViews
+SpriteKit uses forecast-driven, wind-aware textured
+rain, snow and leaf particles; Lottie remains the
+illustrated background option.
 end note
 @enduml

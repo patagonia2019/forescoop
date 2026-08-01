@@ -316,7 +316,7 @@ public struct AnimatedWeatherBackground: WeatherBackground {
     }
 }
 
-private enum AnimatedWeatherPreviewData {
+enum AnimatedWeatherPreviewData {
     static func forecast(
         precipitation: Double,
         temperature: Double,
