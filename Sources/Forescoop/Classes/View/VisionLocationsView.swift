@@ -22,8 +22,10 @@ public struct VisionLocationsView: View {
                 }
                 .clipShape(.rect(cornerRadius: 24))
 
-                List(locations) { location in
-                    SavedLocationRow(location: location)
+                List {
+                    LocationList(savedLocations: locations) { location, isFavorite in
+                        SavedLocationRow(location: location, isFavorite: isFavorite)
+                    }
                 }
                 .frame(width: 280)
                 .scrollContentBackground(.hidden)

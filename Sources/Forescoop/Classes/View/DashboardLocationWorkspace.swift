@@ -22,7 +22,12 @@ struct DashboardLocationWorkspace: View {
     let onManageLocations: () -> Void
     let onSelectLocation: (SavedMapLocation) -> Void
 
-    private var locations: [SavedMapLocation] { savedLocations + favoriteLocations }
+    private var locations: [SavedMapLocation] {
+        LocationList<EmptyView>.merged(
+            savedLocations: savedLocations,
+            favoriteLocations: favoriteLocations
+        )
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -53,10 +58,13 @@ struct DashboardLocationWorkspace: View {
                     .frame(maxWidth: .infinity)
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
-                    ForEach(locations) { location in
+                    LocationList(
+                        savedLocations: savedLocations,
+                        favoriteLocations: favoriteLocations
+                    ) { location, isFavorite in
                         SavedLocationRow(
                             location: location,
-                            isFavorite: isFavorite(location),
+                            isFavorite: isFavorite,
                             onSelect: { onSelectLocation(location) }
                         )
                         .padding(12)
@@ -66,10 +74,6 @@ struct DashboardLocationWorkspace: View {
             }
         }
         .padding(.top, 8)
-    }
-
-    private func isFavorite(_ location: SavedMapLocation) -> Bool {
-        favoriteLocations.contains(where: { $0.id == location.id })
     }
 }
 
