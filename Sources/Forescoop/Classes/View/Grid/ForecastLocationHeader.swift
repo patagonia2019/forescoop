@@ -24,9 +24,11 @@ struct ForecastLocationHeader: View {
             .accessibilityLabel("Choose location")
 
 #if !os(tvOS)
-            Button("Show \(locationName) on map", systemImage: "map", action: onShowMap)
-                .labelStyle(.iconOnly)
-                .buttonStyle(.plain)
+            LocationMapButton(
+                locationName: locationName,
+                buttonStyle: .plain,
+                action: onShowMap
+            )
 #endif
         }
         .font(.title.bold())

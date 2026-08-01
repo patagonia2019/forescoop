@@ -132,11 +132,9 @@ public struct WindguruFavoritesView: View {
             .buttonStyle(.plain)
 
 #if !os(tvOS)
-            Button("Show \(spot.displayName) on map", systemImage: "map") {
+            LocationMapButton(locationName: spot.displayName) {
                 Task { await showMap(for: spot) }
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
 #endif
         }
         .disabled(viewModel.removingIDs.contains(spot.identifier ?? ""))

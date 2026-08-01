@@ -255,11 +255,9 @@ public struct WindguruSpotPicker: View {
             .buttonStyle(.plain)
 
 #if !os(tvOS)
-            Button("Show \(spot.displayName) on map", systemImage: "map") {
+            LocationMapButton(locationName: spot.displayName) {
                 Task { await showMap(for: spot) }
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
 #endif
         }
         .disabled(isLoading || favoriteIDsBeingRemoved.contains(spot.identifier ?? ""))
@@ -279,11 +277,9 @@ public struct WindguruSpotPicker: View {
             )
 
 #if !os(tvOS)
-            Button("Show \(location.displayName) on map", systemImage: "map") {
+            LocationMapButton(locationName: location.displayName) {
                 mapCoordinateToShow = location.coordinate
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
 #endif
 
 #if !os(macOS)
