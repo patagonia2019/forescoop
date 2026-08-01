@@ -40,6 +40,7 @@ public struct MetalWeatherBackground: WeatherBackground {
     public var body: some View {
         #if canImport(MetalKit) && !os(watchOS)
         MetalWeatherSurface(condition: condition)
+            .background(.black.opacity(0.48))
             .allowsHitTesting(false)
             .accessibilityHidden(true)
         #else

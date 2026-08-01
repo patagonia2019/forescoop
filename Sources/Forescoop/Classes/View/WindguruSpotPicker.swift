@@ -16,11 +16,6 @@ public struct WindguruSpotPicker: View {
         case addFavorite
     }
 
-    private let searchSpots: @MainActor (String) async throws -> SpotResult?
-    private let loadSpotInfo: @MainActor (String) async throws -> SpotInfo?
-    private let loadFavoriteSpots: @MainActor (String, String) async throws -> SpotResult?
-    private let removeFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
-    private let addFavoriteSpot: @MainActor (String, String, String) async throws -> WGSuccess?
     private let purpose: Purpose
     let account: WindguruAccount
     private var username: String { account.username }
@@ -32,18 +27,9 @@ public struct WindguruSpotPicker: View {
     let onFavoriteAdded: () -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var query = ""
-    @State private var spots: [SpotOwner] = []
-    @State private var favoriteSpots: [SpotOwner] = []
-    @State private var isLoading = false
-    @State private var isLoadingFavorites = false
-    @State private var errorMessage: String?
-    @State private var favoritesErrorMessage: String?
-    @State private var favoriteIDsBeingRemoved = Set<String>()
-    @State private var favoriteIDsBeingAdded = Set<String>()
+    @StateObject private var viewModel: WindguruSpotPickerViewModel
     @State private var showsMap = false
     @State private var mapCoordinateToShow: CLLocationCoordinate2D?
-    @State private var savedLocations = SavedMapLocationStore.load()
     @State private var locationToRename: SavedMapLocation?
     @State private var renamedLocation = ""
 #if !os(macOS)
@@ -60,15 +46,7 @@ public struct WindguruSpotPicker: View {
         purpose: Purpose = .chooseLocation,
         onFavoriteAdded: @escaping () -> Void = {}
     ) {
-        searchSpots = { try await forecastService.searchSpots(byLocation: $0) }
-        loadSpotInfo = { try await forecastService.spotInfo(bySpotId: $0) }
-        loadFavoriteSpots = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
-        removeFavoriteSpot = { spotID, username, password in
-            try await forecastService.removeFavoriteSpot(withSpotId: spotID, username: username, password: password)
-        }
-        addFavoriteSpot = { spotID, username, password in
-            try await forecastService.addFavoriteSpot(withSpotId: spotID, username: username, password: password)
-        }
+        _viewModel = StateObject(wrappedValue: WindguruSpotPickerViewModel(forecastService: forecastService))
         self.purpose = purpose
         self.account = account
         self.onSpotSelected = onSpotSelected
@@ -77,6 +55,17 @@ public struct WindguruSpotPicker: View {
         self.onCoordinateSelected = onCoordinateSelected
         self.onFavoriteAdded = onFavoriteAdded
     }
+
+    private var query: String { get { viewModel.query } nonmutating set { viewModel.query = newValue } }
+    private var spots: [SpotOwner] { get { viewModel.spots } nonmutating set { viewModel.spots = newValue } }
+    private var favoriteSpots: [SpotOwner] { get { viewModel.favoriteSpots } nonmutating set { viewModel.favoriteSpots = newValue } }
+    private var isLoading: Bool { get { viewModel.isLoading } nonmutating set { viewModel.isLoading = newValue } }
+    private var isLoadingFavorites: Bool { get { viewModel.isLoadingFavorites } nonmutating set { viewModel.isLoadingFavorites = newValue } }
+    private var errorMessage: String? { get { viewModel.errorMessage } nonmutating set { viewModel.errorMessage = newValue } }
+    private var favoritesErrorMessage: String? { get { viewModel.favoritesErrorMessage } nonmutating set { viewModel.favoritesErrorMessage = newValue } }
+    private var favoriteIDsBeingRemoved: Set<String> { get { viewModel.favoriteIDsBeingRemoved } nonmutating set { viewModel.favoriteIDsBeingRemoved = newValue } }
+    private var favoriteIDsBeingAdded: Set<String> { get { viewModel.favoriteIDsBeingAdded } nonmutating set { viewModel.favoriteIDsBeingAdded = newValue } }
+    private var savedLocations: [SavedMapLocation] { get { viewModel.savedLocations } nonmutating set { viewModel.savedLocations = newValue } }
 
     private var lastSavedCoordinate: CLLocationCoordinate2D? { savedLocations.last?.coordinate }
 
@@ -108,7 +97,7 @@ public struct WindguruSpotPicker: View {
 
                 Section("Search Windguru spots") {
                     HStack {
-                        TextField("City or spot", text: $query)
+                        TextField("City or spot", text: $viewModel.query)
 #if !os(macOS)
                             .textInputAutocapitalization(.words)
 #endif
@@ -327,7 +316,7 @@ public struct WindguruSpotPicker: View {
         favoritesErrorMessage = nil
         defer { isLoadingFavorites = false }
         do {
-            favoriteSpots = try await loadFavoriteSpots(username, password)?.allSpots ?? []
+            favoriteSpots = try await viewModel.favorites(username: username, password: password)?.allSpots ?? []
         } catch {
             favoritesErrorMessage = "Favorites are unavailable right now."
         }
@@ -350,7 +339,7 @@ public struct WindguruSpotPicker: View {
         favoriteIDsBeingRemoved.insert(identifier)
         defer { favoriteIDsBeingRemoved.remove(identifier) }
         do {
-            _ = try await removeFavoriteSpot(identifier, username, password)
+            _ = try await viewModel.removeFavorite(spotID: identifier, username: username, password: password)
             favoriteSpots.removeAll { $0.identifier == identifier }
         } catch {
             favoritesErrorMessage = "Couldn’t remove this favorite."
@@ -368,7 +357,7 @@ public struct WindguruSpotPicker: View {
         favoriteIDsBeingAdded.insert(spotID)
         defer { favoriteIDsBeingAdded.remove(spotID) }
         do {
-            _ = try await addFavoriteSpot(spotID, username, password)
+            _ = try await viewModel.addFavorite(spotID: spotID, username: username, password: password)
             savedLocations.removeAll { $0.id == location.id }
             saveLocations()
             await loadFavorites()
@@ -395,7 +384,7 @@ public struct WindguruSpotPicker: View {
                 throw DeviceLocationError.noPlacemark
             }
             query = searchTerm
-            spots = try await searchSpots(searchTerm)?.allSpots ?? []
+            spots = try await viewModel.searchSpots(searchTerm)?.allSpots ?? []
             guard let closestSpot = spots.first else { throw DeviceLocationError.noWindguruSpot }
             await selectSpot(closestSpot)
         } catch {
@@ -413,7 +402,7 @@ public struct WindguruSpotPicker: View {
         defer { isLoading = false }
 
         do {
-            spots = try await searchSpots(searchTerm)?.allSpots ?? []
+            spots = try await viewModel.searchSpots(searchTerm)?.allSpots ?? []
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -432,7 +421,7 @@ public struct WindguruSpotPicker: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            guard let info = try await loadSpotInfo(spotID) else { throw DeviceLocationError.noWindguruSpot }
+            guard let info = try await viewModel.spotInfo(spotID) else { throw DeviceLocationError.noWindguruSpot }
             if let coordinate = info.location?.coordinate {
                 appendSavedLocation(SavedMapLocation(
                     name: info.name ?? "Windguru spot",
@@ -506,7 +495,7 @@ public struct WindguruSpotPicker: View {
                 spotID = spot.identifier
                 resolvedPlaceDescription = spot.countryName ?? resolvedPlaceDescription
                 if let spotID,
-                   let spotCoordinate = try await loadSpotInfo(spotID)?.location?.coordinate {
+                   let spotCoordinate = try await viewModel.spotInfo(spotID)?.location?.coordinate {
                     savedCoordinate = spotCoordinate
                 }
             }
@@ -544,7 +533,7 @@ public struct WindguruSpotPicker: View {
         }
 
         if let identifier = spot.identifier,
-           let spotInfo = try? await loadSpotInfo(identifier),
+           let spotInfo = try? await viewModel.spotInfo(identifier),
            let coordinate = spotInfo.location?.coordinate {
             appendSavedLocation(SavedMapLocation(
                 name: spot.name ?? "Windguru spot",
@@ -568,7 +557,7 @@ public struct WindguruSpotPicker: View {
         favoriteIDsBeingAdded.insert(spotID)
         defer { favoriteIDsBeingAdded.remove(spotID) }
         do {
-            _ = try await addFavoriteSpot(spotID, username, password)
+            _ = try await viewModel.addFavorite(spotID: spotID, username: username, password: password)
             onFavoriteAdded()
             dismiss()
         } catch {
@@ -607,8 +596,7 @@ public struct WindguruSpotPicker: View {
     }
 
     private func saveLocations() {
-        SavedMapLocationStore.save(savedLocations)
-        savedLocations = SavedMapLocationStore.load()
+        viewModel.saveLocations()
     }
 
     private func appendSavedLocation(_ location: SavedMapLocation) {
@@ -620,7 +608,7 @@ public struct WindguruSpotPicker: View {
     @MainActor
     private func showMap(for spot: SpotOwner) async {
         guard let spotID = spot.identifier,
-              let coordinate = try? await loadSpotInfo(spotID)?.location?.coordinate else {
+              let coordinate = try? await viewModel.spotInfo(spotID)?.location?.coordinate else {
             errorMessage = "This favorite has no map location."
             return
         }
@@ -636,11 +624,11 @@ public struct WindguruSpotPicker: View {
         // "South Brisbane"). Only use coordinates when that lookup has no
         // results, since the API can return unrelated results for a lat/lon
         // text query.
-        let placeMatches = (try? await searchSpots(placeName))?.allSpots ?? []
+        let placeMatches = (try? await viewModel.searchSpots(placeName))?.allSpots ?? []
         let matches: [SpotOwner]
         if placeMatches.isEmpty {
             let coordinateQuery = "\(coordinate.latitude),\(coordinate.longitude)"
-            matches = (try? await searchSpots(coordinateQuery))?.allSpots ?? []
+            matches = (try? await viewModel.searchSpots(coordinateQuery))?.allSpots ?? []
         } else {
             matches = placeMatches
         }
@@ -648,7 +636,7 @@ public struct WindguruSpotPicker: View {
         var nearest: (spot: SpotOwner, distance: CLLocationDistance)?
         for spot in matches.prefix(12) {
             guard let spotID = spot.identifier,
-                  let spotCoordinate = try? await loadSpotInfo(spotID)?.location?.coordinate else {
+                  let spotCoordinate = try? await viewModel.spotInfo(spotID)?.location?.coordinate else {
                 continue
             }
             let distance = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
