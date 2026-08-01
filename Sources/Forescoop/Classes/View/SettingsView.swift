@@ -33,14 +33,6 @@ public struct SettingsView: View {
                 } footer: {
                     Text("The selected animation is used as the forecast background on this device.")
                 }
-
-                Section {
-                    NavigationLink {
-                        AboutView()
-                    } label: {
-                        Label("About Ventus", systemImage: "info.circle")
-                    }
-                }
             }
             .navigationTitle("Settings")
             .toolbar {

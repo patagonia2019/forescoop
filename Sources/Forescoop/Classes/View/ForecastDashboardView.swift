@@ -25,6 +25,7 @@ public struct ForecastDashboardView: View {
         case favorites
         case forecastMap
         case weatherBackgroundSettings
+        case about
 
         var id: String { rawValue }
     }
@@ -142,6 +143,10 @@ public struct ForecastDashboardView: View {
 
             Button("Settings", systemImage: "gearshape") {
                 activeSheet = .weatherBackgroundSettings
+            }
+
+            Button("About", systemImage: "info.circle") {
+                activeSheet = .about
             }
 
             Divider()
@@ -342,6 +347,11 @@ public struct ForecastDashboardView: View {
             }
             .sheet(isPresented: sheetBinding(.weatherBackgroundSettings)) {
                 SettingsView(weatherBackgroundStyle: $weatherBackgroundStyle)
+            }
+            .sheet(isPresented: sheetBinding(.about)) {
+                NavigationStack {
+                    AboutView()
+                }
             }
 #if !os(tvOS)
             .sheet(isPresented: sheetBinding(.forecastMap)) {
