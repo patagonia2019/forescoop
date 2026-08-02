@@ -18,6 +18,7 @@ struct DashboardAccountMenu: View {
     let onShowGrid: () -> Void
     let onShowWorkspace: () -> Void
     let onShowSettings: () -> Void
+    let onShowHelp: () -> Void
     let onShowAbout: () -> Void
     let onShowAccount: () -> Void
     let onShowFavorites: () -> Void
@@ -38,6 +39,7 @@ struct DashboardAccountMenu: View {
             Divider()
 
             Button("Settings", systemImage: "gearshape", action: onShowSettings)
+            Button("Help", systemImage: "questionmark.circle", action: onShowHelp)
             Button("About", systemImage: "info.circle", action: onShowAbout)
 
             Divider()
@@ -68,6 +70,7 @@ struct DashboardAccountMenu: View {
         onShowGrid: {},
         onShowWorkspace: {},
         onShowSettings: {},
+        onShowHelp: {},
         onShowAbout: {},
         onShowAccount: {},
         onShowFavorites: {},

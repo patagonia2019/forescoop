@@ -20,6 +20,7 @@ public struct ForecastDashboardView: View {
         case favorites
         case forecastMap
         case weatherBackgroundSettings
+        case help
         case about
 
         var id: String { rawValue }
@@ -110,6 +111,7 @@ public struct ForecastDashboardView: View {
             onShowGrid: { content = .grid },
             onShowWorkspace: { content = .workspace },
             onShowSettings: { activeSheet = .weatherBackgroundSettings },
+            onShowHelp: { activeSheet = .help },
             onShowAbout: { activeSheet = .about },
             onShowAccount: { activeSheet = .login },
             onShowFavorites: { activeSheet = .favorites },
@@ -284,6 +286,11 @@ public struct ForecastDashboardView: View {
                     forecastViewMode: $content,
                     theme: $theme
                 )
+            }
+            .sheet(isPresented: sheetBinding(.help)) {
+                NavigationStack {
+                    VentusHelpView()
+                }
             }
             .sheet(isPresented: sheetBinding(.about)) {
                 NavigationStack {
