@@ -13,6 +13,7 @@ import SwiftUI
 struct ForecastGridHourHeader: View {
     let hours: [String]
     let columnWidth: CGFloat
+    let columnSpacing: CGFloat
     let height: CGFloat
     let day: (String) -> String
     let time: (String) -> String
@@ -21,7 +22,7 @@ struct ForecastGridHourHeader: View {
     let onSelectHour: (String) -> Void
 
     var body: some View {
-        LazyHStack(spacing: 0) {
+        LazyHStack(spacing: columnSpacing) {
             ForEach(hours, id: \.self) { hour in
                 ForecastGridHourCell(
                     hour: hour,
@@ -69,9 +70,63 @@ struct ForecastGridHourCell: View {
             }
             .frame(width: columnWidth, height: height)
             .background(isSelected ? theme.accentColor.opacity(0.18) : Color.secondary.opacity(0.12))
+            .overlay {
+                if isSelected {
+                    ForecastGridHeaderSelectionBorder(cornerRadius: 3)
+                        .stroke(theme.accentColor, lineWidth: 2)
+                }
+            }
         }
         .buttonStyle(.plain)
         .foregroundStyle(theme.accentColor)
+    }
+}
+
+/// The top half of the continuous selection outline that joins the sticky
+/// date/hour cell to its scrolling data column.
+struct ForecastGridHeaderSelectionBorder: Shape {
+    let cornerRadius: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        let radius = min(cornerRadius, min(rect.width, rect.height) / 2)
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + radius))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + radius, y: rect.minY),
+            control: CGPoint(x: rect.minX, y: rect.minY)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX - radius, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.minY + radius),
+            control: CGPoint(x: rect.maxX, y: rect.minY)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        return path
+    }
+}
+
+/// The bottom half of the continuous selection outline that joins the sticky
+/// date/hour cell above it.
+struct ForecastGridDataSelectionBorder: Shape {
+    let cornerRadius: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        let radius = min(cornerRadius, min(rect.width, rect.height) / 2)
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY - radius))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + radius, y: rect.maxY),
+            control: CGPoint(x: rect.minX, y: rect.maxY)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX - radius, y: rect.maxY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.maxY - radius),
+            control: CGPoint(x: rect.maxX, y: rect.maxY)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        return path
     }
 }
 
@@ -81,6 +136,7 @@ struct ForecastGridHourCell: View {
         ForecastGridHourHeader(
             hours: ["0", "1", "2", "3"],
             columnWidth: 56,
+            columnSpacing: 0,
             height: 64,
             day: { _ in "Sat 1" },
             time: { hour in "\(hour)h" },

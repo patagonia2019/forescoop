@@ -154,7 +154,7 @@ public struct WindguruForecastGridView: View {
 
                 ScrollView(.horizontal) {
                     LazyVStack(alignment: .leading, spacing: 0) {
-                        LazyHStack(alignment: .top, spacing: cellSpacing) {
+                        LazyHStack(alignment: .top, spacing: 0) {
                             ForEach(hours, id: \.self) { hour in
                                 forecastColumn(for: hour, includesHeader: includesHeader)
                                     .id(hour)
@@ -169,7 +169,7 @@ public struct WindguruForecastGridView: View {
                 .background(ScrollViewBounceDisabler())
 #endif
                 .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                    (geometry.contentOffset.x / 4).rounded() * 4
+                    geometry.contentOffset.x
                 } action: { _, offset in
                     horizontalGridOffset = offset
                 }
@@ -249,6 +249,7 @@ public struct WindguruForecastGridView: View {
         ForecastGridHourHeader(
             hours: hours,
             columnWidth: columnWidth,
+            columnSpacing: 0,
             height: gridHeaderHeight,
             day: day(for:),
             time: time(for:),
@@ -261,13 +262,13 @@ public struct WindguruForecastGridView: View {
     /// Keeps the day/hour row aligned with the horizontally scrolling columns.
     private var stickyGridHeader: some View {
         GeometryReader { geometry in
-            HStack(spacing: 0) {
+            HStack(spacing: cellSpacing) {
                 labelHeader
 
                 timeHeader
                     .offset(x: -horizontalGridOffset)
                     .frame(
-                        width: max(0, geometry.size.width - rowLabelWidth),
+                        width: max(0, geometry.size.width - rowLabelWidth - cellSpacing),
                         height: gridHeaderHeight,
                         alignment: .leading
                     )
@@ -490,7 +491,7 @@ public struct WindguruForecastGridView: View {
         }
         .overlay {
             if viewModel.selectedHour == hour {
-                RoundedRectangle(cornerRadius: 3)
+                ForecastGridDataSelectionBorder(cornerRadius: 3)
                     .stroke(theme.accentColor, lineWidth: 2)
             }
         }

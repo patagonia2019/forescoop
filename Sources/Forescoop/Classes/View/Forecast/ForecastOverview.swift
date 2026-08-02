@@ -153,16 +153,19 @@ public struct ForecastOverview: View {
 }
 
 #Preview("Forecast overview") {
-    let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
-    ForecastOverview(
-        forecast: forecast,
-        selectedHour: "29",
-        temperatureUnit: .constant(.celsius),
-        onSelectLocation: {},
-        onSelectModel: {},
-        onShowMap: {}
-    )
-    .padding()
+    if let forecast = ForecastWindguruMockup().dashboardPreviewForecast {
+        ForecastOverview(
+            forecast: forecast,
+            selectedHour: "29",
+            temperatureUnit: .constant(.celsius),
+            onSelectLocation: {},
+            onSelectModel: {},
+            onShowMap: {}
+        )
+        .padding()
+    } else {
+        ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
+    }
 }
 
 #endif

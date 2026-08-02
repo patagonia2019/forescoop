@@ -64,17 +64,20 @@ public struct ForecastModelSourceRows: View {
 }
 
 #Preview("Model source rows") {
-    let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
-    let modelID = forecast.model ?? Model.defaultModel
-    ForecastModelSourceRows(
-        forecasts: [forecast, forecast],
-        modelNamesByID: [modelID: forecast.forecast?.modelName ?? "Forecast model"],
-        isEnabled: true
-    ) { source in
-        let hour = source.currentForecastHour
-        guard let value = source.forecast?.windSpeed(hh: hour) else { return "—" }
-        return "\(value.forecastFormatted()) kn"
+    if let forecast = ForecastWindguruMockup().dashboardPreviewForecast {
+        let modelID = forecast.model ?? Model.defaultModel
+        ForecastModelSourceRows(
+            forecasts: [forecast, forecast],
+            modelNamesByID: [modelID: forecast.forecast?.modelName ?? "Forecast model"],
+            isEnabled: true
+        ) { source in
+            let hour = source.currentForecastHour
+            guard let value = source.forecast?.windSpeed(hh: hour) else { return "—" }
+            return "\(value.forecastFormatted()) kn"
+        }
+        .padding()
+    } else {
+        ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
     }
-    .padding()
 }
 #endif

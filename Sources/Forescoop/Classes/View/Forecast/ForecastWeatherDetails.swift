@@ -249,13 +249,19 @@ public struct ForecastWeatherDetails: View {
 }
 @MainActor
 private enum ForecastComponentPreviewData {
-    static let forecast: SpotForecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
+    static let forecast = ForecastWindguruMockup().dashboardPreviewForecast
 }
 
 @MainActor
 private struct ForecastComponentPreview<Content: View>: View {
     let content: (SpotForecast, String?) -> Content
-    var body: some View { content(ForecastComponentPreviewData.forecast, "29").padding() }
+    @ViewBuilder var body: some View {
+        if let forecast = ForecastComponentPreviewData.forecast {
+            content(forecast, "29").padding()
+        } else {
+            ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
+        }
+    }
 }
 
 #Preview("Weather details") { ForecastComponentPreview { forecast, hour in ForecastWeatherDetails(forecast: forecast, selectedHour: hour, waveHeightUnit: .constant(.meters), precipitationUnit: .constant(.millimeters), freezingLevelUnit: .constant(.meters), pressureUnit: .constant(.hectopascals)) } }

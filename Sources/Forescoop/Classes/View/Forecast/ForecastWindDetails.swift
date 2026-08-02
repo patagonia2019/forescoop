@@ -96,13 +96,16 @@ public struct ForecastWindDetails: View {
 }
 
 #Preview("Wind details") {
-    let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
-    ForecastWindDetails(
-        forecast: forecast,
-        selectedHour: "29",
-        windSpeedUnit: .constant(.knots)
-    )
-    .padding()
+    if let forecast = ForecastWindguruMockup().dashboardPreviewForecast {
+        ForecastWindDetails(
+            forecast: forecast,
+            selectedHour: "29",
+            windSpeedUnit: .constant(.knots)
+        )
+        .padding()
+    } else {
+        ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
+    }
 }
 
 #endif

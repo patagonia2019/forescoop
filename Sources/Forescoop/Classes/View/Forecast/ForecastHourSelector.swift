@@ -113,12 +113,13 @@ public struct ForecastHourSelector: View {
 private struct ForecastHourSelectorPreview: View {
     @State private var selectedHour: String?
 
-    var body: some View {
-        ForecastHourSelector(forecast: Self.forecast, selectedHour: $selectedHour)
+    @ViewBuilder var body: some View {
+        if let forecast = ForecastWindguruMockup().dashboardPreviewForecast {
+            ForecastHourSelector(forecast: forecast, selectedHour: $selectedHour)
+        } else {
+            ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
+        }
     }
-
-    private static let forecast: SpotForecast =
-        try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
 }
 #endif
 #endif
