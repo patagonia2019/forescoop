@@ -39,6 +39,7 @@ public struct ForecastDashboardView: View {
     @State private var activeSheet: DashboardSheet?
     @State private var content: ForecastViewMode
     @State private var weatherBackgroundStyle: WeatherBackgroundStyle
+    @State private var theme: VentusTheme
     @State private var showsDashboardModelComparison = false
     @State private var iPadMapPosition: MapCameraPosition = .automatic
     @State private var selectedMapLocationID: SavedMapLocation.ID?
@@ -48,6 +49,7 @@ public struct ForecastDashboardView: View {
         self.forecastService = forecastService
         _selectedSpotID = State(initialValue: SelectedWindguruSpotStore.load())
         _weatherBackgroundStyle = State(initialValue: WeatherBackgroundStyleStore.load())
+        _theme = State(initialValue: VentusThemeStore.load())
         _content = State(initialValue: ForecastViewModeStore.load())
         _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
         _account = StateObject(wrappedValue: WindguruAccount())
@@ -279,7 +281,8 @@ public struct ForecastDashboardView: View {
             .sheet(isPresented: sheetBinding(.weatherBackgroundSettings)) {
                 SettingsView(
                     weatherBackgroundStyle: $weatherBackgroundStyle,
-                    forecastViewMode: $content
+                    forecastViewMode: $content,
+                    theme: $theme
                 )
             }
             .sheet(isPresented: sheetBinding(.about)) {
@@ -301,6 +304,7 @@ public struct ForecastDashboardView: View {
             }
 #endif
         }
+        .modifier(VentusThemeModifier(theme: theme))
     }
 
     private func forecastContent(

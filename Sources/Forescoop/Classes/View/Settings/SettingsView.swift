@@ -13,18 +13,35 @@ public struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding private var weatherBackgroundStyle: WeatherBackgroundStyle
     @Binding private var forecastViewMode: ForecastViewMode
+    @Binding private var theme: VentusTheme
 
     public init(
         weatherBackgroundStyle: Binding<WeatherBackgroundStyle>,
-        forecastViewMode: Binding<ForecastViewMode>
+        forecastViewMode: Binding<ForecastViewMode>,
+        theme: Binding<VentusTheme>
     ) {
         _weatherBackgroundStyle = weatherBackgroundStyle
         _forecastViewMode = forecastViewMode
+        _theme = theme
     }
 
     public var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Picker("Theme", selection: $theme) {
+                        ForEach(VentusTheme.allCases) { theme in
+                            Label(theme.title, systemImage: "paintpalette")
+                                .tag(theme)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                } header: {
+                    Text("Appearance")
+                } footer: {
+                    Text("Themes change colors and font design without changing text sizes. System Default follows the current device appearance.")
+                }
+
                 Section {
                     Picker("Forecast view", selection: $forecastViewMode) {
                         ForEach(ForecastViewMode.allCases) { mode in
@@ -66,12 +83,16 @@ public struct SettingsView: View {
         .onChange(of: forecastViewMode) { _, mode in
             ForecastViewModeStore.save(mode)
         }
+        .onChange(of: theme) { _, theme in
+            VentusThemeStore.save(theme)
+        }
     }
 }
 
 #Preview {
     SettingsView(
         weatherBackgroundStyle: .constant(.lottieAdriana),
-        forecastViewMode: .constant(.dashboard)
+        forecastViewMode: .constant(.dashboard),
+        theme: .constant(.system)
     )
 }

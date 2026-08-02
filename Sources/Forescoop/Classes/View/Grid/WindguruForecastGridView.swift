@@ -32,6 +32,7 @@ public struct WindguruForecastGridView: View {
     @State private var modelComparisonMode: ModelComparisonMode = .off
     @State private var showsCloudLayers = false
     @Environment(\.displayScale) private var displayScale
+    @Environment(\.ventusTheme) private var theme
     @State private var horizontalGridOffset: CGFloat = 0
     private var columnWidth: CGFloat = 56
 
@@ -346,7 +347,7 @@ public struct WindguruForecastGridView: View {
                     }
                     label
                 }
-                .font(.caption)
+                .font(gridRowTitleFont)
                 .padding(.horizontal, 8)
                 .frame(width: rowLabelWidth, height: 30, alignment: showsRowTitles ? .leading : .center)
                 .background(gridLabelBackground)
@@ -419,7 +420,7 @@ public struct WindguruForecastGridView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .font(.caption)
+                .font(gridRowTitleFont)
                 .padding(.horizontal, 8)
                 .frame(width: rowLabelWidth, height: 90, alignment: .leading)
                 .background(gridLabelBackground)
@@ -587,6 +588,9 @@ public struct WindguruForecastGridView: View {
     private var rowLabelWidth: CGFloat { 152 + (isModelComparisonEnabled && viewModel.displayedModelForecasts.count > 1 ? 20 : 0) }
     private var gridHeaderHeight: CGFloat { 64 }
     private var cellSpacing: CGFloat { 1 / displayScale }
+    /// Sunset uses a monospaced design, so the fixed title column adopts a
+    /// compact caption to preserve the table's existing width.
+    private var gridRowTitleFont: Font { theme == .sunset ? .caption2 : .caption }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
     /// The fixed header must be opaque; otherwise vertically scrolling labels
     /// and values show through it and become difficult to read.
