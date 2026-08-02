@@ -23,6 +23,9 @@ let package = Package(
         .library(
             name: "Forescoop",
             targets: ["Forescoop"]),
+        .library(
+            name: "ForescoopWidgets",
+            targets: ["ForescoopWidgets"]),
     ],
     dependencies: [
         .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.6.1"),
@@ -48,6 +51,10 @@ let package = Package(
             ],
             path: "Sources/Forescoop",
             resources: [.process("Resources")]),
+        .target(
+            name: "ForescoopWidgets",
+            dependencies: ["Forescoop"],
+            path: "Sources/ForescoopWidgets"),
         .testTarget(
             name: "ForescoopTests",
             dependencies: ["Forescoop"],

@@ -677,6 +677,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Forescoop_Example.entitlements;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -696,6 +697,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Forescoop_Example.entitlements;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -846,6 +848,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ForescoopTVOS/ForescoopTVOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
@@ -878,6 +881,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ForescoopTVOS/ForescoopTVOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -900,6 +904,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Forescoop_Example.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -920,6 +925,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Forescoop_Example.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -940,6 +946,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = ForescoopWatchOnly.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "ForescoopWatchOnly-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.iOSnowatch.ForescoopWatchOnly;
@@ -956,6 +963,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = ForescoopWatchOnly.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "ForescoopWatchOnly-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = org.forescoop.iOSnowatch.ForescoopWatchOnly;
@@ -972,6 +980,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ForescoopVisionOS.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -994,6 +1003,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ForescoopVisionOS.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
 				INFOPLIST_FILE = "Forescoop_Example-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (

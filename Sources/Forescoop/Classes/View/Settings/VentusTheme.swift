@@ -33,7 +33,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var accentColor: Color {
+    public var accentColor: Color {
         switch self {
         case .system: .accentColor
         case .ocean: Color(red: 0.02, green: 0.43, blue: 0.68)
@@ -45,7 +45,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var backgroundColor: Color {
+    public var backgroundColor: Color {
         switch self {
         case .system: .clear
         case .ocean: Color(red: 0.92, green: 0.97, blue: 1.0)
@@ -57,7 +57,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var primaryTextColor: Color {
+    public var primaryTextColor: Color {
         switch self {
         case .system: .primary
         case .ocean: Color(red: 0.02, green: 0.16, blue: 0.27)
@@ -69,7 +69,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var fontDesign: Font.Design? {
+    public var fontDesign: Font.Design? {
         switch self {
         case .system: nil
         case .ocean: .rounded
@@ -119,16 +119,21 @@ struct VentusThemeModifier: ViewModifier {
     }
 }
 
-enum VentusThemeStore {
+/// Theme storage shared by every Forescoop target installed on this device.
+/// The App Group is intentionally also used by the widget extensions.
+public enum VentusThemeStore {
     private static let key = "ventusTheme"
-
-    static func load() -> VentusTheme {
-        VentusPreferenceStore.value(forKey: key)
-            .flatMap(VentusTheme.init(rawValue:)) ?? .system
+    private static let appGroupIdentifier = "group.org.forescoop.shared"
+    private static func defaults() -> UserDefaults {
+        UserDefaults(suiteName: appGroupIdentifier) ?? .standard
     }
 
-    static func save(_ theme: VentusTheme) {
-        VentusPreferenceStore.save(theme.rawValue, forKey: key)
+    public static func load() -> VentusTheme {
+        defaults().string(forKey: key).flatMap(VentusTheme.init(rawValue:)) ?? .system
+    }
+
+    public static func save(_ theme: VentusTheme) {
+        defaults().set(theme.rawValue, forKey: key)
     }
 }
 

@@ -50,6 +50,7 @@ public struct ForecastGraphCanvas: View {
                 }
                 .frame(width: width, height: 520)
                 .contentShape(Rectangle())
+#if !os(tvOS)
                 // Selection is a tap. A drag must remain available to the
                 // enclosing horizontal scroll view so long forecasts can be
                 // explored rather than getting stuck on the first columns.
@@ -57,6 +58,7 @@ public struct ForecastGraphCanvas: View {
                     let progress = min(max((value.location.x - 42) / (width - 58), 0), 1)
                     selectedID = points[Int((progress * CGFloat(points.count - 1)).rounded())].id
                 })
+#endif
             }
             .scrollIndicators(.hidden)
         }

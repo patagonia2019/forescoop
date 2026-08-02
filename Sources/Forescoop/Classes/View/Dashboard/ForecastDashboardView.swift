@@ -365,6 +365,10 @@ public struct ForecastDashboardView: View {
                     selectedHour: selectedHourBinding
                 )
 
+#if os(tvOS)
+                TVForecastWidgetCard(forecast: forecast, hour: selectedHour)
+#endif
+
                 if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
                         ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, showsLocationHeader: showsLocationHeader, showsModelSummary: showsModelSummary, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
