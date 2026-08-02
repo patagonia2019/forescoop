@@ -210,5 +210,10 @@ enum WatchForecastFormatting {
     }
 }
 
-#Preview("Watch forecast dashboard") { WatchForecastView(forecastService: ForecastWindguruMockup()) }
+#if DEBUG
+#Preview("Watch forecast dashboard") {
+    WatchForecastView(forecastService: ForecastWindguruMockup())
+}
+#endif
+
 #endif

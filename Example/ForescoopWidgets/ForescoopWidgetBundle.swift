@@ -1,4 +1,5 @@
 import ForescoopWidgets
+import SwiftUI
 import WidgetKit
 
 @main

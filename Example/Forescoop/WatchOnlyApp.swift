@@ -18,4 +18,11 @@ struct ForescoopWatchOnlyApp: App {
         }
     }
 }
+
+#if DEBUG
+#Preview {
+    WatchForecastView(forecastService: ForecastWindguruMockup())
+}
+#endif
+
 #endif
