@@ -24,13 +24,14 @@ public struct WatchForecastView: View {
     @State private var errorMessage: String?
     @State private var selectedHour: String?
     @State private var selectedModelID: String?
+    @State private var navigationPath = NavigationPath()
 
     public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
         self.forecastService = forecastService
     }
 
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             Group {
                 if let forecast {
                     dashboard(for: forecast)
@@ -45,9 +46,9 @@ public struct WatchForecastView: View {
                 case .locations:
                     WatchLocationPicker(locations: locations, selectedSpotID: selectedSpotID, select: select, add: add)
                 case .hours:
-                    WatchForecastHoursView(forecast: forecast, selectedHour: $selectedHour)
-                case .grid:
-                    WatchForecastGridView(forecast: forecast, selectedHour: $selectedHour, temperatureUnit: temperatureUnit, windSpeedUnit: windSpeedUnit, precipitationUnit: precipitationUnit)
+                    WatchForecastHoursView(forecast: forecast, selectedHour: $selectedHour, temperatureUnit: temperatureUnit, windSpeedUnit: windSpeedUnit, precipitationUnit: precipitationUnit) {
+                        navigationPath = NavigationPath()
+                    }
                 case .settings:
                     WatchForecastSettingsView(temperatureUnitRaw: $temperatureUnitRaw, windSpeedUnitRaw: $windSpeedUnitRaw, waveHeightUnitRaw: $waveHeightUnitRaw, pressureUnitRaw: $pressureUnitRaw, precipitationUnitRaw: $precipitationUnitRaw, freezingLevelUnitRaw: $freezingLevelUnitRaw)
                 case .models:
@@ -68,7 +69,6 @@ public struct WatchForecastView: View {
             VStack(spacing: 10) {
                 HStack(spacing: 8) {
                 NavigationLink(value: WatchDestination.locations) { Image(systemName: "mappin.circle.fill") }.accessibilityLabel("Choose location")
-                NavigationLink(value: WatchDestination.grid) { Image(systemName: "tablecells") }.accessibilityLabel("Forecast grid")
                 NavigationLink(value: WatchDestination.settings) { Image(systemName: "gearshape") }.accessibilityLabel("Settings")
                 Button { Task { await loadForecast() } } label: { Image(systemName: "arrow.clockwise") }
                     .accessibilityLabel("Refresh forecast")
@@ -179,7 +179,7 @@ public struct WatchForecastView: View {
     }
 }
 
-enum WatchDestination: Hashable { case locations, hours, grid, settings, models }
+enum WatchDestination: Hashable { case locations, hours, settings, models }
 
 enum WatchForecastFormatting {
     /// Uses the system's 12/24-hour preference while keeping the watch label concise.

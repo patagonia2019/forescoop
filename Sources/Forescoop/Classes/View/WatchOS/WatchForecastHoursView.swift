@@ -13,27 +13,35 @@ import SwiftUI
 struct WatchForecastHoursView: View {
     let forecast: SpotForecast?
     @Binding var selectedHour: String?
+    let temperatureUnit: TemperatureUnit
+    let windSpeedUnit: WindSpeedUnit
+    let precipitationUnit: PrecipitationUnit
+    let onHourSelected: () -> Void
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         List {
-            if let forecast {
+            if let forecast, let weather = forecast.forecast {
                 ForEach(forecast.availableForecastHours, id: \.self) { hour in
-                    Button { selectedHour = hour } label: {
-                        HStack {
-                            Text(title(for: hour, in: forecast))
-                            Spacer()
-                            if selectedHour == hour { Image(systemName: "checkmark").foregroundStyle(.tint) }
-                        }
+                    Button {
+                        selectedHour = hour
+                        onHourSelected()
+                        dismiss()
+                    } label: {
+                        WatchForecastHourCell(
+                            hour: hour,
+                            forecast: forecast,
+                            weather: weather,
+                            temperatureUnit: temperatureUnit,
+                            windSpeedUnit: windSpeedUnit,
+                            precipitationUnit: precipitationUnit,
+                            isSelected: selectedHour == hour
+                        )
                     }
                 }
             }
         }
         .navigationTitle("Forecast hour")
-    }
-
-    private func title(for hour: String, in forecast: SpotForecast) -> String {
-        guard let date = forecast.forecastDate(hour: hour) else { return "\(hour) hs" }
-        return WatchForecastFormatting.hour(date)
     }
 }
 #endif
