@@ -27,7 +27,7 @@ public struct VentusHelpView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                GroupBox {
+                HelpSection {
                     VStack(alignment: .leading, spacing: 14) {
                         HelpStep(
                             number: 1,
@@ -65,13 +65,14 @@ public struct VentusHelpView: View {
                             HelpPlatformPreview(name: "Mac", systemImage: "laptopcomputer", layout: .split)
                             HelpPlatformPreview(name: "Vision", systemImage: "visionpro", layout: .spatial)
                             HelpPlatformPreview(name: "Watch", systemImage: "applewatch", layout: .watch)
+                            HelpPlatformPreview(name: "Apple TV", systemImage: "appletv", layout: .television)
                         }
                         .padding(.vertical, 2)
                     }
                     .scrollIndicators(.hidden)
                 }
 
-                GroupBox {
+                HelpSection {
                     VStack(alignment: .leading, spacing: 12) {
                         HelpFeature(symbol: "cpu", title: "Models depend on the location", detail: "Each spot exposes the forecast models that cover it. The available selection can change when you choose another location or sign in to a different account tier.")
                         HelpFeature(symbol: "circle.hexagongrid", title: "Forescoop Mix", detail: "When multiple sources are selected, Ventus presents a Forescoop Mix: one continuous forecast assembled from the selected model data available for each hour.")
@@ -83,7 +84,7 @@ public struct VentusHelpView: View {
                     Label("Understanding forecast models", systemImage: "cpu")
                 }
 
-                GroupBox {
+                HelpSection {
                     VStack(alignment: .leading, spacing: 12) {
                         HelpFeature(symbol: "tablecells", title: "Forecast Grid", detail: "Scroll through hours, tap a column to select it, and use the comparison control to inspect individual or all model sources.")
                         HelpFeature(symbol: "rectangle.split.2x1", title: "Grid and Dashboard", detail: "Drag the separator to choose your preferred balance. The selected hour, units, location, and models stay synchronized.")
@@ -132,6 +133,30 @@ private struct HelpStep: View {
     }
 }
 
+/// A cross-platform replacement for GroupBox, which is unavailable on tvOS.
+private struct HelpSection<Content: View, Label: View>: View {
+    @ViewBuilder let content: () -> Content
+    @ViewBuilder let label: () -> Label
+
+    init(
+        @ViewBuilder content: @escaping () -> Content,
+        @ViewBuilder label: @escaping () -> Label
+    ) {
+        self.content = content
+        self.label = label
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            label()
+                .font(.headline)
+            content()
+        }
+        .padding()
+        .background(.thinMaterial, in: .rect(cornerRadius: 16))
+    }
+}
+
 private struct HelpFeature: View {
     let symbol: String
     let title: String
@@ -151,7 +176,7 @@ private struct HelpFeature: View {
 }
 
 private struct HelpPlatformPreview: View {
-    enum Layout { case phone, split, spatial, watch }
+    enum Layout { case phone, split, spatial, watch, television }
 
     let name: String
     let systemImage: String
@@ -215,6 +240,17 @@ private struct HelpPlatformPreview: View {
                     .font(.title3.monospacedDigit())
                 Text("Cloudy")
                     .font(.caption2)
+            }
+        case .television:
+            VStack(spacing: 8) {
+                previewTitle
+                HStack(spacing: 6) {
+                    miniGrid
+                    miniDashboard
+                }
+                Label("Remote-friendly forecast", systemImage: "rectangle.on.rectangle")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
         }
     }

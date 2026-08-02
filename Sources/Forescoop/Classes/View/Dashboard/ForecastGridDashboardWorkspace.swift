@@ -76,8 +76,9 @@ struct ForecastGridDashboardWorkspace<GridContent: View, DashboardContent: View>
 
     private var splitHitArea: CGFloat { 16 }
 
+    @ViewBuilder
     private func splitDivider(isWide: Bool, totalLength: CGFloat, crossLength: CGFloat) -> some View {
-        Color.clear
+        let divider = Color.clear
             .frame(
                 width: isWide ? splitHitArea : crossLength,
                 height: isWide ? crossLength : splitHitArea
@@ -92,6 +93,12 @@ struct ForecastGridDashboardWorkspace<GridContent: View, DashboardContent: View>
                 }
             }
             .contentShape(.rect)
+
+#if os(tvOS)
+        divider
+            .accessibilityLabel("Forecast panel separator")
+#else
+        divider
             .gesture(
                 DragGesture()
                     .updating($splitDragTranslation) { value, state, _ in
@@ -107,6 +114,7 @@ struct ForecastGridDashboardWorkspace<GridContent: View, DashboardContent: View>
             )
             .accessibilityLabel("Resize forecast panels")
             .accessibilityHint(isWide ? "Drag left or right to resize the grid" : "Drag up or down to resize the grid")
+#endif
     }
 
     private func displayedSplitFraction(isWide: Bool, totalLength: CGFloat) -> CGFloat {

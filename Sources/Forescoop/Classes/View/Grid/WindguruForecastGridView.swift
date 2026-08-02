@@ -596,8 +596,10 @@ public struct WindguruForecastGridView: View {
     /// The fixed header must be opaque; otherwise vertically scrolling labels
     /// and values show through it and become difficult to read.
     private var pinnedGridHeaderBackground: Color {
-#if canImport(UIKit)
+#if os(iOS) || os(visionOS)
         Color(uiColor: .systemBackground)
+#elseif os(tvOS)
+        Color.black.opacity(0.9)
 #elseif canImport(AppKit)
         Color(nsColor: .windowBackgroundColor)
 #else
