@@ -683,6 +683,9 @@ public struct ForecastDashboardView: View {
         if didLoad, persistSelection {
             selectedSpotID = requestedSpotID
         }
+        if didLoad, let forecast {
+            ForescoopSpotlightIndexer.index(forecast: forecast, savedLocations: savedMapLocations)
+        }
     }
 
     @MainActor
@@ -697,6 +700,9 @@ public struct ForecastDashboardView: View {
             modelIDs: modelIDs,
             account: account
         )
+        if let forecast {
+            ForescoopSpotlightIndexer.index(forecast: forecast, savedLocations: savedMapLocations)
+        }
     }
 
     private func unavailableForecastContent(errorMessage: String) -> some View {
