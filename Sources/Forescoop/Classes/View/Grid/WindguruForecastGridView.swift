@@ -28,6 +28,7 @@ public struct WindguruForecastGridView: View {
     @State private var expandedComparisonRows = Set<String>()
     @State private var isModelComparisonEnabled = false
     @State private var showsCloudLayers = false
+    @Environment(\.displayScale) private var displayScale
     @State private var horizontalGridOffset: CGFloat = 0
     private var columnWidth: CGFloat = 56
 
@@ -133,8 +134,8 @@ public struct WindguruForecastGridView: View {
 
     private func gridBody(includesHeader: Bool) -> some View {
         ScrollViewReader { scrollProxy in
-            HStack(alignment: .top, spacing: 0) {
-                LazyVStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: cellSpacing) {
+                LazyVStack(alignment: .leading, spacing: cellSpacing) {
                     if includesHeader {
                         labelHeader
                     } else {
@@ -146,7 +147,7 @@ public struct WindguruForecastGridView: View {
 
                 ScrollView(.horizontal) {
                     LazyVStack(alignment: .leading, spacing: 0) {
-                        LazyHStack(alignment: .top, spacing: 0) {
+                        LazyHStack(alignment: .top, spacing: cellSpacing) {
                             ForEach(hours, id: \.self) { hour in
                                 forecastColumn(for: hour, includesHeader: includesHeader)
                                     .id(hour)
@@ -252,7 +253,6 @@ public struct WindguruForecastGridView: View {
         gridRow(id: "pressure", label: unitLabel("Pressure (\(viewModel.pressureUnit.label))", compactLabel: viewModel.pressureUnit.label, icon: "gauge.medium", selection: $viewModel.pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, background: pressureColor, in: column)
         gridRow(id: "humidity", label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, comparisonValues: { humidity($1, source: $0) }, background: humidityColor, in: column)
         if hasWaveData {
-            Divider()
             gridRow(id: "waveHeight", label: unitLabel("Wave (\(viewModel.waveHeightUnit.label))", compactLabel: viewModel.waveHeightUnit.label, icon: "water.waves", selection: $viewModel.waveHeightUnit, unitLabel: \.label), values: { waveHeight($0) }, comparisonValues: { waveHeight($1, source: $0) }, background: waveColor, in: column)
             gridRow(id: "wavePeriod", label: rowLabel("Wave period (s)", icon: "waveform"), values: { wavePeriod($0) }, comparisonValues: { wavePeriod($1, source: $0) }, background: wavePeriodColor, in: column)
             gridRow(id: "waveDirection", label: rowLabel("Wave direction", icon: "location.north.line"), values: { waveDirection($0) }, comparisonValues: { waveDirection($1, source: $0) }, in: column)
@@ -271,7 +271,7 @@ public struct WindguruForecastGridView: View {
         let isExpanded = expandedComparisonRows.contains(id)
         switch column {
         case .labels:
-            VStack(spacing: 0) {
+            VStack(spacing: cellSpacing) {
                 HStack(spacing: 4) {
                     if showsComparisonControl, isModelComparisonEnabled, viewModel.displayedModelForecasts.count > 1 {
                         Button {
@@ -301,7 +301,7 @@ public struct WindguruForecastGridView: View {
                 }
             }
         case .value(let hour):
-            VStack(spacing: 0) {
+            VStack(spacing: cellSpacing) {
                 forecastValueCell(hour: hour, values: values, background: background)
                 if isExpanded {
                     ForEach(Array(viewModel.displayedModelForecasts.enumerated()), id: \.offset) { _, source in
@@ -329,7 +329,7 @@ public struct WindguruForecastGridView: View {
         let isComparisonExpanded = expandedComparisonRows.contains("cloudCover")
         switch column {
         case .labels:
-            VStack(spacing: 0) {
+            VStack(spacing: cellSpacing) {
                 HStack(spacing: 4) {
                     if isModelComparisonEnabled, viewModel.displayedModelForecasts.count > 1 {
                         Button {
@@ -374,7 +374,7 @@ public struct WindguruForecastGridView: View {
                 }
             }
         case .value(let hour):
-            VStack(spacing: 0) {
+            VStack(spacing: cellSpacing) {
                 cloudLayerValueRows(hour: hour)
 
                 if isComparisonExpanded {
@@ -397,7 +397,7 @@ public struct WindguruForecastGridView: View {
     }
 
     private func hourColumn(for hour: String) -> some View {
-        LazyVStack(spacing: 0) {
+        LazyVStack(spacing: cellSpacing) {
             gridRows(in: .value(hour))
         }
         .frame(width: columnWidth)
@@ -406,7 +406,7 @@ public struct WindguruForecastGridView: View {
     /// Combines the selected day/hour header and values so selection is drawn
     /// once around the full forecast column, not as two separate rectangles.
     private func forecastColumn(for hour: String, includesHeader: Bool) -> some View {
-        VStack(spacing: 0) {
+        VStack(spacing: cellSpacing) {
             if includesHeader {
                 ForecastGridHourCell(
                     hour: hour,
@@ -445,7 +445,6 @@ public struct WindguruForecastGridView: View {
                 .foregroundStyle(cell.isSnow ? .blue : .primary)
                 .frame(width: columnWidth, height: height)
                 .background(background(cell))
-                .overlay(alignment: .bottom) { Divider().opacity(0.3) }
         }
         .buttonStyle(.plain)
     }
@@ -512,6 +511,7 @@ public struct WindguruForecastGridView: View {
     /// truncating it, while the comparison affordance receives its own space.
     private var rowLabelWidth: CGFloat { 152 + (isModelComparisonEnabled && viewModel.displayedModelForecasts.count > 1 ? 20 : 0) }
     private var gridHeaderHeight: CGFloat { 64 }
+    private var cellSpacing: CGFloat { 1 / displayScale }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
 
     private func day(for hour: String) -> String {
