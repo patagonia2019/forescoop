@@ -17,7 +17,7 @@ struct ForecastGridDashboardWorkspace<GridContent: View, DashboardContent: View>
     private let dashboardContent: () -> DashboardContent
     @State private var wideSplitFraction: CGFloat
     @State private var tallSplitFraction: CGFloat
-    @State private var splitFractionAtDragStart: CGFloat?
+    @GestureState private var splitDragTranslation: CGSize = .zero
     @Environment(\.displayScale) private var displayScale
 
     init(
@@ -33,80 +33,99 @@ struct ForecastGridDashboardWorkspace<GridContent: View, DashboardContent: View>
     var body: some View {
         GeometryReader { geometry in
             if geometry.size.width > geometry.size.height {
+                let dividerFraction = displayedSplitFraction(isWide: true, totalLength: geometry.size.width)
                 HStack(spacing: 0) {
                     gridContent()
                         .frame(width: panelLength(total: geometry.size.width, fraction: wideSplitFraction))
 
-                    splitDivider(isWide: true, totalLength: geometry.size.width)
-
                     dashboardContent()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
+                .overlay(alignment: .leading) {
+                    splitDivider(
+                        isWide: true,
+                        totalLength: geometry.size.width,
+                        crossLength: geometry.size.height
+                    )
+                    .offset(x: panelLength(total: geometry.size.width, fraction: dividerFraction) - splitHitArea / 2)
+                }
             } else {
+                let dividerFraction = displayedSplitFraction(isWide: false, totalLength: geometry.size.height)
                 VStack(spacing: 0) {
                     gridContent()
                         .frame(height: panelLength(total: geometry.size.height, fraction: tallSplitFraction))
 
-                    splitDivider(isWide: false, totalLength: geometry.size.height)
-
                     dashboardContent()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                .overlay(alignment: .top) {
+                    splitDivider(
+                        isWide: false,
+                        totalLength: geometry.size.height,
+                        crossLength: geometry.size.width
+                    )
+                    .offset(y: panelLength(total: geometry.size.height, fraction: dividerFraction) - splitHitArea / 2)
                 }
             }
         }
     }
 
     private func panelLength(total: CGFloat, fraction: CGFloat) -> CGFloat {
-        max(0, total * fraction - splitHitArea / 2)
+        max(0, total * fraction)
     }
 
     private var splitHitArea: CGFloat { 16 }
 
-    private func splitDivider(isWide: Bool, totalLength: CGFloat) -> some View {
+    private func splitDivider(isWide: Bool, totalLength: CGFloat, crossLength: CGFloat) -> some View {
         Color.clear
-            .frame(width: isWide ? splitHitArea : nil, height: isWide ? nil : splitHitArea)
+            .frame(
+                width: isWide ? splitHitArea : crossLength,
+                height: isWide ? crossLength : splitHitArea
+            )
             .overlay {
                 if isWide {
                     Color.secondary.opacity(0.45)
-                        .frame(width: 1 / displayScale)
+                        .frame(width: 5 / displayScale)
                 } else {
                     Color.secondary.opacity(0.45)
-                        .frame(height: 1 / displayScale)
+                        .frame(height: 5 / displayScale)
                 }
             }
             .contentShape(.rect)
             .gesture(
                 DragGesture()
-                    .onChanged { value in
-                        updateSplit(
+                    .updating($splitDragTranslation) { value, state, _ in
+                        state = value.translation
+                    }
+                    .onEnded { value in
+                        saveSplit(
                             isWide: isWide,
                             translation: isWide ? value.translation.width : value.translation.height,
                             totalLength: totalLength
                         )
-                    }
-                    .onEnded { _ in
-                        saveSplit(isWide: isWide)
                     }
             )
             .accessibilityLabel("Resize forecast panels")
             .accessibilityHint(isWide ? "Drag left or right to resize the grid" : "Drag up or down to resize the grid")
     }
 
-    private func updateSplit(isWide: Bool, translation: CGFloat, totalLength: CGFloat) {
+    private func displayedSplitFraction(isWide: Bool, totalLength: CGFloat) -> CGFloat {
+        guard totalLength > 0 else { return isWide ? wideSplitFraction : tallSplitFraction }
+        let translation = isWide ? splitDragTranslation.width : splitDragTranslation.height
+        let storedFraction = isWide ? wideSplitFraction : tallSplitFraction
+        return min(max(storedFraction + translation / totalLength, 0.25), 0.75)
+    }
+
+    private func saveSplit(isWide: Bool, translation: CGFloat, totalLength: CGFloat) {
         guard totalLength > 0 else { return }
-        let start = splitFractionAtDragStart ?? (isWide ? wideSplitFraction : tallSplitFraction)
-        splitFractionAtDragStart = start
-        let fraction = min(max(start + translation / totalLength, 0.25), 0.75)
+        let storedFraction = isWide ? wideSplitFraction : tallSplitFraction
+        let fraction = min(max(storedFraction + translation / totalLength, 0.25), 0.75)
         if isWide {
             wideSplitFraction = fraction
         } else {
             tallSplitFraction = fraction
         }
-    }
-
-    private func saveSplit(isWide: Bool) {
-        ForecastWorkspaceSplitStore.save(isWide ? wideSplitFraction : tallSplitFraction, isWide: isWide)
-        splitFractionAtDragStart = nil
+        ForecastWorkspaceSplitStore.save(fraction, isWide: isWide)
     }
 }
 

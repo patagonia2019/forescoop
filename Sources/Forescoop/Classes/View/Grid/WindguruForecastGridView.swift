@@ -72,6 +72,7 @@ public struct WindguruForecastGridView: View {
 
             frozenGrid(scrollsVertically: true)
             ForecastGridModelSelector(
+                modelSummaryTitle: forecast.forecast?.modelName ?? "Forecast model",
                 modelIDs: availableModelIDs,
                 selectedModelIDs: selectedModelIDs,
                 modelNamesByID: viewModel.modelNamesByID,

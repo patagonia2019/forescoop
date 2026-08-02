@@ -17,6 +17,7 @@ public struct ForecastOverview: View {
     public let modelNamesByID: [String: String]
     public let isModelComparisonEnabled: Bool
     public let showsLocationHeader: Bool
+    public let showsModelSummary: Bool
     @Binding public var temperatureUnit: TemperatureUnit
     @State private var showsTemperatureSources = false
     private let onSelectLocation: () -> Void
@@ -33,6 +34,7 @@ public struct ForecastOverview: View {
         modelNamesByID: [String: String] = [:],
         isModelComparisonEnabled: Bool = false,
         showsLocationHeader: Bool = true,
+        showsModelSummary: Bool = true,
         modelInfoURL: URL = URL(string: "https://www.windguru.cz/help.php?sec=models")!,
         onSelectLocation: @escaping () -> Void,
         onSelectModel: @escaping () -> Void,
@@ -45,6 +47,7 @@ public struct ForecastOverview: View {
         self.modelNamesByID = modelNamesByID
         self.isModelComparisonEnabled = isModelComparisonEnabled
         self.showsLocationHeader = showsLocationHeader
+        self.showsModelSummary = showsModelSummary
         _temperatureUnit = temperatureUnit
         self.modelInfoURL = modelInfoURL
         self.onSelectLocation = onSelectLocation
@@ -69,19 +72,12 @@ public struct ForecastOverview: View {
                     }
                 }
 
-                HStack(spacing: 6) {
-                    Button(action: onSelectModel) {
-                        Label(forecast.forecast?.modelName ?? "Forecast model", systemImage: "cpu")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-
-                    Link(destination: modelInfoURL) {
-                        Image(systemName: "info.circle")
-                    }
-                    .accessibilityLabel("About Windguru forecast models")
-                    .accessibilityHint("Opens Windguru's model explanation")
+                if showsModelSummary {
+                    ForecastModelSummary(
+                        title: forecast.forecast?.modelName ?? "Forecast model",
+                        modelInfoURL: modelInfoURL,
+                        onSelect: onSelectModel
+                    )
                 }
 
                 Text(forecast.forecast?.cadenceDescription ?? "Forecast cadence unavailable")
