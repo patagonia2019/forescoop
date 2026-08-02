@@ -22,6 +22,7 @@
 		A0010000000000000000000B /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = A0010000000000000000000C /* Forescoop */; };
 		AA0100000000000000000001 /* WatchOnlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000012 /* WatchOnlyApp.swift */; };
 		AA0100000000000000000002 /* Forescoop in Frameworks */ = {isa = PBXBuildFile; productRef = AA0100000000000000000009 /* Forescoop */; };
+		E00100000000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E00100000000000000000002 /* Assets.xcassets */; };
 		B00100000000000000000007 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		B00100000000000000000009 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		B0010000000000000000000A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -65,6 +66,7 @@
 		A0010000000000000000000D /* iOSnowatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnowatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0100000000000000000011 /* ForescoopWatchOnly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopWatchOnly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0100000000000000000012 /* WatchOnlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchOnlyApp.swift; sourceTree = "<group>"; };
+		E00100000000000000000002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../ForescoopWatchOnly/Assets.xcassets; sourceTree = "<group>"; };
 		B0010000000000000000000D /* ForescoopVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForescoopVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F00100000000000000000003 /* VisionForescoopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionForescoopApp.swift; sourceTree = "<group>"; };
 		D00100000000000000000002 /* ForescoopWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForescoopWidgetBundle.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				F00100000000000000000003 /* VisionForescoopApp.swift */,
 				AA0100000000000000000012 /* WatchOnlyApp.swift */,
+				E00100000000000000000002 /* Assets.xcassets */,
 				D0010000000000000000000A /* ForescoopWidgets */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -346,6 +349,7 @@
 			buildPhases = (
 				AA0100000000000000000003 /* Sources */,
 				AA0100000000000000000004 /* Frameworks */,
+				E00100000000000000000003 /* Resources */,
 				D0010000000000000000000B /* Embed App Extensions */,
 			);
 			buildRules = (
@@ -516,6 +520,14 @@
 			files = (
 				A00100000000000000000009 /* LaunchScreen.xib in Resources */,
 				A0010000000000000000000A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00100000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E00100000000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1018,6 +1030,7 @@
 		AA0100000000000000000007 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGN_ENTITLEMENTS = ForescoopWatchOnly.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;
@@ -1035,6 +1048,7 @@
 		AA0100000000000000000008 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGN_ENTITLEMENTS = ForescoopWatchOnly.entitlements;
 				DEVELOPMENT_TEAM = 27XTSJS68A;

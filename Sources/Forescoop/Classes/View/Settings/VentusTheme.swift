@@ -113,11 +113,17 @@ public extension EnvironmentValues {
 public extension View {
     @ViewBuilder
     func ventusGlassEffect<S: Shape>(theme: VentusTheme, in shape: S) -> some View {
+#if os(visionOS)
+        // visionOS already supplies depth and material to its windows; this
+        // API is unavailable there.
+        self
+#else
         if theme.usesMaterial {
             glassEffect(.regular, in: shape)
         } else {
             self
         }
+#endif
     }
 }
 

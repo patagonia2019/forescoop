@@ -1,4 +1,4 @@
-#if canImport(CoreSpotlight)
+#if canImport(CoreSpotlight) && !os(tvOS) && !os(watchOS)
 import CoreSpotlight
 
 /// Makes a person's current forecast and saved locations discoverable through
