@@ -245,6 +245,7 @@ public struct WindguruForecastGridView: View {
             .padding(.horizontal, 8)
             .frame(width: rowLabelWidth, height: gridHeaderHeight, alignment: .leading)
             .background(gridLabelBackground)
+            .ventusGlassEffect(theme: theme, in: Rectangle())
     }
 
     private var timeHeader: some View {
@@ -279,6 +280,7 @@ public struct WindguruForecastGridView: View {
         }
         .frame(height: gridHeaderHeight)
         .background(pinnedGridHeaderBackground)
+        .ventusGlassEffect(theme: theme, in: Rectangle())
         .zIndex(1)
     }
 

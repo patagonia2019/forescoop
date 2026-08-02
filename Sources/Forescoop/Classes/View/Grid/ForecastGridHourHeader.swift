@@ -85,6 +85,7 @@ struct ForecastGridHourCell: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(theme.accentColor)
+        .ventusGlassEffect(theme: theme, in: RoundedRectangle(cornerRadius: 3))
     }
 }
 

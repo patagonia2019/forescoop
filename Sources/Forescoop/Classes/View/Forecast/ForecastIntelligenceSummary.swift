@@ -46,6 +46,7 @@ public struct ForecastIntelligenceSummary: View {
             RoundedRectangle(cornerRadius: 14)
                 .stroke(theme.accentColor.opacity(0.25))
         }
+        .ventusGlassEffect(theme: theme, in: RoundedRectangle(cornerRadius: 14))
         .task(id: snapshot) {
             await generateSummary()
         }

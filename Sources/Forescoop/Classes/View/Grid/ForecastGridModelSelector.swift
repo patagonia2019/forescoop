@@ -52,6 +52,7 @@ struct ForecastGridModelSelector: View {
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .ventusGlassEffect(theme: theme, in: RoundedRectangle(cornerRadius: 10))
                 }
             }
         }

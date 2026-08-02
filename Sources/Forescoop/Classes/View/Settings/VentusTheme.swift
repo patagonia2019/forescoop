@@ -108,6 +108,19 @@ public extension EnvironmentValues {
     }
 }
 
+/// Applies the platform's native Liquid Glass treatment only for the Liquid
+/// Glass theme. Other themes retain their existing visual treatment.
+public extension View {
+    @ViewBuilder
+    func ventusGlassEffect<S: Shape>(theme: VentusTheme, in shape: S) -> some View {
+        if theme.usesMaterial {
+            glassEffect(.regular, in: shape)
+        } else {
+            self
+        }
+    }
+}
+
 /// Applies a palette and a non-sizing font design to a complete app scene.
 struct VentusThemeModifier: ViewModifier {
     let theme: VentusTheme
