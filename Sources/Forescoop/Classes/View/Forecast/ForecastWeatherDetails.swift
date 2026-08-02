@@ -18,6 +18,7 @@ public struct ForecastWeatherDetails: View {
     public let modelForecasts: [SpotForecast]
     public let modelNamesByID: [String: String]
     public let isModelComparisonEnabled: Bool
+    @State private var showsCloudLayers = false
 
     public init(
         forecast: SpotForecast,
@@ -43,7 +44,12 @@ public struct ForecastWeatherDetails: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            cloudCover(high: weather?.cloudCoverHigh(hh: hour), mid: weather?.cloudCoverMid(hh: hour), low: weather?.cloudCoverLow(hh: hour))
+            cloudCover(
+                total: weather?.cloudCoverTotal(hh: hour),
+                high: weather?.cloudCoverHigh(hh: hour),
+                mid: weather?.cloudCoverMid(hh: hour),
+                low: weather?.cloudCoverLow(hh: hour)
+            )
             sourceRows { percent($0.forecast?.cloudCoverTotal(hh: hour)) }
             relativeHumidity(weather?.relativeHumidity(hh: hour))
             sourceRows { percent($0.forecast?.relativeHumidity(hh: hour)) }
@@ -138,14 +144,27 @@ public struct ForecastWeatherDetails: View {
         }
     }
 
-    private func cloudCover(high: Int?, mid: Int?, low: Int?) -> some View {
+    private func cloudCover(total: Int?, high: Int?, mid: Int?, low: Int?) -> some View {
         HStack(alignment: .bottom, spacing: 16) {
-            Label("Cloud", systemImage: "cloud.fill")
+            Button {
+                showsCloudLayers.toggle()
+            } label: {
+                Label("Cloud", systemImage: "cloud.fill")
+                    .foregroundStyle(.blue)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Cloud cover")
+            .accessibilityHint(showsCloudLayers ? "Shows total cloud cover" : "Shows high, mid, and low cloud cover")
             Spacer(minLength: 16)
-            HStack(alignment: .bottom, spacing: 8) {
-                cloudColumn("High", value: high)
-                cloudColumn("Mid", value: mid)
-                cloudColumn("Low", value: low)
+            if showsCloudLayers {
+                HStack(alignment: .bottom, spacing: 8) {
+                    cloudColumn("High", value: high)
+                    cloudColumn("Mid", value: mid)
+                    cloudColumn("Low", value: low)
+                }
+            } else {
+                Text(percent(total))
+                    .monospacedDigit()
             }
         }
     }

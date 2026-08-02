@@ -27,6 +27,7 @@ public struct WindguruForecastGridView: View {
 
     @State private var expandedComparisonRows = Set<String>()
     @State private var isModelComparisonEnabled = false
+    @State private var showsCloudLayers = false
     @State private var horizontalGridOffset: CGFloat = 0
     private var columnWidth: CGFloat = 56
 
@@ -246,7 +247,7 @@ public struct WindguruForecastGridView: View {
         gridRow(id: "windDirection", label: windDirectionLabel, values: { windDirection($0) }, comparisonValues: { windDirection($1, source: $0) }, in: column)
         gridRow(id: "temperature", label: unitLabel("Temperature (\(viewModel.temperatureUnit.label))", compactLabel: viewModel.temperatureUnit.label, icon: "thermometer.medium", selection: $viewModel.temperatureUnit, unitLabel: \.label), values: { temperature($0) }, comparisonValues: { temperature($1, source: $0) }, background: temperatureColor, in: column)
         gridRow(id: "freezingLevel", label: unitLabel("Freezing level (\(viewModel.freezingLevelUnit.label))", compactLabel: viewModel.freezingLevelUnit.label, icon: "snowflake", selection: $viewModel.freezingLevelUnit, unitLabel: \.label), values: { freezingLevel($0) }, comparisonValues: { freezingLevel($1, source: $0) }, in: column)
-        gridRow(id: "cloudCover", label: rowLabel("Cloud cover (%)", icon: "cloud.fill"), values: { cloudCover($0) }, comparisonValues: { cloudCover($1, source: $0) }, background: cloudColor, in: column)
+        cloudRows(in: column)
         gridRow(id: "precipitation", label: unitLabel("Precipitation (\(viewModel.precipitationUnit.label))", compactLabel: viewModel.precipitationUnit.label, icon: "cloud.rain", selection: $viewModel.precipitationUnit, unitLabel: \.label), values: { precipitation($0) }, comparisonValues: { precipitation($1, source: $0) }, background: precipitationColor, in: column)
         gridRow(id: "pressure", label: unitLabel("Pressure (\(viewModel.pressureUnit.label))", compactLabel: viewModel.pressureUnit.label, icon: "gauge.medium", selection: $viewModel.pressureUnit, unitLabel: \.label), values: { pressure($0) }, comparisonValues: { pressure($1, source: $0) }, background: pressureColor, in: column)
         gridRow(id: "humidity", label: rowLabel("Humidity (%)", icon: "humidity"), values: { humidity($0) }, comparisonValues: { humidity($1, source: $0) }, background: humidityColor, in: column)
@@ -263,6 +264,7 @@ public struct WindguruForecastGridView: View {
         label: Label,
         values: @escaping (String) -> GridCell,
         comparisonValues: @escaping (SpotForecast, String) -> GridCell,
+        showsComparisonControl: Bool = true,
         background: @escaping (GridCell) -> Color = { _ in .clear },
         in column: GridColumn
     ) -> some View {
@@ -271,8 +273,7 @@ public struct WindguruForecastGridView: View {
         case .labels:
             VStack(spacing: 0) {
                 HStack(spacing: 4) {
-                    label
-                    if isModelComparisonEnabled, viewModel.displayedModelForecasts.count > 1 {
+                    if showsComparisonControl, isModelComparisonEnabled, viewModel.displayedModelForecasts.count > 1 {
                         Button {
                             toggleComparisonRow(id)
                         } label: {
@@ -281,6 +282,7 @@ public struct WindguruForecastGridView: View {
                         .buttonStyle(.plain)
                         .foregroundStyle(.blue)
                     }
+                    label
                 }
                 .font(.caption)
                 .padding(.horizontal, 8)
@@ -313,6 +315,83 @@ public struct WindguruForecastGridView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder private func cloudRows(in column: GridColumn) -> some View {
+        if showsCloudLayers {
+            cloudLayerRows(in: column)
+        } else {
+            gridRow(id: "cloudCover", label: cloudCoverLabel("Cloud cover (%)"), values: { cloudCover($0) }, comparisonValues: { cloudCover($1, source: $0) }, background: cloudColor, in: column)
+        }
+    }
+
+    @ViewBuilder private func cloudLayerRows(in column: GridColumn) -> some View {
+        let isComparisonExpanded = expandedComparisonRows.contains("cloudCover")
+        switch column {
+        case .labels:
+            VStack(spacing: 0) {
+                HStack(spacing: 4) {
+                    if isModelComparisonEnabled, viewModel.displayedModelForecasts.count > 1 {
+                        Button {
+                            toggleComparisonRow("cloudCover")
+                        } label: {
+                            Image(systemName: isComparisonExpanded ? "rectangle.compress.vertical" : "rectangle.expand.vertical")
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.blue)
+                    }
+
+                    Button {
+                        showsCloudLayers.toggle()
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Cloud cover (%)")
+                            Text("high / mid / low")
+                        }
+                        .foregroundStyle(.blue)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .font(.caption)
+                .padding(.horizontal, 8)
+                .frame(width: rowLabelWidth, height: 90, alignment: .leading)
+                .background(gridLabelBackground)
+
+                if isComparisonExpanded {
+                    ForEach(Array(viewModel.displayedModelForecasts.enumerated()), id: \.offset) { _, source in
+                        HStack {
+                            Text(modelName(for: source))
+                                .lineLimit(1)
+                            Spacer(minLength: 0)
+                        }
+                        .font(.caption2)
+                        .padding(.horizontal, 8)
+                        .frame(width: rowLabelWidth, height: 72, alignment: .leading)
+                        .background(gridLabelBackground)
+                    }
+                }
+            }
+        case .value(let hour):
+            VStack(spacing: 0) {
+                cloudLayerValueRows(hour: hour)
+
+                if isComparisonExpanded {
+                    ForEach(Array(viewModel.displayedModelForecasts.enumerated()), id: \.offset) { _, source in
+                        cloudLayerValueRows(hour: hour, source: source, height: 24)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private func cloudLayerValueRows(
+        hour: String,
+        source: SpotForecast? = nil,
+        height: CGFloat = 30
+    ) -> some View {
+        forecastValueCell(hour: hour, values: { cloudCoverHigh($0, source: source) }, background: cloudColor, height: height)
+        forecastValueCell(hour: hour, values: { cloudCoverMid($0, source: source) }, background: cloudColor, height: height)
+        forecastValueCell(hour: hour, values: { cloudCoverLow($0, source: source) }, background: cloudColor, height: height)
     }
 
     private func hourColumn(for hour: String) -> some View {
@@ -391,6 +470,22 @@ public struct WindguruForecastGridView: View {
         .buttonStyle(.plain)
     }
 
+    private func cloudCoverLabel(_ title: String, showsIcon: Bool = true) -> some View {
+        Button {
+            showsCloudLayers.toggle()
+        } label: {
+            if showsIcon {
+                rowLabel(title, icon: "cloud.fill", isInteractive: true)
+            } else {
+                Text(title)
+                    .foregroundStyle(.blue)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Cloud cover")
+        .accessibilityHint(showsCloudLayers ? "Shows total cloud cover" : "Shows high, mid, and low cloud cover")
+    }
+
     private func rowLabel(
         _ title: String,
         compactTitle: String? = nil,
@@ -459,6 +554,23 @@ public struct WindguruForecastGridView: View {
 
     private func cloudCover(_ hour: String, source: SpotForecast? = nil) -> GridCell {
         guard let value = weather(for: source)?.cloudCoverTotal(hh: hour) else { return .empty }
+        return GridCell(value: Double(value), text: "\(value)")
+    }
+
+    private func cloudCoverHigh(_ hour: String, source: SpotForecast? = nil) -> GridCell {
+        cloudCover(weather(for: source)?.cloudCoverHigh(hh: hour))
+    }
+
+    private func cloudCoverMid(_ hour: String, source: SpotForecast? = nil) -> GridCell {
+        cloudCover(weather(for: source)?.cloudCoverMid(hh: hour))
+    }
+
+    private func cloudCoverLow(_ hour: String, source: SpotForecast? = nil) -> GridCell {
+        cloudCover(weather(for: source)?.cloudCoverLow(hh: hour))
+    }
+
+    private func cloudCover(_ value: Int?) -> GridCell {
+        guard let value else { return .empty }
         return GridCell(value: Double(value), text: "\(value)")
     }
 
