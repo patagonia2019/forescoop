@@ -72,6 +72,7 @@ public struct WatchForecastView: View {
                 NavigationLink(value: WatchDestination.settings) { Image(systemName: "gearshape") }.accessibilityLabel("Settings")
                 Button { Task { await loadForecast() } } label: { Image(systemName: "arrow.clockwise") }
                     .accessibilityLabel("Refresh forecast")
+                    .handGestureShortcut(.primaryAction)
                 }
                 .font(.caption)
 

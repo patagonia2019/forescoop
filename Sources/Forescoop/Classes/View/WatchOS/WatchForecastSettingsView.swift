@@ -38,6 +38,14 @@ struct WatchForecastSettingsView: View {
             Picker("Freezing level", selection: $freezingLevelUnitRaw) {
                 ForEach(FreezingLevelUnit.allCases) { unit in Text(unit.label).tag(unit.rawValue) }
             }
+
+            Section {
+                NavigationLink {
+                    WatchAboutView()
+                } label: {
+                    Label("About Ventus", systemImage: "info.circle")
+                }
+            }
         }
         .navigationTitle("Settings")
     }

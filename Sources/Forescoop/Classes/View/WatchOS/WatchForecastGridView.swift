@@ -20,7 +20,7 @@ struct WatchForecastGridView: View {
     var body: some View {
         List {
             if let forecast, let weather = forecast.forecast {
-                Section("Forecast grid") {
+                Section(forecast.asCurrentLocation ?? forecast.displayName) {
                     ForEach(forecast.availableForecastHours, id: \.self) { hour in
                         Button { selectedHour = hour } label: {
                             VStack(alignment: .leading, spacing: 4) {
