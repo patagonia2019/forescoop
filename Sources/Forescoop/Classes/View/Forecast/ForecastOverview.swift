@@ -15,6 +15,7 @@ public struct ForecastOverview: View {
     public let modelForecasts: [SpotForecast]
     public let modelNamesByID: [String: String]
     public let isModelComparisonEnabled: Bool
+    public let showsLocationHeader: Bool
     @Binding public var temperatureUnit: TemperatureUnit
     @State private var showsTemperatureSources = false
     private let onSelectLocation: () -> Void
@@ -30,6 +31,7 @@ public struct ForecastOverview: View {
         modelForecasts: [SpotForecast] = [],
         modelNamesByID: [String: String] = [:],
         isModelComparisonEnabled: Bool = false,
+        showsLocationHeader: Bool = true,
         modelInfoURL: URL = URL(string: "https://www.windguru.cz/help.php?sec=models")!,
         onSelectLocation: @escaping () -> Void,
         onSelectModel: @escaping () -> Void,
@@ -41,6 +43,7 @@ public struct ForecastOverview: View {
         self.modelForecasts = modelForecasts
         self.modelNamesByID = modelNamesByID
         self.isModelComparisonEnabled = isModelComparisonEnabled
+        self.showsLocationHeader = showsLocationHeader
         _temperatureUnit = temperatureUnit
         self.modelInfoURL = modelInfoURL
         self.onSelectLocation = onSelectLocation
@@ -51,16 +54,18 @@ public struct ForecastOverview: View {
     public var body: some View {
         VStack(spacing: 16) {
             VStack(spacing: 4) {
-                ForecastLocationHeader(
-                    locationName: locationName,
-                    onSelectLocation: onSelectLocation,
-                    onShowMap: onShowMap
-                )
+                if showsLocationHeader {
+                    ForecastLocationHeader(
+                        locationName: locationName,
+                        onSelectLocation: onSelectLocation,
+                        onShowMap: onShowMap
+                    )
 
-                if forecast.isCoordinateLocation {
-                    Text(forecast.coordinateSummary)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    if forecast.isCoordinateLocation {
+                        Text(forecast.coordinateSummary)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 HStack(spacing: 6) {

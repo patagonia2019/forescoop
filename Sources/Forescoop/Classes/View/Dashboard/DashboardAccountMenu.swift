@@ -12,9 +12,11 @@ import SwiftUI
 /// The dashboard hamburger menu. The parent owns navigation and session actions.
 struct DashboardAccountMenu: View {
     let isShowingGrid: Bool
+    let isShowingWorkspace: Bool
     let isLoggedIn: Bool
     let onShowDashboard: () -> Void
     let onShowGrid: () -> Void
+    let onShowWorkspace: () -> Void
     let onShowSettings: () -> Void
     let onShowAbout: () -> Void
     let onShowAccount: () -> Void
@@ -23,10 +25,14 @@ struct DashboardAccountMenu: View {
 
     var body: some View {
         Menu {
-            if isShowingGrid {
+            if isShowingGrid || isShowingWorkspace {
                 Button("Forecast Dashboard", systemImage: "rectangle.3.group", action: onShowDashboard)
-            } else {
+            }
+            if !isShowingGrid {
                 Button("Forecast Grid", systemImage: "tablecells", action: onShowGrid)
+            }
+            if !isShowingWorkspace {
+                Button("Grid and Dashboard", systemImage: "rectangle.split.2x1", action: onShowWorkspace)
             }
 
             Divider()
@@ -56,9 +62,11 @@ struct DashboardAccountMenu: View {
 #Preview("Dashboard account menu") {
     DashboardAccountMenu(
         isShowingGrid: false,
+        isShowingWorkspace: false,
         isLoggedIn: true,
         onShowDashboard: {},
         onShowGrid: {},
+        onShowWorkspace: {},
         onShowSettings: {},
         onShowAbout: {},
         onShowAccount: {},

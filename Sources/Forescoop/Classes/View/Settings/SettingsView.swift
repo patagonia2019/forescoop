@@ -12,14 +12,33 @@ import SwiftUI
 public struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding private var weatherBackgroundStyle: WeatherBackgroundStyle
+    @Binding private var forecastViewMode: ForecastViewMode
 
-    public init(weatherBackgroundStyle: Binding<WeatherBackgroundStyle>) {
+    public init(
+        weatherBackgroundStyle: Binding<WeatherBackgroundStyle>,
+        forecastViewMode: Binding<ForecastViewMode>
+    ) {
         _weatherBackgroundStyle = weatherBackgroundStyle
+        _forecastViewMode = forecastViewMode
     }
 
     public var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Picker("Forecast view", selection: $forecastViewMode) {
+                        ForEach(ForecastViewMode.allCases) { mode in
+                            Label(mode.title, systemImage: mode.systemImage)
+                                .tag(mode)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                } header: {
+                    Text("Layout")
+                } footer: {
+                    Text("Choose the default presentation for forecasts on this device.")
+                }
+
                 Section {
                     Picker("Weather background", selection: $weatherBackgroundStyle) {
                         ForEach(WeatherBackgroundStyle.allCases) { style in
@@ -44,9 +63,15 @@ public struct SettingsView: View {
         .onChange(of: weatherBackgroundStyle) { _, style in
             WeatherBackgroundStyleStore.save(style)
         }
+        .onChange(of: forecastViewMode) { _, mode in
+            ForecastViewModeStore.save(mode)
+        }
     }
 }
 
 #Preview {
-    SettingsView(weatherBackgroundStyle: .constant(.lottieAdriana))
+    SettingsView(
+        weatherBackgroundStyle: .constant(.lottieAdriana),
+        forecastViewMode: .constant(.dashboard)
+    )
 }

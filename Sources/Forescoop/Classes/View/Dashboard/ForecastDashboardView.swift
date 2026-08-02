@@ -13,11 +13,6 @@ import SwiftUI
 
 @MainActor
 public struct ForecastDashboardView: View {
-    private enum DashboardContent: Equatable {
-        case dashboard
-        case grid
-    }
-
     private enum DashboardSheet: String, Identifiable, Equatable {
         case spotPicker
         case modelPicker
@@ -42,7 +37,7 @@ public struct ForecastDashboardView: View {
     @StateObject private var viewModel: ForecastDashboardViewModel
     @State private var showsWindDirectionArrow = false
     @State private var activeSheet: DashboardSheet?
-    @State private var content = DashboardContent.dashboard
+    @State private var content: ForecastViewMode
     @State private var weatherBackgroundStyle: WeatherBackgroundStyle
     @State private var showsDashboardModelComparison = false
     @State private var iPadMapPosition: MapCameraPosition = .automatic
@@ -53,6 +48,7 @@ public struct ForecastDashboardView: View {
         self.forecastService = forecastService
         _selectedSpotID = State(initialValue: SelectedWindguruSpotStore.load())
         _weatherBackgroundStyle = State(initialValue: WeatherBackgroundStyleStore.load())
+        _content = State(initialValue: ForecastViewModeStore.load())
         _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
         _account = StateObject(wrappedValue: WindguruAccount())
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
@@ -106,9 +102,11 @@ public struct ForecastDashboardView: View {
     private var accountMenu: some View {
         DashboardAccountMenu(
             isShowingGrid: content == .grid,
+            isShowingWorkspace: content == .workspace,
             isLoggedIn: !account.username.isEmpty,
             onShowDashboard: { content = .dashboard },
             onShowGrid: { content = .grid },
+            onShowWorkspace: { content = .workspace },
             onShowSettings: { activeSheet = .weatherBackgroundSettings },
             onShowAbout: { activeSheet = .about },
             onShowAccount: { activeSheet = .login },
@@ -151,6 +149,8 @@ public struct ForecastDashboardView: View {
                     Group {
                         if content == .grid {
                             forecastGridContent(for: forecast)
+                        } else if content == .workspace {
+                            forecastWorkspaceContent(for: forecast)
                         } else {
                             forecastContent(for: forecast)
                         }
@@ -200,6 +200,7 @@ public struct ForecastDashboardView: View {
                 await loadPreferredForecast()
             }
             .onChange(of: selectedSpotID) { _, spotID in SelectedWindguruSpotStore.save(spotID) }
+            .onChange(of: content) { _, mode in ForecastViewModeStore.save(mode) }
             .sheet(isPresented: sheetBinding(.spotPicker), onDismiss: {
                 refreshSavedMapLocations()
                 Task { await loadFavoriteMapLocations() }
@@ -276,7 +277,10 @@ public struct ForecastDashboardView: View {
                 )
             }
             .sheet(isPresented: sheetBinding(.weatherBackgroundSettings)) {
-                SettingsView(weatherBackgroundStyle: $weatherBackgroundStyle)
+                SettingsView(
+                    weatherBackgroundStyle: $weatherBackgroundStyle,
+                    forecastViewMode: $content
+                )
             }
             .sheet(isPresented: sheetBinding(.about)) {
                 NavigationStack {
@@ -299,7 +303,11 @@ public struct ForecastDashboardView: View {
         }
     }
 
-    private func forecastContent(for forecast: SpotForecast) -> some View {
+    private func forecastContent(
+        for forecast: SpotForecast,
+        includesLocationWorkspace: Bool = true,
+        showsLocationHeader: Bool = true
+    ) -> some View {
         ScrollView {
             VStack(spacing: 28) {
                 ForecastHourSelector(
@@ -309,7 +317,7 @@ public struct ForecastDashboardView: View {
 
                 if usesWideLayout {
                     HStack(alignment: .top, spacing: 56) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, showsLocationHeader: showsLocationHeader, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
                             .frame(maxWidth: .infinity)
 
                         VStack(alignment: .leading, spacing: 28) {
@@ -319,19 +327,21 @@ public struct ForecastDashboardView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    DashboardLocationWorkspace(
-                        savedLocations: savedMapLocations,
-                        favoriteLocations: favoriteLocationsNotSaved,
-                        mapPosition: $iPadMapPosition,
-                        selectedLocationID: $selectedMapLocationID,
-                        selectedHour: selectedHour,
-                        forecast: forecast,
-                        onManageLocations: { activeSheet = .spotPicker },
-                        onSelectLocation: selectMapLocation
-                    )
+                    if includesLocationWorkspace {
+                        DashboardLocationWorkspace(
+                            savedLocations: savedMapLocations,
+                            favoriteLocations: favoriteLocationsNotSaved,
+                            mapPosition: $iPadMapPosition,
+                            selectedLocationID: $selectedMapLocationID,
+                            selectedHour: selectedHour,
+                            forecast: forecast,
+                            onManageLocations: { activeSheet = .spotPicker },
+                            onSelectLocation: selectMapLocation
+                        )
+                    }
                 } else {
                     VStack(spacing: 24) {
-                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
+                        ForecastOverview(forecast: forecast, selectedHour: selectedHour, temperatureUnit: $viewModel.temperatureUnit, coordinateLocationName: coordinateLocationName, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison, showsLocationHeader: showsLocationHeader, onSelectLocation: { activeSheet = .spotPicker }, onSelectModel: { activeSheet = .modelPicker }, onShowMap: { activeSheet = .forecastMap })
                         ForecastWindDetails(forecast: forecast, selectedHour: selectedHour, windSpeedUnit: $viewModel.windSpeedUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
                         ForecastWeatherDetails(forecast: forecast, selectedHour: selectedHour, waveHeightUnit: $viewModel.waveHeightUnit, precipitationUnit: $viewModel.precipitationUnit, freezingLevelUnit: $viewModel.freezingLevelUnit, pressureUnit: $viewModel.pressureUnit, modelForecasts: displayedModelForecasts, modelNamesByID: modelNamesByID, isModelComparisonEnabled: showsDashboardModelComparison)
                     }
@@ -383,10 +393,25 @@ public struct ForecastDashboardView: View {
             onSelectHour: { hour in
                 selectedHour = hour
             },
-            onShowMap: { activeSheet = .forecastMap }
+            onShowMap: { activeSheet = .forecastMap },
+            onModelComparisonChanged: { isEnabled in
+                showsDashboardModelComparison = isEnabled
+            }
         )
         .task(id: availableModelIDs) {
             await viewModel.loadModelNames(for: availableModelIDs)
+        }
+    }
+
+    private func forecastWorkspaceContent(for forecast: SpotForecast) -> some View {
+        ForecastGridDashboardWorkspace {
+            forecastGridContent(for: forecast)
+        } dashboard: {
+            forecastContent(
+                for: forecast,
+                includesLocationWorkspace: false,
+                showsLocationHeader: false
+            )
         }
     }
 

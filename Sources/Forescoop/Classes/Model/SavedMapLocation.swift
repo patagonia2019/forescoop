@@ -165,3 +165,53 @@ public enum WeatherBackgroundStyleStore {
         try? context.save()
     }
 }
+
+/// The primary forecast presentation selected for this device.
+public enum ForecastViewMode: String, CaseIterable, Identifiable, Sendable {
+    case dashboard
+    case grid
+    case workspace
+
+    public var id: String { rawValue }
+
+    public var title: String {
+        switch self {
+        case .dashboard: "Forecast Dashboard"
+        case .grid: "Forecast Grid"
+        case .workspace: "Grid and Dashboard"
+        }
+    }
+
+    public var systemImage: String {
+        switch self {
+        case .dashboard: "rectangle.3.group"
+        case .grid: "tablecells"
+        case .workspace: "rectangle.split.2x1"
+        }
+    }
+}
+
+/// Persists the selected primary forecast presentation independently of a
+/// Windguru account session.
+public enum ForecastViewModeStore {
+    private static let key = "forecastViewMode"
+
+    public static func load() -> ForecastViewMode {
+        let context = ModelContext(SavedMapLocationStore.container)
+        let value = (try? context.fetch(FetchDescriptor<VentusPreferenceRecord>()))?
+            .first(where: { $0.key == key })?
+            .value
+        return value.flatMap(ForecastViewMode.init(rawValue:)) ?? .dashboard
+    }
+
+    public static func save(_ mode: ForecastViewMode) {
+        let context = ModelContext(SavedMapLocationStore.container)
+        if let record = (try? context.fetch(FetchDescriptor<VentusPreferenceRecord>()))?
+            .first(where: { $0.key == key }) {
+            record.value = mode.rawValue
+        } else {
+            context.insert(VentusPreferenceRecord(key: key, value: mode.rawValue))
+        }
+        try? context.save()
+    }
+}

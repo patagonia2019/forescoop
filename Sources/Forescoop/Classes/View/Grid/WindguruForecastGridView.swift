@@ -26,6 +26,7 @@ public struct WindguruForecastGridView: View {
     private let onShowMap: () -> Void
     private let onToggleModel: (String) -> Void
     private let onSelectHour: (String) -> Void
+    private let onModelComparisonChanged: (Bool) -> Void
 
     @State private var expandedComparisonRows = Set<String>()
     @State private var modelComparisonMode: ModelComparisonMode = .off
@@ -44,7 +45,8 @@ public struct WindguruForecastGridView: View {
         onSelectLocation: @escaping () -> Void,
         onToggleModel: @escaping (String) -> Void,
         onSelectHour: @escaping (String) -> Void,
-        onShowMap: @escaping () -> Void = {}
+        onShowMap: @escaping () -> Void = {},
+        onModelComparisonChanged: @escaping (Bool) -> Void = { _ in }
     ) {
         self.forecast = forecast
         self.coordinateLocationName = coordinateLocationName
@@ -56,6 +58,7 @@ public struct WindguruForecastGridView: View {
         self.onShowMap = onShowMap
         self.onToggleModel = onToggleModel
         self.onSelectHour = onSelectHour
+        self.onModelComparisonChanged = onModelComparisonChanged
     }
 
     public var body: some View {
@@ -87,7 +90,9 @@ public struct WindguruForecastGridView: View {
             guard count < 2 else { return }
             modelComparisonMode = .off
             expandedComparisonRows = []
+            onModelComparisonChanged(false)
         }
+        .onAppear { onModelComparisonChanged(isModelComparisonEnabled) }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 if viewModel.displayedModelForecasts.count > 1 {
@@ -227,6 +232,7 @@ public struct WindguruForecastGridView: View {
             modelComparisonMode = .off
             expandedComparisonRows = []
         }
+        onModelComparisonChanged(isModelComparisonEnabled)
     }
 
     private var labelHeader: some View {
