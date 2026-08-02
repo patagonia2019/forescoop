@@ -28,7 +28,7 @@ public struct WindguruForecastGridView: View {
     private let onSelectHour: (String) -> Void
 
     @State private var expandedComparisonRows = Set<String>()
-    @State private var isModelComparisonEnabled = false
+    @State private var modelComparisonMode: ModelComparisonMode = .off
     @State private var showsCloudLayers = false
     @Environment(\.displayScale) private var displayScale
     @State private var horizontalGridOffset: CGFloat = 0
@@ -85,20 +85,17 @@ public struct WindguruForecastGridView: View {
 #endif
         .onChange(of: viewModel.displayedModelForecasts.count) { _, count in
             guard count < 2 else { return }
-            isModelComparisonEnabled = false
+            modelComparisonMode = .off
             expandedComparisonRows = []
         }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 if viewModel.displayedModelForecasts.count > 1 {
                     Button(
-                        "Compare models",
-                        systemImage: "arrow.left.and.right"
+                        modelComparisonMode.title,
+                        systemImage: modelComparisonMode.symbolName
                     ) {
-                        isModelComparisonEnabled.toggle()
-                        if !isModelComparisonEnabled {
-                            expandedComparisonRows = []
-                        }
+                        advanceModelComparisonMode()
                     }
                     .tint(isModelComparisonEnabled ? .accentColor : .secondary)
                 }
@@ -193,10 +190,42 @@ public struct WindguruForecastGridView: View {
     }
 
     private func toggleComparisonRow(_ id: String) {
+        if modelComparisonMode == .all {
+            modelComparisonMode = .selective
+        }
         if expandedComparisonRows.contains(id) {
             expandedComparisonRows.remove(id)
         } else {
             expandedComparisonRows.insert(id)
+        }
+    }
+
+    private var isModelComparisonEnabled: Bool {
+        modelComparisonMode != .off
+    }
+
+    private var comparisonRowIDs: Set<String> {
+        var ids: Set<String> = [
+            "windSpeed", "windGusts", "windDirection", "temperature",
+            "freezingLevel", "cloudCover", "precipitation", "pressure", "humidity"
+        ]
+        if hasWaveData {
+            ids.formUnion(["waveHeight", "wavePeriod", "waveDirection"])
+        }
+        return ids
+    }
+
+    private func advanceModelComparisonMode() {
+        switch modelComparisonMode {
+        case .off:
+            modelComparisonMode = .selective
+            expandedComparisonRows = []
+        case .selective:
+            modelComparisonMode = .all
+            expandedComparisonRows = comparisonRowIDs
+        case .all:
+            modelComparisonMode = .off
+            expandedComparisonRows = []
         }
     }
 
@@ -245,6 +274,28 @@ public struct WindguruForecastGridView: View {
     private enum GridColumn {
         case labels
         case value(String)
+    }
+
+    private enum ModelComparisonMode {
+        case off
+        case selective
+        case all
+
+        var title: String {
+            switch self {
+            case .off: "Compare models"
+            case .selective: "Compare all"
+            case .all: "Stop comparing"
+            }
+        }
+
+        var symbolName: String {
+            switch self {
+            case .off: "arrow.left.and.right"
+            case .selective: "rectangle.expand.vertical"
+            case .all: "rectangle.compress.vertical"
+            }
+        }
     }
 
     @ViewBuilder private func gridRows(in column: GridColumn) -> some View {
