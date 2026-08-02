@@ -19,15 +19,28 @@ public struct ForecastGraphPoint: Identifiable, Sendable {
     }
 }
 
+public struct ForecastGraphSeries: Identifiable, Sendable {
+    public let id: String
+    public let name: String
+    public let points: [ForecastGraphPoint]
+
+    public init(id: String, name: String, points: [ForecastGraphPoint]) {
+        self.id = id
+        self.name = name
+        self.points = points
+    }
+}
+
 /// Self-contained Canvas renderer. This target deliberately depends only on SwiftUI,
 /// allowing Xcode to cache it separately from the forecast dashboard target.
 public struct ForecastGraphCanvas: View {
     public let points: [ForecastGraphPoint]
+    public let comparisonSeries: [ForecastGraphSeries]
     @Binding public var selectedID: String?
     public let windUnitLabel: String
 
-    public init(points: [ForecastGraphPoint], selectedID: Binding<String?>, windUnitLabel: String) {
-        self.points = points; _selectedID = selectedID; self.windUnitLabel = windUnitLabel
+    public init(points: [ForecastGraphPoint], comparisonSeries: [ForecastGraphSeries] = [], selectedID: Binding<String?>, windUnitLabel: String) {
+        self.points = points; self.comparisonSeries = comparisonSeries; _selectedID = selectedID; self.windUnitLabel = windUnitLabel
     }
 
     private var width: CGFloat { max(720, CGFloat(points.count) * 62) }
@@ -46,6 +59,14 @@ public struct ForecastGraphCanvas: View {
             }
             .font(.caption).foregroundStyle(.secondary)
             legend
+            if !comparisonSeries.isEmpty {
+                HStack(spacing: 10) {
+                    ForEach(Array(comparisonSeries.enumerated()), id: \.element.id) { index, series in
+                        ForecastGraphLegendItem(label: series.name, color: comparisonColor(for: index), style: .line)
+                    }
+                }
+                .font(.caption2)
+            }
             ScrollView(.horizontal) {
                 Canvas(opaque: false, colorMode: .linear, rendersAsynchronously: true) { context, size in
                     draw(in: &context, size: size)
@@ -88,7 +109,7 @@ public struct ForecastGraphCanvas: View {
         let wind = CGRect(x: 42, y: 28, width: size.width - 58, height: 240)
         let weather = CGRect(x: 42, y: 334, width: wind.width, height: 165)
         let x: (Int) -> CGFloat = { wind.minX + CGFloat($0) / CGFloat(max(points.count - 1, 1)) * wind.width }
-        let maxGust = max(points.map(\.gust).max() ?? 1, 1)
+        let maxGust = max((points.map(\.gust) + comparisonSeries.flatMap { $0.points.map(\.gust) }).max() ?? 1, 1)
         let windY: (Double) -> CGFloat = { wind.maxY - CGFloat($0 / maxGust) * wind.height }
         let weatherY: (Double) -> CGFloat = { weather.maxY - CGFloat(min(max($0, 0), 100) / 100) * weather.height }
 
@@ -102,6 +123,11 @@ public struct ForecastGraphCanvas: View {
         var gustArea = smoothPath(points.map(\.gust), x: x, y: windY)
         gustArea.addLine(to: CGPoint(x: x(points.count - 1), y: wind.maxY)); gustArea.closeSubpath()
         context.fill(gustArea, with: .linearGradient(Gradient(colors: [.cyan.opacity(0.2), .mint.opacity(0.55), .yellow.opacity(0.7), .orange.opacity(0.8), .pink.opacity(0.9)]), startPoint: CGPoint(x: 0, y: wind.maxY), endPoint: CGPoint(x: 0, y: wind.minY)))
+        for (seriesIndex, series) in comparisonSeries.enumerated() {
+            let valuesByID = Dictionary(uniqueKeysWithValues: series.points.map { ($0.id, $0.wind) })
+            let values = points.map { valuesByID[$0.id] ?? $0.wind }
+            drawLine(values, color: comparisonColor(for: seriesIndex), in: &context, x: x, y: windY)
+        }
         drawLine(points.map(\.wind), color: .primary, in: &context, x: x, y: windY)
 
         for index in points.indices {
@@ -160,6 +186,10 @@ public struct ForecastGraphCanvas: View {
     private func pressureLevel(_ pressure: Double) -> Double {
         guard pressureRange.lowerBound != pressureRange.upperBound, pressure > 0 else { return 50 }
         return 22 + (pressure - pressureRange.lowerBound) / (pressureRange.upperBound - pressureRange.lowerBound) * 58
+    }
+
+    private func comparisonColor(for index: Int) -> Color {
+        [.purple, .orange, .pink, .teal, .indigo][index % 5]
     }
 }
 

@@ -47,7 +47,8 @@ public struct WindguruForecastGridView: View {
         onToggleModel: @escaping (String) -> Void,
         onSelectHour: @escaping (String) -> Void,
         onShowMap: @escaping () -> Void = {},
-        onModelComparisonChanged: @escaping (Bool) -> Void = { _ in }
+        onModelComparisonChanged: @escaping (Bool) -> Void = { _ in },
+        showsModelComparisonInitially: Bool = false
     ) {
         self.forecast = forecast
         self.coordinateLocationName = coordinateLocationName
@@ -60,6 +61,7 @@ public struct WindguruForecastGridView: View {
         self.onToggleModel = onToggleModel
         self.onSelectHour = onSelectHour
         self.onModelComparisonChanged = onModelComparisonChanged
+        _modelComparisonMode = State(initialValue: showsModelComparisonInitially ? .all : .off)
     }
 
     public var body: some View {
@@ -824,23 +826,45 @@ private struct ScrollViewBounceDisabler: UIViewRepresentable {
 #if DEBUG
 
 #Preview("WindguruForecastGridView") {
-    if let forecast = ForecastWindguruMockup().dashboardPreviewForecast {
-        let modelID = forecast.model ?? Model.defaultModel
-        let viewModel = ForecastDashboardViewModel(forecastService: ForecastWindguruMockup())
+    WindguruForecastGridPreview()
+}
+
+private struct WindguruForecastGridPreview: View {
+    private let models: [SpotForecast]
+    private let forecast: SpotForecast?
+    @StateObject private var viewModel: ForecastDashboardViewModel
+
+    init() {
+        let mockup = ForecastWindguruMockup()
+        let models = mockup.dashboardPreviewForecasts
+        self.models = models
+        forecast = models.first
+        let viewModel = ForecastDashboardViewModel(forecastService: mockup)
+        if let forecast = models.first {
+            viewModel.usePreviewForecast(forecast, spotID: forecast.identifier ?? "64141", modelForecasts: models)
+        }
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    var body: some View {
+        if let forecast {
+            let modelIDs = models.compactMap(\.model)
         NavigationStack {
             WindguruForecastGridView(
                 forecast: forecast,
                 viewModel: viewModel,
-                availableModelIDs: [modelID],
-                selectedModelIDs: [modelID],
+                availableModelIDs: modelIDs,
+                selectedModelIDs: modelIDs,
                 showsWindDirectionArrow: .constant(true),
                 onSelectLocation: {},
                 onToggleModel: { _ in },
-                onSelectHour: { _ in }
+                onSelectHour: { _ in },
+                showsModelComparisonInitially: true
             )
         }
-    } else {
-        ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
+        } else {
+            ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
+        }
     }
 }
 

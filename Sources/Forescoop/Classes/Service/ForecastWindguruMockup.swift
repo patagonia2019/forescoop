@@ -16,7 +16,18 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
     /// A synchronous, bundled forecast for SwiftUI previews. It never reaches
     /// Windguru, the credential store, or the network.
     public var dashboardPreviewForecast: SpotForecast? {
-        try? SpotForecast(map: previewForecastMap())
+        dashboardPreviewForecasts.first
+    }
+
+    /// Separate forecast instances keep the model-comparison UI functional in
+    /// previews, just as it is with independently fetched provider models.
+    public var dashboardPreviewForecasts: [SpotForecast] {
+        [
+            try? SpotForecast(map: previewForecastMap(modelID: "3", name: "GFS 13 km", windAdjustment: 0, temperatureAdjustment: 0)),
+            try? SpotForecast(map: previewForecastMap(modelID: "5", name: "ICON 13 km", windAdjustment: 3, temperatureAdjustment: 1.5)),
+            try? SpotForecast(map: previewForecastMap(modelID: "15", name: "GDPS 15 km", windAdjustment: -2, temperatureAdjustment: -1))
+        ]
+        .compactMap { $0 }
     }
     
     public func forecast(bySpotId spotId: String,
@@ -52,7 +63,12 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
 
     /// Kept in code rather than loaded from a package resource because the
     /// Xcode preview agent does not consistently mount SwiftPM resource bundles.
-    private func previewForecastMap() -> [String: Any] {
+    private func previewForecastMap(
+        modelID: String,
+        name: String,
+        windAdjustment: Double,
+        temperatureAdjustment: Double
+    ) -> [String: Any] {
         let hours = Array(0...72)
         func values(_ transform: (Int) -> Any) -> [String: Any] {
             Dictionary(uniqueKeysWithValues: hours.map { (String($0), transform($0)) })
@@ -61,16 +77,16 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
         let model: [String: Any] = [
             "initstamp": 1_786_000_000,
             "initdate": "2026-08-02 00:00:00",
-            "model_name": "GFS 13 km",
+            "model_name": name,
             // Forecast's wind accessors expose `Double` values. Keep the
             // inline preview map faithful to decoded API data so charts and
             // detail views receive the same non-zero values as the grid.
-            "WINDSPD": values { Double(8 + ($0 % 6)) },
-            "GUST": values { Double(13 + ($0 % 8)) },
+            "WINDSPD": values { Double(8 + ($0 % 6)) + windAdjustment },
+            "GUST": values { Double(13 + ($0 % 8)) + windAdjustment },
             "WINDDIR": values { Double(240 + ($0 % 5) * 12) },
             "WINDIRNAME": values { _ in "WSW" },
-            "TMP": values { -3 + Double($0 % 8) * 0.8 },
-            "TMPE": values { -4 + Double($0 % 8) * 0.8 },
+            "TMP": values { -3 + Double($0 % 8) * 0.8 + temperatureAdjustment },
+            "TMPE": values { -4 + Double($0 % 8) * 0.8 + temperatureAdjustment },
             "TCDC": values { 72 + ($0 % 4) * 7 },
             "HCDC": values { 45 + ($0 % 5) * 5 },
             "MCDC": values { 55 + ($0 % 4) * 6 },
@@ -97,9 +113,9 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
             "gmt_hour_offset": -3,
             "sunrise": "08:30",
             "sunset": "18:45",
-            "models": [3],
+            "models": [Int(modelID) ?? 3],
             "tides": "0",
-            "forecast": ["3": model]
+            "forecast": [modelID: model]
         ]
     }
 

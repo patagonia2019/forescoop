@@ -51,7 +51,8 @@ public struct ForecastDashboardView: View {
         forecastService: ForecastWindguruProtocol = ForecastWindguruService(),
         initialViewMode: ForecastViewMode? = nil,
         initialWeatherBackgroundStyle: WeatherBackgroundStyle? = nil,
-        previewForecast: SpotForecast? = nil
+        previewForecast: SpotForecast? = nil,
+        previewModelForecasts: [SpotForecast] = []
     ) {
         self.forecastService = forecastService
         usesPreviewForecast = previewForecast != nil
@@ -64,9 +65,10 @@ public struct ForecastDashboardView: View {
         _content = State(initialValue: initialViewMode ?? ForecastViewModeStore.load())
         let viewModel = ForecastDashboardViewModel(forecastService: forecastService)
         if let previewForecast {
-            viewModel.usePreviewForecast(previewForecast, spotID: initialSpotID)
+            viewModel.usePreviewForecast(previewForecast, spotID: initialSpotID, modelForecasts: previewModelForecasts)
         }
         _viewModel = StateObject(wrappedValue: viewModel)
+        _showsDashboardModelComparison = State(initialValue: previewModelForecasts.count > 1)
         _account = StateObject(wrappedValue: WindguruAccount())
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
         favoriteSpotsLoader = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
@@ -175,7 +177,10 @@ public struct ForecastDashboardView: View {
                             ForecastGraphView(
                                 forecast: forecast,
                                 selectedHour: selectedHourBinding,
-                                windSpeedUnit: $viewModel.windSpeedUnit
+                                windSpeedUnit: $viewModel.windSpeedUnit,
+                                modelForecasts: displayedModelForecasts,
+                                modelNamesByID: modelNamesByID,
+                                isModelComparisonEnabled: $showsDashboardModelComparison
                             )
                         } else {
                             forecastContent(for: forecast)
@@ -221,7 +226,7 @@ public struct ForecastDashboardView: View {
                         Button("Refresh", systemImage: "arrow.clockwise") {
                             Task { await loadForecast() }
                         }
-                        if content == .dashboard, displayedModelForecasts.count > 1 {
+                        if (content == .dashboard || content == .graph), displayedModelForecasts.count > 1 {
                             Button("Compare models", systemImage: "arrow.left.and.right") {
                                 showsDashboardModelComparison.toggle()
                             }
@@ -455,7 +460,8 @@ public struct ForecastDashboardView: View {
             onShowMap: { activeSheet = .forecastMap },
             onModelComparisonChanged: { isEnabled in
                 showsDashboardModelComparison = isEnabled
-            }
+            },
+            showsModelComparisonInitially: usesPreviewForecast && displayedModelForecasts.count > 1
         )
         .task(id: availableModelIDs) {
             await viewModel.loadModelNames(for: availableModelIDs)
@@ -692,11 +698,13 @@ public struct ForecastDashboardView: View {
 }
 
 #Preview("Forecast Dashboard · macOS", traits: .fixedLayout(width: 1_280, height: 900)) {
+    let mockup = ForecastWindguruMockup()
     ForecastDashboardView(
-        forecastService: ForecastWindguruMockup(),
+        forecastService: mockup,
         initialViewMode: .dashboard,
         initialWeatherBackgroundStyle: .animated,
-        previewForecast: ForecastWindguruMockup().dashboardPreviewForecast
+        previewForecast: mockup.dashboardPreviewForecast,
+        previewModelForecasts: mockup.dashboardPreviewForecasts
     )
 }
 #endif

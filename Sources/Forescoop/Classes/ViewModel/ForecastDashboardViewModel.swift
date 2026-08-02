@@ -144,15 +144,16 @@ public final class ForecastDashboardViewModel: ObservableObject {
 
     /// Sets deterministic, already-loaded content for an Xcode preview.
     /// Preview rendering must not depend on credentials or network requests.
-    func usePreviewForecast(_ forecast: SpotForecast, spotID: String) {
-        self.forecast = forecast
+    func usePreviewForecast(_ forecast: SpotForecast, spotID: String, modelForecasts: [SpotForecast] = []) {
+        let sources = modelForecasts.isEmpty ? [forecast] : modelForecasts
+        self.forecast = (try? SpotForecast.blended(sources)) ?? forecast
         coordinateLocationName = nil
         errorMessage = nil
         isLoading = false
         displayedForecastSpotID = spotID
 
-        let modelIDs = [forecast.model ?? Model.defaultModel]
-        displayedModelForecasts = [forecast]
+        let modelIDs = sources.compactMap(\.model)
+        displayedModelForecasts = sources
         usableModelIDs = modelIDs
         selectedModelIDs = modelIDs
         modelIDsBySpot[spotID] = modelIDs
