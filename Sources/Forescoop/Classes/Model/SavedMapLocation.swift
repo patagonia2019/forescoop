@@ -211,6 +211,7 @@ public enum ForecastViewMode: String, CaseIterable, Identifiable, Sendable {
     case dashboard
     case grid
     case workspace
+    case graph
 
     public var id: String { rawValue }
 
@@ -219,6 +220,7 @@ public enum ForecastViewMode: String, CaseIterable, Identifiable, Sendable {
         case .dashboard: "Forecast Dashboard"
         case .grid: "Forecast Grid"
         case .workspace: "Grid and Dashboard"
+        case .graph: "Forecast Graph"
         }
     }
 
@@ -227,6 +229,7 @@ public enum ForecastViewMode: String, CaseIterable, Identifiable, Sendable {
         case .dashboard: "rectangle.3.group"
         case .grid: "tablecells"
         case .workspace: "rectangle.split.2x1"
+        case .graph: "chart.xyaxis.line"
         }
     }
 }

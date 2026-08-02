@@ -29,8 +29,12 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "ForescoopGraph",
+            path: "Sources/ForescoopGraph"),
+        .target(
             name: "Forescoop",
             dependencies: [
+                "ForescoopGraph",
                 .product(
                     name: "Lottie",
                     package: "lottie-spm",

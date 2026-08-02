@@ -13,10 +13,12 @@ import SwiftUI
 struct DashboardAccountMenu: View {
     let isShowingGrid: Bool
     let isShowingWorkspace: Bool
+    let isShowingGraph: Bool
     let isLoggedIn: Bool
     let onShowDashboard: () -> Void
     let onShowGrid: () -> Void
     let onShowWorkspace: () -> Void
+    let onShowGraph: () -> Void
     let onShowSettings: () -> Void
     let onShowHelp: () -> Void
     let onShowAbout: () -> Void
@@ -26,7 +28,7 @@ struct DashboardAccountMenu: View {
 
     var body: some View {
         Menu {
-            if isShowingGrid || isShowingWorkspace {
+            if isShowingGrid || isShowingWorkspace || isShowingGraph {
                 Button("Forecast Dashboard", systemImage: "rectangle.3.group", action: onShowDashboard)
             }
             if !isShowingGrid {
@@ -34,6 +36,9 @@ struct DashboardAccountMenu: View {
             }
             if !isShowingWorkspace {
                 Button("Grid and Dashboard", systemImage: "rectangle.split.2x1", action: onShowWorkspace)
+            }
+            if !isShowingGraph {
+                Button("Forecast Graph", systemImage: "chart.xyaxis.line", action: onShowGraph)
             }
 
             Divider()
@@ -65,10 +70,12 @@ struct DashboardAccountMenu: View {
     DashboardAccountMenu(
         isShowingGrid: false,
         isShowingWorkspace: false,
+        isShowingGraph: false,
         isLoggedIn: true,
         onShowDashboard: {},
         onShowGrid: {},
         onShowWorkspace: {},
+        onShowGraph: {},
         onShowSettings: {},
         onShowHelp: {},
         onShowAbout: {},

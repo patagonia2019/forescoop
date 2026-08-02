@@ -62,9 +62,12 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
             "initstamp": 1_786_000_000,
             "initdate": "2026-08-02 00:00:00",
             "model_name": "GFS 13 km",
-            "WINDSPD": values { 8 + ($0 % 6) },
-            "GUST": values { 13 + ($0 % 8) },
-            "WINDDIR": values { 240 + ($0 % 5) * 12 },
+            // Forecast's wind accessors expose `Double` values. Keep the
+            // inline preview map faithful to decoded API data so charts and
+            // detail views receive the same non-zero values as the grid.
+            "WINDSPD": values { Double(8 + ($0 % 6)) },
+            "GUST": values { Double(13 + ($0 % 8)) },
+            "WINDDIR": values { Double(240 + ($0 % 5) * 12) },
             "WINDIRNAME": values { _ in "WSW" },
             "TMP": values { -3 + Double($0 % 8) * 0.8 },
             "TMPE": values { -4 + Double($0 % 8) * 0.8 },
@@ -76,10 +79,10 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
             "APCP": values { $0 % 5 == 0 ? 1.4 : 0.0 },
             "APCP1": values { $0 % 5 == 0 ? 0.7 : 0.0 },
             "SLP": values { 1_012 + Double($0 % 7) },
-            "FLHGT": values { 900 + ($0 % 6) * 80 },
+            "FLHGT": values { Double(900 + ($0 % 6) * 80) },
             "HTSGW": values { 0.8 + Double($0 % 4) * 0.2 },
-            "WVPER": values { 6 + ($0 % 3) },
-            "WVDIR": values { 220 + ($0 % 5) * 10 }
+            "WVPER": values { Double(6 + ($0 % 3)) },
+            "WVDIR": values { Double(220 + ($0 % 5) * 10) }
         ]
 
         return [

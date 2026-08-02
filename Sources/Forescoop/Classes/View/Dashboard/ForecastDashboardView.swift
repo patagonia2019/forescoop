@@ -120,10 +120,12 @@ public struct ForecastDashboardView: View {
         DashboardAccountMenu(
             isShowingGrid: content == .grid,
             isShowingWorkspace: content == .workspace,
+            isShowingGraph: content == .graph,
             isLoggedIn: !account.username.isEmpty,
             onShowDashboard: { content = .dashboard },
             onShowGrid: { content = .grid },
             onShowWorkspace: { content = .workspace },
+            onShowGraph: { content = .graph },
             onShowSettings: { activeSheet = .weatherBackgroundSettings },
             onShowHelp: { activeSheet = .help },
             onShowAbout: { activeSheet = .about },
@@ -169,12 +171,27 @@ public struct ForecastDashboardView: View {
                             forecastGridContent(for: forecast)
                         } else if content == .workspace {
                             forecastWorkspaceContent(for: forecast)
+                        } else if content == .graph {
+                            ForecastGraphView(
+                                forecast: forecast,
+                                selectedHour: selectedHourBinding,
+                                windSpeedUnit: $viewModel.windSpeedUnit
+                            )
                         } else {
                             forecastContent(for: forecast)
                         }
                     }
                     .background {
-                        weatherBackground(for: forecast)
+                        if content == .graph {
+                            // A graph needs a quiet surface. More importantly,
+                            // keeping animated weather renderers out of this
+                            // destination lets its SwiftUI preview update
+                            // independently and quickly.
+                            theme.backgroundColor
+                                .ignoresSafeArea()
+                        } else {
+                            weatherBackground(for: forecast)
+                        }
                     }
                 } else if isLoading {
                     ProgressView("Loading forecast…")
