@@ -188,6 +188,24 @@ enum VentusPreferenceStore {
     }
 }
 
+/// Persists the movable split between the forecast grid and dashboard.
+enum ForecastWorkspaceSplitStore {
+    private static let wideKey = "forecastWorkspaceWideSplit"
+    private static let tallKey = "forecastWorkspaceTallSplit"
+
+    static func load(isWide: Bool) -> CGFloat {
+        let key = isWide ? wideKey : tallKey
+        let fallback: CGFloat = isWide ? 0.56 : 0.52
+        guard let value = VentusPreferenceStore.value(forKey: key),
+              let fraction = Double(value) else { return fallback }
+        return min(max(CGFloat(fraction), 0.25), 0.75)
+    }
+
+    static func save(_ fraction: CGFloat, isWide: Bool) {
+        VentusPreferenceStore.save(String(Double(fraction)), forKey: isWide ? wideKey : tallKey)
+    }
+}
+
 /// The primary forecast presentation selected for this device.
 public enum ForecastViewMode: String, CaseIterable, Identifiable, Sendable {
     case dashboard
