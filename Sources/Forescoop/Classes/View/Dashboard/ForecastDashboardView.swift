@@ -359,11 +359,15 @@ public struct ForecastDashboardView: View {
 
     @ViewBuilder
     private func weatherBackground(for forecast: SpotForecast) -> some View {
-        WeatherBackgroundRenderer(
-            style: weatherBackgroundStyle,
-            forecast: forecast,
-            hour: selectedHour
-        )
+        ZStack {
+            theme.backgroundColor
+            WeatherBackgroundRenderer(
+                style: weatherBackgroundStyle,
+                forecast: forecast,
+                hour: selectedHour
+            )
+            .opacity(theme.weatherBackgroundOpacity)
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
     }

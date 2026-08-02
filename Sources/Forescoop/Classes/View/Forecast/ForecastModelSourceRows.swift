@@ -11,6 +11,7 @@ import SwiftUI
 
 /// An inline disclosure that shows the selected models' source values for one forecast metric.
 public struct ForecastModelSourceRows: View {
+    @Environment(\.ventusTheme) private var theme
     public let forecasts: [SpotForecast]
     public let modelNamesByID: [String: String]
     public let isEnabled: Bool
@@ -38,7 +39,7 @@ public struct ForecastModelSourceRows: View {
                         isExpanded.toggle()
                     }
                     .labelStyle(.iconOnly)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(theme.accentColor)
                 }
 
                 if isExpanded {

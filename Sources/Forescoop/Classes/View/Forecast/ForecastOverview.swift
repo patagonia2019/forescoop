@@ -9,6 +9,7 @@
 import SwiftUI
 
 public struct ForecastOverview: View {
+    @Environment(\.ventusTheme) private var theme
     public let forecast: SpotForecast
     public let selectedHour: String?
     public let coordinateLocationName: String?
@@ -105,7 +106,7 @@ public struct ForecastOverview: View {
                     ) {
                         Label(temperature, systemImage: "thermometer.medium")
                             .font(.system(size: 44, weight: .semibold))
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(theme.accentColor)
                     }
                     .accessibilityLabel("Temperature")
 
@@ -114,7 +115,7 @@ public struct ForecastOverview: View {
                             showsTemperatureSources.toggle()
                         }
                         .labelStyle(.iconOnly)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(theme.accentColor)
                     }
                 }
 

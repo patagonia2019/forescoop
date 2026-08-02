@@ -18,6 +18,7 @@ struct ForecastModelOption: Identifiable {
 
 /// Reusable model rows for both the modal picker and inline forecast grid.
 struct ForecastModelSelectionList: View {
+    @Environment(\.ventusTheme) private var theme
     let models: [ForecastModelOption]
     let selectedModelIDs: Set<String>
     let minimumSelectionCount: Int
@@ -54,7 +55,7 @@ struct ForecastModelSelectionList: View {
                     .contentShape(.rect)
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(isSelected ? .blue : .primary)
+                .foregroundStyle(isSelected ? theme.accentColor : Color.primary)
 
                 if showsDividers, model.identifier != models.last?.identifier {
                     Divider()

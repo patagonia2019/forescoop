@@ -9,6 +9,7 @@
 import SwiftUI
 
 public struct ForecastWeatherDetails: View {
+    @Environment(\.ventusTheme) private var theme
     public let forecast: SpotForecast
     public let selectedHour: String?
     @Binding public var waveHeightUnit: WaveHeightUnit
@@ -82,7 +83,7 @@ public struct ForecastWeatherDetails: View {
                 }
             } label: {
                 Label("Precipitation", systemImage: "cloud.rain")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(theme.accentColor)
             }
         }
     }
@@ -96,7 +97,7 @@ public struct ForecastWeatherDetails: View {
             ) {
                 LabeledContent { Text(waveHeightText(waveHeight)) } label: {
                     Label("Wave", systemImage: "water.waves")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(theme.accentColor)
                 }
             }
         }
@@ -126,7 +127,7 @@ public struct ForecastWeatherDetails: View {
         ) {
             LabeledContent { Text(freezingLevel) } label: {
                 Label("Freezing level", systemImage: "ruler")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(theme.accentColor)
             }
         }
     }
@@ -139,7 +140,7 @@ public struct ForecastWeatherDetails: View {
         ) {
             LabeledContent { Text(pressure) } label: {
                 Label("Sea level pressure", systemImage: "gauge.medium")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(theme.accentColor)
             }
         }
     }
@@ -150,7 +151,7 @@ public struct ForecastWeatherDetails: View {
                 showsCloudLayers.toggle()
             } label: {
                 Label("Cloud", systemImage: "cloud.fill")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(theme.accentColor)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Cloud cover")

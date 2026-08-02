@@ -9,6 +9,7 @@
 import SwiftUI
 
 public struct ForecastWindDetails: View {
+    @Environment(\.ventusTheme) private var theme
     public let forecast: SpotForecast
     public let selectedHour: String?
     @Binding public var windSpeedUnit: WindSpeedUnit
@@ -41,7 +42,7 @@ public struct ForecastWindDetails: View {
             ) {
                 LabeledContent { Text(windSpeed(weather?.windSpeed(hh: hour))) } label: {
                     Label("Wind speed", systemImage: "wind")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(theme.accentColor)
                 }
             }
             .accessibilityLabel("Wind speed")
@@ -56,7 +57,7 @@ public struct ForecastWindDetails: View {
             ) {
                 LabeledContent { Text(windSpeed(weather?.windGustsKnots(hh: hour))) } label: {
                     Label("Wind gusts", systemImage: "wind.circle.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(theme.accentColor)
                 }
             }
             .accessibilityLabel("Wind gusts")

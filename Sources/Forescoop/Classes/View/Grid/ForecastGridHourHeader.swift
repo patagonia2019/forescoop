@@ -41,6 +41,7 @@ struct ForecastGridHourHeader: View {
 /// A single interactive day/hour/weather header cell that can also be composed
 /// with its data column for one continuous selection outline.
 struct ForecastGridHourCell: View {
+    @Environment(\.ventusTheme) private var theme
     let hour: String
     let columnWidth: CGFloat
     let height: CGFloat
@@ -67,10 +68,10 @@ struct ForecastGridHourCell: View {
                 .foregroundStyle(.secondary)
             }
             .frame(width: columnWidth, height: height)
-            .background(isSelected ? Color.blue.opacity(0.18) : Color.secondary.opacity(0.12))
+            .background(isSelected ? theme.accentColor.opacity(0.18) : Color.secondary.opacity(0.12))
         }
         .buttonStyle(.plain)
-        .foregroundStyle(.blue)
+        .foregroundStyle(theme.accentColor)
     }
 }
 

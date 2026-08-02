@@ -343,7 +343,7 @@ public struct WindguruForecastGridView: View {
                             Image(systemName: isExpanded ? "rectangle.compress.vertical" : "rectangle.expand.vertical")
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(theme.accentColor)
                     }
                     label
                 }
@@ -401,7 +401,7 @@ public struct WindguruForecastGridView: View {
                             Image(systemName: isComparisonExpanded ? "rectangle.compress.vertical" : "rectangle.expand.vertical")
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(theme.accentColor)
                     }
 
                     Button {
@@ -415,7 +415,7 @@ public struct WindguruForecastGridView: View {
                             Text("high / mid / low")
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(theme.accentColor)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.plain)
@@ -490,7 +490,7 @@ public struct WindguruForecastGridView: View {
         .overlay {
             if viewModel.selectedHour == hour {
                 RoundedRectangle(cornerRadius: 3)
-                    .stroke(.blue, lineWidth: 2)
+                    .stroke(theme.accentColor, lineWidth: 2)
             }
         }
     }
@@ -545,7 +545,7 @@ public struct WindguruForecastGridView: View {
                 rowLabel(title, icon: "cloud.fill", isInteractive: true)
             } else {
                 Text(title)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(theme.accentColor)
             }
         }
         .buttonStyle(.plain)
@@ -572,7 +572,7 @@ public struct WindguruForecastGridView: View {
                 }
             }
         }
-        .foregroundStyle(isInteractive ? .blue : .primary)
+        .foregroundStyle(isInteractive ? theme.accentColor : Color.primary)
     }
 
     /// A fixed symbol slot keeps every row title aligned despite SF Symbols
