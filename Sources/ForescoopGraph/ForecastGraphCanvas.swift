@@ -1,35 +1,12 @@
+//
+//  ForecastGraphCanvas.swift
+//  ForescoopGraph package
+//
+//  Created by Javier on 08/02/26.
+//  Copyright © 2026 Mobile Patagonia. All rights reserved.
+//
+
 import SwiftUI
-
-public struct ForecastGraphPoint: Identifiable, Sendable {
-    public let id: String
-    public let date: Date
-    public let wind: Double
-    public let gust: Double
-    public let direction: Double?
-    public let cloudCover: Double
-    public let humidity: Double
-    public let pressure: Double
-    public let temperature: Double
-    public let precipitation: Double
-
-    public init(id: String, date: Date, wind: Double, gust: Double, direction: Double?, cloudCover: Double, humidity: Double, pressure: Double, temperature: Double, precipitation: Double) {
-        self.id = id; self.date = date; self.wind = wind; self.gust = gust; self.direction = direction
-        self.cloudCover = cloudCover; self.humidity = humidity; self.pressure = pressure
-        self.temperature = temperature; self.precipitation = precipitation
-    }
-}
-
-public struct ForecastGraphSeries: Identifiable, Sendable {
-    public let id: String
-    public let name: String
-    public let points: [ForecastGraphPoint]
-
-    public init(id: String, name: String, points: [ForecastGraphPoint]) {
-        self.id = id
-        self.name = name
-        self.points = points
-    }
-}
 
 /// Self-contained Canvas renderer. This target deliberately depends only on SwiftUI,
 /// allowing Xcode to cache it separately from the forecast dashboard target.
@@ -52,12 +29,12 @@ public struct ForecastGraphCanvas: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 12) {
-                Label("Wind", systemImage: "chart.line.uptrend.xyaxis")
-                Label("Gusts", systemImage: "wind")
-                Label("Cloud · humidity · pressure · temperature · rain", systemImage: "chart.bar.xaxis")
-            }
-            .font(.caption).foregroundStyle(.secondary)
+//            HStack(spacing: 12) {
+//                Label("Wind", systemImage: "chart.line.uptrend.xyaxis")
+//                Label("Gusts", systemImage: "wind")
+//                Label("Cloud · humidity · pressure · temperature · rain", systemImage: "chart.bar.xaxis")
+//            }
+//            .font(.caption).foregroundStyle(.secondary)
             legend
             if !comparisonSeries.isEmpty {
                 HStack(spacing: 10) {
@@ -190,39 +167,5 @@ public struct ForecastGraphCanvas: View {
 
     private func comparisonColor(for index: Int) -> Color {
         [.purple, .orange, .pink, .teal, .indigo][index % 5]
-    }
-}
-
-private struct ForecastGraphLegendItem: View {
-    enum Style { case line, area, dot, bar, arrow, gustGradient }
-
-    let label: String
-    var color: Color = .clear
-    let style: Style
-
-    var body: some View {
-        HStack(spacing: 5) {
-            swatch.frame(width: 22, height: 12)
-            Text(label).lineLimit(1)
-        }
-        .accessibilityElement(children: .combine)
-    }
-
-    @ViewBuilder private var swatch: some View {
-        switch style {
-        case .line:
-            Capsule().fill(color).frame(height: 2)
-        case .area:
-            RoundedRectangle(cornerRadius: 2).fill(color)
-        case .dot:
-            Circle().fill(color)
-        case .bar:
-            RoundedRectangle(cornerRadius: 1).fill(color).frame(width: 5)
-        case .arrow:
-            Image(systemName: "arrow.down").foregroundStyle(color)
-        case .gustGradient:
-            RoundedRectangle(cornerRadius: 2)
-                .fill(LinearGradient(colors: [.cyan, .mint, .yellow, .orange, .pink], startPoint: .leading, endPoint: .trailing))
-        }
     }
 }
