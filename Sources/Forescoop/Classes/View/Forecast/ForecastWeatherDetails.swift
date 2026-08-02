@@ -64,11 +64,11 @@ public struct ForecastWeatherDetails: View {
     private var weather: Forecast? { forecast.forecast }
 
     private var precipitationRow: some View {
-        Menu {
-            Picker("Precipitation unit", selection: $precipitationUnit) {
-                ForEach(PrecipitationUnit.allCases) { unit in Text(unit.label).tag(unit) }
-            }
-        } label: {
+        ForecastUnitSelector(
+            "Precipitation unit",
+            selection: $precipitationUnit,
+            unitTitle: \.label
+        ) {
             LabeledContent {
                 HStack(spacing: 6) {
                     precipitationIndicator
@@ -76,19 +76,21 @@ public struct ForecastWeatherDetails: View {
                 }
             } label: {
                 Label("Precipitation", systemImage: "cloud.rain")
+                    .foregroundStyle(.blue)
             }
         }
     }
 
     @ViewBuilder private var waveRows: some View {
         if let waveHeight = weather?.waveHeight(hh: hour) {
-            Menu {
-                Picker("Wave height unit", selection: $waveHeightUnit) {
-                    ForEach(WaveHeightUnit.allCases) { unit in Text(unit.label).tag(unit) }
-                }
-            } label: {
+            ForecastUnitSelector(
+                "Wave height unit",
+                selection: $waveHeightUnit,
+                unitTitle: \.label
+            ) {
                 LabeledContent { Text(waveHeightText(waveHeight)) } label: {
                     Label("Wave", systemImage: "water.waves")
+                        .foregroundStyle(.blue)
                 }
             }
         }
@@ -111,22 +113,28 @@ public struct ForecastWeatherDetails: View {
     }
 
     private var freezingLevelRow: some View {
-        Menu {
-            Picker("Freezing level unit", selection: $freezingLevelUnit) {
-                ForEach(FreezingLevelUnit.allCases) { unit in Text(unit.label).tag(unit) }
+        ForecastUnitSelector(
+            "Freezing level unit",
+            selection: $freezingLevelUnit,
+            unitTitle: \.label
+        ) {
+            LabeledContent { Text(freezingLevel) } label: {
+                Label("Freezing level", systemImage: "ruler")
+                    .foregroundStyle(.blue)
             }
-        } label: {
-            LabeledContent { Text(freezingLevel) } label: { Label("Freezing level", systemImage: "ruler") }
         }
     }
 
     private var pressureRow: some View {
-        Menu {
-            Picker("Pressure unit", selection: $pressureUnit) {
-                ForEach(PressureUnit.allCases) { unit in Text(unit.label).tag(unit) }
+        ForecastUnitSelector(
+            "Pressure unit",
+            selection: $pressureUnit,
+            unitTitle: \.label
+        ) {
+            LabeledContent { Text(pressure) } label: {
+                Label("Sea level pressure", systemImage: "gauge.medium")
+                    .foregroundStyle(.blue)
             }
-        } label: {
-            LabeledContent { Text(pressure) } label: { Label("Sea level pressure", systemImage: "gauge.medium") }
         }
     }
 

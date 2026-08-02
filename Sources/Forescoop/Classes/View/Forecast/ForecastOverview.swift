@@ -93,15 +93,14 @@ public struct ForecastOverview: View {
 
             VStack(spacing: 8) {
                 HStack(spacing: 12) {
-                    Menu {
-                        Picker("Temperature unit", selection: $temperatureUnit) {
-                            ForEach(TemperatureUnit.allCases) { unit in
-                                Text(unit.label).tag(unit)
-                            }
-                        }
-                    } label: {
+                    ForecastUnitSelector(
+                        "Temperature unit",
+                        selection: $temperatureUnit,
+                        unitTitle: \.label
+                    ) {
                         Label(temperature, systemImage: "thermometer.medium")
                             .font(.system(size: 44, weight: .semibold))
+                            .foregroundStyle(.blue)
                     }
                     .accessibilityLabel("Temperature")
 

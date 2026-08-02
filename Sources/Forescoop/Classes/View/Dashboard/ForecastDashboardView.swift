@@ -182,15 +182,14 @@ public struct ForecastDashboardView: View {
 #endif
                 ToolbarItem(placement: .primaryAction) {
                     HStack {
+                        Button("Refresh", systemImage: "arrow.clockwise") {
+                            Task { await loadForecast() }
+                        }
                         if content == .dashboard, displayedModelForecasts.count > 1 {
                             Button("Compare models", systemImage: "arrow.left.and.right") {
                                 showsDashboardModelComparison.toggle()
                             }
                             .tint(showsDashboardModelComparison ? .accentColor : .secondary)
-                        }
-
-                        Button("Refresh", systemImage: "arrow.clockwise") {
-                            Task { await loadForecast() }
                         }
                     }
                 }
@@ -383,7 +382,6 @@ public struct ForecastDashboardView: View {
             },
             onSelectHour: { hour in
                 selectedHour = hour
-                content = .dashboard
             },
             onShowMap: { activeSheet = .forecastMap }
         )

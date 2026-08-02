@@ -37,15 +37,14 @@ public struct ForecastWindDetails: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Menu {
-                Picker("Wind speed unit", selection: $windSpeedUnit) {
-                    ForEach(WindSpeedUnit.allCases) { unit in
-                        Text(unit.label).tag(unit)
-                    }
-                }
-            } label: {
+            ForecastUnitSelector(
+                "Wind speed unit",
+                selection: $windSpeedUnit,
+                unitTitle: \.label
+            ) {
                 LabeledContent { Text(windSpeed(weather?.windSpeed(hh: hour))) } label: {
                     Label("Wind speed", systemImage: "wind")
+                        .foregroundStyle(.blue)
                 }
             }
             .accessibilityLabel("Wind speed")
@@ -71,12 +70,12 @@ public struct ForecastWindDetails: View {
                         Text(weather?.windDirectionName(hh: hour) ?? "—")
                     }
                 }
-                .foregroundColor(.blue)
                 .buttonStyle(.plain)
                 .accessibilityLabel("Wind direction")
                 .accessibilityHint("Shows the direction as an arrow")
             } label: {
                 Label("Wind direction", systemImage: "location.north.line")
+                    .foregroundStyle(.blue)
             }
             ForecastModelSourceRows(forecasts: modelForecasts, modelNamesByID: modelNamesByID, isEnabled: isModelComparisonEnabled) {
                 $0.forecast?.windDirectionName(hh: hour) ?? "—"

@@ -62,18 +62,22 @@ public struct WeatherBackgroundRenderer: View {
         self.hour = hour
     }
 
-    @ViewBuilder public var body: some View {
-        switch style {
-        case .animated:
-            AnimatedWeatherBackground(forecast: forecast, hour: hour)
-        case .metal:
-            MetalWeatherBackground(forecast: forecast, hour: hour)
-        case .spriteKit:
-            SpriteKitWeatherBackground(forecast: forecast, hour: hour)
-        case .lottieAdriana:
-            LottieWeatherBackground(forecast: forecast, hour: hour, theme: .adrianaMandjarova)
-        case .lottieAsad:
-            LottieWeatherBackground(forecast: forecast, hour: hour, theme: .asadAwan)
+    public var body: some View {
+        Group {
+            switch style {
+            case .animated:
+                AnimatedWeatherBackground(forecast: forecast, hour: hour)
+            case .metal:
+                MetalWeatherBackground(forecast: forecast, hour: hour)
+            case .spriteKit:
+                SpriteKitWeatherBackground(forecast: forecast, hour: hour)
+            case .lottieAdriana:
+                LottieWeatherBackground(forecast: forecast, hour: hour, theme: .adrianaMandjarova)
+            case .lottieAsad:
+                LottieWeatherBackground(forecast: forecast, hour: hour, theme: .asadAwan)
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipped()
     }
 }
