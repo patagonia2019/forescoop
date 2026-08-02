@@ -69,7 +69,13 @@ struct ForecastGridHourCell: View {
                 .foregroundStyle(.secondary)
             }
             .frame(width: columnWidth, height: height)
-            .background(isSelected ? theme.accentColor.opacity(0.18) : Color.secondary.opacity(0.12))
+            .background {
+                if theme.usesMaterial && !isSelected {
+                    Rectangle().fill(.thinMaterial)
+                } else {
+                    isSelected ? theme.accentColor.opacity(0.18) : Color.secondary.opacity(0.12)
+                }
+            }
             .overlay {
                 if isSelected {
                     ForecastGridHeaderSelectionBorder(cornerRadius: 3)

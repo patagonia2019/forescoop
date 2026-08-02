@@ -34,7 +34,14 @@ public struct ForecastIntelligenceSummary: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
-        .background(theme.backgroundColor.opacity(theme == .system ? 0.2 : 0.82), in: .rect(cornerRadius: 14))
+        .background {
+            if theme.usesMaterial {
+                RoundedRectangle(cornerRadius: 14).fill(.regularMaterial)
+            } else {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(theme.backgroundColor.opacity(theme == .system ? 0.2 : 0.82))
+            }
+        }
         .overlay {
             RoundedRectangle(cornerRadius: 14)
                 .stroke(theme.accentColor.opacity(0.25))

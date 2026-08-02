@@ -192,8 +192,14 @@ public struct ForecastDashboardView: View {
                             // keeping animated weather renderers out of this
                             // destination lets its SwiftUI preview update
                             // independently and quickly.
-                            theme.backgroundColor
-                                .ignoresSafeArea()
+                            Group {
+                                if theme.usesMaterial {
+                                    Rectangle().fill(.ultraThinMaterial)
+                                } else {
+                                    theme.backgroundColor
+                                }
+                            }
+                            .ignoresSafeArea()
                         } else {
                             weatherBackground(for: forecast)
                         }
@@ -422,7 +428,11 @@ public struct ForecastDashboardView: View {
     @ViewBuilder
     private func weatherBackground(for forecast: SpotForecast) -> some View {
         ZStack {
-            theme.backgroundColor
+            if theme.usesMaterial {
+                Rectangle().fill(.ultraThinMaterial)
+            } else {
+                theme.backgroundColor
+            }
             WeatherBackgroundRenderer(
                 style: weatherBackgroundStyle,
                 forecast: forecast,

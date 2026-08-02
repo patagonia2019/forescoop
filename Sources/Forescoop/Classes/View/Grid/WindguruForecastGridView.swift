@@ -595,19 +595,29 @@ public struct WindguruForecastGridView: View {
     /// Sunset uses a monospaced design, so the fixed title column adopts a
     /// compact caption to preserve the table's existing width.
     private var gridRowTitleFont: Font { theme == .sunset ? .caption2 : .caption }
-    private var gridLabelBackground: Color { .primary.opacity(0.06) }
+    @ViewBuilder private var gridLabelBackground: some View {
+        if theme.usesMaterial {
+            Rectangle().fill(.thinMaterial)
+        } else {
+            Color.primary.opacity(0.06)
+        }
+    }
     /// The fixed header must be opaque; otherwise vertically scrolling labels
     /// and values show through it and become difficult to read.
-    private var pinnedGridHeaderBackground: Color {
+    @ViewBuilder private var pinnedGridHeaderBackground: some View {
+        if theme.usesMaterial {
+            Rectangle().fill(.regularMaterial)
+        } else {
 #if os(iOS) || os(visionOS)
-        Color(uiColor: .systemBackground)
+            Color(uiColor: .systemBackground)
 #elseif os(tvOS)
-        Color.black.opacity(0.9)
+            Color.black.opacity(0.9)
 #elseif canImport(AppKit)
-        Color(nsColor: .windowBackgroundColor)
+            Color(nsColor: .windowBackgroundColor)
 #else
-        Color.primary.opacity(0.1)
+            Color.primary.opacity(0.1)
 #endif
+        }
     }
 
     private func day(for hour: String) -> String {

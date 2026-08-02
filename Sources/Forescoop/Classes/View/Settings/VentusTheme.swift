@@ -12,6 +12,7 @@ import SwiftUI
 /// existing size, weight, and dynamic-type behavior.
 public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
     case system
+    case liquidGlass
     case ocean
     case forest
     case sunset
@@ -24,6 +25,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
     public var title: String {
         switch self {
         case .system: "System Default"
+        case .liquidGlass: "Liquid Glass"
         case .ocean: "Ocean"
         case .forest: "Forest"
         case .sunset: "Sunset"
@@ -36,6 +38,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
     public var accentColor: Color {
         switch self {
         case .system: .accentColor
+        case .liquidGlass: .accentColor
         case .ocean: Color(red: 0.02, green: 0.43, blue: 0.68)
         case .forest: Color(red: 0.10, green: 0.45, blue: 0.27)
         case .sunset: Color(red: 0.77, green: 0.25, blue: 0.20)
@@ -48,6 +51,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
     public var backgroundColor: Color {
         switch self {
         case .system: .clear
+        case .liquidGlass: .clear
         case .ocean: Color(red: 0.92, green: 0.97, blue: 1.0)
         case .forest: Color(red: 0.94, green: 0.98, blue: 0.93)
         case .sunset: Color(red: 1.0, green: 0.95, blue: 0.91)
@@ -60,6 +64,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
     public var primaryTextColor: Color {
         switch self {
         case .system: .primary
+        case .liquidGlass: .primary
         case .ocean: Color(red: 0.02, green: 0.16, blue: 0.27)
         case .forest: Color(red: 0.04, green: 0.20, blue: 0.10)
         case .sunset: Color(red: 0.29, green: 0.10, blue: 0.06)
@@ -71,7 +76,7 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
 
     public var fontDesign: Font.Design? {
         switch self {
-        case .system: nil
+        case .system, .liquidGlass: nil
         case .ocean: .rounded
         case .forest: .serif
         case .sunset: .monospaced
@@ -84,8 +89,12 @@ public enum VentusTheme: String, CaseIterable, Identifiable, Sendable {
     /// Leaves the stock weather renderer unchanged for System Default while
     /// allowing themed backgrounds to show through its animated layer.
     var weatherBackgroundOpacity: Double {
-        self == .system ? 1 : 0.72
+        (self == .system || self == .liquidGlass) ? 1 : 0.72
     }
+
+    /// Uses the adaptive system material that reads as Liquid Glass on modern
+    /// platforms and remains a native material surface on every supported OS.
+    public var usesMaterial: Bool { self == .liquidGlass }
 }
 
 private struct VentusThemeKey: EnvironmentKey {
@@ -109,12 +118,19 @@ struct VentusThemeModifier: ViewModifier {
             .environment(\.ventusTheme, theme)
             .tint(theme.accentColor)
             .foregroundStyle(theme.primaryTextColor)
-            .background(theme.backgroundColor.ignoresSafeArea())
+
+        let surfacedContent = themedContent.background {
+            if theme.usesMaterial {
+                Rectangle().fill(.ultraThinMaterial).ignoresSafeArea()
+            } else {
+                theme.backgroundColor.ignoresSafeArea()
+            }
+        }
 
         if let fontDesign = theme.fontDesign {
-            themedContent.fontDesign(fontDesign)
+            surfacedContent.fontDesign(fontDesign)
         } else {
-            themedContent
+            surfacedContent
         }
     }
 }
@@ -146,4 +162,15 @@ public enum VentusThemeStore {
     }
     .padding()
     .modifier(VentusThemeModifier(theme: .ocean))
+}
+
+#Preview("Liquid Glass theme") {
+    VStack(alignment: .leading, spacing: 12) {
+        Text("Ventus")
+            .font(.title.bold())
+        Label("Forecast Dashboard", systemImage: "wind")
+        Text("Adaptive material surface")
+    }
+    .padding()
+    .modifier(VentusThemeModifier(theme: .liquidGlass))
 }
