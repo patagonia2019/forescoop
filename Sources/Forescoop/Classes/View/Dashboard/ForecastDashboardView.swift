@@ -184,6 +184,7 @@ public struct ForecastDashboardView: View {
                     ContentUnavailableView("Forecast unavailable", systemImage: "cloud.sun")
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle("Ventus")
 #if os(iOS)
             .navigationBarTitleDisplayMode(.large)
@@ -375,9 +376,19 @@ public struct ForecastDashboardView: View {
                 }
 
             }
-            .frame(maxWidth: 1_100)
+            .frame(maxWidth: forecastContentMaximumWidth)
             .padding()
         }
+    }
+
+    private var forecastContentMaximumWidth: CGFloat? {
+#if os(tvOS)
+        // A television has ample horizontal space; do not letterbox the
+        // dashboard inside the phone and iPad reading-width constraint.
+        nil
+#else
+        1_100
+#endif
     }
 
     @ViewBuilder
