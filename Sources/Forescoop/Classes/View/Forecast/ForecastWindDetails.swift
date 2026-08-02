@@ -12,7 +12,6 @@ public struct ForecastWindDetails: View {
     public let forecast: SpotForecast
     public let selectedHour: String?
     @Binding public var windSpeedUnit: WindSpeedUnit
-    @Binding public var showsDirectionArrow: Bool
     public let modelForecasts: [SpotForecast]
     public let modelNamesByID: [String: String]
     public let isModelComparisonEnabled: Bool
@@ -21,7 +20,6 @@ public struct ForecastWindDetails: View {
         forecast: SpotForecast,
         selectedHour: String?,
         windSpeedUnit: Binding<WindSpeedUnit>,
-        showsDirectionArrow: Binding<Bool>,
         modelForecasts: [SpotForecast] = [],
         modelNamesByID: [String: String] = [:],
         isModelComparisonEnabled: Bool = false
@@ -29,7 +27,6 @@ public struct ForecastWindDetails: View {
         self.forecast = forecast
         self.selectedHour = selectedHour
         _windSpeedUnit = windSpeedUnit
-        _showsDirectionArrow = showsDirectionArrow
         self.modelForecasts = modelForecasts
         self.modelNamesByID = modelNamesByID
         self.isModelComparisonEnabled = isModelComparisonEnabled
@@ -52,30 +49,33 @@ public struct ForecastWindDetails: View {
                 windSpeed($0.forecast?.windSpeed(hh: hour))
             }
 
-            LabeledContent { Text(windSpeed(weather?.windGustsKnots(hh: hour))) } label: {
-                Label("Wind gusts", systemImage: "wind.circle.fill")
+            ForecastUnitSelector(
+                "Wind speed unit",
+                selection: $windSpeedUnit,
+                unitTitle: \.label
+            ) {
+                LabeledContent { Text(windSpeed(weather?.windGustsKnots(hh: hour))) } label: {
+                    Label("Wind gusts", systemImage: "wind.circle.fill")
+                        .foregroundStyle(.blue)
+                }
             }
+            .accessibilityLabel("Wind gusts")
             ForecastModelSourceRows(forecasts: modelForecasts, modelNamesByID: modelNamesByID, isEnabled: isModelComparisonEnabled) {
                 windSpeed($0.forecast?.windGustsKnots(hh: hour))
             }
 
             LabeledContent {
-                Button {
-                    showsDirectionArrow.toggle()
-                } label: {
-                    if showsDirectionArrow, let direction = weather?.windDirection(hh: hour) {
+                if let direction = weather?.windDirection(hh: hour) {
+                    HStack(spacing: 6) {
                         Image(systemName: "arrow.down")
                             .rotationEffect(.degrees(direction))
-                    } else {
                         Text(weather?.windDirectionName(hh: hour) ?? "—")
                     }
+                } else {
+                    Text("—")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Wind direction")
-                .accessibilityHint("Shows the direction as an arrow")
             } label: {
                 Label("Wind direction", systemImage: "location.north.line")
-                    .foregroundStyle(.blue)
             }
             ForecastModelSourceRows(forecasts: modelForecasts, modelNamesByID: modelNamesByID, isEnabled: isModelComparisonEnabled) {
                 $0.forecast?.windDirectionName(hh: hour) ?? "—"
@@ -99,8 +99,7 @@ public struct ForecastWindDetails: View {
     ForecastWindDetails(
         forecast: forecast,
         selectedHour: "29",
-        windSpeedUnit: .constant(.knots),
-        showsDirectionArrow: .constant(false)
+        windSpeedUnit: .constant(.knots)
     )
     .padding()
 }

@@ -345,7 +345,10 @@ public struct WindguruForecastGridView: View {
                         showsCloudLayers.toggle()
                     } label: {
                         VStack(alignment: .leading, spacing: 2) {
-                            Label("Cloud cover (%)", systemImage: "cloud.fill")
+                            HStack(spacing: 4) {
+                                rowIcon("cloud.fill")
+                                Text("Cloud cover (%)")
+                            }
                             Text("high / mid / low")
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
@@ -495,15 +498,25 @@ public struct WindguruForecastGridView: View {
     ) -> some View {
         Group {
             if showsRowTitles {
-                Label(title, systemImage: icon)
+                HStack(spacing: 4) {
+                    rowIcon(icon)
+                    Text(title)
+                }
             } else {
                 HStack(spacing: 3) {
-                    Image(systemName: icon)
+                    rowIcon(icon)
                     if let compactTitle { Text(compactTitle) }
                 }
             }
         }
         .foregroundStyle(isInteractive ? .blue : .primary)
+    }
+
+    /// A fixed symbol slot keeps every row title aligned despite SF Symbols
+    /// having different intrinsic widths.
+    private func rowIcon(_ name: String) -> some View {
+        Image(systemName: name)
+            .frame(width: 16, alignment: .center)
     }
 
     private var showsRowTitles: Bool { true }
