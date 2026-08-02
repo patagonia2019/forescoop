@@ -10,6 +10,8 @@
 import SwiftUI
 #if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 /// A compact, Windguru-inspired table for comparing forecast hours at a glance.
@@ -64,7 +66,7 @@ public struct WindguruForecastGridView: View {
                 onShowMap: onShowMap
             )
 
-            frozenGrid(scrollsVertically: false)
+            frozenGrid(scrollsVertically: true)
             ForecastGridModelSelector(
                 modelIDs: availableModelIDs,
                 selectedModelIDs: selectedModelIDs,
@@ -127,6 +129,7 @@ public struct WindguruForecastGridView: View {
 
                 stickyGridHeader
             }
+            .frame(maxHeight: .infinity, alignment: .top)
         } else {
             gridBody(includesHeader: true)
         }
@@ -235,6 +238,8 @@ public struct WindguruForecastGridView: View {
             }
         }
         .frame(height: gridHeaderHeight)
+        .background(pinnedGridHeaderBackground)
+        .zIndex(1)
     }
 
     private enum GridColumn {
@@ -526,6 +531,17 @@ public struct WindguruForecastGridView: View {
     private var gridHeaderHeight: CGFloat { 64 }
     private var cellSpacing: CGFloat { 1 / displayScale }
     private var gridLabelBackground: Color { .primary.opacity(0.06) }
+    /// The fixed header must be opaque; otherwise vertically scrolling labels
+    /// and values show through it and become difficult to read.
+    private var pinnedGridHeaderBackground: Color {
+#if canImport(UIKit)
+        Color(uiColor: .systemBackground)
+#elseif canImport(AppKit)
+        Color(nsColor: .windowBackgroundColor)
+#else
+        Color.primary.opacity(0.1)
+#endif
+    }
 
     private func day(for hour: String) -> String {
         guard let date = forecast.forecastDate(hour: hour) else { return "" }
