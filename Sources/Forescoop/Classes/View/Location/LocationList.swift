@@ -29,6 +29,9 @@ struct LocationList<Row: View>: View {
         ForEach(locations) { location in
             row(location, isFavorite(location))
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Saved locations")
+        .accessibilityHint("Select a location to view its forecast.")
     }
 
     static func merged(

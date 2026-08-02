@@ -97,6 +97,11 @@ public struct WindguruForecastGridView: View {
             onModelComparisonChanged(false)
         }
         .onAppear { onModelComparisonChanged(isModelComparisonEnabled) }
+        .forecastAccessibilityContainer(
+            "Forecast grid for \(forecast.locationDisplayName(coordinateLocationName: coordinateLocationName))",
+            hint: "Select an hour to inspect it. The forecast columns can scroll horizontally.",
+            identifier: "forecast.grid"
+        )
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 if viewModel.displayedModelForecasts.count > 1 {

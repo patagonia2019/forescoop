@@ -30,6 +30,10 @@ struct TVForecastWidgetCard: View {
         .padding(28)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
         .focusable()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(forecast.locationDisplayName()). Temperature \(temperature). Wind \(wind). Rain \(rain).")
+        .accessibilityHint("Current selected forecast hour")
+        .accessibilityIdentifier("tv.forecast.card")
     }
 
     private var temperature: String {

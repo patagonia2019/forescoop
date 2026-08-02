@@ -47,6 +47,10 @@ public struct ForecastIntelligenceSummary: View {
                 .stroke(theme.accentColor.opacity(0.25))
         }
         .ventusGlassEffect(theme: theme, in: RoundedRectangle(cornerRadius: 14))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Forecast insight. \(summary)")
+        .accessibilityAddTraits(.isStaticText)
+        .accessibilityIdentifier("forecast.insight")
         .task(id: snapshot) {
             await generateSummary()
         }

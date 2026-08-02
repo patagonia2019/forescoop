@@ -60,6 +60,11 @@ struct WatchLocationPicker: View {
             }
         }
         .navigationTitle("Location")
+        .forecastAccessibilityContainer(
+            "Watch locations",
+            hint: "Select a saved location or add a Windguru spot.",
+            identifier: "watch.locations"
+        )
     }
 }
 

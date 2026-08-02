@@ -40,6 +40,8 @@ struct WatchForecastHourCell: View {
             }
             .font(.system(size: 10, design: .monospaced))
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(hourTitle). Temperature \(temperature(weather.temperatureReal(hh: hour) ?? weather.temperature(hh: hour))). Wind \(wind(weather.windSpeed(hh: hour))). Rain \(precipitation(weather.precipitation(hh: hour) ?? weather.precipitation1(hh: hour)))\(isSelected ? ". Selected" : "")")
     }
 
     private var hourTitle: String {

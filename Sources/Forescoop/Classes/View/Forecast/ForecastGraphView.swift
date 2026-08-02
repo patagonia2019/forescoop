@@ -90,6 +90,11 @@ public struct ForecastGraphView: View {
             .frame(maxWidth: 1_300, alignment: .leading)
             .padding()
         }
+        .forecastAccessibilityContainer(
+            "Forecast graph for \(forecast.locationDisplayName())",
+            hint: "Explore forecast metrics and select a point to change the active forecast hour.",
+            identifier: "forecast.graph"
+        )
     }
 }
 #endif

@@ -39,6 +39,8 @@ struct SavedLocationRow: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityLabel("\(location.displayName), \(location.detailText)\(isFavorite ? ", favorite" : "")")
+        .accessibilityHint(onSelect == nil ? "Saved location" : "Show forecast")
     }
 
     private var label: some View {

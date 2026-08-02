@@ -78,6 +78,9 @@ public struct ForecastHourSelector: View {
             .disabled(selectedIndex == nil || selectedIndex == hours.count - 1)
         }
         .accessibilityElement(children: .contain)
+        .accessibilityLabel("Forecast date and hour")
+        .accessibilityHint("Use previous and next controls, or open the picker to choose a forecast hour.")
+        .accessibilityIdentifier("forecast.hour.selector")
     }
 
     private func moveSelection(by offset: Int) {

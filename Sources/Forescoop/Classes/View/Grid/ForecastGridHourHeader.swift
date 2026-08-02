@@ -86,6 +86,9 @@ struct ForecastGridHourCell: View {
         .buttonStyle(.plain)
         .foregroundStyle(theme.accentColor)
         .ventusGlassEffect(theme: theme, in: RoundedRectangle(cornerRadius: 3))
+        .accessibilityLabel("\(day(hour)), \(time(hour)), \(weatherSymbols(hour).count) weather symbol\(weatherSymbols(hour).count == 1 ? "" : "s")")
+        .accessibilityHint(isSelected ? "Selected forecast hour" : "Select forecast hour")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

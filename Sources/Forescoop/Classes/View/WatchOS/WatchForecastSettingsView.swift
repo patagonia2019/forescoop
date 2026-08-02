@@ -48,6 +48,11 @@ struct WatchForecastSettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        .forecastAccessibilityContainer(
+            "Watch settings",
+            hint: "Choose the units used in the forecast dashboard.",
+            identifier: "watch.settings"
+        )
     }
 }
 #endif

@@ -86,6 +86,11 @@ public struct SettingsView: View {
         .onChange(of: theme) { _, theme in
             VentusThemeStore.save(theme)
         }
+        .forecastAccessibilityContainer(
+            "Settings",
+            hint: "Choose appearance, forecast layout, and weather animation preferences.",
+            identifier: "settings"
+        )
     }
 }
 

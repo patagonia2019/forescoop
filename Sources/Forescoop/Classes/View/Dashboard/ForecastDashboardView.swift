@@ -356,6 +356,11 @@ public struct ForecastDashboardView: View {
 #endif
         }
         .modifier(VentusThemeModifier(theme: theme))
+        .forecastAccessibilityContainer(
+            "Ventus forecast dashboard",
+            hint: "Choose a location, forecast hour, view mode, or settings.",
+            identifier: "forecast.dashboard"
+        )
     }
 
     private func forecastContent(

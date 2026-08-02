@@ -25,6 +25,11 @@ public struct VisionForecastView: View {
 
     public var body: some View {
         ForecastDashboardView(forecastService: forecastService)
+            .forecastAccessibilityContainer(
+                "Ventus forecast workspace",
+                hint: "Use forecast controls to choose a location, hour, layout, or settings.",
+                identifier: "vision.forecast.workspace"
+            )
     }
 }
 

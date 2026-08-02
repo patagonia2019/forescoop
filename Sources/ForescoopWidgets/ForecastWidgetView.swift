@@ -14,28 +14,34 @@ public struct ForecastWidgetView: View {
     }
 
     @ViewBuilder public var body: some View {
+        Group {
 #if os(watchOS) || os(iOS)
-        switch family {
-        case .accessoryCircular:
-            Image(systemName: entry.symbolName)
-                .font(.title2)
-                .widgetAccentable()
-        case .accessoryInline:
-            Text("\(entry.temperature) · \(entry.wind)")
-        case .accessoryRectangular:
-            HStack {
-                Image(systemName: entry.symbolName).widgetAccentable()
-                VStack(alignment: .leading) {
-                    Text(entry.locationName).lineLimit(1)
-                    Text("\(entry.temperature) · \(entry.wind)").font(.caption)
+            switch family {
+            case .accessoryCircular:
+                Image(systemName: entry.symbolName)
+                    .font(.title2)
+                    .widgetAccentable()
+            case .accessoryInline:
+                Text("\(entry.temperature) · \(entry.wind)")
+            case .accessoryRectangular:
+                HStack {
+                    Image(systemName: entry.symbolName).widgetAccentable()
+                    VStack(alignment: .leading) {
+                        Text(entry.locationName).lineLimit(1)
+                        Text("\(entry.temperature) · \(entry.wind)").font(.caption)
+                    }
                 }
+            default:
+                regularWidgetContent
             }
-        default:
-            regularWidgetContent
-        }
 #else
-        regularWidgetContent
+            regularWidgetContent
 #endif
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(entry.locationName). Temperature \(entry.temperature). Wind \(entry.wind). Rain \(entry.rain).")
+        .accessibilityHint("Open Ventus for the full forecast.")
+        .accessibilityIdentifier("forecast.widget")
     }
 
     private var regularWidgetContent: some View {

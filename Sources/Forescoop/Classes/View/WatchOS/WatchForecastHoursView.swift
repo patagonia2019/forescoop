@@ -42,6 +42,11 @@ struct WatchForecastHoursView: View {
             }
         }
         .navigationTitle("Forecast hour")
+        .forecastAccessibilityContainer(
+            "Forecast hour selector",
+            hint: "Select an hour to return to the dashboard.",
+            identifier: "watch.forecast.hours"
+        )
     }
 }
 #endif

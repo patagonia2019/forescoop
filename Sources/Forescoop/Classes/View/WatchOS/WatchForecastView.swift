@@ -120,6 +120,11 @@ public struct WatchForecastView: View {
         }
         .scrollIndicators(.hidden)
         .multilineTextAlignment(.center)
+        .forecastAccessibilityContainer(
+            ForecastAccessibility.summary(for: forecast, hour: hour),
+            hint: "Use the controls to change location, settings, refresh, choose an hour, or select a forecast model.",
+            identifier: "watch.forecast.dashboard"
+        )
     }
 
     @MainActor private func loadForecast() async {
