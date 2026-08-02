@@ -22,17 +22,20 @@ struct ForescoopWatchOnlyApp: App {
 private struct WatchForecastView: View {
     private let forecastService: ForecastWindguruProtocol = ForecastWindguruService()
     @AppStorage("watchSelectedWindguruSpotID") private var selectedSpotID = "64141"
+    @AppStorage("watchTemperatureUnit") private var temperatureUnitRaw = DeviceForecastPreferences.temperatureUnit.rawValue
+    @AppStorage("watchWindSpeedUnit") private var windSpeedUnitRaw = DeviceForecastPreferences.windSpeedUnit.rawValue
     @State private var locations = WatchLocationStore.load()
     @State private var forecast: SpotForecast?
     @State private var errorMessage: String?
+    @State private var selectedHour: String?
 
     var body: some View {
         NavigationStack {
             Group {
                 if let forecast {
-                    let hour = forecast.currentForecastHour
+                    let hour = selectedHour ?? forecast.currentForecastHour
                     let weather = forecast.forecast
-                    VStack(spacing: 8) {
+                    VStack(spacing: 10) {
                         HStack(spacing: 4) {
                             Text(forecast.asCurrentLocation ?? selectedLocation?.name ?? "Forecast")
                             .font(.headline)
@@ -42,6 +45,22 @@ private struct WatchForecastView: View {
                                 Image(systemName: "mappin.circle.fill")
                             }
                             .accessibilityLabel("Choose location")
+
+                            NavigationLink(value: WatchDestination.grid) {
+                                Image(systemName: "tablecells")
+                            }
+                            .accessibilityLabel("Forecast grid")
+
+                            NavigationLink(value: WatchDestination.settings) {
+                                Image(systemName: "gearshape")
+                            }
+                            .accessibilityLabel("Settings")
+                        }
+
+                        NavigationLink(value: WatchDestination.hours) {
+                            Label(hourTitle(forecast, hour: hour), systemImage: "clock")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
 
                         HStack(spacing: 5) {
@@ -54,12 +73,17 @@ private struct WatchForecastView: View {
                         Text(temperature(weather?.temperatureReal(hh: hour) ?? weather?.temperature(hh: hour)))
                             .font(.system(.title2, design: .rounded).weight(.semibold))
 
-                        Label(wind(weather?.windSpeed(hh: hour)), systemImage: "wind")
-                            .font(.caption)
-                        Text("Updated for \(hour ?? "—") hs")
+                        HStack(spacing: 12) {
+                            watchMetric("Wind", value: wind(weather?.windSpeed(hh: hour)), symbol: "wind")
+                            watchMetric("Gusts", value: wind(weather?.windGustsKnots(hh: hour)), symbol: "wind.circle")
+                            watchMetric("Rain", value: precipitation(weather?.precipitation(hh: hour) ?? weather?.precipitation1(hh: hour)), symbol: "drop")
+                        }
+
+                        Label(weather?.modelName ?? "Forecast model", systemImage: "cpu")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
+                    .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
                 } else if let errorMessage {
                     ContentUnavailableView("Forecast unavailable", systemImage: "exclamationmark.triangle", description: Text(errorMessage))
@@ -76,6 +100,30 @@ private struct WatchForecastView: View {
                         select: select,
                         add: add
                     )
+                case .hours:
+                    WatchForecastHoursView(
+                        forecast: forecast,
+                        selectedHour: $selectedHour
+                    )
+                case .grid:
+                    WatchForecastGridView(
+                        forecast: forecast,
+                        selectedHour: $selectedHour,
+                        temperatureUnit: temperatureUnit,
+                        windSpeedUnit: windSpeedUnit
+                    )
+                case .settings:
+                    WatchForecastSettingsView(
+                        temperatureUnitRaw: $temperatureUnitRaw,
+                        windSpeedUnitRaw: $windSpeedUnitRaw
+                    )
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Refresh", systemImage: "arrow.clockwise") {
+                        Task { await loadForecast() }
+                    }
                 }
             }
         }
@@ -90,6 +138,7 @@ private struct WatchForecastView: View {
         do {
             errorMessage = nil
             forecast = try await forecastService.forecast(bySpotId: selectedSpotID, model: nil)
+            selectedHour = forecast?.currentForecastHour
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -115,17 +164,56 @@ private struct WatchForecastView: View {
 
     private func temperature(_ value: Double?) -> String {
         guard let value else { return "—" }
-        return "\(value.formatted(.number.precision(.fractionLength(0))))°C"
+        let converted = temperatureUnit == .fahrenheit ? value * 9 / 5 + 32 : value
+        return "\(converted.formatted(.number.precision(.fractionLength(0))))\(temperatureUnit.label)"
     }
 
     private func wind(_ value: Double?) -> String {
         guard let value else { return "—" }
-        return "\(value.formatted(.number.precision(.fractionLength(0)))) kt"
+        let converted: Double
+        switch windSpeedUnit {
+        case .knots: converted = value
+        case .metersPerSecond: converted = value * 0.514_444
+        case .kilometersPerHour: converted = value * 1.852
+        case .milesPerHour: converted = value * 1.150_78
+        case .beaufort: converted = min(12, (value / 3.01).rounded())
+        }
+        return "\(converted.formatted(.number.precision(.fractionLength(0)))) \(windSpeedUnit.label)"
+    }
+
+    private func precipitation(_ value: Double?) -> String {
+        guard let value else { return "—" }
+        return "\(value.formatted(.number.precision(.fractionLength(1)))) mm"
+    }
+
+    private func watchMetric(_ title: String, value: String, symbol: String) -> some View {
+        VStack(spacing: 2) {
+            Image(systemName: symbol).font(.caption2)
+            Text(value).font(.caption2.monospacedDigit())
+            Text(title).font(.system(size: 9)).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func hourTitle(_ forecast: SpotForecast, hour: String?) -> String {
+        guard let hour, let date = forecast.forecastDate(hour: hour) else { return "Select hour" }
+        return date.formatted(.dateTime.weekday(.abbreviated).hour())
+    }
+
+    private var temperatureUnit: TemperatureUnit {
+        TemperatureUnit(rawValue: temperatureUnitRaw) ?? DeviceForecastPreferences.temperatureUnit
+    }
+
+    private var windSpeedUnit: WindSpeedUnit {
+        WindSpeedUnit(rawValue: windSpeedUnitRaw) ?? DeviceForecastPreferences.windSpeedUnit
     }
 }
 
 private enum WatchDestination: Hashable {
     case locations
+    case hours
+    case grid
+    case settings
 }
 
 private struct WatchLocation: Codable, Identifiable, Hashable {
@@ -220,6 +308,130 @@ private struct WatchSpotIDEditor: View {
             .disabled(spotID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
         .navigationTitle("Add location")
+    }
+}
+
+/// A compact hour picker for the watch dashboard.
+private struct WatchForecastHoursView: View {
+    let forecast: SpotForecast?
+    @Binding var selectedHour: String?
+
+    var body: some View {
+        List {
+            if let forecast {
+                ForEach(forecast.availableForecastHours, id: \.self) { hour in
+                    Button {
+                        selectedHour = hour
+                    } label: {
+                        HStack {
+                            Text(title(for: hour, in: forecast))
+                            Spacer()
+                            if selectedHour == hour {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(.tint)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Forecast hour")
+    }
+
+    private func title(for hour: String, in forecast: SpotForecast) -> String {
+        guard let date = forecast.forecastDate(hour: hour) else { return "\(hour) hs" }
+        return date.formatted(.dateTime.weekday(.abbreviated).hour())
+    }
+}
+
+/// A readable watch adaptation of the forecast grid: one compact row per hour.
+private struct WatchForecastGridView: View {
+    let forecast: SpotForecast?
+    @Binding var selectedHour: String?
+    let temperatureUnit: TemperatureUnit
+    let windSpeedUnit: WindSpeedUnit
+
+    var body: some View {
+        List {
+            if let forecast, let weather = forecast.forecast {
+                Section("Forecast grid") {
+                    ForEach(forecast.availableForecastHours, id: \.self) { hour in
+                        Button {
+                            selectedHour = hour
+                        } label: {
+                            HStack(spacing: 8) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(hourTitle(hour, in: forecast))
+                                    Image(systemName: forecast.weatherSymbolName(hour: hour))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .frame(width: 58, alignment: .leading)
+
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    Label(wind(weather.windSpeed(hh: hour)), systemImage: "wind")
+                                    Text(temperature(weather.temperatureReal(hh: hour) ?? weather.temperature(hh: hour)))
+                                }
+                                .font(.caption.monospacedDigit())
+
+                                if selectedHour == hour {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.tint)
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                ContentUnavailableView("Forecast unavailable", systemImage: "exclamationmark.triangle")
+            }
+        }
+        .navigationTitle("Forecast grid")
+    }
+
+    private func hourTitle(_ hour: String, in forecast: SpotForecast) -> String {
+        guard let date = forecast.forecastDate(hour: hour) else { return "\(hour) hs" }
+        return date.formatted(.dateTime.weekday(.narrow).hour())
+    }
+
+    private func temperature(_ value: Double?) -> String {
+        guard let value else { return "—" }
+        let converted = temperatureUnit == .fahrenheit ? value * 9 / 5 + 32 : value
+        return "\(converted.formatted(.number.precision(.fractionLength(0))))\(temperatureUnit.label)"
+    }
+
+    private func wind(_ value: Double?) -> String {
+        guard let value else { return "—" }
+        let converted: Double
+        switch windSpeedUnit {
+        case .knots: converted = value
+        case .metersPerSecond: converted = value * 0.514_444
+        case .kilometersPerHour: converted = value * 1.852
+        case .milesPerHour: converted = value * 1.150_78
+        case .beaufort: converted = min(12, (value / 3.01).rounded())
+        }
+        return "\(converted.formatted(.number.precision(.fractionLength(0)))) \(windSpeedUnit.label)"
+    }
+}
+
+/// Watch-sized settings for the units visible in its dashboard and grid.
+private struct WatchForecastSettingsView: View {
+    @Binding var temperatureUnitRaw: String
+    @Binding var windSpeedUnitRaw: String
+
+    var body: some View {
+        Form {
+            Picker("Temperature", selection: $temperatureUnitRaw) {
+                ForEach(TemperatureUnit.allCases) { unit in
+                    Text(unit.label).tag(unit.rawValue)
+                }
+            }
+            Picker("Wind", selection: $windSpeedUnitRaw) {
+                ForEach(WindSpeedUnit.allCases) { unit in
+                    Text(unit.label).tag(unit.rawValue)
+                }
+            }
+        }
+        .navigationTitle("Settings")
     }
 }
 #endif

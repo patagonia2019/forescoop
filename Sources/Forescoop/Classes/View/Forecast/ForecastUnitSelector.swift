@@ -42,6 +42,19 @@ struct ForecastUnitSelector<Unit, Label: View>: View where Unit: CaseIterable & 
             }
             .buttonStyle(.plain)
         } else {
+#if os(watchOS)
+            Button {
+                guard let currentIndex = units.firstIndex(of: selection) else {
+                    selection = units[units.startIndex]
+                    return
+                }
+                let nextIndex = units.index(after: currentIndex)
+                selection = nextIndex == units.endIndex ? units[units.startIndex] : units[nextIndex]
+            } label: {
+                label()
+            }
+            .buttonStyle(.plain)
+#else
             Menu {
                 Picker(title, selection: $selection) {
                     ForEach(units) { unit in
@@ -52,6 +65,7 @@ struct ForecastUnitSelector<Unit, Label: View>: View where Unit: CaseIterable & 
                 label()
             }
             .buttonStyle(.plain)
+#endif
         }
     }
 }
