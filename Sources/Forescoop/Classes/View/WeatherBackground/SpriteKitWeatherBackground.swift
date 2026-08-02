@@ -256,8 +256,10 @@ private final class SpriteWeatherScene: SKScene {
         emitter.emissionAngleRange = condition.isSnowy ? .pi / 4 : .pi / 12
         // The original long streak texture looks like falling glass in
         // SpriteKit. Rain deliberately uses a rounded SF Symbol drop instead.
-        emitter.particleScale = condition.isSnowy ? 0.18 : 0.78
-        emitter.particleScaleRange = condition.isSnowy ? 0.14 : 0.28
+        // The 512px snow texture needs a much smaller SpriteKit scale than a
+        // system-symbol raindrop. Keep snow at 20% of its former size.
+        emitter.particleScale = condition.isSnowy ? 0.036 : 0.78
+        emitter.particleScaleRange = condition.isSnowy ? 0.028 : 0.28
         emitter.particleScaleSpeed = condition.isSnowy ? -0.004 : 0
         // Snowflakes tumble naturally. Keep raindrops upright: their falling
         // trajectory already carries the wind direction, and rotation makes
