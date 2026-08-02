@@ -345,10 +345,12 @@ public struct WindguruForecastGridView: View {
                         showsCloudLayers.toggle()
                     } label: {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Cloud cover (%)")
+                            Label("Cloud cover (%)", systemImage: "cloud.fill")
                             Text("high / mid / low")
+                                .frame(maxWidth: .infinity, alignment: .center)
                         }
                         .foregroundStyle(.blue)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.plain)
                 }
