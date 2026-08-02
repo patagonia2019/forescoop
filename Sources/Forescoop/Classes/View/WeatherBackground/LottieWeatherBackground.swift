@@ -14,7 +14,7 @@ enum LottieWeatherTheme {
     case asadAwan
 }
 
-#if canImport(Lottie)
+#if canImport(Lottie) && !os(macOS)
 import Lottie
 
 /// A locally bundled, designer-authored weather animation.

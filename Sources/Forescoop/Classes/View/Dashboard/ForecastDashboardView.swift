@@ -30,6 +30,7 @@ public struct ForecastDashboardView: View {
     private let spotSearch: @MainActor (String) async throws -> SpotResult?
     private let favoriteSpotsLoader: @MainActor (String, String) async throws -> SpotResult?
     private let spotInfoLoader: @MainActor (String) async throws -> SpotInfo?
+    private let usesPreviewForecast: Bool
 #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
@@ -46,13 +47,26 @@ public struct ForecastDashboardView: View {
     @State private var selectedMapLocationID: SavedMapLocation.ID?
     @State private var favoriteMapLocations = [SavedMapLocation]()
 
-    public init(forecastService: ForecastWindguruProtocol = ForecastWindguruService()) {
+    public init(
+        forecastService: ForecastWindguruProtocol = ForecastWindguruService(),
+        initialViewMode: ForecastViewMode? = nil,
+        initialWeatherBackgroundStyle: WeatherBackgroundStyle? = nil,
+        previewForecast: SpotForecast? = nil
+    ) {
         self.forecastService = forecastService
-        _selectedSpotID = State(initialValue: SelectedWindguruSpotStore.load())
-        _weatherBackgroundStyle = State(initialValue: WeatherBackgroundStyleStore.load())
+        usesPreviewForecast = previewForecast != nil
+        let initialSpotID = previewForecast?.identifier ?? SelectedWindguruSpotStore.load()
+        _selectedSpotID = State(initialValue: initialSpotID)
+        _weatherBackgroundStyle = State(
+            initialValue: initialWeatherBackgroundStyle ?? WeatherBackgroundStyleStore.load()
+        )
         _theme = State(initialValue: VentusThemeStore.load())
-        _content = State(initialValue: ForecastViewModeStore.load())
-        _viewModel = StateObject(wrappedValue: ForecastDashboardViewModel(forecastService: forecastService))
+        _content = State(initialValue: initialViewMode ?? ForecastViewModeStore.load())
+        let viewModel = ForecastDashboardViewModel(forecastService: forecastService)
+        if let previewForecast {
+            viewModel.usePreviewForecast(previewForecast, spotID: initialSpotID)
+        }
+        _viewModel = StateObject(wrappedValue: viewModel)
         _account = StateObject(wrappedValue: WindguruAccount())
         spotSearch = { try await forecastService.searchSpots(byLocation: $0) }
         favoriteSpotsLoader = { try await forecastService.favoriteSpots(withUsername: $0, password: $1) }
@@ -199,6 +213,7 @@ public struct ForecastDashboardView: View {
                 }
             }
             .task {
+                guard !usesPreviewForecast else { return }
                 await loadUserPreferences()
                 await loadFavoriteMapLocations()
                 await loadPreferredForecast()
@@ -648,7 +663,12 @@ public struct ForecastDashboardView: View {
 
 }
 
-#Preview {
-    ForecastDashboardView(forecastService: ForecastWindguruMockup())
+#Preview("Forecast Dashboard · macOS", traits: .fixedLayout(width: 1_280, height: 900)) {
+    ForecastDashboardView(
+        forecastService: ForecastWindguruMockup(),
+        initialViewMode: .dashboard,
+        initialWeatherBackgroundStyle: .animated,
+        previewForecast: ForecastWindguruMockup().dashboardPreviewForecast
+    )
 }
 #endif

@@ -823,20 +823,23 @@ private struct ScrollViewBounceDisabler: UIViewRepresentable {
 #if DEBUG
 
 #Preview("WindguruForecastGridView") {
-    let forecast = try! SpotForecast(map: Definition().json(jsonFile: "SpotForecast"))!
-    let modelID = forecast.model ?? Model.defaultModel
-    let viewModel = ForecastDashboardViewModel(forecastService: ForecastWindguruMockup())
-    NavigationStack {
-        WindguruForecastGridView(
-            forecast: forecast,
-            viewModel: viewModel,
-            availableModelIDs: [modelID],
-            selectedModelIDs: [modelID],
-            showsWindDirectionArrow: .constant(true),
-            onSelectLocation: {},
-            onToggleModel: { _ in },
-            onSelectHour: { _ in }
-        )
+    if let forecast = ForecastWindguruMockup().dashboardPreviewForecast {
+        let modelID = forecast.model ?? Model.defaultModel
+        let viewModel = ForecastDashboardViewModel(forecastService: ForecastWindguruMockup())
+        NavigationStack {
+            WindguruForecastGridView(
+                forecast: forecast,
+                viewModel: viewModel,
+                availableModelIDs: [modelID],
+                selectedModelIDs: [modelID],
+                showsWindDirectionArrow: .constant(true),
+                onSelectLocation: {},
+                onToggleModel: { _ in },
+                onSelectHour: { _ in }
+            )
+        }
+    } else {
+        ContentUnavailableView("Preview forecast unavailable", systemImage: "exclamationmark.triangle")
     }
 }
 

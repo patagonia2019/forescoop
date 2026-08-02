@@ -12,10 +12,16 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
     required public init() {}
 
     let definition = Definition()
+
+    /// A synchronous, bundled forecast for SwiftUI previews. It never reaches
+    /// Windguru, the credential store, or the network.
+    public var dashboardPreviewForecast: SpotForecast? {
+        try? SpotForecast(map: previewForecastMap())
+    }
     
     public func forecast(bySpotId spotId: String,
                          model modelId: String? = nil) async throws -> SpotForecast? {
-        try SpotForecast(map: snowForecastMap())
+        dashboardPreviewForecast
     }
 
     /// Keeps SwiftUI previews visibly representative of cold, snowy weather.
@@ -42,6 +48,56 @@ public class ForecastWindguruMockup: ForecastWindguruProtocol {
 
         response["forecast"] = forecasts
         return response
+    }
+
+    /// Kept in code rather than loaded from a package resource because the
+    /// Xcode preview agent does not consistently mount SwiftPM resource bundles.
+    private func previewForecastMap() -> [String: Any] {
+        let hours = Array(0...72)
+        func values(_ transform: (Int) -> Any) -> [String: Any] {
+            Dictionary(uniqueKeysWithValues: hours.map { (String($0), transform($0)) })
+        }
+
+        let model: [String: Any] = [
+            "initstamp": 1_786_000_000,
+            "initdate": "2026-08-02 00:00:00",
+            "model_name": "GFS 13 km",
+            "WINDSPD": values { 8 + ($0 % 6) },
+            "GUST": values { 13 + ($0 % 8) },
+            "WINDDIR": values { 240 + ($0 % 5) * 12 },
+            "WINDIRNAME": values { _ in "WSW" },
+            "TMP": values { -3 + Double($0 % 8) * 0.8 },
+            "TMPE": values { -4 + Double($0 % 8) * 0.8 },
+            "TCDC": values { 72 + ($0 % 4) * 7 },
+            "HCDC": values { 45 + ($0 % 5) * 5 },
+            "MCDC": values { 55 + ($0 % 4) * 6 },
+            "LCDC": values { 68 + ($0 % 3) * 8 },
+            "RH": values { 78 + ($0 % 5) * 3 },
+            "APCP": values { $0 % 5 == 0 ? 1.4 : 0.0 },
+            "APCP1": values { $0 % 5 == 0 ? 0.7 : 0.0 },
+            "SLP": values { 1_012 + Double($0 % 7) },
+            "FLHGT": values { 900 + ($0 % 6) * 80 },
+            "HTSGW": values { 0.8 + Double($0 % 4) * 0.2 },
+            "WVPER": values { 6 + ($0 % 3) },
+            "WVDIR": values { 220 + ($0 % 5) * 10 }
+        ]
+
+        return [
+            "id_spot": "64141",
+            "spotname": "Bariloche",
+            "country": "Argentina",
+            "id_country": 32,
+            "lat": -41.1281,
+            "lon": -71.348,
+            "alt": 770,
+            "tz": "America/Argentina/Mendoza",
+            "gmt_hour_offset": -3,
+            "sunrise": "08:30",
+            "sunset": "18:45",
+            "models": [3],
+            "tides": "0",
+            "forecast": ["3": model]
+        ]
     }
 
     public func wforecast(bySpotId spotId: String,

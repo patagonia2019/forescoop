@@ -34,7 +34,12 @@ let package = Package(
                 .product(
                     name: "Lottie",
                     package: "lottie-spm",
-                    condition: .when(platforms: [.iOS, .macOS, .tvOS, .visionOS])
+                    // Lottie is distributed as a static XCFramework. Xcode's
+                    // macOS JIT preview agent crashes while registering its
+                    // Swift protocol conformances, even for views that do not
+                    // render a Lottie animation. macOS uses the native
+                    // fallback declared in LottieWeatherBackground instead.
+                    condition: .when(platforms: [.iOS, .tvOS, .visionOS])
                 ),
             ],
             path: "Sources/Forescoop",

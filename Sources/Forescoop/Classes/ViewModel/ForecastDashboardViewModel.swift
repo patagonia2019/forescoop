@@ -142,6 +142,24 @@ public final class ForecastDashboardViewModel: ObservableObject {
         savedMapLocations = SavedMapLocationStore.clearSessionData()
     }
 
+    /// Sets deterministic, already-loaded content for an Xcode preview.
+    /// Preview rendering must not depend on credentials or network requests.
+    func usePreviewForecast(_ forecast: SpotForecast, spotID: String) {
+        self.forecast = forecast
+        coordinateLocationName = nil
+        errorMessage = nil
+        isLoading = false
+        displayedForecastSpotID = spotID
+
+        let modelIDs = [forecast.model ?? Model.defaultModel]
+        displayedModelForecasts = [forecast]
+        usableModelIDs = modelIDs
+        selectedModelIDs = modelIDs
+        modelIDsBySpot[spotID] = modelIDs
+        selectedModelIDsBySpot[spotID] = modelIDs
+        selectedHour = closestHour(to: Date(), in: forecast)
+    }
+
     func loadModelNames(for modelIDs: [String]) async {
         let missingModelIDs = modelIDs.filter { modelNamesByID[$0] == nil }
         guard !missingModelIDs.isEmpty,
