@@ -14,24 +14,9 @@ import Forescoop
 struct VisionForescoopApp: App {
     var body: some Scene {
         WindowGroup {
-            VisionForecastWindow()
+            VisionForecastView()
         }
-        .defaultSize(width: 1_100, height: 720)
-
-        WindowGroup(id: "locations") {
-            VisionLocationsView()
-        }
-        .defaultSize(width: 900, height: 680)
-    }
-}
-
-private struct VisionForecastWindow: View {
-    @Environment(\.openWindow) private var openWindow
-
-    var body: some View {
-        VisionForecastView {
-            openWindow(id: "locations")
-        }
+        .defaultSize(width: 1_280, height: 900)
     }
 }
 #endif
