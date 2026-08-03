@@ -90,6 +90,18 @@ public struct WatchForecastView: View {
                     Label(hourTitle(forecast, hour: hour), systemImage: "clock").font(.caption).foregroundStyle(.secondary)
                 }
 
+                if let sunrise = forecast.sunrise, let sunset = forecast.sunset {
+                    HStack(spacing: 14) {
+                        Label(sunrise, systemImage: "sunrise.fill")
+                        Label(sunset, systemImage: "sunset.fill")
+                    }
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Sunrise at \(sunrise). Sunset at \(sunset).")
+                    .accessibilityIdentifier("watch.forecast.daylight")
+                }
+
                 HStack(spacing: 5) {
                     ForEach(forecast.weatherSymbolNames(hour: hour), id: \.self) { Image(systemName: $0) }
                 }

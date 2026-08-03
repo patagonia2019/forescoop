@@ -107,7 +107,10 @@ public extension SpotForecast {
     /// therefore tomorrow at 03:00, regardless of when the forecast was fetched.
     func forecastDate(hour: String?, relativeTo referenceDate: Date = Date()) -> Date? {
         guard let offset = Int(hour ?? "") else { return nil }
-        let calendar = Calendar.current
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timezone
+            ?? TimeZone(secondsFromGMT: gmtHourOffset * 3_600)
+            ?? .current
         return calendar.date(byAdding: .hour, value: offset, to: calendar.startOfDay(for: referenceDate))
     }
     
@@ -147,7 +150,7 @@ public extension SpotForecast {
         let humidity = forecast?.relativeHumidity(hh: hour) ?? 0
         let windSpeed = forecast?.windSpeed(hh: hour) ?? 0
         let windGusts = forecast?.windGusts(hh: hour) ?? 0
-        let isNight = elapseContainsTime(date: forecastDate(hour: hour) ?? Date())
+        let isNight = !isDaylight(at: forecastDate(hour: hour) ?? Date())
         var symbols: [String] = []
 
         if windGusts >= 60 {
@@ -227,7 +230,7 @@ public extension SpotForecast {
 private extension SpotForecast {
     
     var isNight: Bool {
-        elapseContainsTime(date: Date())
+        !isDaylight(at: Date())
     }
     
     var isSunny: Bool {

@@ -45,6 +45,7 @@ public struct ForecastWeatherDetails: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            daylightRow
             cloudCover(
                 total: weather?.cloudCoverTotal(hh: hour),
                 high: weather?.cloudCoverHigh(hh: hour),
@@ -69,6 +70,23 @@ public struct ForecastWeatherDetails: View {
 
     private var hour: String? { selectedHour ?? forecast.currentForecastHour }
     private var weather: Forecast? { forecast.forecast }
+
+    @ViewBuilder private var daylightRow: some View {
+        if let sunrise = forecast.sunrise,
+           let sunset = forecast.sunset {
+            HStack(spacing: 16) {
+                Label("Sunrise \(sunrise)", systemImage: "sunrise.fill")
+                    .foregroundStyle(theme.accentColor)
+                Spacer(minLength: 12)
+                Label("Sunset \(sunset)", systemImage: "sunset.fill")
+                    .foregroundStyle(theme.accentColor)
+            }
+            .font(.subheadline)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Sunrise at \(sunrise). Sunset at \(sunset).")
+            .accessibilityIdentifier("forecast.daylight")
+        }
+    }
 
     private var precipitationRow: some View {
         ForecastUnitSelector(

@@ -11,6 +11,7 @@ import SwiftUI
 /// An in-app guide to choosing locations, reading forecasts, and comparing
 /// models in Ventus. Its flow is informed by Windguru's introductory guide.
 public struct VentusHelpView: View {
+    @Environment(\.dismiss) private var dismiss
     private let windguruHelpURL = URL(string: "https://www.windguru.cz/help.php?sec=intro")!
     private let windguruModelsURL = URL(string: "https://www.windguru.cz/help.php?sec=models")!
 
@@ -110,6 +111,14 @@ public struct VentusHelpView: View {
             .padding()
         }
         .navigationTitle("Help")
+#if os(macOS)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+            }
+        }
+#endif
     }
 }
 

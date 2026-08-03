@@ -129,6 +129,12 @@ public struct AnimatedWeatherBackground: WeatherBackground {
                 }
 
                 if isNight {
+                    Image(systemName: "moon.stars.fill")
+                        .font(.system(size: 86))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.white.opacity(0.68))
+                        .offset(x: proxy.size.width * 0.27, y: -proxy.size.height * 0.28)
+
                     TimelineView(.animation) { timeline in
                         let time = timeline.date.timeIntervalSinceReferenceDate
                         ForEach(0..<12, id: \.self) { index in

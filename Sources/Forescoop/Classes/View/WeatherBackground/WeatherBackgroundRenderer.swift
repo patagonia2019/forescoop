@@ -51,6 +51,8 @@ public struct WeatherBackgroundRenderer: View {
     private let style: WeatherBackgroundStyle
     private let forecast: SpotForecast
     private let hour: String?
+    private let isNight: Bool
+    private let showsStars: Bool
 
     public init(
         style: WeatherBackgroundStyle,
@@ -60,6 +62,14 @@ public struct WeatherBackgroundRenderer: View {
         self.style = style
         self.forecast = forecast
         self.hour = hour
+        let selectedHour = hour ?? forecast.currentForecastHour
+        let symbols = forecast.weatherSymbolNames(hour: selectedHour)
+        let hasClouds = symbols.contains { $0.contains("cloud") || $0.contains("fog") }
+        let precipitation = forecast.forecast?.precipitation(hh: selectedHour)
+            ?? forecast.forecast?.precipitation1(hh: selectedHour)
+            ?? 0
+        isNight = !forecast.isDaylight(at: forecast.forecastDate(hour: selectedHour) ?? Date())
+        showsStars = !hasClouds && precipitation <= 0
     }
 
     public var body: some View {
@@ -79,5 +89,12 @@ public struct WeatherBackgroundRenderer: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
+        .overlay {
+            // Native rendering already paints its own stars; the other engines
+            // receive this layer so nighttime never presents daytime sun art.
+            if style != .animated {
+                WeatherNightSkyOverlay(isVisible: isNight, showsStars: showsStars)
+            }
+        }
     }
 }

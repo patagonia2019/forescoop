@@ -153,7 +153,20 @@ public extension SpotInfo {
     }
 
     func elapseContainsTime(date: Date) -> Bool {
-        elapse?.containsTime(date: date) == true
+        isDaylight(at: date)
+    }
+
+    /// Whether an instant falls between the spot's reported sunrise and sunset.
+    /// Windguru supplies these as local times, so creating the bounds in the
+    /// spot's time zone is essential when the device is elsewhere.
+    func isDaylight(at date: Date) -> Bool {
+        guard let sunrise = daylightDate(from: sunrise, on: date),
+              let sunset = daylightDate(from: sunset, on: date) else {
+            // Do not turn a forecast into permanent night when a provider omits
+            // its astronomical data.
+            return true
+        }
+        return date >= sunrise && date <= sunset
     }
     
     var countryIdentifier: Int {
@@ -182,5 +195,21 @@ public extension SpotInfo {
 
     var currentTides: String? {
         tides
+    }
+
+    private func daylightDate(from time: String?, on date: Date) -> Date? {
+        guard let time else { return nil }
+        let hourMinute = time.split(separator: ":").compactMap { Int($0) }
+        guard hourMinute.count == 2 else { return nil }
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timezone
+            ?? TimeZone(secondsFromGMT: gmtHourOffset * 3_600)
+            ?? .current
+        var components = calendar.dateComponents([.year, .month, .day], from: date)
+        components.hour = hourMinute[0]
+        components.minute = hourMinute[1]
+        components.second = 0
+        return calendar.date(from: components)
     }
 }
