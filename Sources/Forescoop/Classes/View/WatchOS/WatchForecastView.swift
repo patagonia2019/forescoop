@@ -44,7 +44,13 @@ public struct WatchForecastView: View {
             .navigationDestination(for: WatchDestination.self) { destination in
                 switch destination {
                 case .locations:
-                    WatchLocationPicker(locations: locations, selectedSpotID: selectedSpotID, select: select, add: add)
+                    WatchLocationPicker(
+                        locations: locations,
+                        selectedSpotID: selectedSpotID,
+                        forecastService: forecastService,
+                        select: select,
+                        add: add
+                    )
                 case .hours:
                     WatchForecastHoursView(forecast: forecast, selectedHour: $selectedHour, temperatureUnit: temperatureUnit, windSpeedUnit: windSpeedUnit, precipitationUnit: precipitationUnit) {
                         navigationPath = NavigationPath()

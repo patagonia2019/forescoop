@@ -11,6 +11,8 @@ import SwiftUI
 
 /// Product and acknowledgement information for Ventus.
 public struct AboutView: View {
+    @Environment(\.dismiss) private var dismiss
+
     public init() {}
 
     public var body: some View {
@@ -120,6 +122,14 @@ public struct AboutView: View {
             }
         }
         .navigationTitle("About")
+#if os(macOS)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+            }
+        }
+#endif
     }
 
     private var versionDescription: String {

@@ -10,6 +10,9 @@
 import CoreLocation
 @preconcurrency import MapKit
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 @MainActor
 public struct ForecastDashboardView: View {
@@ -337,9 +340,7 @@ public struct ForecastDashboardView: View {
                 }
             }
             .sheet(isPresented: sheetBinding(.about)) {
-                NavigationStack {
-                    AboutView()
-                }
+                aboutSheet
             }
 #if !os(tvOS)
             .sheet(isPresented: sheetBinding(.forecastMap)) {
@@ -362,6 +363,27 @@ public struct ForecastDashboardView: View {
             identifier: "forecast.dashboard"
         )
     }
+
+    @ViewBuilder
+    private var aboutSheet: some View {
+        NavigationStack {
+            AboutView()
+        }
+#if os(macOS)
+        // A desktop About view should use meaningful window real estate rather
+        // than its phone-sized intrinsic List width.
+        .frame(
+            width: max(640, appWindowSize.width * 0.5),
+            height: max(480, appWindowSize.height * 0.5)
+        )
+#endif
+    }
+
+#if os(macOS)
+    private var appWindowSize: CGSize {
+        NSApp.mainWindow?.contentLayoutRect.size ?? CGSize(width: 1_280, height: 900)
+    }
+#endif
 
     private func forecastContent(
         for forecast: SpotForecast,
