@@ -6,14 +6,17 @@
       "scale" : "1x"
     },
     {
+      "filename" : "top-shelf-2x.png",
       "idiom" : "tv",
       "scale" : "2x"
     },
     {
+      "filename" : "top-shelf-marketing.png",
       "idiom" : "tv-marketing",
       "scale" : "1x"
     },
     {
+      "filename" : "top-shelf-marketing-2x.png",
       "idiom" : "tv-marketing",
       "scale" : "2x"
     }

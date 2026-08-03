@@ -1,5 +1,5 @@
 @startuml
-title Ventus architecture
+title Ventus / Forescoop architecture
 
 skinparam backgroundColor #FFFFFF
 skinparam shadowing false
@@ -16,64 +16,80 @@ skinparam database {
   BorderColor #A67820
 }
 
-package "Ventus applications" #F5F8FB {
-  [SwiftUI app targets\niOS / iPadOS / macOS / tvOS / visionOS / watchOS] as apps
+package "Apple platform applications" #F5F8FB {
+  [App targets\niOS / iPadOS: iOSnowatch\nmacOS: ForescoopMacOS\ntvOS: ForescoopTVOS\nvisionOS: ForescoopVisionOS\nwatchOS: ForescoopWatchOnly] as apps
+  [watchOS Widget Extension\nForescoopWatchWidgets] as watchWidget
 }
 
-package "Forescoop Swift package" #E9F4EC {
-  package "Views" #F8FCF8 {
-    [Dashboard\nForecastDashboardView\nDashboardAccountMenu\nDashboardLocationWorkspace] as dashboard
-    [Forecast\nOverview, hour selector,\ndetails, model comparison] as forecastViews
-    [Grid\nWindguruForecastGridView\nfrozen headers and model selector] as grid
-    [Location and SpotPicker\nlocation list, map picker,\nsaved-location row] as locationViews
-    [Account\nlogin, profile, favorites] as accountViews
-    [Settings and About] as settingsViews
-    [WeatherBackground\nNative, SpriteKit particles,\nMetal, Lottie] as weatherViews
-    [VisionOS views] as visionViews
+package "Swift packages" #E9F4EC {
+  package "Forescoop" #F8FCF8 {
+    package "Views" #F8FCF8 {
+      [Dashboard and workspace\nForecastDashboardView\naccount and location menus] as dashboard
+      [Forecast views\noverview, details, hour selector,\nmodel comparison and intelligence] as forecastViews
+      [Forecast grid\nWindguruForecastGridView\nfrozen header and model selector] as grid
+      [Location and account\nspot picker, map, saved locations,\nlogin, profile and favorites] as locationAccountViews
+      [Settings, About and Help\nVentusTheme and units] as settingsViews
+      [Weather backgrounds\nNative material, SpriteKit, Metal, Lottie] as weatherViews
+      [Platform adaptations\nTV card, Vision views, Watch dashboard] as platformViews
+    }
+
+    package "View models" #F1F8EE {
+      [ForecastDashboardViewModel] as dashboardVM
+      [ForecastModelPickerViewModel] as modelPickerVM
+      [WindguruSpotPickerViewModel] as spotPickerVM
+      [WindguruFavoritesViewModel] as favoritesVM
+    }
+
+    package "Domain and services" #F1F8EE {
+      [Forecast domain\nSpotForecast, Forecast,\nmodels, units and user] as domain
+      interface "ForecastWindguruProtocol" as forecastProtocol
+      [ForecastWindguruService\nURLSession REST client] as service
+      [ForecastWindguruMockup\nfixture-backed previews and tests] as mock
+      [ForescoopSpotlightIndexer\ncurrent forecast and locations] as spotlight
+      [Forecast intelligence\nFoundation Models with\ndeterministic fallback] as intelligence
+    }
   }
 
-  package "View models" #F1F8EE {
-    [ForecastDashboardViewModel] as dashboardVM
-    [ForecastModelPickerViewModel] as modelPickerVM
-    [WindguruSpotPickerViewModel] as spotPickerVM
-    [WindguruFavoritesViewModel] as favoritesVM
+  package "ForescoopGraph" #F8FCF8 {
+    [ForecastGraphView adapter] as graphAdapter
+    [Canvas graph\ndata, smooth paths, legend\nand model comparison] as graph
   }
 
-  package "Domain and configuration" #F1F8EE {
-    [Forecast domain\nSpotForecast, Forecast,\nmodels, units, User] as domain
-    [WindguruAccount\nauthenticated session] as account
-    [Forecast preferences provider\ndevice or profile units] as preferences
-    [WeatherBackgroundRenderer\nselected rendering style] as renderer
+  package "ForescoopWidgets" #F8FCF8 {
+    [Widget timeline provider\nand forecast entry] as widgetProvider
+    [Adaptive widget view\nstandard and accessory families] as widgetView
   }
+}
 
-  package "Services" #F1F8EE {
-    interface "ForecastWindguruProtocol" as forecastProtocol
-    [ForecastWindguruService\nURLSession REST client] as service
-    [ForecastWindguruMockup\nfixture-backed service] as mock
-  }
-
-  database "SwiftData\nSavedMapLocationStore\nSelectedWindguruSpotStore\nand background preference" as swiftData
-  database "Keychain\nWindguruCredentialStore\naccount + PRO password" as keychain
-  database "Package resources\nJSON fixtures, Lottie, Metal assets\nand service plist" as resources
+package "Local data, assets and shared state" #FFF9E8 {
+  database "SwiftData and local preferences\nlocations, selected spot,\nview mode and units" as localStore
+  database "App Group UserDefaults\ngroup.org.forescoop.shared\nshared theme and widget state" as appGroup
+  database "Keychain\nWindguru credentials and PRO password" as keychain
+  database "Package resources\nforecast fixtures, Lottie, Metal,\nweather particles and service plist" as resources
+  [Platform asset catalogs\napp icons for iOS/iPadOS, macOS,\ntvOS, visionOS and watchOS] as icons
 }
 
 cloud "Windguru public API" as windguru
 cloud "Windguru PRO API\nspot and coordinate forecasts" as pro
+cloud "System search\nSpotlight" as systemSearch
+cloud "On-device Apple Intelligence" as appleIntelligence
 
 apps --> dashboard
-apps --> grid
-apps --> visionViews
+apps --> platformViews
+apps --> watchWidget
+watchWidget --> widgetProvider
 
 dashboard --> dashboardVM
-grid --> dashboardVM
-forecastViews --> dashboardVM
-locationViews --> spotPickerVM
-accountViews --> favoritesVM
-accountViews --> account
-settingsViews --> preferences
-weatherViews --> renderer
+dashboard --> grid
+dashboard --> forecastViews
+dashboard --> graphAdapter
+platformViews --> forecastViews
+platformViews --> weatherViews
+settingsViews --> appGroup : theme
+widgetProvider --> widgetView
+widgetView --> appGroup : shared theme
 
-dashboardVM --> forecastProtocol : forecast, spot and\nmodel requests
+dashboardVM --> forecastProtocol : forecasts, spots\nand model requests
 modelPickerVM --> forecastProtocol
 spotPickerVM --> forecastProtocol
 favoritesVM --> forecastProtocol
@@ -81,41 +97,44 @@ dashboardVM --> domain
 modelPickerVM --> domain
 spotPickerVM --> domain
 favoritesVM --> domain
+forecastViews --> intelligence
+graphAdapter --> graph
+graphAdapter --> domain
 
-dashboardVM --> swiftData
-spotPickerVM --> swiftData
-locationViews --> swiftData
-account --> keychain
-accountViews --> keychain
-
-forecastProtocol <|.. service
-forecastProtocol <|.. mock
+dashboardVM --> localStore
+locationAccountViews --> localStore
+locationAccountViews --> keychain
 service --> windguru : public forecasts, spots,\nfavorites and model metadata
 service --> pro : authenticated forecasts
+forecastProtocol <|.. service
+forecastProtocol <|.. mock
 service --> domain : maps API responses
 mock --> resources : loads fixture data
-weatherViews --> resources : Lottie, Metal and\nSpriteKit particle assets
+weatherViews --> resources : animations and particles
+apps --> icons
+
+spotlight --> systemSearch
+dashboardVM --> spotlight : indexes current forecast\nand saved locations
+intelligence --> appleIntelligence : supported devices only
 
 note right of forecastProtocol
-Service injection keeps views and view models
-testable; previews use the mock service.
+Protocol injection keeps views and view models testable.
+Previews use the fixture-backed mock service.
 end note
 
-note bottom of swiftData
-Locations and the selected spot persist locally.
-Logout clears session-scoped data while preserving
-the primary spot (#64141).
+note bottom of appGroup
+The same group identifier makes theme and widget-facing
+preferences available to app and extension processes on one device.
+Cross-device sync requires a cloud service.
 end note
 
-note bottom of keychain
-Credentials never use UserDefaults in release builds.
-DEBUG previews can use a local fallback when Keychain
-is unavailable.
+note bottom of intelligence
+Foundation Models is used only when available.
+Every platform retains the deterministic forecast summary.
 end note
 
-note bottom of weatherViews
-SpriteKit uses forecast-driven, wind-aware textured
-rain, snow and leaf particles; Lottie remains the
-illustrated background option.
+note bottom of spotlight
+Indexed on iOS, iPadOS, macOS and visionOS.
+The tvOS and watchOS implementation is a no-op.
 end note
 @enduml

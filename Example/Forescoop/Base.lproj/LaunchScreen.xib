@@ -13,6 +13,13 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchIcon" translatesAutoresizingMaskIntoConstraints="NO" id="VTs-qz-0Ae">
+                    <rect key="frame" x="160" y="104" width="160" height="160"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="160" id="Edf-QV-PzO"/>
+                        <constraint firstAttribute="height" constant="160" id="kgL-VE-OqT"/>
+                    </constraints>
+                </imageView>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Copyright © 2023 Mobile Patagonia. All rights reserved." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="8ie-xW-0ye">
                     <rect key="frame" x="20" y="439" width="440" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -20,20 +27,31 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ventus" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="kId-c2-rCX">
-                    <rect key="frame" x="20" y="139.5" width="440" height="43"/>
+                    <rect key="frame" x="20" y="284" width="440" height="43"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
                     <color key="textColor" systemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 0.1.0 • Windguru forecasts&#10;Lottie weather animations&#10;iOS • iPadOS • macOS • watchOS • tvOS • visionOS" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="3" translatesAutoresizingMaskIntoConstraints="NO" id="DqA-4H-rX1">
+                    <rect key="frame" x="20" y="337" width="440" height="54"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <color key="textColor" red="0.27" green="0.34" blue="0.4" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="bottom" multiplier="1/3" constant="1" id="5cJ-9S-tgC"/>
+                <constraint firstItem="VTs-qz-0Ae" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="1Pp-4w-7zi"/>
+                <constraint firstItem="VTs-qz-0Ae" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="104" id="4Vt-I7-Fbu"/>
+                <constraint firstItem="kId-c2-rCX" firstAttribute="top" secondItem="VTs-qz-0Ae" secondAttribute="bottom" constant="20" id="5cJ-9S-tgC"/>
                 <constraint firstAttribute="centerX" secondItem="kId-c2-rCX" secondAttribute="centerX" id="Koa-jz-hwk"/>
                 <constraint firstAttribute="bottom" secondItem="8ie-xW-0ye" secondAttribute="bottom" constant="20" id="Kzo-t9-V3l"/>
                 <constraint firstItem="8ie-xW-0ye" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="MfP-vx-nX0"/>
                 <constraint firstAttribute="centerX" secondItem="8ie-xW-0ye" secondAttribute="centerX" id="ZEH-qu-HZ9"/>
                 <constraint firstItem="kId-c2-rCX" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="fvb-Df-36g"/>
+                <constraint firstItem="DqA-4H-rX1" firstAttribute="top" secondItem="kId-c2-rCX" secondAttribute="bottom" constant="10" id="mGj-tb-nJk"/>
+                <constraint firstItem="DqA-4H-rX1" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="U2n-3C-gfi"/>
+                <constraint firstAttribute="trailing" secondItem="DqA-4H-rX1" secondAttribute="trailing" constant="20" symbolic="YES" id="UKE-xZ-qXQ"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -41,6 +59,7 @@
         </view>
     </objects>
     <resources>
+        <image name="LaunchIcon" width="128" height="128"/>
         <systemColor name="darkTextColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
